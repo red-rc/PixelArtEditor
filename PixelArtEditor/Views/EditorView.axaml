@@ -1,0 +1,183 @@
+<UserControl
+    Background="#222222"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d"
+    x:Class="PixelArtEditor.Views.EditorView"
+    x:DataType="vm:EditorViewModel"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="clr-namespace:PixelArtEditor.UI"
+    xmlns:vm="clr-namespace:PixelArtEditor.ViewModels"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <DockPanel Name="RootPanel">
+        <Panel
+            Background="#1b1b1b"
+            DockPanel.Dock="Top"
+            Height="75"
+            HorizontalAlignment="Stretch"
+            Name="ToolOptionsPanel">
+            <Rectangle
+                Fill="#171717"
+                Height="3"
+                Name="ToolOptionsPanelBorder"
+                VerticalAlignment="Bottom" />
+            <Panel.ContextMenu>
+                <ContextMenu>
+                    <MenuItem
+                        Click="Align_Click"
+                        Header="Align to the top"
+                        Tag="Top" />
+                    <MenuItem
+                        Click="Align_Click"
+                        Header="Align to the bottom"
+                        Tag="Bottom" />
+                </ContextMenu>
+            </Panel.ContextMenu>
+        </Panel>
+        <Panel
+            Background="#1b1b1b"
+            DockPanel.Dock="Right"
+            HorizontalAlignment="Right"
+            Name="LayerPanel"
+            VerticalAlignment="Stretch"
+            Width="300">
+            <Panel.ContextMenu>
+                <ContextMenu>
+                    <MenuItem
+                        Click="Align_Click"
+                        Header="Align to the right"
+                        Tag="Right" />
+                    <MenuItem
+                        Click="Align_Click"
+                        Header="Align to the left"
+                        Tag="Left" />
+                </ContextMenu>
+            </Panel.ContextMenu>
+            <Border
+                BorderBrush="#444444"
+                BorderThickness="0,0,0,3"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Top">
+
+                <Viewbox Stretch="Uniform">
+                    <ColorView Color="{Binding PickedColor}" />
+                </Viewbox>
+            </Border>
+            <Rectangle
+                Fill="#171717"
+                HorizontalAlignment="Left"
+                Name="LayerPanelBorder"
+                Width="3" />
+        </Panel>
+        <Panel
+            Background="#1b1b1b"
+            DockPanel.Dock="Left"
+            Name="Toolbar"
+            VerticalAlignment="Stretch"
+            Width="40">
+            <Rectangle
+                Fill="#171717"
+                HorizontalAlignment="Right"
+                Name="ToolbarBorder"
+                Width="3" />
+            <Panel.ContextMenu>
+                <ContextMenu>
+                    <MenuItem
+                        Click="Align_Click"
+                        Header="Align to the top"
+                        Tag="Top" />
+                    <MenuItem
+                        Click="Align_Click"
+                        Header="Align to the bottom"
+                        Tag="Bottom" />
+                    <MenuItem
+                        Click="Align_Click"
+                        Header="Align to the right"
+                        Tag="Right" />
+                    <MenuItem
+                        Click="Align_Click"
+                        Header="Align to the left"
+                        Tag="Left" />
+                    <MenuItem Click="BringToFront" Header="Bring to front" />
+                    <MenuItem Click="BringToBack" Header="Bring to back" />
+                </ContextMenu>
+            </Panel.ContextMenu>
+            <StackPanel
+                HorizontalAlignment="Center"
+                Margin="0,10,0,0"
+                Spacing="5"
+                VerticalAlignment="Top"
+                x:Name="ToolbarStackPanel">
+                <ToggleButton
+                    Classes="EditButton"
+                    Height="24"
+                    IsChecked="{Binding IsPenEnabled}"
+                    Width="24">
+                    <Image
+                        Height="18"
+                        HorizontalAlignment="Center"
+                        Source="/Assets/DarkMode/EditButtons/pen.png"
+                        VerticalAlignment="Center"
+                        Width="18" />
+                </ToggleButton>
+                <ToggleButton
+                    Classes="EditButton"
+                    Height="24"
+                    IsChecked="{Binding IsColorPickerEnabled}"
+                    Width="24">
+                    <Image
+                        Height="18"
+                        HorizontalAlignment="Center"
+                        Source="/Assets/DarkMode/EditButtons/colorpicker.png"
+                        VerticalAlignment="Center"
+                        Width="18" />
+                </ToggleButton>
+                <ToggleButton
+                    Classes="EditButton"
+                    Height="24"
+                    IsChecked="{Binding IsFillEnabled}"
+                    Width="24">
+                    <Image
+                        Height="18"
+                        HorizontalAlignment="Center"
+                        Source="/Assets/DarkMode/EditButtons/fill.png"
+                        VerticalAlignment="Center"
+                        Width="18" />
+                </ToggleButton>
+                <ToggleButton
+                    Classes="EditButton"
+                    Height="24"
+                    IsChecked="{Binding IsEraserEnabled}"
+                    Width="24">
+                    <Image
+                        Height="18"
+                        HorizontalAlignment="Center"
+                        Source="/Assets/DarkMode/EditButtons/eraser.png"
+                        VerticalAlignment="Center"
+                        Width="18" />
+                </ToggleButton>
+            </StackPanel>
+        </Panel>
+        <Panel
+            Background="#222222"
+            ClipToBounds="True"
+            HorizontalAlignment="Stretch"
+            Loaded="CanvasPanel_OnLoaded"
+            Name="CanvasPanel"
+            PointerMoved="CanvasPanel_OnPointerMoved"
+            PointerPressed="CanvasPanel_OnPointerPressed"
+            PointerReleased="CanvasPanel_OnPointerReleased"
+            PointerWheelChanged="CanvasPanel_OnPointerWheelChanged"
+            VerticalAlignment="Stretch">
+            <ui:Canvas
+                Offset="{Binding Offset}"
+                Parameters="{Binding Parameters}"
+                PickedColor="{Binding PickedColor}"
+                Scale="{Binding Scale}"
+                SelectedTool="{Binding SelectedTool}" />
+        </Panel>
+    </DockPanel>
+</UserControl>

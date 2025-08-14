@@ -1,15 +1,26 @@
-<Application xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="using:PixelArtEditor"
-             x:Class="PixelArtEditor.App"
-             RequestedThemeVariant="Default">
-             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+<Application
+    RequestedThemeVariant="Dark"
+    x:Class="PixelArtEditor.App"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:local="using:PixelArtEditor"
+    xmlns:viewModels="clr-namespace:PixelArtEditor.ViewModels"
+    xmlns:views1="clr-namespace:PixelArtEditor.Views"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!--  "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options.  -->
 
     <Application.DataTemplates>
-        <local:ViewLocator/>
+        <local:ViewLocator />
+        <DataTemplate DataType="{x:Type viewModels:StartMenuViewModel}">
+            <views1:StartMenuView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModels:EditorViewModel}">
+            <views1:EditorView />
+        </DataTemplate>
     </Application.DataTemplates>
 
     <Application.Styles>
         <FluentTheme />
+        <StyleInclude Source="avares://PixelArtEditor/Styles/Style.axaml" />
+        <StyleInclude Source="avares://Avalonia.Controls.ColorPicker/Themes/Fluent/Fluent.xaml" />
     </Application.Styles>
 </Application>

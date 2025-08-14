@@ -1,12 +1,119 @@
-<Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="using:PixelArtEditor.ViewModels"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:views="clr-namespace:PixelArtEditor.Views"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="PixelArtEditor.Views.MainWindow"
-        Icon="/Assets/avalonia-logo.ico"
-        Title="PixelArtEditor">
-        <views:MainView />
+<Window
+    Background="Transparent"
+    ExtendClientAreaToDecorationsHint="True"
+    Icon="/Assets/avalonia-logo.ico"
+    SystemDecorations="None"
+    Title="Pixeller"
+    TransparencyLevelHint="AcrylicBlur"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d"
+    x:Class="PixelArtEditor.Views.MainWindow"
+    x:DataType="vm:MainWindowViewModel"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="clr-namespace:PixelArtEditor.ViewModels"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <DockPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <DockPanel
+            DockPanel.Dock="Top"
+            Height="30"
+            PointerPressed="MoveWindow">
+            <Grid Background="#1e1e1e" ColumnDefinitions="Auto,*,Auto">
+                <Border
+                    Grid.Column="0"
+                    Height="30"
+                    Width="30">
+                    <Image
+                        Height="16"
+                        HorizontalAlignment="Center"
+                        Source="/Assets/avalonia-logo.ico"
+                        VerticalAlignment="Center"
+                        Width="16" />
+                </Border>
+                <Menu Grid.Column="1" HorizontalAlignment="Left">
+                    <MenuItem Header="File">
+                        <MenuItem Command="{Binding Menu.CreateCommand}" Header="Create New" />
+                        <MenuItem Command="{Binding Menu.OpenCommand}" Header="Open" />
+                        <MenuItem Command="{Binding Menu.ImportCommand}" Header="Import" />
+                        <Separator />
+                        <MenuItem Command="{Binding Menu.SaveCommand}" Header="Save" />
+                        <MenuItem Command="{Binding Menu.SaveAsCommand}" Header="Save As" />
+                        <MenuItem Command="{Binding Menu.ExportCommand}" Header="Export" />
+                        <Separator />
+                        <MenuItem Command="{Binding Menu.LastAutosaveCommand}" Header="Last Autosave" />
+                        <MenuItem Command="{Binding Menu.ExitCommand}" Header="Exit" />
+                    </MenuItem>
+
+                    <MenuItem Header="Edit">
+                        <MenuItem Command="{Binding Menu.UndoCommand}" Header="Undo" />
+                        <MenuItem Command="{Binding Menu.RedoCommand}" Header="Redo" />
+                        <MenuItem Command="{Binding Menu.ImagePropertiesCommand}" Header="Image Properties" />
+                        <Separator />
+                        <MenuItem Command="{Binding Menu.SettingsCommand}" Header="Settings" />
+                    </MenuItem>
+
+                    <MenuItem Header="View">
+                        <MenuItem Command="{Binding Menu.ZoomInCommand}" Header="Zoom In" />
+                        <MenuItem Command="{Binding Menu.ZoomOutCommand}" Header="Zoom Out" />
+                        <MenuItem Command="{Binding Menu.ResetZoomCommand}" Header="Reset Zoom" />
+                        <Separator />
+                        <MenuItem Command="{Binding Menu.WhiteThemeCommand}" Header="White Theme" />
+                        <MenuItem Command="{Binding Menu.DarkThemeCommand}" Header="Dark Theme" />
+                    </MenuItem>
+
+                    <MenuItem Header="Help">
+                        <MenuItem Command="{Binding Menu.CheckForUpdatesCommand}" Header="Check For Updates" />
+                        <MenuItem Command="{Binding Menu.ContactUsCommand}" Header="Contact Us" />
+                        <MenuItem Command="{Binding Menu.AboutCommand}" Header="About" />
+                    </MenuItem>
+
+                </Menu>
+                <StackPanel
+                    Grid.Column="2"
+                    HorizontalAlignment="Right"
+                    Orientation="Horizontal">
+                    <Button
+                        Classes="WindowBaseButton"
+                        Click="OnMinimizeClick"
+                        Height="30"
+                        Width="40">
+                        <Image
+                            Height="10"
+                            HorizontalAlignment="Center"
+                            Source="avares://PixelArtEditor/Assets/DarkMode/WindowButtons/minimize-icon.png"
+                            VerticalAlignment="Center"
+                            Width="10" />
+                    </Button>
+                    <Button
+                        Classes="WindowBaseButton"
+                        Click="OnMaximizeClick"
+                        Height="30"
+                        Width="40">
+                        <Image
+                            Height="10"
+                            HorizontalAlignment="Center"
+                            Source="avares://PixelArtEditor/Assets/DarkMode/WindowButtons/maximize-icon.png"
+                            VerticalAlignment="Center"
+                            Width="10" />
+                    </Button>
+                    <Button
+                        Classes="WindowCloseButton"
+                        Click="OnCloseClick"
+                        Foreground="White"
+                        Height="30"
+                        Width="40">
+                        <Image
+                            Height="10"
+                            HorizontalAlignment="Center"
+                            Source="avares://PixelArtEditor/Assets/DarkMode/WindowButtons/close-icon.png"
+                            VerticalAlignment="Center"
+                            Width="10" />
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </DockPanel>
+        <ContentControl Content="{Binding CurrentView}" />
+    </DockPanel>
 </Window>

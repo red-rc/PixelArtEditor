@@ -4,6 +4,7 @@
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   
   <ItemGroup>
@@ -12,6 +13,7 @@
 
   <ItemGroup>
     <PackageReference Include="Avalonia" />
+    <PackageReference Include="Avalonia.Controls.ColorPicker" />
     <PackageReference Include="Avalonia.Themes.Fluent" />
     <PackageReference Include="Avalonia.Fonts.Inter" />
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
@@ -20,5 +22,35 @@
       <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Avalonia.ReactiveUI" />
+    <PackageReference Include="Newtonsoft.Json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="UI\ColorView.cs">
+      <DependentUpon>ColorView.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Services\NavigationService.cs">
+      <DependentUpon>INavigationService.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Services\DialogService.cs">
+      <DependentUpon>IDialogService.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Services\ActionsService.cs">
+      <DependentUpon>IActionsService.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Services\AppServices.cs">
+      <DependentUpon>IAppServices.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Windows\SettingsDialogWindow.axaml.cs">
+      <DependentUpon>SettingsWindow.axaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Windows\CreateDialogWindow.axaml.cs">
+      <DependentUpon>CreateDialogWindow.axaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Other\Settings.cs">
+      <DependentUpon>ISettings.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
 </Project>
