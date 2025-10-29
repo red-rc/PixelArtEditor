@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Avalonia;
@@ -5,14 +6,13 @@ using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 
-namespace PixelArtEditor.Other;
+namespace PixelArtEditor.AppServices;
 
-public static class BitmapService
+public class BitmapService : IBitmapService
 {
-    public static byte[] CreatePixelData(int width, int height, Color background)
+    public byte[] CreatePixelData(int width, int height, Color background)
     {
-        var stride = width * 4;
-        var pixelData = new byte[height * stride];
+        var pixelData = new byte[height * width * 4];
 
         for (var i = 0; i < pixelData.Length; i += 4)
         {
@@ -24,17 +24,16 @@ public static class BitmapService
         return pixelData;
     }
     
-    public static byte[] CreateZeroPixelData(int width, int height)
+    public byte[] CreateZeroPixelData(int width, int height)
     {
-        var stride = width * 4;
-        var pixelData = new byte[height * stride];
+        var pixelData = new byte[height * width * 4];
         
         for (var y = 0; y < height; y++)
         {
             for (var x = 0; x < width; x++)
             {
                 var i = (y * width + x) * 4;
-                var isLight = (x % 2 == 0 && y % 20 == 0) || (x % 2 == 1 && y % 20 == 1);
+                var isLight = x % 2 == 0 && y % 2 == 0 || x % 2 == 1 && y % 2 == 1;
                 var color = isLight ? new Color(255, 235, 235, 235)
                     : new Color(255, 185, 185, 185);
             
@@ -48,7 +47,32 @@ public static class BitmapService
         return pixelData;
     }
     
-    public static WriteableBitmap CreateBitmap(int width, int height, byte[] pixelData)
+    public byte[] CreateScaledPixelData(byte[] source, int srcWidth, int srcHeight, int newWidth, int newHeight)
+    {
+        var pixelData = new byte[newWidth * newHeight * 4];
+
+        for (var y = 0; y < newHeight; y++)
+        {
+            var srcY = Math.Min(srcHeight - 1, y * srcHeight / newHeight);
+
+            for (var x = 0; x < newWidth; x++)
+            {
+                var srcX = Math.Min(srcWidth - 1, x * srcWidth / newWidth);
+
+                var srcIndex = (srcY * srcWidth + srcX) * 4;
+                var dstIndex = (y * newWidth + x) * 4;
+
+                pixelData[dstIndex + 0] = source[srcIndex + 0];
+                pixelData[dstIndex + 1] = source[srcIndex + 1];
+                pixelData[dstIndex + 2] = source[srcIndex + 2];
+                pixelData[dstIndex + 3] = source[srcIndex + 3];
+            }
+        }
+
+        return pixelData;
+    }
+    
+    public WriteableBitmap CreateBitmap(int width, int height, byte[] pixelData)
     {
         var wb = new WriteableBitmap(new PixelSize(width, height), new Vector(96, 96), PixelFormat.Bgra8888, AlphaFormat.Unpremul);
 
@@ -58,13 +82,13 @@ public static class BitmapService
         return wb;
     }
     
-    public static void UpdateBitmap(WriteableBitmap bitmap, byte[] pixelData)
+    public void UpdateBitmap(WriteableBitmap bitmap, byte[] pixelData)
     {
         using var fb = bitmap.Lock();
         Marshal.Copy(pixelData, 0, fb.Address, pixelData.Length);
     }
     
-    public static Color GetPixelColor(byte[] pixelData, int width, PixelPoint pixel)
+    public Color GetPixelColor(byte[] pixelData, int width, PixelPoint pixel)
     {
         var stride = width * 4;
         var index = pixel.Y * stride + pixel.X * 4;
@@ -80,7 +104,7 @@ public static class BitmapService
         return Color.FromArgb(a, r, g, b);
     }
 
-    public static List<PixelPoint>? GetSimilarPixels(byte[] pixelData, int width, int height, PixelPoint startPixel)
+    public List<PixelPoint>? GetSimilarPixels(byte[] pixelData, int width, int height, PixelPoint startPixel)
     {
         var result = new List<PixelPoint>();
         var visited = new bool[width * height];

@@ -1,48 +1,52 @@
 <UserControl
-    Background="#1e1e1e"
-    d:DesignHeight="450"
-    d:DesignWidth="800"
-    mc:Ignorable="d"
     x:Class="PixelArtEditor.Views.StartMenuView"
-    x:DataType="vm:StartMenuViewModel"
     xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:other="clr-namespace:PixelArtEditor.Other"
     xmlns:vm="clr-namespace:PixelArtEditor.ViewModels"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    x:DataType="vm:StartMenuViewModel"
+    Background="{DynamicResource BackgroundColor}"
+    mc:Ignorable="d">
     <UserControl.Resources>
         <other:DivideByConverter x:Key="DivideByConverter" />
     </UserControl.Resources>
 
     <DockPanel>
-        <DockPanel
-            Background="#1b1b1b"
-            DockPanel.Dock="Left"
-            Width="{Binding Width, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource DivideByConverter}, ConverterParameter=5}">
+        <DockPanel Width="{Binding Width, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource DivideByConverter}, ConverterParameter=5}" DockPanel.Dock="Left">
             <StackPanel
                 Margin="30,75,30,0"
                 Orientation="Vertical"
                 Spacing="10">
                 <Button
+                    Padding="30,10,30,10"
+                    HorizontalAlignment="Stretch"
                     Classes="BlueButton"
                     Command="{Binding CreateCommand}"
-                    Content="Create"
-                    HorizontalAlignment="Stretch"
-                    Padding="30,10,30,10" />
+                    Content="{DynamicResource StartViewCreate}" />
                 <Button
-                    Classes="BorderButton"
-                    Content="Open"
+                    Padding="30,10,30,10"
                     HorizontalAlignment="Stretch"
-                    Padding="30,10,30,10" />
+                    Classes="BorderButton"
+                    Content="{DynamicResource StartViewOpen}" />
             </StackPanel>
         </DockPanel>
-        <DockPanel Background="#222222" DockPanel.Dock="Right">
+        <Grid Background="{DynamicResource SecondaryBackgroundColor}">
             <TextBlock
-                FontSize="25"
                 HorizontalAlignment="Center"
-                Text="Pixeller - your pixel art editor"
-                VerticalAlignment="Center" />
-        </DockPanel>
+                VerticalAlignment="Center"
+                FontSize="28"
+                Text="{DynamicResource StartViewText}" />
+            <TextBlock
+                Margin="0,0,10,10"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                FontSize="14"
+                Foreground="Gray"
+                Text="v1.0.0" />
+        </Grid>
     </DockPanel>
 </UserControl>

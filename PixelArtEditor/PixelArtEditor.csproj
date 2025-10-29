@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
@@ -9,6 +9,10 @@
   
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Styles\Style.axaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -23,23 +27,43 @@
     </PackageReference>
     <PackageReference Include="Avalonia.ReactiveUI" />
     <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="YamlDotNet" />
   </ItemGroup>
 
   <ItemGroup>
     <Compile Update="UI\ColorView.cs">
       <DependentUpon>ColorView.xaml</DependentUpon>
     </Compile>
-    <Compile Update="Services\NavigationService.cs">
+    <Compile Update="AppServices\NavigationService.cs">
       <DependentUpon>INavigationService.cs</DependentUpon>
     </Compile>
-    <Compile Update="Services\DialogService.cs">
+    <Compile Update="AppServices\DialogService.cs">
       <DependentUpon>IDialogService.cs</DependentUpon>
     </Compile>
-    <Compile Update="Services\ActionsService.cs">
+    <Compile Update="AppServices\ActionsService.cs">
       <DependentUpon>IActionsService.cs</DependentUpon>
     </Compile>
-    <Compile Update="Services\AppServices.cs">
-      <DependentUpon>IAppServices.cs</DependentUpon>
+    <Compile Update="AppServices\SettingsService.cs">
+      <DependentUpon>ISettingsService.cs</DependentUpon>
+    </Compile>
+    <Compile Update="AppServices\ServiceLocator.cs">
+      <DependentUpon>IServiceLocator.cs</DependentUpon>
+    </Compile>
+    <Compile Update="AppServices\BitmapService.cs">
+      <DependentUpon>IBitmapService.cs</DependentUpon>
+    </Compile>
+    <Compile Update="AppServices\JsonService.cs">
+      <DependentUpon>IJsonService.cs</DependentUpon>
+    </Compile>
+    <Compile Update="AppServices\YamlService.cs">
+      <DependentUpon>IYamlService.cs</DependentUpon>
+    </Compile>
+    <Compile Update="AppServices\LocalizationService.cs">
+      <DependentUpon>ILocalizationService.cs</DependentUpon>
+    </Compile>
+
+    <Compile Update="Views\SettingsViews\GeneralView.axaml.cs">
+      <DependentUpon>GeneralView.axaml</DependentUpon>
     </Compile>
     <Compile Update="Windows\SettingsDialogWindow.axaml.cs">
       <DependentUpon>SettingsWindow.axaml</DependentUpon>
@@ -49,8 +73,16 @@
       <DependentUpon>CreateDialogWindow.axaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Other\Settings.cs">
-      <DependentUpon>ISettings.cs</DependentUpon>
+    <Compile Update="Windows\MainWindow.axaml.cs">
+      <DependentUpon>MainWindow.axaml</DependentUpon>
+      <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Windows\ExportDialogWindow.axaml.cs">
+      <DependentUpon>ExportDialogWindow.axaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Localization\" />
   </ItemGroup>
 </Project>

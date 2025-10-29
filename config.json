@@ -1,0 +1,20 @@
+{
+  "Language": "en",
+  "GridMaxSize": 32,
+  "GridColor": {
+    "A": 255,
+    "R": 127,
+    "G": 127,
+    "B": 127
+  },
+  "EnableGrid": true,
+  "EnableAutosave": true,
+  "AutosaveFrequency": 10,
+  "AccentColor": {
+    "A": 255,
+    "R": 30,
+    "G": 144,
+    "B": 255
+  },
+  "Theme": "System"
+}

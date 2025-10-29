@@ -3,7 +3,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 
-namespace PixelArtEditor.Services;
+namespace PixelArtEditor.AppServices;
 
 public class DialogService : IDialogService
 {

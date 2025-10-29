@@ -1,0 +1,55 @@
+<UserControl
+    x:Class="PixelArtEditor.Views.SettingsViews.AppearanceView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:other="clr-namespace:PixelArtEditor.Other"
+    xmlns:vm="clr-namespace:PixelArtEditor.ViewModels"
+    d:DesignHeight="350"
+    d:DesignWidth="450"
+    x:DataType="vm:SettingsDialogViewModel"
+    Background="{DynamicResource SecondaryBackgroundColor}"
+    mc:Ignorable="d">
+    <UserControl.Styles>
+        <Style Selector="TextBlock">
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style Selector="ComboBox">
+            <Setter Property="FontSize" Value="14" />
+        </Style>
+    </UserControl.Styles>
+
+    <StackPanel Orientation="Vertical" Spacing="10">
+        <StackPanel Orientation="Horizontal" Spacing="10">
+            <TextBlock Text="{DynamicResource AprViewTheme}" />
+            <ComboBox
+                Width="150"
+                Height="30"
+                Padding="10,0,10,0"
+                ItemsSource="{Binding ThemeOptions}"
+                SelectedItem="{Binding Theme, Mode=TwoWay}" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="10">
+            <TextBlock Text="{DynamicResource AprViewAccentColor}" />
+            <ColorPicker Width="100" Color="{Binding AccentColor, Mode=TwoWay}" />
+            <Border
+                Width="40"
+                Height="30"
+                Padding="0"
+                Background="{DynamicResource PrimaryColor}"
+                CornerRadius="4" />
+            <Border
+                Width="40"
+                Height="30"
+                Background="{DynamicResource PrimaryHoverColor}"
+                CornerRadius="4" />
+            <Border
+                Width="40"
+                Height="30"
+                Background="{DynamicResource PrimaryPressedColor}"
+                CornerRadius="4" />
+        </StackPanel>
+    </StackPanel>
+</UserControl>

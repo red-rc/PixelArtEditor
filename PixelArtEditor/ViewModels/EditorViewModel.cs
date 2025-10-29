@@ -3,15 +3,12 @@ using System.Numerics;
 using Avalonia;
 using Avalonia.Media;
 using PixelArtEditor.Other;
-using PixelArtEditor.Services;
 using ReactiveUI;
 
 namespace PixelArtEditor.ViewModels;
 
 public class EditorViewModel : ReactiveObject
 {
-    private readonly IAppServices _services;
-
     private Point _startMousePosition;
     private Vector2 _startOffset;
     public bool IsPositionSet;
@@ -127,11 +124,9 @@ public class EditorViewModel : ReactiveObject
         set => this.RaiseAndSetIfChanged(ref _pickedColor, value);
     }
 
-    public EditorViewModel(IAppServices services, CreateParams parameters)
+    public EditorViewModel(CreateParams parameters)
     {
-        _services = services;
         _parameters = parameters;
-        
         SelectedTool = ToolType.None;
     }
     

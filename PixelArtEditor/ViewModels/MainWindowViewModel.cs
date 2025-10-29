@@ -1,4 +1,4 @@
-﻿using PixelArtEditor.Services;
+﻿using PixelArtEditor.AppServices;
 using ReactiveUI;
 
 namespace PixelArtEditor.ViewModels;
@@ -17,14 +17,9 @@ public class MainWindowViewModel : ReactiveObject
 
     public MainWindowViewModel()
     {
-        var navigation = new NavigationService(this);
-        var dialogService = new DialogService();
-        var actions = new ActionsService();
-    
-        var services = new AppServices(dialogService, navigation, actions);
-        
-        Menu = new MenuCommandsViewModel(services);
+        Services.Navigation.Initialize(this);
 
-        _currentView = new StartMenuViewModel(services);
+        Menu = new MenuCommandsViewModel();
+        _currentView = new StartMenuViewModel();
     }
 }

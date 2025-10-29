@@ -1,149 +1,93 @@
 <Window
-    Background="#222222"
-    CanResize="False"
-    Height="450"
-    Icon="/Assets/info-icon.ico"
-    Title="Settings"
-    Width="600"
-    d:DesignHeight="450"
-    d:DesignWidth="600"
-    mc:Ignorable="d"
     x:Class="PixelArtEditor.Windows.SettingsDialogWindow"
-    x:DataType="vm:SettingsDialogViewModel"
     xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:other="clr-namespace:PixelArtEditor.Other"
+    xmlns:settings="clr-namespace:PixelArtEditor.Views.SettingsViews"
     xmlns:vm="clr-namespace:PixelArtEditor.ViewModels"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    Title="{DynamicResource SetWinSettings}"
+    Width="600"
+    Height="450"
+    d:DesignHeight="450"
+    d:DesignWidth="600"
+    x:DataType="vm:SettingsDialogViewModel"
+    Background="{DynamicResource BackgroundColor}"
+    CanResize="False"
+    Icon="/Assets/info-icon.ico"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
+
+    <Window.Resources>
+        <other:TabToViewConverter x:Key="TabToViewConverter" />
+    </Window.Resources>
 
     <Window.Styles>
-        <Style Selector="TextBlock">
-            <Setter Property="FontSize" Value="18" />
-            <Setter Property="VerticalAlignment" Value="Center" />
-        </Style>
-        <Style Selector="NumericUpDown">
-            <Setter Property="FontSize" Value="14" />
-            <Setter Property="ShowButtonSpinner" Value="False" />
-            <Setter Property="Minimum" Value="0" />
-            <Setter Property="Maximum" Value="8192" />
+        <Style Selector="ListBoxItem">
+            <Setter Property="FontSize" Value="20" />
         </Style>
     </Window.Styles>
 
-    <DockPanel>
+    <DockPanel Background="{DynamicResource SecondaryBackgroundColor}">
+        <DockPanel
+            Width="150"
+            HorizontalAlignment="Left"
+            DockPanel.Dock="Left">
+            <ListBox Background="{DynamicResource TertiaryBackgroundColor}" SelectedIndex="{Binding SelectedTabIndex, Mode=TwoWay}">
+                <ListBoxItem
+                    HorizontalContentAlignment="Center"
+                    Classes="Heading"
+                    Content="{DynamicResource SetWinGeneral}" />
+                <ListBoxItem
+                    HorizontalContentAlignment="Center"
+                    Classes="Heading"
+                    Content="{DynamicResource SetWinAppearance}" />
+            </ListBox>
+        </DockPanel>
         <StackPanel
-            DockPanel.Dock="Top"
-            Margin="0,20,0,0"
-            Orientation="Vertical"
-            Spacing="10"
-            VerticalAlignment="Center">
-            <StackPanel
-                HorizontalAlignment="Center"
-                Orientation="Horizontal"
-                Spacing="10">
-                <TextBlock Text="Language" />
-                <ComboBox
-                    Height="35"
-                    SelectedValue="{Binding Language}"
-                    Width="200" />
-            </StackPanel>
-            <StackPanel
-                HorizontalAlignment="Center"
-                Orientation="Horizontal"
-                Spacing="10">
-                <TextBlock Text="Theme" />
-                <ComboBox
-                    Height="35"
-                    SelectedValue="{Binding Theme}"
-                    Width="150" />
-            </StackPanel>
-            <StackPanel
-                HorizontalAlignment="Center"
-                Orientation="Horizontal"
-                Spacing="10">
-                <TextBlock Text="Pixel grid max size" />
-                <NumericUpDown
-                    Height="35"
-                    Maximum="8192"
-                    Minimum="0"
-                    Value="{Binding GridMaxSize}"
-                    Width="50" />
-            </StackPanel>
-            <StackPanel
-                HorizontalAlignment="Center"
-                Orientation="Horizontal"
-                Spacing="10">
-                <TextBlock Text="Pixel grid Color" />
-                <ColorPicker
-                    Height="35"
-                    SelectedIndex="{Binding GridColor}"
-                    Width="100" />
-            </StackPanel>
-            <StackPanel
-                HorizontalAlignment="Center"
-                Orientation="Horizontal"
-                Spacing="10">
-                <TextBlock Text="Enable Grid" />
-                <CheckBox IsChecked="{Binding EnableGrid}" />
-            </StackPanel>
-            <StackPanel
-                HorizontalAlignment="Center"
-                Orientation="Horizontal"
-                Spacing="10">
-                <TextBlock Text="Enable Autosave" />
-                <CheckBox IsChecked="{Binding EnableAutosave}" />
-            </StackPanel>
-            <StackPanel
-                HorizontalAlignment="Center"
-                Orientation="Horizontal"
-                Spacing="10">
-                <TextBlock Text="Autosave every" />
-                <NumericUpDown
-                    Height="35"
-                    IsEnabled="{Binding EnableAutosave}"
-                    Maximum="600"
-                    Minimum="10"
-                    Value="{Binding AutosaveFrequency}"
-                    Width="50" />
-                <TextBlock Text="seconds" />
-            </StackPanel>
+            Margin="40,20,40,0"
+            VerticalAlignment="Center"
+            DockPanel.Dock="Top">
+            <ContentControl Content="{Binding SelectedTabIndex, Converter={StaticResource TabToViewConverter}}" />
         </StackPanel>
         <Grid
-            Background="#1b1b1b"
-            ColumnDefinitions="*,Auto,Auto"
-            DockPanel.Dock="Bottom"
             Height="100"
             HorizontalAlignment="Stretch"
-            VerticalAlignment="Bottom">
+            VerticalAlignment="Bottom"
+            Background="{DynamicResource BackgroundColor}"
+            ColumnDefinitions="*,Auto,Auto"
+            DockPanel.Dock="Bottom">
             <Button
+                Grid.Column="0"
+                Margin="0,25,10,25"
+                Padding="30,0,30,0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Stretch"
                 Classes="BorderButton"
                 Command="{Binding CancelCommand}"
-                Content="Cancel"
-                FontSize="20"
-                Grid.Column="0"
-                HorizontalAlignment="Right"
+                Content="{DynamicResource SetWinCancel}"
+                FontSize="20" />
+            <Button
+                Grid.Column="1"
                 Margin="0,25,10,25"
                 Padding="30,0,30,0"
-                VerticalAlignment="Stretch" />
-            <Button
+                HorizontalAlignment="Right"
+                VerticalAlignment="Stretch"
                 Classes="GrayButton"
                 Command="{Binding ResetCommand}"
-                Content="Reset"
-                FontSize="20"
-                Grid.Column="1"
-                HorizontalAlignment="Right"
+                Content="{DynamicResource SetWinReset}"
+                FontSize="20" />
+            <Button
+                Grid.Column="2"
                 Margin="0,25,10,25"
                 Padding="30,0,30,0"
-                VerticalAlignment="Stretch" />
-            <Button
+                HorizontalAlignment="Right"
+                VerticalAlignment="Stretch"
                 Classes="BlueButton"
                 Command="{Binding SaveCommand}"
-                Content="Save"
-                FontSize="20"
-                Grid.Column="2"
-                HorizontalAlignment="Right"
-                Margin="0,25,10,25"
-                Padding="30,0,30,0"
-                VerticalAlignment="Stretch" />
+                Content="{DynamicResource SetWinSave}"
+                FontSize="20" />
         </Grid>
     </DockPanel>
 </Window>

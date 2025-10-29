@@ -1,12 +1,13 @@
 ﻿using ReactiveUI;
 using System.Reactive;
-using PixelArtEditor.Services;
+using PixelArtEditor.AppServices;
 
 namespace PixelArtEditor.ViewModels;
 
-public class StartMenuViewModel(IAppServices services) : ReactiveObject
+public class StartMenuViewModel() : ReactiveObject
 {
-    public ReactiveCommand<Unit, Unit> CreateCommand { get; } = ReactiveCommand.CreateFromTask(() => services.Actions.ShowCreateWindowAsync(services));
+    public ReactiveCommand<Unit, Unit> CreateCommand { get; } = 
+        ReactiveCommand.CreateFromTask(Services.Actions.ShowCreateWindowAsync);
 
     // ReactiveCommand<Unit, Unit> означає: "Не приймає вхідних даних (Unit) і не повертає нічого (Unit)".
 }

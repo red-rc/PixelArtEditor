@@ -1,6 +1,8 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
+using Avalonia.Media.Imaging;
+using PixelArtEditor.AppServices;
 using PixelArtEditor.ViewModels;
 
 namespace PixelArtEditor.UI;
@@ -16,8 +18,11 @@ public class Previewer : Control
         set => SetValue(ParametersProperty, value);
     }
     
-    static Previewer()
+    private ImageBrush? _checkerboardBrush;
+    
+    public Previewer()
     {
+        RenderOptions.SetBitmapInterpolationMode(this, BitmapInterpolationMode.None);
         ParametersProperty.Changed.AddClassHandler<Previewer>((sender, _) => sender.InvalidateVisual());
     }
     
@@ -33,6 +38,15 @@ public class Previewer : Control
         var rect = 200 / ratio > 200 ? new Rect((200 - 200 * ratio) / 2, 0, 200 * ratio, 200) : 
             new Rect(0, (200 - 200 / ratio) / 2, 200, 200 / ratio);
         
+        _checkerboardBrush ??= new ImageBrush(
+            Services.Bitmap.CreateBitmap(8, 8, Services.Bitmap.CreateZeroPixelData(8, 8)))
+        {
+            TileMode = TileMode.Tile,
+            Stretch = Stretch.Fill,
+            DestinationRect = new RelativeRect(0, 0, 64, 64, RelativeUnit.Absolute)
+        };
+        
+        context.FillRectangle(_checkerboardBrush, rect);
         context.FillRectangle(new SolidColorBrush(Parameters.BackgroundColor), rect);
     }
 }

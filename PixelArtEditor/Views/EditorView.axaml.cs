@@ -73,7 +73,7 @@ public partial class EditorView : UserControl
     private void CanvasPanel_OnPointerMoved(object? sender, PointerEventArgs e)
     {
         if (!e.GetCurrentPoint(CanvasPanel).Properties.IsRightButtonPressed) return;
-        if (ViewModel.IsPositionSet == false) return;
+        if (!ViewModel.IsPositionSet) return;
         ViewModel.UpdateDragging(e.GetPosition(CanvasPanel));
     }
 

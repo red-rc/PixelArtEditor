@@ -1,5 +1,4 @@
 using Avalonia.Controls;
-using PixelArtEditor.ViewModels;
 
 namespace PixelArtEditor.Views;
 

@@ -4,8 +4,8 @@
         <Setter Property="VerticalContentAlignment" Value="Center" />
     </Style>
     <Style Selector="Button.BlueButton">
-        <Setter Property="Background" Value="DodgerBlue" />
-        <Setter Property="Foreground" Value="#efefef" />
+        <Setter Property="Background" Value="{DynamicResource PrimaryColor}" />
+        <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="CornerRadius" Value="25" />
         <Setter Property="FontSize" Value="22.5" />
@@ -13,22 +13,22 @@
     </Style>
 
     <Style Selector="Button.BlueButton:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-        <Setter Property="Background" Value="#4aa6ff" />
+        <Setter Property="Background" Value="{DynamicResource PrimaryHoverColor}" />
     </Style>
 
     <Style Selector="Button.BlueButton:pressed /template/ ContentPresenter#PART_ContentPresenter">
-        <Setter Property="Background" Value="#1873cc" />
+        <Setter Property="Background" Value="{DynamicResource PrimaryPressedColor}" />
     </Style>
 
     <Style Selector="Button.BlueButton:disabled /template/ ContentPresenter#PART_ContentPresenter">
-        <Setter Property="Background" Value="DodgerBlue" />
-        <Setter Property="Foreground" Value="#efefef" />
+        <Setter Property="Background" Value="{DynamicResource PrimaryColor}" />
+        <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />
     </Style>
 
     <Style Selector="Button.BorderButton">
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Foreground" Value="#efefef" />
-        <Setter Property="BorderBrush" Value="#efefef" />
+        <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource ForegroundColor}" />
         <Setter Property="BorderThickness" Value="2.5" />
         <Setter Property="CornerRadius" Value="25" />
         <Setter Property="FontSize" Value="22.5" />
@@ -36,20 +36,20 @@
     </Style>
 
     <Style Selector="Button.BorderButton:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-        <Setter Property="Background" Value="#383838" />
-        <Setter Property="BorderBrush" Value="#efefef" />
+        <Setter Property="Background" Value="{DynamicResource BackgroundHoverColor}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource ForegroundColor}" />
         <Setter Property="BorderThickness" Value="2.5" />
     </Style>
 
     <Style Selector="Button.BorderButton:pressed /template/ ContentPresenter#PART_ContentPresenter">
-        <Setter Property="Background" Value="#1b1b1b" />
-        <Setter Property="BorderBrush" Value="#efefef" />
+        <Setter Property="Background" Value="{DynamicResource BackgroundColor}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource ForegroundColor}" />
         <Setter Property="BorderThickness" Value="2.5" />
     </Style>
 
     <Style Selector="Button.GrayButton">
-        <Setter Property="Background" Value="DimGray" />
-        <Setter Property="Foreground" Value="#efefef" />
+        <Setter Property="Background" Value="{DynamicResource GrayColor}" />
+        <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="CornerRadius" Value="25" />
         <Setter Property="FontSize" Value="22.5" />
@@ -57,97 +57,102 @@
     </Style>
 
     <Style Selector="Button.GrayButton:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-        <Setter Property="Background" Value="Gray" />
+        <Setter Property="Background" Value="{DynamicResource GrayHoverColor}" />
     </Style>
 
     <Style Selector="Button.GrayButton:pressed /template/ ContentPresenter#PART_ContentPresenter">
-        <Setter Property="Background" Value="#4a4a4a" />
+        <Setter Property="Background" Value="{DynamicResource GrayPressedColor}" />
     </Style>
 
     <Style Selector="Button.GrayButton:disabled /template/ ContentPresenter#PART_ContentPresenter">
-        <Setter Property="Background" Value="DimGray" />
-        <Setter Property="Foreground" Value="#efefef" />
+        <Setter Property="Background" Value="{DynamicResource GrayColor}" />
+        <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />
     </Style>
 
     <Style Selector="TextBox">
-        <Setter Property="Background" Value="#1b1b1b" />
+        <Setter Property="Background" Value="{DynamicResource BackgroundColor}" />
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="BorderBrush" Value="#bfbfbf" />
-        <Setter Property="Foreground" Value="#efefef" />
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}" />
+        <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />
         <Setter Property="CornerRadius" Value="2.5" />
     </Style>
 
     <Style Selector="TextBox:pointerover /template/ Border#PART_BorderElement">
-        <Setter Property="Background" Value="#383838" />
+        <Setter Property="Background" Value="{DynamicResource BackgroundHoverColor}" />
     </Style>
 
     <Style Selector="TextBox:focus /template/ Border#PART_BorderElement">
-        <Setter Property="Background" Value="#141414" />
+        <Setter Property="Background" Value="{DynamicResource BackgroundPressedColor}" />
     </Style>
 
     <Style Selector="NumericUpDown">
-        <Setter Property="Background" Value="#1b1b1b" />
+        <Setter Property="Background" Value="{DynamicResource BackgroundColor}" />
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="BorderBrush" Value="#bfbfbf" />
-        <Setter Property="Foreground" Value="#efefef" />
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}" />
+        <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />
         <Setter Property="CornerRadius" Value="2.5" />
     </Style>
 
     <Style Selector="NumericUpDown:pointerover /template/ Border#PART_BorderElement">
-        <Setter Property="Background" Value="#383838" />
+        <Setter Property="Background" Value="{DynamicResource BackgroundHoverColor}" />
     </Style>
 
-    <Style Selector="NumericUpDown:focus /template/ Border#PART_BorderElement">
-        <Setter Property="Background" Value="#141414" />
+    <Style Selector="NumericUpDown:focus">
+        <Setter Property="Background" Value="{DynamicResource BackgroundPressedColor}" />
+    </Style>
+
+    <Style Selector="NumericUpDown:focus /template/ ContentPresenter#PART_Spinner">
+        <Setter Property="BorderBrush" Value="{DynamicResource PrimaryColor}" />
+        <Setter Property="BorderThickness" Value="2.5" />
     </Style>
 
     <Style Selector="ComboBox">
-        <Setter Property="Background" Value="#1b1b1b" />
+        <Setter Property="Background" Value="{DynamicResource BackgroundColor}" />
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="BorderBrush" Value="#bfbfbf" />
-        <Setter Property="Foreground" Value="#efefef" />
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}" />
+        <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />
         <Setter Property="CornerRadius" Value="2.5" />
     </Style>
 
     <Style Selector="ComboBox:pointerover /template/ Border#Background">
-        <Setter Property="Background" Value="#383838" />
+        <Setter Property="Background" Value="{DynamicResource BackgroundHoverColor}" />
     </Style>
 
     <Style Selector="ComboBox:dropdownopen /template/ Border#Background">
-        <Setter Property="Background" Value="#141414" />
-        <Setter Property="BorderBrush" Value="DodgerBlue" />
+        <Setter Property="Background" Value="{DynamicResource BackgroundPressedColor}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource PrimaryColor}" />
         <Setter Property="BorderThickness" Value="2.5" />
     </Style>
 
     <Style Selector="ComboBox:dropdownopen /template/ Border">
-        <Setter Property="Background" Value="#1b1b1b" />
+        <Setter Property="Background" Value="{DynamicResource BackgroundColor}" />
     </Style>
 
     <Style Selector="ComboBoxItem:selected /template/ ContentPresenter">
-        <Setter Property="Background" Value="DodgerBlue" />
+        <Setter Property="Background" Value="{DynamicResource PrimaryColor}" />
     </Style>
 
     <Style Selector="DropDownButton">
-        <Setter Property="Background" Value="#1b1b1b" />
-        <Setter Property="BorderBrush" Value="#efefef" />
+        <Setter Property="Background" Value="{DynamicResource BackgroundColor}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource ForegroundColor}" />
         <Setter Property="BorderThickness" Value="1" />
     </Style>
 
     <Style Selector="DropDownButton:pointerover /template/ Border">
-        <Setter Property="Background" Value="#383838" />
-        <Setter Property="BorderBrush" Value="#efefef" />
+        <Setter Property="Background" Value="{DynamicResource BackgroundHoverColor}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource ForegroundColor}" />
         <Setter Property="BorderThickness" Value="1" />
     </Style>
 
     <Style Selector="DropDownButton:pressed /template/ Border">
-        <Setter Property="Background" Value="#141414" />
-        <Setter Property="BorderBrush" Value="#efefef" />
+        <Setter Property="Background" Value="{DynamicResource BackgroundPressedColor}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource ForegroundColor}" />
         <Setter Property="BorderThickness" Value="1" />
     </Style>
 
     <Style Selector="DropDownButton:disabled /template/ Border">
-        <Setter Property="Background" Value="#141414" />
-        <Setter Property="BorderBrush" Value="#efefef" />
+        <Setter Property="Background" Value="{DynamicResource BackgroundPressedColor}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource ForegroundColor}" />
         <Setter Property="BorderThickness" Value="1" />
     </Style>
 
@@ -156,7 +161,7 @@
     </Style>
 
     <Style Selector="Button.WindowBaseButton:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-        <Setter Property="Background" Value="#383838" />
+        <Setter Property="Background" Value="{DynamicResource BackgroundHoverColor}" />
     </Style>
 
     <Style Selector="Button.WindowCloseButton">
@@ -168,45 +173,45 @@
     </Style>
 
     <Style Selector="TextBlock">
-        <Setter Property="Foreground" Value="#efefef" />
+        <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />
     </Style>
 
     <Style Selector="ToggleButton.EditButton">
-        <Setter Property="Background" Value="#383838" />
+        <Setter Property="Background" Value="{DynamicResource UiColor}" />
         <Setter Property="CornerRadius" Value="2.5" />
     </Style>
 
     <Style Selector="ToggleButton.EditButton:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-        <Setter Property="Background" Value="#5f5f5f" />
+        <Setter Property="Background" Value="{DynamicResource UiHoverColor}" />
     </Style>
 
     <Style Selector="ToggleButton.EditButton:pressed /template/ ContentPresenter#PART_ContentPresenter">
-        <Setter Property="Background" Value="#2c2c2c" />
+        <Setter Property="Background" Value="{DynamicResource UiPressedColor}" />
     </Style>
 
     <Style Selector="ToggleButton.EditButton:checked /template/ ContentPresenter#PART_ContentPresenter">
-        <Setter Property="Background" Value="DodgerBlue" />
+        <Setter Property="Background" Value="{DynamicResource PrimaryColor}" />
     </Style>
 
     <Style Selector="ColorView RadioButton">
-        <Setter Property="Background" Value="#383838" />
+        <Setter Property="Background" Value="{DynamicResource UiColor}" />
         <Setter Property="CornerRadius" Value="2.5" />
     </Style>
 
     <Style Selector="ColorView RadioButton:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-        <Setter Property="Background" Value="#5f5f5f" />
+        <Setter Property="Background" Value="{DynamicResource UiHoverColor}" />
     </Style>
 
     <Style Selector="ColorView RadioButton:pressed /template/ ContentPresenter#PART_ContentPresenter">
-        <Setter Property="Background" Value="#2c2c2c" />
+        <Setter Property="Background" Value="{DynamicResource UiPressedColor}" />
     </Style>
 
     <Style Selector="ColorView RadioButton:checked /template/ ContentPresenter#PART_ContentPresenter">
-        <Setter Property="Background" Value="DodgerBlue" />
+        <Setter Property="Background" Value="{DynamicResource PrimaryColor}" />
     </Style>
 
     <Style Selector="ColorView TabItem">
-        <Setter Property="Background" Value="#383838" />
+        <Setter Property="Background" Value="{DynamicResource UiColor}" />
     </Style>
 
     <Style Selector="ColorView TabItem:pointerover /template/ Border#PART_SelectedPipe">
@@ -214,36 +219,48 @@
     </Style>
 
     <Style Selector="ColorView TabItem:pointerover">
-        <Setter Property="Background" Value="#5f5f5f" />
+        <Setter Property="Background" Value="{DynamicResource UiHoverColor}" />
     </Style>
 
     <Style Selector="ColorView TabItem:pressed /template/ Border">
-        <Setter Property="Background" Value="#2c2c2c" />
+        <Setter Property="Background" Value="{DynamicResource UiPressedColor}" />
     </Style>
 
     <Style Selector="ColorView TabItem:selected">
-        <Setter Property="Background" Value="DodgerBlue" />
+        <Setter Property="Background" Value="{DynamicResource PrimaryColor}" />
+    </Style>
+
+    <Style Selector="ListBox ListBoxItem Border">
+        <Setter Property="Background" Value="Transparent" />
+    </Style>
+
+    <Style Selector="ListBox ListBoxItem:pointerover ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource BackgroundHoverColor}" />
+    </Style>
+
+    <Style Selector="ListBox ListBoxItem:selected ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource PrimaryColor}" />
     </Style>
 
     <Style Selector="ColorPicker RadioButton">
-        <Setter Property="Background" Value="#383838" />
+        <Setter Property="Background" Value="{DynamicResource UiColor}" />
         <Setter Property="CornerRadius" Value="2.5" />
     </Style>
 
     <Style Selector="ColorPicker RadioButton:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-        <Setter Property="Background" Value="#5f5f5f" />
+        <Setter Property="Background" Value="{DynamicResource UiHoverColor}" />
     </Style>
 
     <Style Selector="ColorPicker RadioButton:pressed /template/ ContentPresenter#PART_ContentPresenter">
-        <Setter Property="Background" Value="#2c2c2c" />
+        <Setter Property="Background" Value="{DynamicResource UiPressedColor}" />
     </Style>
 
     <Style Selector="ColorPicker RadioButton:checked /template/ ContentPresenter#PART_ContentPresenter">
-        <Setter Property="Background" Value="DodgerBlue" />
+        <Setter Property="Background" Value="{DynamicResource PrimaryColor}" />
     </Style>
 
     <Style Selector="ColorPicker TabItem">
-        <Setter Property="Background" Value="#383838" />
+        <Setter Property="Background" Value="{DynamicResource UiColor}" />
     </Style>
 
     <Style Selector="ColorPicker TabItem:pointerover /template/ Border#PART_SelectedPipe">
@@ -251,21 +268,39 @@
     </Style>
 
     <Style Selector="ColorPicker TabItem:pointerover">
-        <Setter Property="Background" Value="#5f5f5f" />
+        <Setter Property="Background" Value="{DynamicResource UiHoverColor}" />
     </Style>
 
     <Style Selector="ColorPicker TabItem:pressed /template/ Border">
-        <Setter Property="Background" Value="#2c2c2c" />
+        <Setter Property="Background" Value="{DynamicResource UiPressedColor}" />
     </Style>
 
     <Style Selector="ColorPicker TabItem:selected">
-        <Setter Property="Background" Value="DodgerBlue" />
+        <Setter Property="Background" Value="{DynamicResource PrimaryColor}" />
+    </Style>
+
+    <Style Selector="ColorPicker DropDownButton">
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}" />
     </Style>
 
     <Style>
         <Style Selector="MenuItem:disabled">
-            <Setter Property="Foreground" Value="#8f8f8f" />
+            <Setter Property="Foreground" Value="{DynamicResource DisabledForegroundColor}" />
         </Style>
+    </Style>
+
+    <Style Selector="TextBlock">
+        <Setter Property="FontFamily" Value="{DynamicResource AppFont}" />
+    </Style>
+
+    <Style Selector="TextBlock.Heading">
+        <Setter Property="FontFamily" Value="{DynamicResource HeadingFont}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+
+    <Style Selector="ListBoxItem.Heading">
+        <Setter Property="FontFamily" Value="{DynamicResource HeadingFont}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
     </Style>
 
 </Styles>

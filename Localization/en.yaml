@@ -1,0 +1,58 @@
+MenuCreateNew: Create New
+MenuOpen: Open
+MenuImport: Import
+MenuSave: Save
+MenuSaveAs: Save As
+MenuExport: Export
+MenuLastAutosave: Last Autosave
+MenuExit: Exit
+MenuUndo: Undo
+MenuRedo: Redo
+MenuImageProperties: Image Properties
+MenuSettings: Settings
+MenuZoomIn: Zoom In
+MenuZoomOut: Zoom Out
+MenuResetZoom: Reset Zoom
+MenuLightTheme: Light Theme
+MenuDarkTheme: Dark Theme
+MenuCheckForUpdates: Check For Updates
+MenuContactUs: Contact Us
+MenuAbout: About
+CrWinTitle: Create File
+CrWinWidth: Width
+CrWinHeight: Height
+CrWinFormat: Format
+CrWinBackgroundColor: >-
+  Background
+
+  Color
+CrWinCancel: Cancel
+CrWinCreate: Create
+SetWinTitle: Settings
+SetWinGeneral: General
+SetWinAppearance: Appearance
+SetWinCancel: Cancel
+SetWinReset: Reset
+SetWinSave: Save
+StartViewCreate: Create
+StartViewOpen: Open
+StartViewText: Pixeller - your pixel art editor
+EditorViewAlignTop: Align to the top
+EditorViewAlignBottom: Align to the bottom
+EditorViewAlignRight: Align to the right
+EditorViewAlignLeft: Align to the left
+EditorViewBringToFront: Bring to front
+EditorViewBringToBack: Bring to back
+AprViewTheme: Theme
+AprViewAccentColor: Accent Color
+GenViewLanguage: Language
+GenViewGrid: Pixel Grid
+GenViewGridMaxSize: Pixel grid max size
+GenViewGridColor: Pixel grid Color
+GenViewEnableGrid: Enable Grid
+GenViewAutosave: Autosave
+GenViewEnableAutosave: Enable Autosave
+GenViewAutosaveEvery: Autosave every
+GenViewSeconds: seconds
+Language: English
+LangCode: en

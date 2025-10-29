@@ -1,0 +1,1118 @@
+[
+  {
+    "Name": "Dark",
+    "Variant": "Dark",
+    "StylePath": "avares://PixelArtEditor/Styles/Style.axaml",
+    "Resources": {
+      "PrimaryColor": {
+        "A": 255,
+        "R": 30,
+        "G": 144,
+        "B": 255
+      },
+      "PrimaryHoverColor": {
+        "A": 255,
+        "R": 75,
+        "G": 166,
+        "B": 255
+      },
+      "PrimaryPressedColor": {
+        "A": 255,
+        "R": 24,
+        "G": 115,
+        "B": 204
+      },
+      "AppFont": {
+        "Name": "avares://PixelArtEditor/Assets/Fonts/OpenSans-Regular.ttf",
+        "FamilyNames": [
+          "avares://PixelArtEditor/Assets/Fonts/OpenSans-Regular.ttf"
+        ],
+        "Key": null,
+        "FamilyTypefaces": []
+      },
+      "HeadingFont": {
+        "Name": "avares://PixelArtEditor/Assets/Fonts/Poppins-SemiBold.ttf",
+        "FamilyNames": [
+          "avares://PixelArtEditor/Assets/Fonts/Poppins-SemiBold.ttf"
+        ],
+        "Key": null,
+        "FamilyTypefaces": []
+      },
+      "ForegroundColor": {
+        "A": 255,
+        "R": 239,
+        "G": 239,
+        "B": 239
+      },
+      "DisabledForegroundColor": {
+        "A": 255,
+        "R": 143,
+        "G": 143,
+        "B": 143
+      },
+      "BorderColor": {
+        "A": 255,
+        "R": 191,
+        "G": 191,
+        "B": 191
+      },
+      "BackgroundColor": {
+        "A": 255,
+        "R": 27,
+        "G": 27,
+        "B": 27
+      },
+      "SecondaryBackgroundColor": {
+        "A": 255,
+        "R": 34,
+        "G": 34,
+        "B": 34
+      },
+      "TertiaryBackgroundColor": {
+        "A": 255,
+        "R": 30,
+        "G": 30,
+        "B": 30
+      },
+      "BackgroundHoverColor": {
+        "A": 255,
+        "R": 56,
+        "G": 56,
+        "B": 56
+      },
+      "BackgroundPressedColor": {
+        "A": 255,
+        "R": 20,
+        "G": 20,
+        "B": 20
+      },
+      "GrayColor": {
+        "A": 255,
+        "R": 105,
+        "G": 105,
+        "B": 105
+      },
+      "GrayHoverColor": {
+        "A": 255,
+        "R": 128,
+        "G": 128,
+        "B": 128
+      },
+      "GrayPressedColor": {
+        "A": 255,
+        "R": 74,
+        "G": 74,
+        "B": 74
+      },
+      "UiColor": {
+        "A": 255,
+        "R": 56,
+        "G": 56,
+        "B": 56
+      },
+      "UiHoverColor": {
+        "A": 255,
+        "R": 105,
+        "G": 105,
+        "B": 105
+      },
+      "UiPressedColor": {
+        "A": 255,
+        "R": 27,
+        "G": 27,
+        "B": 27
+      },
+      "MinimizeIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 10.0,
+          "Height": 10.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 10,
+          "Height": 10
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "MaximizeIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 10.0,
+          "Height": 10.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 10,
+          "Height": 10
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "CloseIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 10.0,
+          "Height": 10.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 10,
+          "Height": 10
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "PenIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "ColorPickerIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "FillIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "EraserIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      }
+    }
+  },
+  {
+    "Name": "Light",
+    "Variant": "Light",
+    "StylePath": "avares://PixelArtEditor/Styles/Style.axaml",
+    "Resources": {
+      "PrimaryColor": {
+        "A": 255,
+        "R": 30,
+        "G": 144,
+        "B": 255
+      },
+      "PrimaryHoverColor": {
+        "A": 255,
+        "R": 75,
+        "G": 166,
+        "B": 255
+      },
+      "PrimaryPressedColor": {
+        "A": 255,
+        "R": 24,
+        "G": 115,
+        "B": 204
+      },
+      "AppFont": {
+        "Name": "avares://PixelArtEditor/Assets/Fonts/OpenSans-Regular.ttf",
+        "FamilyNames": [
+          "avares://PixelArtEditor/Assets/Fonts/OpenSans-Regular.ttf"
+        ],
+        "Key": null,
+        "FamilyTypefaces": []
+      },
+      "HeadingFont": {
+        "Name": "avares://PixelArtEditor/Assets/Fonts/Poppins-SemiBold.ttf",
+        "FamilyNames": [
+          "avares://PixelArtEditor/Assets/Fonts/Poppins-SemiBold.ttf"
+        ],
+        "Key": null,
+        "FamilyTypefaces": []
+      },
+      "ForegroundColor": {
+        "A": 255,
+        "R": 27,
+        "G": 27,
+        "B": 27
+      },
+      "DisabledForegroundColor": {
+        "A": 255,
+        "R": 122,
+        "G": 122,
+        "B": 122
+      },
+      "BorderColor": {
+        "A": 255,
+        "R": 176,
+        "G": 176,
+        "B": 176
+      },
+      "BackgroundColor": {
+        "A": 255,
+        "R": 240,
+        "G": 240,
+        "B": 240
+      },
+      "SecondaryBackgroundColor": {
+        "A": 255,
+        "R": 247,
+        "G": 247,
+        "B": 247
+      },
+      "TertiaryBackgroundColor": {
+        "A": 255,
+        "R": 245,
+        "G": 245,
+        "B": 245
+      },
+      "BackgroundHoverColor": {
+        "A": 255,
+        "R": 235,
+        "G": 235,
+        "B": 235
+      },
+      "BackgroundPressedColor": {
+        "A": 255,
+        "R": 224,
+        "G": 224,
+        "B": 224
+      },
+      "GrayColor": {
+        "A": 255,
+        "R": 160,
+        "G": 160,
+        "B": 160
+      },
+      "GrayHoverColor": {
+        "A": 255,
+        "R": 136,
+        "G": 136,
+        "B": 136
+      },
+      "GrayPressedColor": {
+        "A": 255,
+        "R": 102,
+        "G": 102,
+        "B": 102
+      },
+      "UiColor": {
+        "A": 255,
+        "R": 247,
+        "G": 247,
+        "B": 247
+      },
+      "UiHoverColor": {
+        "A": 255,
+        "R": 240,
+        "G": 240,
+        "B": 240
+      },
+      "UiPressedColor": {
+        "A": 255,
+        "R": 232,
+        "G": 232,
+        "B": 232
+      },
+      "MinimizeIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 10.0,
+          "Height": 10.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 10,
+          "Height": 10
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "MaximizeIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 10.0,
+          "Height": 10.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 10,
+          "Height": 10
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "CloseIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 10.0,
+          "Height": 10.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 10,
+          "Height": 10
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "PenIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "ColorPickerIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "FillIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "EraserIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      }
+    }
+  },
+  {
+    "Name": "Gray",
+    "Variant": "Dark",
+    "StylePath": "avares://PixelArtEditor/Styles/Style.axaml",
+    "Resources": {
+      "PrimaryColor": {
+        "A": 255,
+        "R": 30,
+        "G": 144,
+        "B": 255
+      },
+      "PrimaryHoverColor": {
+        "A": 255,
+        "R": 75,
+        "G": 166,
+        "B": 255
+      },
+      "PrimaryPressedColor": {
+        "A": 255,
+        "R": 24,
+        "G": 115,
+        "B": 204
+      },
+      "AppFont": {
+        "Name": "avares://PixelArtEditor/Assets/Fonts/OpenSans-Regular.ttf",
+        "FamilyNames": [
+          "avares://PixelArtEditor/Assets/Fonts/OpenSans-Regular.ttf"
+        ],
+        "Key": null,
+        "FamilyTypefaces": []
+      },
+      "HeadingFont": {
+        "Name": "avares://PixelArtEditor/Assets/Fonts/Poppins-SemiBold.ttf",
+        "FamilyNames": [
+          "avares://PixelArtEditor/Assets/Fonts/Poppins-SemiBold.ttf"
+        ],
+        "Key": null,
+        "FamilyTypefaces": []
+      },
+      "ForegroundColor": {
+        "A": 255,
+        "R": 239,
+        "G": 239,
+        "B": 239
+      },
+      "DisabledForegroundColor": {
+        "A": 255,
+        "R": 143,
+        "G": 143,
+        "B": 143
+      },
+      "BorderColor": {
+        "A": 255,
+        "R": 191,
+        "G": 191,
+        "B": 191
+      },
+      "BackgroundColor": {
+        "A": 255,
+        "R": 42,
+        "G": 42,
+        "B": 42
+      },
+      "SecondaryBackgroundColor": {
+        "A": 255,
+        "R": 50,
+        "G": 50,
+        "B": 50
+      },
+      "TertiaryBackgroundColor": {
+        "A": 255,
+        "R": 46,
+        "G": 46,
+        "B": 46
+      },
+      "BackgroundHoverColor": {
+        "A": 255,
+        "R": 72,
+        "G": 72,
+        "B": 72
+      },
+      "BackgroundPressedColor": {
+        "A": 255,
+        "R": 30,
+        "G": 30,
+        "B": 30
+      },
+      "GrayColor": {
+        "A": 255,
+        "R": 112,
+        "G": 112,
+        "B": 112
+      },
+      "GrayHoverColor": {
+        "A": 255,
+        "R": 136,
+        "G": 136,
+        "B": 136
+      },
+      "GrayPressedColor": {
+        "A": 255,
+        "R": 80,
+        "G": 80,
+        "B": 80
+      },
+      "UiColor": {
+        "A": 255,
+        "R": 58,
+        "G": 58,
+        "B": 58
+      },
+      "UiHoverColor": {
+        "A": 255,
+        "R": 90,
+        "G": 90,
+        "B": 90
+      },
+      "UiPressedColor": {
+        "A": 255,
+        "R": 37,
+        "G": 37,
+        "B": 37
+      },
+      "MinimizeIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 10.0,
+          "Height": 10.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 10,
+          "Height": 10
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "MaximizeIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 10.0,
+          "Height": 10.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 10,
+          "Height": 10
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "CloseIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 10.0,
+          "Height": 10.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 10,
+          "Height": 10
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "PenIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "ColorPickerIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "FillIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "EraserIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      }
+    }
+  },
+  {
+    "Name": "System",
+    "Variant": "Light",
+    "StylePath": "avares://PixelArtEditor/Styles/Style.axaml",
+    "Resources": {
+      "PrimaryColor": {
+        "A": 255,
+        "R": 30,
+        "G": 144,
+        "B": 255
+      },
+      "PrimaryHoverColor": {
+        "A": 255,
+        "R": 75,
+        "G": 166,
+        "B": 255
+      },
+      "PrimaryPressedColor": {
+        "A": 255,
+        "R": 24,
+        "G": 115,
+        "B": 204
+      },
+      "AppFont": {
+        "Name": "avares://PixelArtEditor/Assets/Fonts/OpenSans-Regular.ttf",
+        "FamilyNames": [
+          "avares://PixelArtEditor/Assets/Fonts/OpenSans-Regular.ttf"
+        ],
+        "Key": null,
+        "FamilyTypefaces": []
+      },
+      "HeadingFont": {
+        "Name": "avares://PixelArtEditor/Assets/Fonts/Poppins-SemiBold.ttf",
+        "FamilyNames": [
+          "avares://PixelArtEditor/Assets/Fonts/Poppins-SemiBold.ttf"
+        ],
+        "Key": null,
+        "FamilyTypefaces": []
+      },
+      "ForegroundColor": {
+        "A": 255,
+        "R": 27,
+        "G": 27,
+        "B": 27
+      },
+      "DisabledForegroundColor": {
+        "A": 255,
+        "R": 122,
+        "G": 122,
+        "B": 122
+      },
+      "BorderColor": {
+        "A": 255,
+        "R": 176,
+        "G": 176,
+        "B": 176
+      },
+      "BackgroundColor": {
+        "A": 255,
+        "R": 240,
+        "G": 240,
+        "B": 240
+      },
+      "SecondaryBackgroundColor": {
+        "A": 255,
+        "R": 247,
+        "G": 247,
+        "B": 247
+      },
+      "TertiaryBackgroundColor": {
+        "A": 255,
+        "R": 245,
+        "G": 245,
+        "B": 245
+      },
+      "BackgroundHoverColor": {
+        "A": 255,
+        "R": 235,
+        "G": 235,
+        "B": 235
+      },
+      "BackgroundPressedColor": {
+        "A": 255,
+        "R": 224,
+        "G": 224,
+        "B": 224
+      },
+      "GrayColor": {
+        "A": 255,
+        "R": 160,
+        "G": 160,
+        "B": 160
+      },
+      "GrayHoverColor": {
+        "A": 255,
+        "R": 136,
+        "G": 136,
+        "B": 136
+      },
+      "GrayPressedColor": {
+        "A": 255,
+        "R": 102,
+        "G": 102,
+        "B": 102
+      },
+      "UiColor": {
+        "A": 255,
+        "R": 247,
+        "G": 247,
+        "B": 247
+      },
+      "UiHoverColor": {
+        "A": 255,
+        "R": 240,
+        "G": 240,
+        "B": 240
+      },
+      "UiPressedColor": {
+        "A": 255,
+        "R": 232,
+        "G": 232,
+        "B": 232
+      },
+      "MinimizeIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 10.0,
+          "Height": 10.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 10,
+          "Height": 10
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "MaximizeIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 10.0,
+          "Height": 10.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 10,
+          "Height": 10
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "CloseIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 10.0,
+          "Height": 10.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 10,
+          "Height": 10
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "PenIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "ColorPickerIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "FillIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "EraserIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      }
+    }
+  }
+]

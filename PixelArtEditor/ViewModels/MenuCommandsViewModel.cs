@@ -1,14 +1,15 @@
+using PixelArtEditor.AppServices;
+using ReactiveUI;
 using System;
 using System.Numerics;
 using System.Reactive;
 using System.Reactive.Linq;
-using PixelArtEditor.Services;
-using ReactiveUI;
 
 namespace PixelArtEditor.ViewModels;
 
 public class MenuCommandsViewModel : ReactiveObject
 {
+    private static readonly ISettingsService _settings = Services.Settings;
     public ReactiveCommand<Unit, Unit> CreateCommand { get; }
     public ReactiveCommand<Unit, Unit> OpenCommand { get; }
     public ReactiveCommand<Unit, Unit> ImportCommand { get; }
@@ -26,7 +27,7 @@ public class MenuCommandsViewModel : ReactiveObject
     public ReactiveCommand<Unit, Unit> ZoomInCommand { get; }
     public ReactiveCommand<Unit, Unit> ZoomOutCommand { get; }
     public ReactiveCommand<Unit, Unit> ResetZoomCommand { get; }
-    public ReactiveCommand<Unit, Unit> WhiteThemeCommand { get; }
+    public ReactiveCommand<Unit, Unit> LightThemeCommand { get; }
     public ReactiveCommand<Unit, Unit> DarkThemeCommand { get; }
     
     public ReactiveCommand<Unit, Unit> CheckForUpdatesCommand { get; }
@@ -59,32 +60,32 @@ public class MenuCommandsViewModel : ReactiveObject
         About
      */
 
-    public MenuCommandsViewModel(IAppServices services)
+    public MenuCommandsViewModel()
     {
-        var isDocumentOpen = services
+        var isDocumentOpen = Services
             .Navigation
             .WhenCurrentViewChanges()
             .Select(view => view is EditorViewModel)
             .DistinctUntilChanged();
         
-        CreateCommand = ReactiveCommand.CreateFromTask(() => services.Actions.ShowCreateWindowAsync(services));
+        CreateCommand = ReactiveCommand.CreateFromTask(Services.Actions.ShowCreateWindowAsync);
         OpenCommand = ReactiveCommand.Create(OnOpen);
         ImportCommand = ReactiveCommand.Create(OnImport);
         SaveCommand = ReactiveCommand.Create(OnSave, isDocumentOpen); 
         SaveAsCommand = ReactiveCommand.Create(OnSaveAs, isDocumentOpen);
-        ExportCommand = ReactiveCommand.Create(OnExport, isDocumentOpen);
+        ExportCommand = ReactiveCommand.CreateFromTask(Services.Actions.ShowExportWindowAsync, isDocumentOpen);
         LastAutosaveCommand = ReactiveCommand.Create(OnLastAutosave); //TODO: Add condition if last save exists
-        ExitCommand = ReactiveCommand.Create(() => services.Navigation.NavigateTo(new StartMenuViewModel(services)), isDocumentOpen);
+        ExitCommand = ReactiveCommand.Create(() => Services.Navigation.NavigateTo(new StartMenuViewModel()), isDocumentOpen);
     
         UndoCommand = ReactiveCommand.Create(OnUndo, isDocumentOpen);
         RedoCommand = ReactiveCommand.Create(OnRedo, isDocumentOpen);
         ImagePropertiesCommand = ReactiveCommand.Create(OnImageProperties, isDocumentOpen);
-        SettingsCommand = ReactiveCommand.CreateFromTask(() => services.Actions.ShowSettingsWindowAsync(services));
+        SettingsCommand = ReactiveCommand.CreateFromTask(Services.Actions.ShowSettingsWindowAsync);
         
-        ZoomInCommand = ReactiveCommand.Create(() => OnZoomIn(services), isDocumentOpen);
-        ZoomOutCommand = ReactiveCommand.Create(() => OnZoomOut(services), isDocumentOpen);
-        ResetZoomCommand = ReactiveCommand.Create(() => OnResetZoom(services), isDocumentOpen);
-        WhiteThemeCommand = ReactiveCommand.Create(OnWhiteTheme);
+        ZoomInCommand = ReactiveCommand.Create(OnZoomIn, isDocumentOpen);
+        ZoomOutCommand = ReactiveCommand.Create(OnZoomOut, isDocumentOpen);
+        ResetZoomCommand = ReactiveCommand.Create(OnResetZoom, isDocumentOpen);
+        LightThemeCommand = ReactiveCommand.Create(OnLightTheme);
         DarkThemeCommand = ReactiveCommand.Create(OnDarkTheme);
         
         CheckForUpdatesCommand = ReactiveCommand.Create(OnCheckForUpdates);
@@ -97,10 +98,6 @@ public class MenuCommandsViewModel : ReactiveObject
     }
     
     private void OnImport()
-    {
-    }
-    
-    private void OnExport()
     {
     }
     
@@ -128,31 +125,33 @@ public class MenuCommandsViewModel : ReactiveObject
     {
     }
 
-    private void OnZoomIn(IAppServices services)
+    private static void OnZoomIn()
     {
-        if (services.Navigation.GetViewModel() is not EditorViewModel editorViewModel) return;
+        if (Services.Navigation.GetViewModel() is not EditorViewModel editorViewModel) return;
         editorViewModel.Scale = Math.Min(editorViewModel.Scale * 1.2, editorViewModel.MaxScale);
     }
 
-    private void OnZoomOut(IAppServices services)
+    private static void OnZoomOut()
     {
-        if (services.Navigation.GetViewModel() is not EditorViewModel editorViewModel) return;
+        if (Services.Navigation.GetViewModel() is not EditorViewModel editorViewModel) return;
         editorViewModel.Scale = Math.Max(editorViewModel.Scale * 0.8, editorViewModel.MinScale);
     }
 
-    private void OnResetZoom(IAppServices services)
+    private static void OnResetZoom()
     {
-        if (services.Navigation.GetViewModel() is not EditorViewModel editorViewModel) return;
+        if (Services.Navigation.GetViewModel() is not EditorViewModel editorViewModel) return;
         editorViewModel.Scale = editorViewModel.BaseScale;
         editorViewModel.Offset = new Vector2(0, 0);
     }
 
-    private void OnWhiteTheme()
+    private static void OnLightTheme()
     {
+        if (_settings.Theme is not "Light") _settings.Theme = "Light";
     }
 
-    private void OnDarkTheme()
+    private static void OnDarkTheme()
     {
+        if (_settings.Theme is not "Dark") _settings.Theme = "Dark";
     }
 
     private void OnCheckForUpdates()

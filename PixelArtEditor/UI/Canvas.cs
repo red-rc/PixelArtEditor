@@ -1,21 +1,24 @@
-using System;
-using System.Numerics;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
+using PixelArtEditor.AppServices;
 using PixelArtEditor.Other;
 using PixelArtEditor.ViewModels;
+using System;
+using System.Numerics;
 
 namespace PixelArtEditor.UI;
 
 public class Canvas : Control
 {
-    private static readonly Settings Settings = Settings.GetInstance;
-    
+    private static readonly ISettingsService _settings = Services.Settings;
+
+    private readonly Pen _gridPen = new(new SolidColorBrush(_settings.GridColor));
+
     public static readonly StyledProperty<Vector2> OffsetProperty =
-        AvaloniaProperty.Register<Canvas, Vector2>(nameof(Offset), new Vector2(0, 0));
+        AvaloniaProperty.Register<Canvas, Vector2>(nameof(Offset));
 
     public Vector2 Offset
     {
@@ -24,7 +27,7 @@ public class Canvas : Control
     }
     
     public static readonly StyledProperty<double> ScaleProperty =
-        AvaloniaProperty.Register<Canvas, double>(nameof(Scale), 1.0);
+        AvaloniaProperty.Register<Canvas, double>(nameof(Scale));
 
     public double Scale
     {
@@ -50,7 +53,7 @@ public class Canvas : Control
         set => SetValue(ParametersProperty, value);
     }
 
-    private bool _isPressed;
+    private bool _isLeftPressed;
 
     private PixelPoint? _hoverPixel;
     private PixelPoint? HoverPixel
@@ -73,62 +76,77 @@ public class Canvas : Control
         set => SetValue(PickedColorProperty, value);
     }
     
-    private readonly Pen _gridPen = new(new SolidColorBrush(Color.Parse(Settings.GridColor)));
-
-    private static readonly double GridMaxSize = Settings.GridMaxSize;
-
-    private WriteableBitmap? _zeroBitmap;
+    private ImageBrush? _checkerboardBrush;
     
-    private WriteableBitmap? _bitmap;
+    private WriteableBitmap? _renderBitmap;
+    private WriteableBitmap? _scaledBitmap;
     private byte[]? _pixelData;
+    private bool _renderBitmapDirty;
     
     public Canvas()
     {
         RenderOptions.SetBitmapInterpolationMode(this, BitmapInterpolationMode.None);
+
+        this.GetObservable(ParametersProperty).Subscribe(param =>
+        {
+            if (param is null) return;
         
-        this.GetObservable(ParametersProperty)
-            .Subscribe(param =>
-            {
-                if (param == null) return;
-        
-                _pixelData = BitmapService.CreatePixelData(param.Width, param.Height, param.BackgroundColor);
-                _bitmap = BitmapService.CreateBitmap(param.Width, param.Height, _pixelData);
-                
-                _zeroBitmap = BitmapService.CreateBitmap(
-                    param.Width,
-                    param.Height,
-                    BitmapService.CreateZeroPixelData(param.Width, param.Height));
-                InvalidateVisual();
-            });
-        
+            _pixelData = Services.Bitmap.CreatePixelData(param.Width, param.Height, param.BackgroundColor);
+
+            _renderBitmap?.Dispose();
+            _renderBitmap = Services.Bitmap.CreateBitmap(param.Width, param.Height, _pixelData);
+            
+            InvalidateVisual();
+        });
         this.GetObservable(OffsetProperty).Subscribe(_ => InvalidateVisual());
         this.GetObservable(ScaleProperty).Subscribe(_ =>
         {
-            if (Parameters != null)
-            {
-                _zeroBitmap = BitmapService.CreateBitmap(
-                    Parameters.Width,
-                    Parameters.Height,
-                    BitmapService.CreateZeroPixelData(Parameters.Width, Parameters.Height));
-            }
-            
+            UpdateScaledBitmap();
             InvalidateVisual();
         });
     }
     
-    private PixelPoint? GetPixelCoord(PointerEventArgs e)
+    private void UpdateScaledBitmap()
     {
-        if (Parameters is null || _bitmap is null) return null;
-
-        var pos = e.GetPosition(this);
-
-        var bmpPx = _bitmap.PixelSize;
-
-        var bmpW = bmpPx.Width * Scale;
-        var bmpH = bmpPx.Height * Scale;
+        if (_renderBitmap is null || _pixelData is null || Parameters is null) return;
+        
+        _scaledBitmap?.Dispose();
+        
+        if (Scale >= 1)
+        {
+            _scaledBitmap = null;
+            return;
+        }
+        
+        var newWidth = (int)Math.Ceiling(_renderBitmap.PixelSize.Width * Scale);
+        var newHeight = (int)Math.Ceiling(_renderBitmap.PixelSize.Height * Scale);
+        
+        var pixelData =
+            Services.Bitmap.CreateScaledPixelData(_pixelData, Parameters.Width, Parameters.Height, newWidth, newHeight);
+        
+        _scaledBitmap = Services.Bitmap.CreateBitmap(newWidth, newHeight, pixelData);
+    }
+    
+    private (Size bmpSize, Point offset) GetBitmapRenderInfo()
+    {
+        if (_renderBitmap is null) return (new Size(0, 0), new Point(0, 0));
+        
+        var bmpW = _renderBitmap.PixelSize.Width * Scale;
+        var bmpH = _renderBitmap.PixelSize.Height * Scale;
 
         var offsetX = (Bounds.Width - bmpW) / 2 + Offset.X;
         var offsetY = (Bounds.Height - bmpH) / 2 + Offset.Y;
+
+        return (new Size(bmpW, bmpH), new Point(offsetX, offsetY));
+    }
+    
+    private PixelPoint? GetPixelCoord(PointerEventArgs e)
+    {
+        if (Parameters is null || _renderBitmap is null) return null;
+
+        var pos = e.GetPosition(this);
+
+        var ((bmpW, bmpH), (offsetX, offsetY)) = GetBitmapRenderInfo();
 
         var relX = pos.X - offsetX;
         var relY = pos.Y - offsetY;
@@ -144,14 +162,14 @@ public class Canvas : Control
     protected override void OnPointerMoved(PointerEventArgs e)
     {
         base.OnPointerMoved(e);
-        
+
         var pixelCoord = GetPixelCoord(e);
 
         if (pixelCoord == HoverPixel) return;
-        
+
         HoverPixel = pixelCoord;
 
-        if (!_isPressed) return;
+        if (!_isLeftPressed) return;
         switch (SelectedTool)
         {
             case ToolType.Pen:
@@ -164,7 +182,7 @@ public class Canvas : Control
             case ToolType.Fill:
             case ToolType.None: break;
             default:
-                throw new ArgumentOutOfRangeException();
+                throw new ArgumentOutOfRangeException(nameof(e), SelectedTool, "Invalid tool type in OnPointerMoved.");
         }
     }
 
@@ -172,7 +190,8 @@ public class Canvas : Control
     {
         base.OnPointerPressed(e);
 
-        _isPressed = true;
+        if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed) return;
+        _isLeftPressed = true;
 
         switch (SelectedTool)
         {
@@ -190,7 +209,7 @@ public class Canvas : Control
                 break;
             case ToolType.None: break;
             default:
-                throw new ArgumentOutOfRangeException();
+                throw new ArgumentOutOfRangeException(nameof(e), SelectedTool, "Invalid tool type in OnPointerPressed.");
         }
     }
     
@@ -200,12 +219,11 @@ public class Canvas : Control
         HoverPixel = null;
     }
 
-
     protected override void OnPointerReleased(PointerReleasedEventArgs e)
     {
         base.OnPointerReleased(e);
         
-        _isPressed = false;
+        if (e.InitialPressMouseButton == MouseButton.Left) _isLeftPressed = false;
     }
 
     private void Paint()
@@ -217,7 +235,7 @@ public class Canvas : Control
     private void PickColor()
     {
         if (_pixelData is null || Parameters is null || HoverPixel is null) return;
-        PickedColor = BitmapService.GetPixelColor(_pixelData, Parameters.Width, HoverPixel.Value);
+        PickedColor = Services.Bitmap.GetPixelColor(_pixelData, Parameters.Width, HoverPixel.Value);
     }
 
     private void Fill(PointerPressedEventArgs e)
@@ -225,7 +243,7 @@ public class Canvas : Control
         var pixelCoord = GetPixelCoord(e);
         
         if (Parameters is null || pixelCoord is null || _pixelData is null) return;
-        var similarPixels = BitmapService.GetSimilarPixels(_pixelData, Parameters.Width, Parameters.Height, pixelCoord.Value);
+        var similarPixels = Services.Bitmap.GetSimilarPixels(_pixelData, Parameters.Width, Parameters.Height, pixelCoord.Value);
 
         if (similarPixels is null || similarPixels.Count < 1) return;
         foreach (var pixel in similarPixels)
@@ -255,7 +273,7 @@ public class Canvas : Control
         
     private void UpdatePixelData(int x, int y, Color color)
     {
-        if (Parameters is null || _bitmap is null || _pixelData is null) return;
+        if (Parameters is null || _pixelData is null) return;
         var stride = Parameters.Width * 4;
         var index = y * stride + x * 4;
         
@@ -263,33 +281,46 @@ public class Canvas : Control
         _pixelData[index + 1] = color.G;
         _pixelData[index + 2] = color.R;
         _pixelData[index + 3] = color.A;
-
-        BitmapService.UpdateBitmap(_bitmap, _pixelData);
-        InvalidateVisual(); 
+        
+        _renderBitmapDirty = true;
     }
-
+    
     public override void Render(DrawingContext context)
     {
         base.Render(context);
-
-        if (_zeroBitmap is null || _bitmap is null || _pixelData is null || Parameters is null) return;
         
-        var bmpPx = _bitmap.PixelSize;
-        var bmpW = bmpPx.Width * Scale;
-        var bmpH = bmpPx.Height * Scale;
+        if (_renderBitmap is null || _pixelData is null || Parameters is null) return;
         
-        var offsetX = (Bounds.Width - bmpW) / 2 + Offset.X;
-        var offsetY = (Bounds.Height - bmpH) / 2 + Offset.Y;
+        if (_renderBitmapDirty)
+        {
+            Services.Bitmap.UpdateBitmap(_renderBitmap, _pixelData);
+            _renderBitmapDirty = false;
+        }
 
-        var destRect = new Rect(offsetX, offsetY, bmpW, bmpH);
-        var srcRect = new Rect(0, 0, bmpPx.Width, bmpPx.Height);
+        var ((bmpW, bmpH), (offsetX, offsetY)) = GetBitmapRenderInfo();
+        
+        _checkerboardBrush ??= new ImageBrush(
+            Services.Bitmap.CreateBitmap(8, 8, Services.Bitmap.CreateZeroPixelData(8, 8)))
+        {
+            TileMode = TileMode.Tile,
+            Stretch = Stretch.Fill,
+            DestinationRect = new RelativeRect(0, 0, 81, 81, RelativeUnit.Absolute)
+        };
 
-        context.DrawImage(_zeroBitmap, srcRect, destRect);
-        context.DrawImage(_bitmap, srcRect, destRect);
+        _checkerboardBrush.Transform = new TranslateTransform(offsetX % 81, offsetY % 81);
+        context.FillRectangle(_checkerboardBrush, new Rect(offsetX, offsetY, bmpW, bmpH));
+        
+        var bitmapToDraw = _scaledBitmap != null && Scale < 1 ? _scaledBitmap : _renderBitmap;
+
+        context.DrawImage(
+            bitmapToDraw,
+            new Rect(0, 0, bitmapToDraw.PixelSize.Width, bitmapToDraw.PixelSize.Height),
+            new Rect(offsetX, offsetY, bmpW, bmpH)
+        );
 
         if (HoverPixel is not null)
         {
-            var pixelColor = BitmapService.GetPixelColor(_pixelData, Parameters.Width, HoverPixel.Value);
+            var pixelColor = Services.Bitmap.GetPixelColor(_pixelData, Parameters.Width, HoverPixel.Value);
 
             if (pixelColor.A != 0)
             {
@@ -298,23 +329,23 @@ public class Canvas : Control
                     offsetY + HoverPixel.Value.Y * Scale,
                     Scale, Scale);
 
-                var color = GetHighlightColor(BitmapService.GetPixelColor(_pixelData, Parameters.Width,
+                var color = GetHighlightColor(Services.Bitmap.GetPixelColor(_pixelData, Parameters.Width,
                     HoverPixel.Value));
                 context.DrawRectangle(new SolidColorBrush(color), null, rect);
             }
         }
 
-        if (Bounds.Width / Scale > GridMaxSize || Bounds.Height / Scale > GridMaxSize) return;
+        if (Bounds.Width / Scale > _settings.GridMaxSize
+            || Bounds.Height / Scale > _settings.GridMaxSize
+            || !_settings.EnableGrid) return;
         
-        if (!Settings.EnableGrid) return;
-        
-        for (var x = 0; x <= bmpPx.Width; x++)
+        for (var x = 0; x <= _renderBitmap.PixelSize.Width; x++)
         {
             var xPos = offsetX + x * Scale;
             context.DrawLine(_gridPen, new Point(xPos, offsetY), new Point(xPos, offsetY + bmpH));
         }
         
-        for (var y = 0; y <= bmpPx.Height; y++)
+        for (var y = 0; y <= _renderBitmap.PixelSize.Height; y++)
         {
             var yPos = offsetY + y * Scale;
             context.DrawLine(_gridPen, new Point(offsetX, yPos), new Point(offsetX + bmpW, yPos));

@@ -1,36 +1,31 @@
-using System.Reactive;
 using Avalonia.Controls;
+using Avalonia.Media;
+using PixelArtEditor.AppServices;
 using PixelArtEditor.Other;
 using ReactiveUI;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reactive;
 
 namespace PixelArtEditor.ViewModels;
 
 public class SettingsDialogViewModel : ReactiveObject
 {
-    private readonly Settings _settings = Settings.GetInstance;
-    
-    public string Language
+    private static readonly ISettingsService _settings = Services.Settings;
+
+    public static IEnumerable<KeyValuePair<string, string>> LanguagePairs => Resources.LanguageOptions;
+
+    public KeyValuePair<string, string> Language
     {
-        get => _settings.Language;
+        get => LanguagePairs.FirstOrDefault(i => i.Key == _settings.Language);
         set
         {
-            if (_settings.Language == value) return;
-            _settings.Language = value;
+            if (Language.Equals(value)) return;
+            _settings.Language = value.Key;
             this.RaisePropertyChanged();
         }
     }
-    
-    public string Theme 
-    {
-        get => _settings.Theme;
-        set
-        {
-            if (_settings.Theme == value) return;
-            _settings.Theme = value;
-            this.RaisePropertyChanged();
-        }
-    }
-    
+
     public int GridMaxSize
     {
         get => _settings.GridMaxSize;
@@ -42,7 +37,7 @@ public class SettingsDialogViewModel : ReactiveObject
         }
     }
     
-    public string GridColor
+    public Color GridColor
     {
         get => _settings.GridColor;
         set
@@ -85,7 +80,38 @@ public class SettingsDialogViewModel : ReactiveObject
             this.RaisePropertyChanged();
         }
     }
-    
+
+    public Color AccentColor
+    {
+        get => _settings.AccentColor;
+        set
+        {
+            if (_settings.AccentColor == value) return;
+            _settings.AccentColor = value;
+            this.RaisePropertyChanged();
+        }
+    }
+
+    public List<string> ThemeOptions { get; set; } = [.. Resources.ThemeOptions.Select(t => t.Name)];
+
+    public string Theme
+    {
+        get => _settings.Theme;
+        set
+        {
+            if (_settings.Theme == value) return;
+            _settings.Theme = value;
+            this.RaisePropertyChanged();
+        }
+    }
+
+    private int _selectedTabIndex;
+    public int SelectedTabIndex
+    {
+        get => _selectedTabIndex;
+        set => this.RaiseAndSetIfChanged(ref _selectedTabIndex, value);
+    }
+
     public ReactiveCommand<Unit, Unit> ResetCommand { get; }
     public ReactiveCommand<Unit, Unit> CancelCommand { get; }
     public ReactiveCommand<Unit, Unit> SaveCommand { get; }
@@ -96,7 +122,6 @@ public class SettingsDialogViewModel : ReactiveObject
         CancelCommand = ReactiveCommand.Create(() =>
         {
             OnClosing();
-            
             dialog.Close();
         });
         SaveCommand = ReactiveCommand.Create(() =>
@@ -104,13 +129,15 @@ public class SettingsDialogViewModel : ReactiveObject
             _settings.Save();
             dialog.Close();
         });
+
+        _selectedTabIndex = 0;
     }
 
     public void OnClosing()
     {
         _settings.Load();
             
-        foreach (var prop in typeof(ISettings).GetProperties())
+        foreach (var prop in typeof(ISettingsService).GetProperties())
         {
             this.RaisePropertyChanged(prop.Name);
         }

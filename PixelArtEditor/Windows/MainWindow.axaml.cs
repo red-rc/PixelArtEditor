@@ -7,7 +7,7 @@ using Avalonia.Interactivity;
 using Avalonia.VisualTree;
 using PixelArtEditor.ViewModels;
 
-namespace PixelArtEditor.Views;
+namespace PixelArtEditor.Windows;
 
 public partial class MainWindow : Window
 {
@@ -75,11 +75,11 @@ public partial class MainWindow : Window
             Cursor = new Cursor(StandardCursorType.Arrow);
     }
     
-    private void OnMinimizeClick(object? sender, RoutedEventArgs routedEventArgs)
+    public void OnMinimizeClick(object? sender, RoutedEventArgs routedEventArgs)
     {
         WindowState = WindowState.Minimized;
     }
-    private void OnMaximizeClick(object? sender, RoutedEventArgs routedEventArgs)
+    public void OnMaximizeClick(object? sender, RoutedEventArgs routedEventArgs)
     {
         switch (WindowState)
         {
@@ -98,12 +98,12 @@ public partial class MainWindow : Window
                 throw new ArgumentOutOfRangeException();
         }
     }
-    private void OnCloseClick(object? sender, RoutedEventArgs routedEventArgs)
+    public void OnCloseClick(object? sender, RoutedEventArgs routedEventArgs)
     {
         Close();
     }
 
-    private void MoveWindow(object? sender, PointerPressedEventArgs e)
+    public void MoveWindow(object? sender, PointerPressedEventArgs e)
     {
         var source = e.Source as Visual;
 
