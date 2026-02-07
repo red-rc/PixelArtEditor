@@ -4,19 +4,19 @@ using System.Collections.Generic;
 
 namespace PixelArtEditor.AppServices;
 
-public class LocalizationService : ILocalizationService
+public static class LocalizationService
 {
-    public void SetLanguage(string langCode)
+    public static void SetLanguage(string langCode)
     {
         try
         {
-            Load(Services.Yaml.Load("Localization/" + langCode + ".yaml"));
+            Load(YamlService.Load("Localization/" + langCode + ".yaml"));
         }
         catch (Exception)
         {
             try
             {
-                Load(Services.Yaml.Load("Localization/en.yaml"));
+                Load(YamlService.Load("Localization/en.yaml"));
             }
             catch (Exception)
             {
@@ -36,7 +36,7 @@ public class LocalizationService : ILocalizationService
         }
     }
 
-    public void SetDefaults()
+    public static void SetDefaults()
     {
         if (Application.Current == null)
             throw new InvalidOperationException("Application.Current is null. Make sure Avalonia is initialized.");
@@ -112,6 +112,6 @@ public class LocalizationService : ILocalizationService
         foreach (var kvp in dict)
             Application.Current.Resources[kvp.Key] = kvp.Value;
 
-        Services.Yaml.Save(dict, "Localization/en.yaml");
+        YamlService.Save(dict, "Localization/en.yaml");
     }
 }

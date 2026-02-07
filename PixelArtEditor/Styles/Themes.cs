@@ -79,13 +79,10 @@ public abstract class BaseTheme
 
     public void SetDefaults()
     {
-        //Accent Color
         Resources["PrimaryColor"] = Color.Parse("DodgerBlue");
         Resources["PrimaryHoverColor"] = Color.Parse("#4ba6ff");
         Resources["PrimaryPressedColor"] = Color.Parse("#1873cc");
 
-
-        //Fonts
         Resources["AppFont"] = new FontFamily("avares://PixelArtEditor/Assets/Fonts/OpenSans-Regular.ttf");
         Resources["HeadingFont"] = new FontFamily("avares://PixelArtEditor/Assets/Fonts/Poppins-SemiBold.ttf");
     }
@@ -126,6 +123,9 @@ public class DarkTheme : BaseTheme
         Resources["ColorPickerIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/EditButtons/colorpicker.png");
         Resources["FillIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/EditButtons/fill.png");
         Resources["EraserIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/EditButtons/eraser.png");
+        Resources["HandIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/EditButtons/hand.png");
+
+        Resources["ChainIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/UIElements/chain.png");
     }
 }
 
@@ -164,6 +164,9 @@ public class LightTheme : BaseTheme
         Resources["ColorPickerIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Light/EditButtons/colorpicker.png");
         Resources["FillIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Light/EditButtons/fill.png");
         Resources["EraserIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Light/EditButtons/eraser.png");
+        Resources["HandIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Light/EditButtons/hand.png");
+
+        Resources["ChainIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Light/UIElements/chain.png");
     }
 }
 
@@ -203,6 +206,9 @@ public class GrayTheme : BaseTheme
         Resources["ColorPickerIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/EditButtons/colorpicker.png");
         Resources["FillIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/EditButtons/fill.png");
         Resources["EraserIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/EditButtons/eraser.png");
+        Resources["HandIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/EditButtons/hand.png");
+
+        Resources["ChainIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/UIElements/chain.png");
     }
 }
 

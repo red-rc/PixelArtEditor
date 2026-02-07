@@ -7,10 +7,10 @@ using PixelArtEditor.ViewModels;
 
 namespace PixelArtEditor.UI;
 
-public class Previewer : Control
+public class CreatePreview : Control
 {
     public static readonly StyledProperty<CreateParams> ParametersProperty =
-        AvaloniaProperty.Register<Previewer, CreateParams>(nameof(Parameters));
+        AvaloniaProperty.Register<CreatePreview, CreateParams>(nameof(Parameters));
 
     public CreateParams Parameters
     {
@@ -20,10 +20,10 @@ public class Previewer : Control
     
     private ImageBrush? _checkerboardBrush;
     
-    public Previewer()
+    public CreatePreview()
     {
         RenderOptions.SetBitmapInterpolationMode(this, BitmapInterpolationMode.None);
-        ParametersProperty.Changed.AddClassHandler<Previewer>((sender, _) => sender.InvalidateVisual());
+        ParametersProperty.Changed.AddClassHandler<CreatePreview>((sender, _) => sender.InvalidateVisual());
     }
     
     public override void Render(DrawingContext context)
@@ -38,8 +38,7 @@ public class Previewer : Control
         var rect = 200 / ratio > 200 ? new Rect((200 - 200 * ratio) / 2, 0, 200 * ratio, 200) : 
             new Rect(0, (200 - 200 / ratio) / 2, 200, 200 / ratio);
         
-        _checkerboardBrush ??= new ImageBrush(
-            Services.Bitmap.CreateBitmap(8, 8, Services.Bitmap.CreateZeroPixelData(8, 8)))
+        _checkerboardBrush ??= new ImageBrush(BitmapService.CreateBitmap(8, 8, BitmapService.CreateZeroPixelData(8, 8)))
         {
             TileMode = TileMode.Tile,
             Stretch = Stretch.Fill,

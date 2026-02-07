@@ -9,10 +9,10 @@
 
     <Application.DataTemplates>
         <local:ViewLocator />
-        <DataTemplate DataType="{x:Type viewModels:StartMenuViewModel}">
+        <DataTemplate DataType="{x:Type viewModels:StartMenuVM}">
             <views1:StartMenuView />
         </DataTemplate>
-        <DataTemplate DataType="{x:Type viewModels:EditorViewModel}">
+        <DataTemplate DataType="{x:Type viewModels:EditorVM}">
             <views1:EditorView />
         </DataTemplate>
     </Application.DataTemplates>

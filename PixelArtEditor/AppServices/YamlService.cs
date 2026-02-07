@@ -5,9 +5,9 @@ using YamlDotNet.Serialization.NamingConventions;
 
 namespace PixelArtEditor.AppServices;
 
-public class YamlService : IYamlService
+public static class YamlService
 {
-    public Dictionary<string, string> Load(string path)
+    public static Dictionary<string, string> Load(string path)
     {
         var deserializer = new DeserializerBuilder()
             .WithNamingConvention(CamelCaseNamingConvention.Instance)
@@ -17,7 +17,7 @@ public class YamlService : IYamlService
         return result;
     }
 
-    public void Save(Dictionary<string, string> data, string path)
+    public static void Save(Dictionary<string, string> data, string path)
     {
         var directory = Path.GetDirectoryName(path);
         if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))

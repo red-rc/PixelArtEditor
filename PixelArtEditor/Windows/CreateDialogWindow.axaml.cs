@@ -8,6 +8,6 @@ public partial class CreateDialogWindow : Window
     public CreateDialogWindow()
     {
         InitializeComponent();
-        DataContext = new CreateDialogViewModel(this);
+        DataContext = new CreateDialogVM(this);
     }
 }

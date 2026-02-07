@@ -2,9 +2,9 @@ using Avalonia.Controls;
 
 namespace PixelArtEditor.Views;
 
-public partial class ImagePropertiesView : UserControl
+public partial class ImageSizeView : UserControl
 {
-    public ImagePropertiesView()
+    public ImageSizeView()
     {
         InitializeComponent();
     }

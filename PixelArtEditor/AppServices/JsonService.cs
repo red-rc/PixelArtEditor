@@ -2,9 +2,9 @@ using System.IO;
 
 namespace PixelArtEditor.AppServices;
 
-public class JsonService : IJsonService
+public static class JsonService
 {
-    public T? Load<T>(string filePath)
+    public static T? Load<T>(string filePath)
     {
         if (!File.Exists(filePath)) return default;
             
@@ -12,7 +12,7 @@ public class JsonService : IJsonService
         return string.IsNullOrWhiteSpace(jsonString) ? default : Newtonsoft.Json.JsonConvert.DeserializeObject<T>(jsonString);
     }
     
-    public void Populate<T>(T target, string filePath)
+    public static void Populate<T>(T target, string filePath)
     {
         if (!File.Exists(filePath)) throw new FileNotFoundException($"File not found: {filePath}");
 
@@ -22,7 +22,7 @@ public class JsonService : IJsonService
         if (target != null) Newtonsoft.Json.JsonConvert.PopulateObject(jsonString, target);
     }
     
-    public void Save<T>(T data, string filePath)
+    public static void Save<T>(T data, string filePath)
     {
         var jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(data, Newtonsoft.Json.Formatting.Indented);
 

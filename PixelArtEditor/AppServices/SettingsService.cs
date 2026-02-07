@@ -23,7 +23,7 @@ public sealed class SettingsService : ISettingsService
         {
             if (_language == value) return;
             _language = value;
-            Services.Localization.SetLanguage(value);
+            LocalizationService.SetLanguage(value);
 
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Language)));
         }
@@ -69,12 +69,12 @@ public sealed class SettingsService : ISettingsService
     {
         try
         {
-            Services.Json.Populate(this, Resources.ConfigPath);
+            JsonService.Populate(this, Resources.ConfigPath);
         }
         catch (Exception)
         {
             SetDefaults();
-            Services.Json.Save(this, Resources.ConfigPath);
+            JsonService.Save(this, Resources.ConfigPath);
         }
     }
 
@@ -92,6 +92,6 @@ public sealed class SettingsService : ISettingsService
 
     public void Save()
     {
-        Services.Json.Save(this, Resources.ConfigPath);
+        JsonService.Save(this, Resources.ConfigPath);
     }
 }

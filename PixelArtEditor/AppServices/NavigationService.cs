@@ -4,20 +4,20 @@ using ReactiveUI;
 
 namespace PixelArtEditor.AppServices;
 
-public class NavigationService() : INavigationService
+public class NavigationService()
 {
-    private MainWindowViewModel _mainWindowViewModel = null!;
-    public void Initialize(MainWindowViewModel mainWindowViewModel)
+    private MainWindowVM _mainWindowVM = null!;
+    public void Initialize(MainWindowVM mainWindowVM)
     {
-        _mainWindowViewModel = mainWindowViewModel;
+        _mainWindowVM = mainWindowVM;
     }
-    public void NavigateTo(object viewModel)
+    public void NavigateTo(object VM)
     {
-        _mainWindowViewModel.CurrentView = viewModel;
+        _mainWindowVM.CurrentView = VM;
     }
 
     public IObservable<object> WhenCurrentViewChanges() =>
-        _mainWindowViewModel.WhenAnyValue(vm => vm.CurrentView);
+        _mainWindowVM.WhenAnyValue(vm => vm.CurrentView);
     
-    public object GetViewModel() => _mainWindowViewModel.CurrentView;
+    public object GetViewModel() => _mainWindowVM.CurrentView;
 }

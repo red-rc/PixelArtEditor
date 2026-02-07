@@ -9,7 +9,7 @@ public partial class SettingsDialogWindow : Window
     {
         InitializeComponent();
 
-        var viewModel = new SettingsDialogViewModel(this);
+        var viewModel = new SettingsDialogVM(this);
         DataContext = viewModel;
 
         Closing += (_, _) =>

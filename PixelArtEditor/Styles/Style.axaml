@@ -1,4 +1,4 @@
-<Styles xmlns="https://github.com/avaloniaui">
+<Styles xmlns="https://github.com/avaloniaui" xmlns:ui="clr-namespace:PixelArtEditor.UI">
     <Style Selector="Button">
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
@@ -85,23 +85,23 @@
         <Setter Property="Background" Value="{DynamicResource BackgroundPressedColor}" />
     </Style>
 
-    <Style Selector="NumericUpDown">
-        <Setter Property="Background" Value="{DynamicResource BackgroundColor}" />
+    <Style Selector="NumericUpDown.NumberBox">
+        <Setter Property="Background" Value="{DynamicResource TertiaryBackgroundColor}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}" />
         <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />
         <Setter Property="CornerRadius" Value="2.5" />
     </Style>
 
-    <Style Selector="NumericUpDown:pointerover /template/ Border#PART_BorderElement">
+    <Style Selector="NumericUpDown.NumberBox:pointerover /template/ Border#PART_BorderElement">
         <Setter Property="Background" Value="{DynamicResource BackgroundHoverColor}" />
     </Style>
 
-    <Style Selector="NumericUpDown:focus">
+    <Style Selector="NumericUpDown.NumberBox:focus">
         <Setter Property="Background" Value="{DynamicResource BackgroundPressedColor}" />
     </Style>
 
-    <Style Selector="NumericUpDown:focus /template/ ContentPresenter#PART_Spinner">
+    <Style Selector="NumericUpDown.NumberBox:focus /template/ ContentPresenter#PART_Spinner">
         <Setter Property="BorderBrush" Value="{DynamicResource PrimaryColor}" />
         <Setter Property="BorderThickness" Value="2.5" />
     </Style>
@@ -176,21 +176,45 @@
         <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />
     </Style>
 
-    <Style Selector="ToggleButton.EditButton">
+    <Style Selector="ui|InstantToggleButton.ToolButton">
         <Setter Property="Background" Value="{DynamicResource UiColor}" />
         <Setter Property="CornerRadius" Value="2.5" />
     </Style>
 
-    <Style Selector="ToggleButton.EditButton:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+    <Style Selector="ui|InstantToggleButton.ToolButton:pointerover /template/ ContentPresenter#PART_ContentPresenter">
         <Setter Property="Background" Value="{DynamicResource UiHoverColor}" />
     </Style>
 
-    <Style Selector="ToggleButton.EditButton:pressed /template/ ContentPresenter#PART_ContentPresenter">
-        <Setter Property="Background" Value="{DynamicResource UiPressedColor}" />
+    <Style Selector="ui|InstantToggleButton.ToolButton:checked /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource PrimaryColor}" />
     </Style>
 
-    <Style Selector="ToggleButton.EditButton:checked /template/ ContentPresenter#PART_ContentPresenter">
+    <Style Selector="ui|InstantToggleButton.ToolButton:pointerover:checked /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource PrimaryHoverColor}" />
+    </Style>
+
+    <Style Selector="ui|InstantToggleButton.ProportionButton">
+        <Setter Property="Background" Value="{DynamicResource TertiaryBackgroundColor}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="2.5" />
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}" />
+    </Style>
+
+    <Style Selector="ui|InstantToggleButton.ProportionButton:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource BackgroundHoverColor}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}" />
+    </Style>
+
+    <Style Selector="ui|InstantToggleButton.ProportionButton:checked /template/ ContentPresenter#PART_ContentPresenter">
         <Setter Property="Background" Value="{DynamicResource PrimaryColor}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}" />
+        <Setter Property="BorderThickness" Value="0" />
+    </Style>
+
+    <Style Selector="ui|InstantToggleButton.ProportionButton:pointerover:checked /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource PrimaryHoverColor}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}" />
+        <Setter Property="BorderThickness" Value="0" />
     </Style>
 
     <Style Selector="ColorView RadioButton">
@@ -215,7 +239,15 @@
     </Style>
 
     <Style Selector="ColorView TabItem:pointerover /template/ Border#PART_SelectedPipe">
-        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="IsVisible" Value="False" />
+    </Style>
+
+    <Style Selector="ColorView TabItem:selected /template/ Border#PART_SelectedPipe">
+        <Setter Property="IsVisible" Value="False" />
+    </Style>
+
+    <Style Selector="ColorView TabItem:pressed /template/ Border#PART_SelectedPipe">
+        <Setter Property="IsVisible" Value="False" />
     </Style>
 
     <Style Selector="ColorView TabItem:pointerover">
@@ -228,6 +260,14 @@
 
     <Style Selector="ColorView TabItem:selected">
         <Setter Property="Background" Value="{DynamicResource PrimaryColor}" />
+    </Style>
+
+    <Style Selector="ColorView TabItem:pointerover:selected /template/ Border#PART_LayoutRoot">
+        <Setter Property="Background" Value="{DynamicResource PrimaryHoverColor}" />
+    </Style>
+
+    <Style Selector="ColorView TabItem:focus-within:pressed /template/ Border#PART_LayoutRoot">
+        <Setter Property="Background" Value="{DynamicResource PrimaryPressedColor}" />
     </Style>
 
     <Style Selector="ListBox ListBoxItem Border">
@@ -259,34 +299,12 @@
         <Setter Property="Background" Value="{DynamicResource PrimaryColor}" />
     </Style>
 
-    <Style Selector="ColorPicker TabItem">
-        <Setter Property="Background" Value="{DynamicResource UiColor}" />
-    </Style>
-
-    <Style Selector="ColorPicker TabItem:pointerover /template/ Border#PART_SelectedPipe">
-        <Setter Property="Background" Value="Transparent" />
-    </Style>
-
-    <Style Selector="ColorPicker TabItem:pointerover">
-        <Setter Property="Background" Value="{DynamicResource UiHoverColor}" />
-    </Style>
-
-    <Style Selector="ColorPicker TabItem:pressed /template/ Border">
-        <Setter Property="Background" Value="{DynamicResource UiPressedColor}" />
-    </Style>
-
-    <Style Selector="ColorPicker TabItem:selected">
-        <Setter Property="Background" Value="{DynamicResource PrimaryColor}" />
-    </Style>
-
     <Style Selector="ColorPicker DropDownButton">
         <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}" />
     </Style>
 
-    <Style>
-        <Style Selector="MenuItem:disabled">
-            <Setter Property="Foreground" Value="{DynamicResource DisabledForegroundColor}" />
-        </Style>
+    <Style Selector="MenuItem:disabled">
+        <Setter Property="Foreground" Value="{DynamicResource DisabledForegroundColor}" />
     </Style>
 
     <Style Selector="TextBlock">

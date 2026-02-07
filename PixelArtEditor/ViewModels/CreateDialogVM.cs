@@ -1,41 +1,30 @@
-using System;
-using System.Reactive;
 using Avalonia.Controls;
 using Avalonia.Media;
+using PixelArtEditor.Other;
 using ReactiveUI;
+using System;
+using System.Reactive;
 
 namespace PixelArtEditor.ViewModels;
 
-public class CreateParams
+public class CreateParams : IPreviewParams
 {
-    public int Width { get; set; }
-    public int Height { get; set; }
+    public short Width { get; set; }
+    public short Height { get; set; }
     public Color BackgroundColor { get; set; } = Colors.White;
 }
 
-public class CreateDialogViewModel : ReactiveObject
-{
-    private int _selectedWidth = 32;
-    public int SelectedWidth
-    {
-        get => _selectedWidth;
-        set => this.RaiseAndSetIfChanged(ref _selectedWidth, value);
-    }
-
-    private int _selectedHeight = 32;
-    public int SelectedHeight
-    {
-        get => _selectedHeight;
-        set => this.RaiseAndSetIfChanged(ref _selectedHeight, value);
-    }
-    
+public class CreateDialogVM : ReactiveObject
+{    
     private Color _selectedColor = Colors.White;
     public Color SelectedColor
     {
         get => _selectedColor;
         set => this.RaiseAndSetIfChanged(ref _selectedColor, value);
     }
-    
+
+    public ImagePropertiesUCVM ImageProperties { get; }
+
     private CreateParams _livePreviewParams = new();
     public CreateParams LivePreviewParams
     {
@@ -46,11 +35,31 @@ public class CreateDialogViewModel : ReactiveObject
     public ReactiveCommand<Unit, Unit> CreateCommand { get; }
     public ReactiveCommand<Unit, Unit> CancelCommand { get; }
 
-    public CreateDialogViewModel(Window dialog)
+    public CreateDialogVM(Window dialog)
+    {
+        ImageProperties = new ImagePropertiesUCVM();
+        
+        CreateCommand = ReactiveCommand.Create(() =>
+        {
+            dialog.Close(new CreateParams
+            {
+                Width = ImageProperties.SelectedWidth,
+                Height = ImageProperties.SelectedHeight,
+                BackgroundColor = SelectedColor
+            });
+        });
+
+        CancelCommand = ReactiveCommand.Create(dialog.Close);
+
+        SetupReactiveLivePreview();
+    }
+
+
+    private void SetupReactiveLivePreview()
     {
         this.WhenAnyValue(
-            x => x.SelectedWidth,
-            x => x.SelectedHeight,
+            x => x.ImageProperties.SelectedWidth,
+            x => x.ImageProperties.SelectedHeight,
             x => x.SelectedColor
         ).Subscribe(tuple =>
         {
@@ -61,17 +70,5 @@ public class CreateDialogViewModel : ReactiveObject
                 BackgroundColor = tuple.Item3
             };
         });
-        
-        CreateCommand = ReactiveCommand.Create(() =>
-        {
-            dialog.Close(new CreateParams
-            {
-                Width = SelectedWidth,
-                Height = SelectedHeight,
-                BackgroundColor = SelectedColor
-            });
-        });
-
-        CancelCommand = ReactiveCommand.Create(dialog.Close);
     }
 }

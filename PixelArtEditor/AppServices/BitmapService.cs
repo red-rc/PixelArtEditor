@@ -1,16 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+using System;
+using System.Collections.Generic;
 
 namespace PixelArtEditor.AppServices;
 
-public class BitmapService : IBitmapService
+public static class BitmapService
 {
-    public byte[] CreatePixelData(int width, int height, Color background)
+    public static byte[] CreatePixelData(short width, short height, Color background)
     {
         var pixelData = new byte[height * width * 4];
 
@@ -24,7 +23,7 @@ public class BitmapService : IBitmapService
         return pixelData;
     }
     
-    public byte[] CreateZeroPixelData(int width, int height)
+    public static byte[] CreateZeroPixelData(short width, short height)
     {
         var pixelData = new byte[height * width * 4];
         
@@ -46,55 +45,121 @@ public class BitmapService : IBitmapService
         
         return pixelData;
     }
-    
-    public byte[] CreateScaledPixelData(byte[] source, int srcWidth, int srcHeight, int newWidth, int newHeight)
+
+    public static void SetPixelData(WriteableBitmap wb, byte[] pixelData)
     {
-        var pixelData = new byte[newWidth * newHeight * 4];
-
-        for (var y = 0; y < newHeight; y++)
+        unsafe
         {
-            var srcY = Math.Min(srcHeight - 1, y * srcHeight / newHeight);
+            using var fb = wb.Lock();
+            if (wb.Format is null) throw new InvalidOperationException("Bitmap format is null.");
 
-            for (var x = 0; x < newWidth; x++)
+            var bytesPerPixel = wb.Format.Value.BitsPerPixel / 8;
+            var rowBytes = fb.RowBytes;
+            fixed (byte* srcPtr = pixelData)
             {
-                var srcX = Math.Min(srcWidth - 1, x * srcWidth / newWidth);
+                for (var y = 0; y < wb.PixelSize.Height; y++)
+                {
+                    byte* dst = (byte*)fb.Address + y * rowBytes;
+                    byte* src = srcPtr + y * wb.PixelSize.Width * bytesPerPixel;
+                    Buffer.MemoryCopy(src, dst, rowBytes, wb.PixelSize.Width * bytesPerPixel);
+                }
+            }
+        }
+    }
 
-                var srcIndex = (srcY * srcWidth + srcX) * 4;
-                var dstIndex = (y * newWidth + x) * 4;
+    public static WriteableBitmap CreateBitmap(short width, short height, AlphaFormat alphaFormat = AlphaFormat.Unpremul)
+    {
+        return new WriteableBitmap(new PixelSize(width, height), new Vector(96, 96), PixelFormat.Bgra8888, alphaFormat);
+    }
 
-                pixelData[dstIndex + 0] = source[srcIndex + 0];
-                pixelData[dstIndex + 1] = source[srcIndex + 1];
-                pixelData[dstIndex + 2] = source[srcIndex + 2];
-                pixelData[dstIndex + 3] = source[srcIndex + 3];
+    public static WriteableBitmap CreateBitmap(short width, short height, byte[] pixelData)
+    {
+        var wb = new WriteableBitmap(new PixelSize(width, height), new Vector(96, 96), PixelFormat.Bgra8888, AlphaFormat.Unpremul);
+        SetPixelData(wb, pixelData);
+
+        return wb;
+    }
+
+    public static WriteableBitmap CreateBitmap(short width, short height, byte[] pixelData, Vector dpi, AlphaFormat alphaFormat)
+    {
+        var wb = new WriteableBitmap(new PixelSize(width, height), dpi, PixelFormat.Bgra8888, alphaFormat);
+        SetPixelData(wb, pixelData);
+
+        return wb;
+    }
+
+    public static void UpdateBitmapProperties(ref WriteableBitmap wb, short newWidth, short newHeight, Vector dpi, AlphaFormat alphaFormat)
+    {
+        if (wb == null || wb.Format == null) return;
+
+        var copyWidth = Math.Min(wb.PixelSize.Width, newWidth);
+        var copyHeight = Math.Min(wb.PixelSize.Height, newHeight);
+
+        var bpp = wb.Format.Value.BitsPerPixel / 8;
+
+        var newRowBytes = ((newWidth * bpp + 3) / 4) * 4;
+        var newPixelData = new byte[newRowBytes * newHeight];
+
+        using var fb = wb.Lock();
+
+        unsafe
+        {
+            byte* srcBase = (byte*)fb.Address;
+
+            fixed (byte* dstBase = newPixelData)
+            {
+                for (int y = 0; y < copyHeight; y++)
+                {
+                    Buffer.MemoryCopy(
+                        srcBase + y * fb.RowBytes,
+                        dstBase + y * newRowBytes,
+                        newRowBytes,
+                        copyWidth * bpp
+                    );
+                }
+            }
+        }
+
+        wb = CreateBitmap(newWidth, newHeight, newPixelData, dpi, alphaFormat);
+    }
+
+    public static byte[] GetPixelData(WriteableBitmap wb)
+    {
+        if (wb.Format == null) throw new InvalidOperationException("Bitmap format is null.");
+
+        var width = wb.PixelSize.Width;
+        var height = wb.PixelSize.Height;
+        var bytesPerPixel = wb.Format.Value.BitsPerPixel / 8;
+
+        byte[] pixelData = new byte[width * height * bytesPerPixel];
+
+        unsafe
+        {
+            using var fb = wb.Lock();
+
+            fixed (byte* dstBase = pixelData)
+            {
+                for (var y = 0; y < height; y++)
+                {
+                    Buffer.MemoryCopy(
+                        (byte*)fb.Address + y * fb.RowBytes,
+                        dstBase + y * width * bytesPerPixel,
+                        width * bytesPerPixel,
+                        width * bytesPerPixel
+                    );
+                }
             }
         }
 
         return pixelData;
     }
-    
-    public WriteableBitmap CreateBitmap(int width, int height, byte[] pixelData)
-    {
-        var wb = new WriteableBitmap(new PixelSize(width, height), new Vector(96, 96), PixelFormat.Bgra8888, AlphaFormat.Unpremul);
 
-        using var fb = wb.Lock();
-        Marshal.Copy(pixelData, 0, fb.Address, pixelData.Length);
-
-        return wb;
-    }
-    
-    public void UpdateBitmap(WriteableBitmap bitmap, byte[] pixelData)
-    {
-        using var fb = bitmap.Lock();
-        Marshal.Copy(pixelData, 0, fb.Address, pixelData.Length);
-    }
-    
-    public Color GetPixelColor(byte[] pixelData, int width, PixelPoint pixel)
+    public static Color GetPixelColor(byte[] pixelData, short width, PixelPoint pixel)
     {
         var stride = width * 4;
         var index = pixel.Y * stride + pixel.X * 4;
 
-        if (index < 0 || index + 3 >= pixelData.Length)
-            return Colors.Transparent;
+        if (index < 0 || index + 3 >= pixelData.Length) return Colors.Transparent;
 
         var b = pixelData[index + 0];
         var g = pixelData[index + 1];
@@ -104,45 +169,61 @@ public class BitmapService : IBitmapService
         return Color.FromArgb(a, r, g, b);
     }
 
-    public List<PixelPoint>? GetSimilarPixels(byte[] pixelData, int width, int height, PixelPoint startPixel)
+    public static unsafe void FillSimilarPixels(WriteableBitmap? wb, byte[] pixelData, short width, short height, PixelPoint startPixel, Color newColor)
     {
-        var result = new List<PixelPoint>();
-        var visited = new bool[width * height];
+        if (wb == null) return;
 
         var targetColor = GetPixelColor(pixelData, width, startPixel);
-        
-        if (startPixel.X < 0 || startPixel.X >= width || startPixel.Y < 0 || startPixel.Y >= height)
-            return null;
-        
-        var queue = new Queue<PixelPoint>();
-        queue.Enqueue(new PixelPoint(startPixel.X, startPixel.Y));
-        visited[startPixel.Y * width + startPixel.X] = true;
+        if (targetColor == newColor) return;
 
-        while (queue.Count > 0)
+        var visited = new byte[width * height];
+        var queue = new Queue<PixelPoint>();
+        queue.Enqueue(startPixel);
+        visited[startPixel.Y * width + startPixel.X] = 1;
+
+        var stride = width * 4;
+
+        fixed (byte* pBase = pixelData)
         {
-            var p = queue.Dequeue();
-            result.Add(p);
-            
-            var neighbors = new[]
+            while (queue.Count > 0)
             {
+                var p = queue.Dequeue();
+                var index = p.Y * stride + p.X * 4;
+
+                pBase[index + 0] = newColor.B;
+                pBase[index + 1] = newColor.G;
+                pBase[index + 2] = newColor.R;
+                pBase[index + 3] = newColor.A;
+
+                var neighbors = new[]
+                {
                 new PixelPoint(p.X + 1, p.Y),
                 new PixelPoint(p.X - 1, p.Y),
                 new PixelPoint(p.X, p.Y + 1),
                 new PixelPoint(p.X, p.Y - 1)
             };
 
-            foreach (var n in neighbors)
-            {
-                if (n.X < 0 || n.X >= width || n.Y < 0 || n.Y >= height) continue;
-                var index = n.Y * width + n.X;
-                if (visited[index]) continue;
-                var color = GetPixelColor(pixelData, width, n);
-                if (color != targetColor) continue;
-                queue.Enqueue(n);
-                visited[index] = true;
+                foreach (var n in neighbors)
+                {
+                    if (n.X < 0 || n.X >= width || n.Y < 0 || n.Y >= height) continue;
+
+                    var nIndex = n.Y * width + n.X;
+                    if (visited[nIndex] != 0) continue;
+
+                    var neighborIndex = n.Y * stride + n.X * 4;
+                    byte b = pBase[neighborIndex + 0];
+                    byte g = pBase[neighborIndex + 1];
+                    byte r = pBase[neighborIndex + 2];
+                    byte a = pBase[neighborIndex + 3];
+
+                    if (b != targetColor.B || g != targetColor.G || r != targetColor.R || a != targetColor.A) continue;
+
+                    queue.Enqueue(n);
+                    visited[nIndex] = 1;
+                }
             }
         }
 
-        return result;
+        SetPixelData(wb, pixelData);
     }
 }

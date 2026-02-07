@@ -12,7 +12,7 @@
     Height="450"
     d:DesignHeight="450"
     d:DesignWidth="600"
-    x:DataType="vm:SettingsDialogViewModel"
+    x:DataType="vm:SettingsDialogVM"
     Background="{DynamicResource BackgroundColor}"
     CanResize="False"
     Icon="/Assets/info-icon.ico"

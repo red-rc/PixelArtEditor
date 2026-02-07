@@ -15,15 +15,12 @@ public class App : Application
 
         // Do not change the order of these initializations, they depend on each other
         Services.Navigation = new NavigationService();
-        Services.Dialogs = new DialogService();
-        Services.Actions = new ActionsService();
-        Services.Bitmap = new BitmapService();
-        Services.Json = new JsonService();
-        Services.Yaml = new YamlService();
-        Services.Localization = new LocalizationService();
+        Services.WindowState = new WindowStateService();
+        Services.RenderInvalidation = new RenderInvalidationService();
 
         Other.Resources.Initialize();
         Services.Settings = SettingsService.GetInstance;
+        Services.ExportPreview = new ExportPreviewService();
     }
     
     public override void OnFrameworkInitializationCompleted()
@@ -32,7 +29,7 @@ public class App : Application
         {
             desktop.MainWindow = new MainWindow
             {
-                DataContext = new MainWindowViewModel()
+                DataContext = new MainWindowVM()
             };
         }
 

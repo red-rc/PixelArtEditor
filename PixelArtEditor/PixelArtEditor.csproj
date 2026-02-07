@@ -26,63 +26,26 @@
       <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Avalonia.ReactiveUI" />
+    <PackageReference Include="HeyRed.ImageSharp.Heif" />
     <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="SixLabors.ImageSharp" />
+    <PackageReference Include="SkiaSharp" />
     <PackageReference Include="YamlDotNet" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="UI\ColorView.cs">
-      <DependentUpon>ColorView.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="AppServices\NavigationService.cs">
-      <DependentUpon>INavigationService.cs</DependentUpon>
-    </Compile>
-    <Compile Update="AppServices\DialogService.cs">
-      <DependentUpon>IDialogService.cs</DependentUpon>
-    </Compile>
-    <Compile Update="AppServices\ActionsService.cs">
-      <DependentUpon>IActionsService.cs</DependentUpon>
-    </Compile>
-    <Compile Update="AppServices\SettingsService.cs">
-      <DependentUpon>ISettingsService.cs</DependentUpon>
-    </Compile>
-    <Compile Update="AppServices\ServiceLocator.cs">
-      <DependentUpon>IServiceLocator.cs</DependentUpon>
-    </Compile>
-    <Compile Update="AppServices\BitmapService.cs">
-      <DependentUpon>IBitmapService.cs</DependentUpon>
-    </Compile>
-    <Compile Update="AppServices\JsonService.cs">
-      <DependentUpon>IJsonService.cs</DependentUpon>
-    </Compile>
-    <Compile Update="AppServices\YamlService.cs">
-      <DependentUpon>IYamlService.cs</DependentUpon>
-    </Compile>
-    <Compile Update="AppServices\LocalizationService.cs">
-      <DependentUpon>ILocalizationService.cs</DependentUpon>
-    </Compile>
-
-    <Compile Update="Views\SettingsViews\GeneralView.axaml.cs">
-      <DependentUpon>GeneralView.axaml</DependentUpon>
-    </Compile>
-    <Compile Update="Windows\SettingsDialogWindow.axaml.cs">
-      <DependentUpon>SettingsWindow.axaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="Windows\CreateDialogWindow.axaml.cs">
-      <DependentUpon>CreateDialogWindow.axaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="Windows\MainWindow.axaml.cs">
-      <DependentUpon>MainWindow.axaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="Windows\ExportDialogWindow.axaml.cs">
-      <DependentUpon>ExportDialogWindow.axaml</DependentUpon>
-    </Compile>
+    <Folder Include="Localization\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Localization\" />
+    <Compile Update="Views\ImagePropertiesView.axaml.cs">
+      <DependentUpon>ImagePropertiesView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\ImageSizeView.axaml.cs">
+      <DependentUpon>ImageSizeView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Windows\ImagePropertiesWindow.axaml.cs">
+      <DependentUpon>ImagePropertiesWindow.axaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 </Project>

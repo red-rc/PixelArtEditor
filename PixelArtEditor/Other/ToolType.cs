@@ -6,5 +6,6 @@ public enum ToolType
     Pen,
     ColorPicker,
     Fill,
-    Eraser
+    Eraser,
+    Hand
 }

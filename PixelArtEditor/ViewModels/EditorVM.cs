@@ -1,14 +1,23 @@
-using System;
-using System.Numerics;
 using Avalonia;
 using Avalonia.Media;
+using Avalonia.Media.Imaging;
 using PixelArtEditor.Other;
+using PixelArtEditor.UI;
 using ReactiveUI;
+using System;
+using System.Numerics;
 
 namespace PixelArtEditor.ViewModels;
 
-public class EditorViewModel : ReactiveObject
+public class EditorVM : ReactiveObject
 {
+    private Canvas? _canvas;
+
+    public WriteableBitmap? GetBitmap() => _canvas?.GetBitmap();
+
+    private double _lastPanelWidth = -1;
+    private double _lastPanelHeight = -1;
+
     private Point _startMousePosition;
     private Vector2 _startOffset;
     public bool IsPositionSet;
@@ -66,6 +75,7 @@ public class EditorViewModel : ReactiveObject
             this.RaisePropertyChanged(nameof(IsColorPickerEnabled));
             this.RaisePropertyChanged(nameof(IsFillEnabled));
             this.RaisePropertyChanged(nameof(IsEraserEnabled));
+            this.RaisePropertyChanged(nameof(IsHandEnabled));
         }
     }
 
@@ -116,7 +126,19 @@ public class EditorViewModel : ReactiveObject
                 SelectedTool = ToolType.None;
         }
     }
-    
+
+    public bool IsHandEnabled
+    {
+        get => SelectedTool == ToolType.Hand;
+        set
+        {
+            if (value)
+                SelectedTool = ToolType.Hand;
+            else if (SelectedTool == ToolType.Hand)
+                SelectedTool = ToolType.None;
+        }
+    }
+
     private Color _pickedColor;
     public Color PickedColor
     {
@@ -124,12 +146,71 @@ public class EditorViewModel : ReactiveObject
         set => this.RaiseAndSetIfChanged(ref _pickedColor, value);
     }
 
-    public EditorViewModel(CreateParams parameters)
+    public string? IndicatorText { get; set; }
+
+    private WriteableBitmap? _importedBitmap;
+    public WriteableBitmap? ImportedBitmap
+    {
+        get => _importedBitmap;
+        set => this.RaiseAndSetIfChanged(ref _importedBitmap, value);
+    }
+
+    public void SetCanvas(Canvas canvas)
+    {
+        _canvas = canvas;
+
+        _canvas.WhenAnyValue(x => x.CurrentPixelCoord)
+            .Subscribe(coord =>
+            {
+                IndicatorText = coord is null
+                    ? "X: - Y: -"
+                    : $"X: {coord.Value.X} Y: {coord.Value.Y}";
+
+                this.RaisePropertyChanged(nameof(IndicatorText));
+            });
+    }
+
+    public EditorVM(CreateParams parameters)
     {
         _parameters = parameters;
-        SelectedTool = ToolType.None;
+        SetInitCreateParams(_parameters);
     }
-    
+
+    public EditorVM(WriteableBitmap bitmap)
+    {
+        _parameters = new CreateParams
+        {
+            Width = 32,
+            Height = 32,
+            BackgroundColor = Colors.White
+        };
+
+        SetInitBitmap(bitmap);
+    }
+
+    public void SetInitCreateParams(CreateParams parameters)
+    {
+        Parameters = parameters;
+        ImportedBitmap = null;
+        SelectedTool = ToolType.None;
+
+        AdjustCanvas(_lastPanelWidth, _lastPanelHeight);
+    }
+
+    public void SetInitBitmap(WriteableBitmap bitmap)
+    {
+        _parameters = new CreateParams
+        {
+            Width = (short)bitmap.Size.Width,
+            Height = (short)bitmap.Size.Height,
+            BackgroundColor = Colors.White
+        };
+        ImportedBitmap = bitmap;
+        SelectedTool = ToolType.None;
+
+        AdjustCanvas(_lastPanelWidth, _lastPanelHeight);
+    }
+
     public void StartDragging(Point startMousePos)
     {
         _startMousePosition = startMousePos;
@@ -143,17 +224,51 @@ public class EditorViewModel : ReactiveObject
         var dy = (float)(currentMousePos.Y - _startMousePosition.Y);
         Offset = new Vector2(_startOffset.X + dx, _startOffset.Y + dy);
     }
-    
-    public void CalculateScale(double width, double height)
+
+    public void ZoomBy(float factor)
     {
+        if (_lastPanelWidth <= 0 || _lastPanelHeight <= 0)
+        {
+            Scale = Math.Clamp(Scale * factor, MinScale, MaxScale);
+            return;
+        }
+
+        var oldScale = Scale;
+        var newScale = Math.Clamp(oldScale * factor, MinScale, MaxScale);
+
+        if (Math.Abs(newScale - oldScale) < 1e-9) return;
+
+        var screenVec = new Vector2(Offset.X, Offset.Y);
+        var newScreenVec = screenVec / (float)oldScale * (float)newScale;
+
+        var correctedOffset = new Vector2(
+            Offset.X + newScreenVec.X - screenVec.X,
+            Offset.Y + newScreenVec.Y - screenVec.Y);
+
+        Scale = newScale;
+        Offset = correctedOffset;
+    }
+
+    public void AdjustCanvas(double width, double height)
+    {
+        if (width <= 0 || height <= 0 || _parameters.Width <= 0 || _parameters.Height <= 0) return;
+
         var borderSize = _parameters.Width > _parameters.Height ? width : height;
         var canvasSize = _parameters.Width > _parameters.Height ? _parameters.Width : _parameters.Height;
-        
-        var scale = Math.Ceiling(borderSize / canvasSize * 10) / 10.0;
 
-        MinScale = scale * 0.9;
+        MinScale = borderSize / canvasSize * 0.8;
         MaxScale = Math.Ceiling(borderSize / 8 * 10) / 10.0;
+
+        if (MaxScale < MinScale)
+        {
+            MaxScale = MinScale;
+        }
+
         Scale = MinScale;
         BaseScale = MinScale;
+        Offset = Vector2.Zero;
+
+        _lastPanelWidth = width;
+        _lastPanelHeight = height;
     }
 }

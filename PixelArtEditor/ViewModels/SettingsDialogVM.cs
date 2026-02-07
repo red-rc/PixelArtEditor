@@ -9,7 +9,7 @@ using System.Reactive;
 
 namespace PixelArtEditor.ViewModels;
 
-public class SettingsDialogViewModel : ReactiveObject
+public class SettingsDialogVM : ReactiveObject
 {
     private static readonly ISettingsService _settings = Services.Settings;
 
@@ -116,7 +116,7 @@ public class SettingsDialogViewModel : ReactiveObject
     public ReactiveCommand<Unit, Unit> CancelCommand { get; }
     public ReactiveCommand<Unit, Unit> SaveCommand { get; }
 
-    public SettingsDialogViewModel(Window dialog)
+    public SettingsDialogVM(Window dialog)
     {
         ResetCommand = ReactiveCommand.Create(OnClosing);
         CancelCommand = ReactiveCommand.Create(() =>

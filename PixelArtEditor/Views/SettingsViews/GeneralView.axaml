@@ -8,7 +8,7 @@
     xmlns:vm="clr-namespace:PixelArtEditor.ViewModels"
     d:DesignHeight="350"
     d:DesignWidth="450"
-    x:DataType="vm:SettingsDialogViewModel"
+    x:DataType="vm:SettingsDialogVM"
     Background="{DynamicResource SecondaryBackgroundColor}"
     mc:Ignorable="d">
     <UserControl.Styles>
@@ -61,7 +61,7 @@
                 Width="50"
                 Maximum="8192"
                 Minimum="0"
-                Value="{Binding GridMaxSize}" />
+                Value="{Binding GridMaxSize, FallbackValue=0}" />
         </StackPanel>
         <StackPanel Orientation="Horizontal" Spacing="10">
             <TextBlock Text="{DynamicResource GenViewGridColor}" />
@@ -89,9 +89,9 @@
             <NumericUpDown
                 Width="50"
                 IsEnabled="{Binding EnableAutosave}"
-                Maximum="600"
+                Maximum="900"
                 Minimum="10"
-                Value="{Binding AutosaveFrequency}" />
+                Value="{Binding AutosaveFrequency, FallbackValue=10}" />
             <TextBlock Text="{DynamicResource GenViewSeconds}" />
         </StackPanel>
     </StackPanel>

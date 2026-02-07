@@ -3,7 +3,7 @@ using ReactiveUI;
 
 namespace PixelArtEditor.ViewModels;
 
-public class MainWindowViewModel : ReactiveObject
+public class MainWindowVM : ReactiveObject
 {
     private object _currentView;
 
@@ -13,13 +13,13 @@ public class MainWindowViewModel : ReactiveObject
         set => this.RaiseAndSetIfChanged(ref _currentView, value);
     }
     
-    public MenuCommandsViewModel Menu { get; }
+    public MenuCommandsVM Menu { get; }
 
-    public MainWindowViewModel()
+    public MainWindowVM()
     {
         Services.Navigation.Initialize(this);
 
-        Menu = new MenuCommandsViewModel();
-        _currentView = new StartMenuViewModel();
+        Menu = new MenuCommandsVM();
+        _currentView = new StartMenuVM();
     }
 }

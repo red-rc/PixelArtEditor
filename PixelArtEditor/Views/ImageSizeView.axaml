@@ -1,15 +1,15 @@
 <UserControl
-    x:Class="PixelArtEditor.Views.ImagePropertiesView"
+    x:Class="PixelArtEditor.Views.ImageSizeView"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="clr-namespace:PixelArtEditor.UI"
     xmlns:vm="clr-namespace:PixelArtEditor.ViewModels"
-    Width="150"
-    Height="185"
-    d:DesignHeight="185"
-    d:DesignWidth="150"
+    Width="80"
+    Height="150"
+    d:DesignHeight="150"
+    d:DesignWidth="80"
     x:DataType="vm:ImagePropertiesUCVM"
     Background="{DynamicResource BackgroundColor}"
     mc:Ignorable="d">
@@ -18,17 +18,11 @@
             <Setter Property="FontSize" Value="16" />
             <Setter Property="FontFamily" Value="sans-serif" />
         </Style>
-        <Style Selector="ui|NumberBox">
+        <Style Selector="NumericUpDown.NumberBox">
             <Setter Property="FontSize" Value="14" />
-            <Setter Property="ShowButtonSpinner" Value="False" />
-            <Setter Property="Minimum" Value="0" />
+            <Setter Property="Minimum" Value="1" />
             <Setter Property="Maximum" Value="8192" />
             <Setter Property="Height" Value="30" />
-            <Setter Property="MinWidth" Value="55" />
-        </Style>
-        <Style Selector="ComboBox">
-            <Setter Property="Height" Value="30" />
-            <Setter Property="Padding" Value="10,0,10,0" />
         </Style>
     </UserControl.Styles>
 
@@ -40,11 +34,22 @@
             <StackPanel>
                 <TextBlock
                     HorizontalAlignment="Center"
-                    Text="DPI (x, y)" />
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="6">
-                    <ui:NumberBox Classes="NumberBox" Value="{Binding SelectedDpiX, Mode=TwoWay}" />
-                    <ui:NumberBox Classes="NumberBox" Value="{Binding SelectedDpiY, Mode=TwoWay}" />
-                </StackPanel>
+                    Text="{DynamicResource CrWinWidth}" />
+                <ui:NumberBox Classes="NumberBox" Width="60" Value="{Binding SelectedWidth, Mode=TwoWay}" />
+            </StackPanel>
+            <StackPanel>
+                <ui:InstantToggleButton
+                    HorizontalAlignment="Center"
+                    Classes="ProportionButton"
+                    Width="30"
+                    Height="18"
+                    IsChecked="{Binding EnableProportion}">
+                    <Image Width="18" Height="9" Source="{DynamicResource ChainIcon}" />
+                </ui:InstantToggleButton>
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    Text="{DynamicResource CrWinHeight}" />
+                <ui:NumberBox Classes="NumberBox" Width="60" Value="{Binding SelectedHeight, Mode=TwoWay}" />
             </StackPanel>
         </StackPanel>
     </DockPanel>

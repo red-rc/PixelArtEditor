@@ -3,11 +3,11 @@ using PixelArtEditor.ViewModels;
 
 namespace PixelArtEditor.Windows;
 
-public partial class ExportDialogWindow : Window
+public partial class ImagePropertiesWindow : Window
 {
-    public ExportDialogWindow()
+    public ImagePropertiesWindow()
     {
         InitializeComponent();
-        DataContext = new ExportDialogVM(this);
+        DataContext = new ImagePropertiesVM(this);
     }
 }

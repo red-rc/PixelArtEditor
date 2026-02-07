@@ -5,9 +5,9 @@ using Avalonia.Controls.ApplicationLifetimes;
 
 namespace PixelArtEditor.AppServices;
 
-public class DialogService : IDialogService
+public static class DialogService
 {
-    public async Task<TResult?> ShowDialogAsync<TWindow, TResult>() where TWindow : Window, new()
+    public static async Task<TResult?> ShowDialogAsync<TWindow, TResult>() where TWindow : Window, new()
     {
         var dialog = new TWindow();
 
@@ -19,7 +19,7 @@ public class DialogService : IDialogService
         return default;
     }
 
-    public async Task ShowDialogAsync<TWindow>() where TWindow : Window, new()
+    public static async Task ShowDialogAsync<TWindow>() where TWindow : Window, new()
     {
         var dialog = new TWindow();
 
@@ -28,27 +28,4 @@ public class DialogService : IDialogService
             await dialog.ShowDialog(lifetime.MainWindow!);
         }
     }
-
-    //public async Task ShowOpenDialogAsync()
-    //{
-    //    var dialog = new OpenDialogWindow();
-//
-    //    if (Application.Current!.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime lifetime)
-    //    {
-    //        var result = await dialog.ShowDialog(lifetime.MainWindow!);
-    //        return result;
-    //    }
-//
-    //    return null;
-    //}
-//
-    //public async Task ShowSettingsDialogAsync()
-    //{
-    //    var dialog = new SettingsDialogWindow();
-//
-    //    if (Application.Current!.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime lifetime)
-    //    {
-    //        await dialog.ShowDialog(lifetime.MainWindow!);
-    //    }
-    //}
 }

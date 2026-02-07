@@ -2,6 +2,7 @@
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Media;
+using Avalonia.Media.Imaging;
 using PixelArtEditor.AppServices;
 using PixelArtEditor.Styles;
 using System;
@@ -40,7 +41,7 @@ public static class Resources
 
         try
         {
-            loadedThemes = Services.Json.Load<BaseTheme[]>(ThemesPath);
+            loadedThemes = JsonService.Load<BaseTheme[]>(ThemesPath);
         }
         catch
         {
@@ -70,7 +71,7 @@ public static class Resources
                 new SystemTheme()
             };
 
-            Services.Json.Save(defaults, ThemesPath);
+            JsonService.Save(defaults, ThemesPath);
 
             return defaults;
         }

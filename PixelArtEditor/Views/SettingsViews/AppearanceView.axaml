@@ -8,7 +8,7 @@
     xmlns:vm="clr-namespace:PixelArtEditor.ViewModels"
     d:DesignHeight="350"
     d:DesignWidth="450"
-    x:DataType="vm:SettingsDialogViewModel"
+    x:DataType="vm:SettingsDialogVM"
     Background="{DynamicResource SecondaryBackgroundColor}"
     mc:Ignorable="d">
     <UserControl.Styles>

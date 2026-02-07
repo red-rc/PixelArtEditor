@@ -275,6 +275,50 @@
           "BitsPerPixel": 32
         },
         "AlphaFormat": 0
+      },
+      "HandIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "ChainIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 2.0,
+          "Width": 16.0,
+          "Height": 8.0
+        },
+        "PixelSize": {
+          "AspectRatio": 2.0,
+          "Width": 16,
+          "Height": 8
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
       }
     }
   },
@@ -549,6 +593,50 @@
           "AspectRatio": 1.0,
           "Width": 18,
           "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "HandIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "ChainIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 2.0,
+          "Width": 16.0,
+          "Height": 8.0
+        },
+        "PixelSize": {
+          "AspectRatio": 2.0,
+          "Width": 16,
+          "Height": 8
         },
         "Format": {
           "BitsPerPixel": 32
@@ -833,6 +921,50 @@
           "BitsPerPixel": 32
         },
         "AlphaFormat": 0
+      },
+      "HandIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "ChainIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 2.0,
+          "Width": 16.0,
+          "Height": 8.0
+        },
+        "PixelSize": {
+          "AspectRatio": 2.0,
+          "Width": 16,
+          "Height": 8
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
       }
     }
   },
@@ -1107,6 +1239,50 @@
           "AspectRatio": 1.0,
           "Width": 18,
           "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "HandIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "ChainIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 2.0,
+          "Width": 16.0,
+          "Height": 8.0
+        },
+        "PixelSize": {
+          "AspectRatio": 2.0,
+          "Width": 16,
+          "Height": 8
         },
         "Format": {
           "BitsPerPixel": 32

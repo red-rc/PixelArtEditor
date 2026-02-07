@@ -8,11 +8,11 @@
     xmlns:vm="clr-namespace:PixelArtEditor.ViewModels"
     xmlns:view="clr-namespace:PixelArtEditor.Views"
     Title="{DynamicResource CrWinTitle}"
-    Width="500"
+    Width="550"
     Height="450"
     d:DesignHeight="450"
-    d:DesignWidth="500"
-    x:DataType="vm:CreateDialogViewModel"
+    d:DesignWidth="550"
+    x:DataType="vm:CreateDialogVM"
     Background="{DynamicResource BackgroundColor}"
     CanResize="False"
     Icon="/Assets/info-icon.ico"
@@ -24,9 +24,9 @@
             <Setter Property="FontSize" Value="16" />
             <Setter Property="FontFamily" Value="sans-serif" />
         </Style>
-         <Style Selector="TextBlock.Header">
+        <Style Selector="TextBlock.Header">
             <Setter Property="HorizontalAlignment" Value="Center" />
-            <Setter Property="FontSize" Value="14" />
+            <Setter Property="FontSize" Value="16" />
             <Setter Property="FontWeight" Value="Bold" />
             <Setter Property="FontFamily" Value="sans-serif" />
             <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />
@@ -50,53 +50,35 @@
         Background="{DynamicResource SecondaryBackgroundColor}">
         <Grid
             Margin="20,50,20,0"
-            ColumnDefinitions="*,Auto,10,Auto"
+            ColumnDefinitions="250,Auto,10,Auto"
             DockPanel.Dock="Top">
-            <ui:Previewer
+            <ui:CreatePreview
                 Grid.Column="0"
                 Margin="30,40,0,0"
                 Parameters="{Binding LivePreviewParams}" />
 
-                <Grid Grid.Column="1" RowDefinitions="Auto,Auto,Auto,Auto">
-                    <TextBlock  Grid.Row="0"
-                        Classes="Header"
-                        Text="Basic" />
-                    <StackPanel Grid.Row="1">
-                        <TextBlock
-                            HorizontalAlignment="Center"
-                            Text="{DynamicResource CrWinWidth}" />
-                        <NumericUpDown
-                            Width="75"
-                            Value="{Binding SelectedWidth, Mode=TwoWay}" />
-                    </StackPanel>
+            <StackPanel Spacing="10" Grid.Column="1">
+                <TextBlock
+                    Classes="Header"
+                    Text="Basic" />
+                <view:ImageSizeView DataContext="{Binding ImageProperties}" />
 
-                    <StackPanel Grid.Row="2">
-                        <TextBlock
-                            Margin="0,10,0,0"
-                            HorizontalAlignment="Center"
-                            Text="{DynamicResource CrWinHeight}" />
-                        <NumericUpDown
-                            Width="75"
-                            Value="{Binding SelectedHeight, Mode=TwoWay}" />
-                    </StackPanel>
-
-                    <StackPanel Grid.Row="3">
-                        <TextBlock
-                            Margin="0,10,0,0"
-                            HorizontalAlignment="Center"
-                            Text="{DynamicResource CrWinBackgroundColor}" />
-                        <ColorPicker
-                            Width="100"
-                            HorizontalAlignment="Center"
-                            Color="{Binding SelectedColor, Mode=TwoWay}" />
-                    </StackPanel>
-                </Grid>
-                <StackPanel Grid.Column="3">
+                <StackPanel>
                     <TextBlock
-                        Classes="Header"
-                        Text="Advanced" />
-                    <view:ImagePropertiesView />
+                        HorizontalAlignment="Center"
+                        Text="{DynamicResource CrWinBackgroundColor}" />
+                    <ColorPicker
+                        Width="100"
+                        HorizontalAlignment="Center"
+                        Color="{Binding SelectedColor, Mode=TwoWay}" />
                 </StackPanel>
+            </StackPanel>
+            <StackPanel Spacing="10" Grid.Column="3">
+                <TextBlock
+                    Classes="Header"
+                    Text="Advanced" />
+                <view:ImagePropertiesView DataContext="{Binding ImageProperties}" />
+            </StackPanel>
         </Grid>
         <Grid
             Height="100"
