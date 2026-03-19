@@ -28,7 +28,7 @@ Download the latest release from [Releases](https://github.com/red-rc/PixelArtEd
 If you have questions, feature requests, or want to report bugs:
 
 - Open an [issue](https://github.com/red-rc/PixelArtEditor/issues)
-- Email: [redthar7@gmail.com](https://mail.google.com/mail/?view=cm&to=redthar7@gmail.com)
+- Email: [redthar7@gmail.com](https://mail.google.com/mail/u/0/?to=redthar7@gmail.com&fs=1&tf=cm)
 
 ---
 
