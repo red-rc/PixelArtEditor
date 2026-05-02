@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Media;
+using PixelArtEditor.AppServices;
 using PixelArtEditor.Other;
 using ReactiveUI;
 using System;
@@ -7,29 +8,23 @@ using System.Reactive;
 
 namespace PixelArtEditor.ViewModels;
 
-public class CreateParams : IPreviewParams
-{
-    public short Width { get; set; }
-    public short Height { get; set; }
-    public Color BackgroundColor { get; set; } = Colors.White;
-}
-
 public class CreateDialogVM : ReactiveObject
-{    
-    private Color _selectedColor = Colors.White;
-    public Color SelectedColor
+{
+    private Color _backgroundColor = Colors.White;
+    public Color BackgroundColor
     {
-        get => _selectedColor;
-        set => this.RaiseAndSetIfChanged(ref _selectedColor, value);
+        get => _backgroundColor;
+        set => this.RaiseAndSetIfChanged(ref _backgroundColor, value);
     }
 
     public ImagePropertiesUCVM ImageProperties { get; }
 
-    private CreateParams _livePreviewParams = new();
-    public CreateParams LivePreviewParams
+    // LivePreviewParams тепер береться з ImageProperties і розширюється кольором
+    private PixelModel _livePreviewParams = new();
+    public PixelModel LivePreviewParams
     {
         get => _livePreviewParams;
-        set => this.RaiseAndSetIfChanged(ref _livePreviewParams, value);
+        private set => this.RaiseAndSetIfChanged(ref _livePreviewParams, value);
     }
 
     public ReactiveCommand<Unit, Unit> CreateCommand { get; }
@@ -38,37 +33,54 @@ public class CreateDialogVM : ReactiveObject
     public CreateDialogVM(Window dialog)
     {
         ImageProperties = new ImagePropertiesUCVM();
-        
+
         CreateCommand = ReactiveCommand.Create(() =>
         {
-            dialog.Close(new CreateParams
+            var data = PixelModelService.CreateRgba32(
+                ImageProperties.Width,
+                ImageProperties.Height,
+                BackgroundColor);
+
+            dialog.Close(new PixelModel
             {
-                Width = ImageProperties.SelectedWidth,
-                Height = ImageProperties.SelectedHeight,
-                BackgroundColor = SelectedColor
+                Width = ImageProperties.Width,
+                Height = ImageProperties.Height,
+                Mode = ImageProperties.ColorMode,
+                BitDepth = ImageProperties.BitDepth,
+                ColorSpace = ImageProperties.ColorSpace,
+                Alpha = ImageProperties.AlphaFormat,
+                BigEndian = ImageProperties.BigEndian,
+                DpiX = ImageProperties.DpiX,
+                DpiY = ImageProperties.DpiY,
+                Data = data
             });
         });
 
         CancelCommand = ReactiveCommand.Create(dialog.Close);
 
-        SetupReactiveLivePreview();
+        // підписуємось на зміни ImageProperties і Color
+        ImageProperties.Changed.Subscribe(_ => UpdateLivePreview());
+        this.WhenAnyValue(x => x.BackgroundColor).Subscribe(_ => UpdateLivePreview());
+        UpdateLivePreview();
     }
 
-
-    private void SetupReactiveLivePreview()
+    private void UpdateLivePreview()
     {
-        this.WhenAnyValue(
-            x => x.ImageProperties.SelectedWidth,
-            x => x.ImageProperties.SelectedHeight,
-            x => x.SelectedColor
-        ).Subscribe(tuple =>
+        // беремо базовий LivePreviewParams з ImageProperties і додаємо колір
+        var base_ = ImageProperties.LivePreviewParams;
+        LivePreviewParams = new PixelModel
         {
-            LivePreviewParams = new CreateParams
-            {
-                Width = tuple.Item1,
-                Height = tuple.Item2,
-                BackgroundColor = tuple.Item3
-            };
-        });
+            Width = base_.Width,
+            Height = base_.Height,
+            Mode = base_.Mode,
+            BitDepth = base_.BitDepth,
+            ColorSpace = base_.ColorSpace,
+            Alpha = base_.Alpha,
+            DpiX = base_.DpiX,
+            DpiY = base_.DpiY,
+            BigEndian = base_.BigEndian,
+            // дані пікселів з фоновим кольором для preview
+            Data = PixelModelService.CreateRgba32(base_.Width, base_.Height, BackgroundColor)
+        };
     }
 }

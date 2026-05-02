@@ -6,10 +6,10 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="clr-namespace:PixelArtEditor.UI"
     xmlns:vm="clr-namespace:PixelArtEditor.ViewModels"
-    Width="150"
-    Height="185"
-    d:DesignHeight="185"
-    d:DesignWidth="150"
+    Width="300"
+    Height="200"
+    d:DesignHeight="200"
+    d:DesignWidth="300"
     x:DataType="vm:ImagePropertiesUCVM"
     Background="{DynamicResource BackgroundColor}"
     mc:Ignorable="d">
@@ -27,25 +27,74 @@
             <Setter Property="MinWidth" Value="55" />
         </Style>
         <Style Selector="ComboBox">
+            <Setter Property="Width" Value="120" />
             <Setter Property="Height" Value="30" />
             <Setter Property="Padding" Value="10,0,10,0" />
         </Style>
     </UserControl.Styles>
 
-    <DockPanel
+    <Grid
         HorizontalAlignment="Stretch"
         VerticalAlignment="Stretch"
+        ColumnDefinitions="*,*"
         Background="{DynamicResource SecondaryBackgroundColor}">
-        <StackPanel DockPanel.Dock="Top" Spacing="10">
+        <StackPanel Grid.Column="0" Spacing="10">
             <StackPanel>
-                <TextBlock
+                <TextBlock HorizontalAlignment="Center" Text="DPI (x, y)" />
+                <StackPanel
                     HorizontalAlignment="Center"
-                    Text="DPI (x, y)" />
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="6">
-                    <ui:NumberBox Classes="NumberBox" Value="{Binding SelectedDpiX, Mode=TwoWay}" />
-                    <ui:NumberBox Classes="NumberBox" Value="{Binding SelectedDpiY, Mode=TwoWay}" />
+                    Orientation="Horizontal"
+                    Spacing="6">
+                    <ui:NumberBox Classes="NumberBox" Value="{Binding DpiX, Mode=TwoWay}" />
+                    <ui:NumberBox Classes="NumberBox" Value="{Binding DpiY, Mode=TwoWay}" />
                 </StackPanel>
             </StackPanel>
+            <StackPanel>
+                <TextBlock HorizontalAlignment="Center" Text="Color Mode" />
+                <StackPanel
+                    HorizontalAlignment="Center"
+                    Orientation="Horizontal"
+                    Spacing="6">
+                    <ComboBox Classes="ComboBox" ItemsSource="{Binding ColorModesNames}" 
+                              SelectedItem="{Binding ColorModeName, Mode=TwoWay}" />
+                </StackPanel>
+            </StackPanel>
+            <StackPanel>
+                <TextBlock HorizontalAlignment="Center" Text="Bit Depth" />
+                <StackPanel
+                    HorizontalAlignment="Center"
+                    Orientation="Horizontal"
+                    Spacing="6">
+                    <ComboBox Classes="ComboBox" ItemsSource="{Binding BitDepthsNames}" 
+                              SelectedItem="{Binding BitDepthName, Mode=TwoWay}" />
+                </StackPanel>
+			</StackPanel>
         </StackPanel>
-    </DockPanel>
+        <StackPanel Grid.Column="1" Spacing="10">
+			<StackPanel>
+                <TextBlock HorizontalAlignment="Center" Text="Alpha Format" />
+                <StackPanel
+                    HorizontalAlignment="Center"
+                    Orientation="Horizontal"
+                    Spacing="6">
+                    <ComboBox Classes="ComboBox" ItemsSource="{Binding AlphaFormatNames}" 
+                              SelectedItem="{Binding AlphaFormatName, Mode=TwoWay}" />
+                </StackPanel>
+			</StackPanel>
+            <StackPanel>
+                <TextBlock HorizontalAlignment="Center" Text="Color Spaces" />
+                <StackPanel
+                    HorizontalAlignment="Center"
+                    Orientation="Horizontal"
+                    Spacing="6">
+                    <ComboBox Classes="ComboBox" ItemsSource="{Binding ColorSpacesNames}" 
+                              SelectedItem="{Binding ColorSpaceName, Mode=TwoWay}" />
+                </StackPanel>
+            </StackPanel>
+            <StackPanel Margin="10,0,0,0" HorizontalAlignment="Center" Orientation="Horizontal" Spacing="10">
+                <TextBlock VerticalAlignment="Center" Text="Big Endian" />
+                <CheckBox IsChecked="{Binding BigEndian, Mode=TwoWay}" />
+            </StackPanel>
+        </StackPanel>
+    </Grid>
 </UserControl>

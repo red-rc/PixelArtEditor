@@ -1,10 +1,8 @@
 ﻿using Avalonia.Controls;
-using Avalonia.Platform;
 using Avalonia.Platform.Storage;
-using Avalonia.Threading;
 using HeyRed.ImageSharp.Heif.Formats.Avif;
 using HeyRed.ImageSharp.Heif.Formats.Heif;
-using PixelArtEditor.ViewModels;
+using PixelArtEditor.Other;
 using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.Formats.Bmp;
 using SixLabors.ImageSharp.Formats.Gif;
@@ -17,65 +15,66 @@ using SixLabors.ImageSharp.Formats.Tiff;
 using SixLabors.ImageSharp.Formats.Webp;
 using SixLabors.ImageSharp.PixelFormats;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using AlphaFormat = PixelArtEditor.Other.AlphaFormat;
 
 namespace PixelArtEditor.AppServices;
 
 public static class ImageExportService
 {
-    public static async Task ExportImageAsync(Window dialog, ExportParams LivePreviewParams)
+    private static readonly List<FilePickerFileType> ExportFileTypes =
+    [
+        new("PNG Image")              { Patterns = ["*.png"] },
+        new("JPEG Image")             { Patterns = ["*.jpg", "*.jpeg"] },
+        new("Bitmap Image")           { Patterns = ["*.bmp"] },
+        new("GIF Image")              { Patterns = ["*.gif"] },
+        new("TIFF Image")             { Patterns = ["*.tif", "*.tiff"] },
+        new("WebP Image")             { Patterns = ["*.webp"] },
+        new("AVIF Image")             { Patterns = ["*.avif"] },
+        new("HEIF Image")             { Patterns = ["*.heif"] },
+        new("TGA Image")              { Patterns = ["*.tga"] },
+        new("Portable Bitmap")        { Patterns = ["*.pbm"] },
+        new("QOI Image")              { Patterns = ["*.qoi"] },
+    ];
+    public static async Task ExportImageAsync(Window dialog, PixelModel parameters)
     {
         var saveOptions = new FilePickerSaveOptions
         {
             Title = "Export",
             SuggestedFileName = "untitled",
-            DefaultExtension = "png"
+            DefaultExtension = "png",
+            FileTypeChoices = ExportFileTypes
         };
 
         var file = await dialog.StorageProvider.SaveFilePickerAsync(saveOptions);
         if (file == null) return;
 
-        var bitmap = Services.ExportPreview.GetUpdatedPreview(LivePreviewParams);
-        if (bitmap == null) return;
-
-        var (Width, Height, Alpha, Pixels) = await Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            return (
-                bitmap.PixelSize.Width,
-                bitmap.PixelSize.Height,
-                bitmap.AlphaFormat ?? AlphaFormat.Unpremul,
-                BitmapService.GetPixelData(bitmap)
-            );
-        });
+        // беремо поточні дані пікселів з canvas (завжди RGBA32)
+        var pixelData = Services.ImageData.BitmapPixelData;
+        if (pixelData == null) return;
 
         await Task.Run(async () =>
         {
             try
             {
-                if (Alpha == AlphaFormat.Premul)
-                {
-                    for (var i = 0; i < Pixels.Length; i += 4)
-                    {
-                        byte a = Pixels[i + 3];
-                        if (a == 0) continue;
+                // конвертуємо з RGBA32 (робочий формат) в потрібний формат для збереження
+                var exportData = ConvertForExport(pixelData, parameters);
 
-                        Pixels[i + 0] = (byte)(Pixels[i + 0] * 255 / a);
-                        Pixels[i + 1] = (byte)(Pixels[i + 1] * 255 / a);
-                        Pixels[i + 2] = (byte)(Pixels[i + 2] * 255 / a);
-                    }
-                }
+                // створюємо базовий Rgba32 і одразу конвертуємо в потрібний формат
+                using var baseImage = SixLabors.ImageSharp.Image.LoadPixelData<Rgba32>(
+                    exportData, parameters.Width, parameters.Height);
+                using var image = ConvertToTargetFormat(baseImage, parameters);
 
-                using var image = SixLabors.ImageSharp.Image.LoadPixelData<Bgra32>(Pixels, Width, Height);
-
-                image.Metadata.HorizontalResolution = LivePreviewParams.SelectedDPI.X;
-                image.Metadata.VerticalResolution = LivePreviewParams.SelectedDPI.Y;
+                image.Metadata.HorizontalResolution = parameters.DpiX;
+                image.Metadata.VerticalResolution = parameters.DpiY;
 
                 await using var stream = await file.OpenWriteAsync();
 
                 IImageEncoder encoder = Path.GetExtension(file.Name).ToLowerInvariant() switch
                 {
-                    ".png" => new PngEncoder(),
+                    ".png" => BuildPngEncoder(parameters),
                     ".jpg" or ".jpeg" => new JpegEncoder { Quality = 100 },
                     ".bmp" => new BmpEncoder(),
                     ".gif" => new GifEncoder(),
@@ -96,5 +95,99 @@ public static class ImageExportService
                 throw new InvalidOperationException("Failed to export image.", ex);
             }
         });
+    }
+
+    private static byte[] ConvertForExport(byte[] bgra, PixelModel parameters)
+    {
+        var result = new byte[bgra.Length];
+
+        for (var i = 0; i < result.Length; i += 4)
+        {
+            result[i + 0] = bgra[i + 2]; // R ← B
+            result[i + 1] = bgra[i + 1]; // G ← G
+            result[i + 2] = bgra[i + 0]; // B ← R
+            result[i + 3] = bgra[i + 3]; // A ← A
+        }
+
+        if (parameters.Alpha == AlphaFormat.Premultiplied)
+        {
+            for (var i = 0; i < result.Length; i += 4)
+            {
+                byte a = result[i + 3];
+                if (a == 0) continue;
+                result[i + 0] = (byte)(result[i + 0] * a / 255);
+                result[i + 1] = (byte)(result[i + 1] * a / 255);
+                result[i + 2] = (byte)(result[i + 2] * a / 255);
+            }
+        }
+
+        return result;
+    }
+
+    private static SixLabors.ImageSharp.Image ConvertToTargetFormat(
+     SixLabors.ImageSharp.Image<Rgba32> baseImage, PixelModel parameters)
+    {
+        return (parameters.Mode, parameters.BitDepth) switch
+        {
+            (ColorMode.RGBA, BitDepth.Bit8) => baseImage.CloneAs<Rgba32>(),
+            (ColorMode.RGB, BitDepth.Bit8) => baseImage.CloneAs<Rgb24>(),
+            (ColorMode.RGBA, BitDepth.Bit16) => ToRgba64Image(baseImage),
+            (ColorMode.RGB, BitDepth.Bit16) => baseImage.CloneAs<Rgb48>(),
+            (ColorMode.Grayscale, BitDepth.Bit8) => baseImage.CloneAs<L8>(),
+            (ColorMode.Grayscale, BitDepth.Bit16) => baseImage.CloneAs<L16>(),
+            (ColorMode.RGB, BitDepth.RGB565) => baseImage.CloneAs<Bgr565>(),
+            _ => baseImage.CloneAs<Rgba32>()
+        };
+    }
+
+    // ToRgba64Image тепер приймає Image<Rgba32> замість byte[]
+    private static SixLabors.ImageSharp.Image<Rgba64> ToRgba64Image(
+        SixLabors.ImageSharp.Image<Rgba32> src)
+    {
+        var width = src.Width;
+        var height = src.Height;
+        var rgba64Data = new byte[width * height * 8];
+
+        src.ProcessPixelRows(accessor =>
+        {
+            for (var y = 0; y < height; y++)
+            {
+                var row = accessor.GetRowSpan(y);
+                for (var x = 0; x < width; x++)
+                {
+                    var j = (y * width + x) * 8;
+                    var r = (ushort)(row[x].R * 65535 / 255);
+                    var g = (ushort)(row[x].G * 65535 / 255);
+                    var b = (ushort)(row[x].B * 65535 / 255);
+                    var a = (ushort)(row[x].A * 65535 / 255);
+
+                    rgba64Data[j + 0] = (byte)(r & 0xFF);
+                    rgba64Data[j + 1] = (byte)(r >> 8);
+                    rgba64Data[j + 2] = (byte)(g & 0xFF);
+                    rgba64Data[j + 3] = (byte)(g >> 8);
+                    rgba64Data[j + 4] = (byte)(b & 0xFF);
+                    rgba64Data[j + 5] = (byte)(b >> 8);
+                    rgba64Data[j + 6] = (byte)(a & 0xFF);
+                    rgba64Data[j + 7] = (byte)(a >> 8);
+                }
+            }
+        });
+
+        return SixLabors.ImageSharp.Image.LoadPixelData<Rgba64>(rgba64Data, width, height);
+    }
+
+    // PNG encoder з урахуванням bit depth
+    private static PngEncoder BuildPngEncoder(PixelModel parameters)
+    {
+        var bitDepth = parameters.BitDepth switch
+        {
+            BitDepth.Bit1 => PngBitDepth.Bit1,
+            BitDepth.Bit4 => PngBitDepth.Bit4,
+            BitDepth.Bit8 => PngBitDepth.Bit8,
+            BitDepth.Bit16 => PngBitDepth.Bit16,
+            _ => PngBitDepth.Bit8
+        };
+
+        return new PngEncoder { BitDepth = bitDepth };
     }
 }

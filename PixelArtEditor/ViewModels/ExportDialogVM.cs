@@ -1,6 +1,4 @@
-﻿using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Media.Imaging;
+﻿using Avalonia.Controls;
 using PixelArtEditor.AppServices;
 using PixelArtEditor.Other;
 using ReactiveUI;
@@ -10,38 +8,36 @@ using System.Reactive.Linq;
 
 namespace PixelArtEditor.ViewModels;
 
-public class ExportParams : IPreviewParams
-{
-    public short Width { get; set; }
-    public short Height { get; set; }
-    public Vector SelectedDPI { get; set; } = new Vector(96, 96);
-}
-
 public class ExportDialogVM : ReactiveObject
 {
-    private ExportParams _livePreviewParams = new();
-    public ExportParams LivePreviewParams
-    {
-        get => _livePreviewParams;
-        set => this.RaiseAndSetIfChanged(ref _livePreviewParams, value);
-    }
+    public ImagePropertiesUCVM ImageProperties { get; }
+    public PixelModel LivePreviewParams => ImageProperties.LivePreviewParams;
 
-    private readonly WriteableBitmap? PreviewBitmap = Services.ExportPreview.PreviewBitmap;
+    private readonly PixelModel? _originalModel = Services.ImageData.Model;
 
     public ReactiveCommand<Unit, Unit> CancelCommand { get; }
     public ReactiveCommand<Unit, Unit> ConfirmCommand { get; }
 
-    public ImagePropertiesUCVM ImageProperties { get; }
 
     public ExportDialogVM(Window dialog)
     {
         ImageProperties = new ImagePropertiesUCVM();
 
-        if (PreviewBitmap != null)
+        ImageProperties.WhenAnyValue(x => x.LivePreviewParams)
+            .Subscribe(_ => this.RaisePropertyChanged(nameof(LivePreviewParams)));
+
+        // заповнюємо з поточної моделі
+        if (_originalModel is not null)
         {
-            ImageProperties.SelectedWidth = (short)PreviewBitmap.Size.Width;
-            ImageProperties.SelectedHeight = (short)PreviewBitmap.Size.Height;
-            ImageProperties.SelectedDPI = PreviewBitmap.Dpi;
+            ImageProperties.Width = _originalModel.Width;
+            ImageProperties.Height = _originalModel.Height;
+            ImageProperties.ColorMode = _originalModel.Mode;
+            ImageProperties.BitDepth = _originalModel.BitDepth;
+            ImageProperties.ColorSpace = _originalModel.ColorSpace;
+            ImageProperties.AlphaFormat = _originalModel.Alpha;
+            ImageProperties.DpiX = _originalModel.DpiX;
+            ImageProperties.DpiY = _originalModel.DpiY;
+            ImageProperties.BigEndian = _originalModel.BigEndian;
         }
 
         ConfirmCommand = ReactiveCommand.CreateFromTask(async () =>
@@ -51,24 +47,5 @@ public class ExportDialogVM : ReactiveObject
         });
 
         CancelCommand = ReactiveCommand.Create(dialog.Close);
-        SetupReactiveLivePreview();
-    }
-
-    private void SetupReactiveLivePreview()
-    {
-        var propsObservable = ImageProperties.WhenAnyValue(
-            ip => ip.SelectedWidth,
-            ip => ip.SelectedHeight,
-            ip => ip.SelectedDPI);
-
-        propsObservable.Subscribe(tuple =>
-        {
-            LivePreviewParams = new ExportParams
-            {
-                Width = tuple.Item1,
-                Height = tuple.Item2,
-                SelectedDPI = tuple.Item3
-            };
-        });
     }
 }

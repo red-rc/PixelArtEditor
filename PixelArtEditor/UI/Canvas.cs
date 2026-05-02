@@ -6,7 +6,6 @@ using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using PixelArtEditor.AppServices;
 using PixelArtEditor.Other;
-using PixelArtEditor.ViewModels;
 using System;
 using System.Buffers;
 using System.Numerics;
@@ -48,24 +47,6 @@ public class Canvas : Control
         set => SetValue(SelectedToolProperty, value);
     }
 
-    public static readonly StyledProperty<CreateParams?> ParametersProperty =
-        AvaloniaProperty.Register<Canvas, CreateParams?>(nameof(Parameters));
-
-    public CreateParams? Parameters
-    {
-        get => GetValue(ParametersProperty);
-        set => SetValue(ParametersProperty, value);
-    }
-
-    public static readonly StyledProperty<WriteableBitmap?> ImportedBitmapProperty =
-    AvaloniaProperty.Register<Canvas, WriteableBitmap?>(nameof(ImportedBitmap));
-
-    public WriteableBitmap? ImportedBitmap
-    {
-        get => GetValue(ImportedBitmapProperty);
-        set => SetValue(ImportedBitmapProperty, value);
-    }
-
     private bool _isLeftPressed;
 
     private PixelPoint? _hoverPixel;
@@ -92,7 +73,7 @@ public class Canvas : Control
     private ImageBrush? _checkerboardBrush;
     
     private WriteableBitmap? _renderBitmap;
-    public WriteableBitmap? GetBitmap() => _renderBitmap;
+    public byte[]? GetPixelData() => _pixelData;
 
     public static readonly StyledProperty<PixelPoint?> CurrentPixelCoordProperty =
     AvaloniaProperty.Register<Canvas, PixelPoint?>(nameof(CurrentPixelCoord));
@@ -102,6 +83,8 @@ public class Canvas : Control
         get => GetValue(CurrentPixelCoordProperty);
         set => SetValue(CurrentPixelCoordProperty, value);
     }
+
+    PixelModel? OriginalModel;
 
     private byte[]? _pixelData;
     private bool _renderBitmapDirty;
@@ -117,35 +100,52 @@ public class Canvas : Control
     {
         RenderOptions.SetBitmapInterpolationMode(this, BitmapInterpolationMode.None);
 
-        this.GetObservable(ImportedBitmapProperty).Subscribe(bitmap =>
-        {
-            if (bitmap is null) return;
+        Services.ImageData.ModelChanged += OnModelChanged;
+        if (Services.ImageData.Model is not null) OnModelChanged(Services.ImageData.Model);
 
-            _renderBitmap?.Dispose();
+        Services.ImageData.PixelDataChanged += OnPixelDataChanged;
 
-            _renderBitmap = bitmap;
-            _pixelData = BitmapService.GetPixelData(bitmap);
-
-            _renderBitmapDirty = true;
-            InvalidateVisual();
-        });
-        this.GetObservable(ParametersProperty).Subscribe(param =>
-        {
-            if (param is null) return;
-
-            _renderBitmap?.Dispose();
-
-            _pixelData = BitmapService.CreatePixelData(param.Width, param.Height, param.BackgroundColor);
-            _renderBitmap = BitmapService.CreateBitmap(param.Width, param.Height, _pixelData);
-
-            _renderBitmapDirty = false;
-            InvalidateVisual();
-        });
         this.GetObservable(OffsetProperty).Subscribe(_ => InvalidateVisual());
         this.GetObservable(ScaleProperty).Subscribe(_ => InvalidateVisual());
 
         _previewBitmap = null;
         _previewDirty = true;
+    }
+
+    private void OnModelChanged(PixelModel? model)
+    {
+        if (model is null) return;
+
+        _renderBitmap?.Dispose();
+        OriginalModel = model;
+
+        var rgba = PixelModelService.ToRgba32(OriginalModel);
+        OriginalModel.Data = [];
+
+        // конвертуємо RGBA → BGRA для WriteableBitmap
+        _pixelData = new byte[rgba.Length];
+        for (var i = 0; i < rgba.Length; i += 4)
+        {
+            _pixelData[i + 0] = rgba[i + 2]; // B ← R
+            _pixelData[i + 1] = rgba[i + 1]; // G
+            _pixelData[i + 2] = rgba[i + 0]; // R ← B
+            _pixelData[i + 3] = rgba[i + 3]; // A
+        }
+
+        _renderBitmap = BitmapService.CreateBitmap(OriginalModel.Width, OriginalModel.Height, _pixelData);
+        _renderBitmapDirty = false;
+        _previewDirty = true;
+        InvalidateVisual();
+    }
+
+    private void OnPixelDataChanged()
+    {
+        _pixelData = Services.ImageData.BitmapPixelData;
+        _renderBitmap?.Dispose();
+        _renderBitmap = BitmapService.CreateBitmap(OriginalModel!.Width, OriginalModel.Height, _pixelData!);
+        _renderBitmapDirty = false;
+        _previewDirty = true;
+        InvalidateVisual();
     }
 
     private (Size bmpSize, Point offset) GetBitmapRenderInfo()
@@ -415,7 +415,7 @@ public class Canvas : Control
 
         EnsurePreviewBitmap(bmpW, bmpH);
 
-        _checkerboardBrush ??= new ImageBrush(BitmapService.CreateBitmap(8, 8, BitmapService.CreateZeroPixelData(8, 8)))
+        _checkerboardBrush ??= new ImageBrush(BitmapService.CreateBitmap(8, 8, BitmapService.CreateCheckerBoardPixelData(8, 8)))
         {
             TileMode = TileMode.Tile,
             Stretch = Stretch.Fill,

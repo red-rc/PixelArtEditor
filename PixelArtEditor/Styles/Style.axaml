@@ -172,6 +172,14 @@
         <Setter Property="Background" Value="#f44336" />
     </Style>
 
+    <Style Selector="Button.WindowCloseButton Image">
+        <Setter Property="Source" Value="{DynamicResource CloseIcon}" />
+    </Style>
+
+    <Style Selector="Button.WindowCloseButton:pointerover Image">
+        <Setter Property="Source" Value="{DynamicResource CloseIconHover}" />
+    </Style>
+
     <Style Selector="TextBlock">
         <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />
     </Style>

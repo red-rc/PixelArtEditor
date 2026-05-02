@@ -1,3 +1,4 @@
+using PixelArtEditor.Other;
 using PixelArtEditor.ViewModels;
 using PixelArtEditor.Windows;
 using System.Threading.Tasks;
@@ -8,39 +9,25 @@ public static class ActionService
 {
     public static async Task ShowCreateWindowAsync()
     {
-        var result = await DialogService.ShowDialogAsync<CreateDialogWindow, CreateParams>();
+        Services.ImageData.Model = await DialogService.ShowDialogAsync<CreateDialogWindow, PixelModel>();
+        if (Services.ImageData.Model == null) return;
 
-        if (result != null)
-        {
-            if (Services.Navigation.GetViewModel() is EditorVM editorVM)
-            {
-                editorVM.SetInitCreateParams(result);
-            }
-            else
-            {
-                Services.Navigation.NavigateTo(new EditorVM(result));
-            }
-        }
+        if (Services.Navigation.GetViewModel() is not EditorVM)
+            Services.Navigation.NavigateTo(new EditorVM());
     }
 
     public static async Task ShowImportWindowAsync()
     {
-        var bitmap = await ImageImportService.ImportImageAsync();
-        if (bitmap == null) return;
+        Services.ImageData.Model = await ImageImportService.ImportImageAsync();
+        if (Services.ImageData.Model == null) return;
 
-        if (Services.Navigation.GetViewModel() is EditorVM editorVM)
-        {
-            editorVM.SetInitBitmap(bitmap);
-        }
-        else
-        {
-            Services.Navigation.NavigateTo(new EditorVM(bitmap));
-        }
+        if (Services.Navigation.GetViewModel() is not EditorVM)
+            Services.Navigation.NavigateTo(new EditorVM());
     }
 
     public static async Task ShowExportWindowAsync()
     {
-        await DialogService.ShowDialogAsync<ExportDialogWindow, ExportParams>();
+        await DialogService.ShowDialogAsync<ExportDialogWindow, PixelModel>();
     }
 
     public static async Task ShowSettingsWindowAsync()

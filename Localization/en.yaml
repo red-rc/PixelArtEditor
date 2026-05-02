@@ -13,9 +13,11 @@ MenuSettings: Settings
 MenuZoomIn: Zoom In
 MenuZoomOut: Zoom Out
 MenuResetZoom: Reset Zoom
+MenuResetLayout: Reset Layout
 MenuLightTheme: Light Theme
 MenuDarkTheme: Dark Theme
 MenuCheckForUpdates: Check For Updates
+Report: Report An Issue
 MenuContactUs: Contact Us
 MenuAbout: About
 CrWinTitle: Create File
@@ -37,12 +39,6 @@ SetWinSave: Save
 StartViewCreate: Create
 StartViewOpen: Open
 StartViewText: Pixeller - your pixel art editor
-EditorViewAlignTop: Align to the top
-EditorViewAlignBottom: Align to the bottom
-EditorViewAlignRight: Align to the right
-EditorViewAlignLeft: Align to the left
-EditorViewBringToFront: Bring to front
-EditorViewBringToBack: Bring to back
 AprViewTheme: Theme
 AprViewAccentColor: Accent Color
 GenViewLanguage: Language
@@ -55,4 +51,3 @@ GenViewEnableAutosave: Enable Autosave
 GenViewAutosaveEvery: Autosave every
 GenViewSeconds: seconds
 Language: English
-LangCode: en

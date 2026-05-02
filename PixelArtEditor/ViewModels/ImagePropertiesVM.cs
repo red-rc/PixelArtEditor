@@ -1,33 +1,19 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Media.Imaging;
-using Avalonia.Platform;
 using PixelArtEditor.AppServices;
 using PixelArtEditor.Other;
 using ReactiveUI;
 using System;
 using System.Reactive;
-using System.Reactive.Linq;
 
 namespace PixelArtEditor.ViewModels;
-
-public class PropertiesParams : IPreviewParams
-{
-    public short Width { get; set; }
-    public short Height { get; set; }
-}
 
 public class ImagePropertiesVM : ReactiveObject
 {
     public ImagePropertiesUCVM ImageProperties { get; }
+    public PixelModel LivePreviewParams => ImageProperties.LivePreviewParams;
 
-    private PropertiesParams _livePreviewParams = new();
-    public PropertiesParams LivePreviewParams
-    {
-        get => _livePreviewParams;
-        set => this.RaiseAndSetIfChanged(ref _livePreviewParams, value);
-    }
-    private readonly WriteableBitmap? PreviewBitmap = Services.ExportPreview.PreviewBitmap;
+    private readonly PixelModel? _originalModel = Services.ImageData.Model;
+
     public ReactiveCommand<Unit, Unit> ResetCommand { get; }
     public ReactiveCommand<Unit, Unit> CancelCommand { get; }
     public ReactiveCommand<Unit, Unit> SaveCommand { get; }
@@ -36,59 +22,74 @@ public class ImagePropertiesVM : ReactiveObject
     {
         ImageProperties = new ImagePropertiesUCVM();
 
-        if (PreviewBitmap != null)
+        ImageProperties.WhenAnyValue(x => x.LivePreviewParams)
+            .Subscribe(_ => this.RaisePropertyChanged(nameof(LivePreviewParams)));
+
+        // заповнюємо з поточної моделі
+        if (_originalModel is not null)
         {
-            ImageProperties.SelectedWidth = (short)PreviewBitmap.Size.Width;
-            ImageProperties.SelectedHeight = (short)PreviewBitmap.Size.Height;
+            ImageProperties.Width = _originalModel.Width;
+            ImageProperties.Height = _originalModel.Height;
+            ImageProperties.ColorMode = _originalModel.Mode;
+            ImageProperties.BitDepth = _originalModel.BitDepth;
+            ImageProperties.ColorSpace = _originalModel.ColorSpace;
+            ImageProperties.AlphaFormat = _originalModel.Alpha;
+            ImageProperties.DpiX = _originalModel.DpiX;
+            ImageProperties.DpiY = _originalModel.DpiY;
+            ImageProperties.BigEndian = _originalModel.BigEndian;
         }
 
-        ResetCommand = ReactiveCommand.Create(OnClosing);
+        ResetCommand = ReactiveCommand.Create(ResetToOriginal);
+
         CancelCommand = ReactiveCommand.Create(() =>
         {
-            OnClosing();
+            ResetToOriginal();
             dialog.Close();
         });
+
         SaveCommand = ReactiveCommand.Create(() =>
         {
-            if (PreviewBitmap == null) return;
+            if (_originalModel is null) return;
 
-            var bitmap = PreviewBitmap;
-            BitmapService.UpdateBitmapProperties(ref bitmap, LivePreviewParams.Width, LivePreviewParams.Height, new Vector(96, 96), AlphaFormat.Unpremul);
+            var newWidth = ImageProperties.Width;
+            var newHeight = ImageProperties.Height;
 
-            Services.ExportPreview.PreviewBitmap = bitmap;
-            Services.RenderInvalidation.BitmapDirty = true;
+            // якщо розмір змінився — ресайзимо пікселі
+            if ((newWidth != _originalModel.Width || newHeight != _originalModel.Height) && Services.ImageData.BitmapPixelData is not null)
+            {
+                Services.ImageData.BitmapPixelData = BitmapService.ResizePixelData(
+                    Services.ImageData.BitmapPixelData,
+                    _originalModel.Width, _originalModel.Height,
+                    newWidth, newHeight);
+                _originalModel.Width = newWidth;
+                _originalModel.Height = newHeight;
+                Services.ImageData.NotifyPixelDataChanged();
+            }
+
+            _originalModel.Mode = ImageProperties.ColorMode;
+            _originalModel.BitDepth = ImageProperties.BitDepth;
+            _originalModel.ColorSpace = ImageProperties.ColorSpace;
+            _originalModel.Alpha = ImageProperties.AlphaFormat;
+            _originalModel.DpiX = ImageProperties.DpiX;
+            _originalModel.DpiY = ImageProperties.DpiY;
+            _originalModel.BigEndian = ImageProperties.BigEndian;
+
             dialog.Close();
         });
-
-        SetupReactiveLivePreview();
     }
 
-    private void SetupReactiveLivePreview()
+    private void ResetToOriginal()
     {
-        this.WhenAnyValue(
-            x => x.ImageProperties.SelectedWidth,
-            x => x.ImageProperties.SelectedHeight
-        ).Subscribe(tuple =>
-        {
-            LivePreviewParams = new PropertiesParams
-            {
-                Width = tuple.Item1,
-                Height = tuple.Item2
-            };
-        });
-    }
+        if (_originalModel is null) return;
 
-    public void OnClosing()
-    {
-        if (PreviewBitmap != null)
-        {
-            ImageProperties.SelectedWidth = (short)PreviewBitmap.Size.Width;
-            ImageProperties.SelectedHeight = (short)PreviewBitmap.Size.Height;
-        }
-
-        foreach (var prop in typeof(ISettingsService).GetProperties())
-        {
-            this.RaisePropertyChanged(prop.Name);
-        }
+        ImageProperties.Width = _originalModel.Width;
+        ImageProperties.Height = _originalModel.Height;
+        ImageProperties.ColorMode = _originalModel.Mode;
+        ImageProperties.BitDepth = _originalModel.BitDepth;
+        ImageProperties.ColorSpace = _originalModel.ColorSpace;
+        ImageProperties.AlphaFormat = _originalModel.Alpha;
+        ImageProperties.DpiX = _originalModel.DpiX;
+        ImageProperties.DpiY = _originalModel.DpiY;
+        ImageProperties.BigEndian = _originalModel.BigEndian;
     }
 }

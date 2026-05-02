@@ -6,14 +6,14 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:other="clr-namespace:PixelArtEditor.Other"
     xmlns:settings="clr-namespace:PixelArtEditor.Views.SettingsViews"
-    xmlns:vm="clr-namespace:PixelArtEditor.ViewModels"
     xmlns:ui="clr-namespace:PixelArtEditor.UI"
     xmlns:view="clr-namespace:PixelArtEditor.Views"
+    xmlns:vm="clr-namespace:PixelArtEditor.ViewModels"
     Title="{DynamicResource SetWinSettings}"
-    Width="600"
+    Width="700"
     Height="450"
     d:DesignHeight="450"
-    d:DesignWidth="600"
+    d:DesignWidth="700"
     x:DataType="vm:ImagePropertiesVM"
     Background="{DynamicResource BackgroundColor}"
     CanResize="False"
@@ -40,21 +40,17 @@
             Margin="20,50,20,0"
             ColumnDefinitions="250,Auto,10,Auto"
             DockPanel.Dock="Top">
-            <ui:ExportPreview
+            <ui:Preview
                 Grid.Column="0"
                 Margin="30,40,0,0"
                 Parameters="{Binding LivePreviewParams}" />
 
-            <StackPanel Spacing="10" Grid.Column="1">
-                <TextBlock
-                    Classes="Header"
-                    Text="Size" />
+            <StackPanel Grid.Column="1" Spacing="10">
+                <TextBlock Classes="Header" Text="Size" />
                 <view:ImageSizeView DataContext="{Binding ImageProperties}" />
             </StackPanel>
-            <StackPanel Spacing="10" Grid.Column="3">
-                <TextBlock
-                    Classes="Header"
-                    Text="Advanced" />
+            <StackPanel Grid.Column="3" Spacing="10">
+                <TextBlock Classes="Header" Text="Advanced" />
                 <view:ImagePropertiesView DataContext="{Binding ImageProperties}" />
             </StackPanel>
         </Grid>

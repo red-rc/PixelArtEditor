@@ -30,6 +30,7 @@
     <PackageReference Include="Newtonsoft.Json" />
     <PackageReference Include="SixLabors.ImageSharp" />
     <PackageReference Include="SkiaSharp" />
+    <PackageReference Include="System.Collections" />
     <PackageReference Include="YamlDotNet" />
   </ItemGroup>
 

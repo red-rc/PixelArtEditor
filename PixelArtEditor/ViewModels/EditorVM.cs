@@ -1,6 +1,6 @@
 using Avalonia;
 using Avalonia.Media;
-using Avalonia.Media.Imaging;
+using PixelArtEditor.AppServices;
 using PixelArtEditor.Other;
 using PixelArtEditor.UI;
 using ReactiveUI;
@@ -13,7 +13,7 @@ public class EditorVM : ReactiveObject
 {
     private Canvas? _canvas;
 
-    public WriteableBitmap? GetBitmap() => _canvas?.GetBitmap();
+    public byte[]? GetPixelData() => _canvas?.GetPixelData();
 
     private double _lastPanelWidth = -1;
     private double _lastPanelHeight = -1;
@@ -55,13 +55,6 @@ public class EditorVM : ReactiveObject
     {
         get => _maxScale;
         private set => this.RaiseAndSetIfChanged(ref _maxScale, value);
-    }
-    
-    private CreateParams _parameters;
-    public CreateParams Parameters
-    {
-        get => _parameters;
-        set => this.RaiseAndSetIfChanged(ref _parameters, value);
     }
     
     private ToolType _selectedTool;
@@ -148,13 +141,6 @@ public class EditorVM : ReactiveObject
 
     public string? IndicatorText { get; set; }
 
-    private WriteableBitmap? _importedBitmap;
-    public WriteableBitmap? ImportedBitmap
-    {
-        get => _importedBitmap;
-        set => this.RaiseAndSetIfChanged(ref _importedBitmap, value);
-    }
-
     public void SetCanvas(Canvas canvas)
     {
         _canvas = canvas;
@@ -170,44 +156,8 @@ public class EditorVM : ReactiveObject
             });
     }
 
-    public EditorVM(CreateParams parameters)
+    public EditorVM()
     {
-        _parameters = parameters;
-        SetInitCreateParams(_parameters);
-    }
-
-    public EditorVM(WriteableBitmap bitmap)
-    {
-        _parameters = new CreateParams
-        {
-            Width = 32,
-            Height = 32,
-            BackgroundColor = Colors.White
-        };
-
-        SetInitBitmap(bitmap);
-    }
-
-    public void SetInitCreateParams(CreateParams parameters)
-    {
-        Parameters = parameters;
-        ImportedBitmap = null;
-        SelectedTool = ToolType.None;
-
-        AdjustCanvas(_lastPanelWidth, _lastPanelHeight);
-    }
-
-    public void SetInitBitmap(WriteableBitmap bitmap)
-    {
-        _parameters = new CreateParams
-        {
-            Width = (short)bitmap.Size.Width,
-            Height = (short)bitmap.Size.Height,
-            BackgroundColor = Colors.White
-        };
-        ImportedBitmap = bitmap;
-        SelectedTool = ToolType.None;
-
         AdjustCanvas(_lastPanelWidth, _lastPanelHeight);
     }
 
@@ -251,10 +201,13 @@ public class EditorVM : ReactiveObject
 
     public void AdjustCanvas(double width, double height)
     {
-        if (width <= 0 || height <= 0 || _parameters.Width <= 0 || _parameters.Height <= 0) return;
+        var modelWidth = Services.ImageData.Model?.Width ?? 0;
+        var modelHeight = Services.ImageData.Model?.Height ?? 0;
 
-        var borderSize = _parameters.Width > _parameters.Height ? width : height;
-        var canvasSize = _parameters.Width > _parameters.Height ? _parameters.Width : _parameters.Height;
+        if (width <= 0 || height <= 0 || modelWidth <= 0 || modelHeight <= 0) return;
+
+        var borderSize = modelWidth > modelHeight ? width : height;
+        var canvasSize = modelWidth > modelHeight ? modelWidth : modelHeight;
 
         MinScale = borderSize / canvasSize * 0.8;
         MaxScale = Math.Ceiling(borderSize / 8 * 10) / 10.0;

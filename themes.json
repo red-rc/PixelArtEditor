@@ -106,21 +106,21 @@
       },
       "UiColor": {
         "A": 255,
-        "R": 56,
-        "G": 56,
-        "B": 56
+        "R": 46,
+        "G": 46,
+        "B": 46
       },
       "UiHoverColor": {
         "A": 255,
-        "R": 105,
-        "G": 105,
-        "B": 105
+        "R": 68,
+        "G": 68,
+        "B": 68
       },
       "UiPressedColor": {
         "A": 255,
-        "R": 27,
-        "G": 27,
-        "B": 27
+        "R": 24,
+        "G": 24,
+        "B": 24
       },
       "MinimizeIcon": {
         "Dpi": {
@@ -167,6 +167,28 @@
         "AlphaFormat": 0
       },
       "CloseIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 10.0,
+          "Height": 10.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 10,
+          "Height": 10
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "CloseIconHover": {
         "Dpi": {
           "X": 96.0,
           "Y": 96.0,
@@ -399,15 +421,15 @@
       },
       "BackgroundHoverColor": {
         "A": 255,
-        "R": 235,
-        "G": 235,
-        "B": 235
+        "R": 227,
+        "G": 227,
+        "B": 227
       },
       "BackgroundPressedColor": {
         "A": 255,
-        "R": 224,
-        "G": 224,
-        "B": 224
+        "R": 218,
+        "G": 218,
+        "B": 218
       },
       "GrayColor": {
         "A": 255,
@@ -429,21 +451,21 @@
       },
       "UiColor": {
         "A": 255,
-        "R": 247,
-        "G": 247,
-        "B": 247
+        "R": 229,
+        "G": 229,
+        "B": 229
       },
       "UiHoverColor": {
         "A": 255,
-        "R": 240,
-        "G": 240,
-        "B": 240
+        "R": 217,
+        "G": 217,
+        "B": 217
       },
       "UiPressedColor": {
         "A": 255,
-        "R": 232,
-        "G": 232,
-        "B": 232
+        "R": 206,
+        "G": 206,
+        "B": 206
       },
       "MinimizeIcon": {
         "Dpi": {
@@ -490,6 +512,28 @@
         "AlphaFormat": 0
       },
       "CloseIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 10.0,
+          "Height": 10.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 10,
+          "Height": 10
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "CloseIconHover": {
         "Dpi": {
           "X": 96.0,
           "Y": 96.0,
@@ -752,21 +796,21 @@
       },
       "UiColor": {
         "A": 255,
-        "R": 58,
-        "G": 58,
-        "B": 58
+        "R": 64,
+        "G": 64,
+        "B": 64
       },
       "UiHoverColor": {
         "A": 255,
-        "R": 90,
-        "G": 90,
-        "B": 90
+        "R": 84,
+        "G": 84,
+        "B": 84
       },
       "UiPressedColor": {
         "A": 255,
-        "R": 37,
-        "G": 37,
-        "B": 37
+        "R": 46,
+        "G": 46,
+        "B": 46
       },
       "MinimizeIcon": {
         "Dpi": {
@@ -813,6 +857,28 @@
         "AlphaFormat": 0
       },
       "CloseIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 10.0,
+          "Height": 10.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 10,
+          "Height": 10
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "CloseIconHover": {
         "Dpi": {
           "X": 96.0,
           "Y": 96.0,
@@ -1045,15 +1111,15 @@
       },
       "BackgroundHoverColor": {
         "A": 255,
-        "R": 235,
-        "G": 235,
-        "B": 235
+        "R": 227,
+        "G": 227,
+        "B": 227
       },
       "BackgroundPressedColor": {
         "A": 255,
-        "R": 224,
-        "G": 224,
-        "B": 224
+        "R": 218,
+        "G": 218,
+        "B": 218
       },
       "GrayColor": {
         "A": 255,
@@ -1075,21 +1141,21 @@
       },
       "UiColor": {
         "A": 255,
-        "R": 247,
-        "G": 247,
-        "B": 247
+        "R": 229,
+        "G": 229,
+        "B": 229
       },
       "UiHoverColor": {
         "A": 255,
-        "R": 240,
-        "G": 240,
-        "B": 240
+        "R": 217,
+        "G": 217,
+        "B": 217
       },
       "UiPressedColor": {
         "A": 255,
-        "R": 232,
-        "G": 232,
-        "B": 232
+        "R": 206,
+        "G": 206,
+        "B": 206
       },
       "MinimizeIcon": {
         "Dpi": {
@@ -1136,6 +1202,28 @@
         "AlphaFormat": 0
       },
       "CloseIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 10.0,
+          "Height": 10.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 10,
+          "Height": 10
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "CloseIconHover": {
         "Dpi": {
           "X": 96.0,
           "Y": 96.0,

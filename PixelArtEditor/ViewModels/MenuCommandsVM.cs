@@ -1,7 +1,9 @@
 using Avalonia.Controls;
 using PixelArtEditor.AppServices;
+using PixelArtEditor.Other;
 using ReactiveUI;
 using System;
+using System.Diagnostics;
 using System.Numerics;
 using System.Reactive;
 using System.Reactive.Linq;
@@ -28,42 +30,16 @@ public class MenuCommandsVM : ReactiveObject
     public ReactiveCommand<Unit, Unit> ZoomInCommand { get; }
     public ReactiveCommand<Unit, Unit> ZoomOutCommand { get; }
     public ReactiveCommand<Unit, Unit> ResetZoomCommand { get; }
+    public ReactiveCommand<Unit, Unit> ResetLayout { get; }
     public ReactiveCommand<Unit, Unit> StandartCommand { get; }
     public ReactiveCommand<Unit, Unit> FullScreenCommand { get; }
     public ReactiveCommand<Unit, Unit> LightThemeCommand { get; }
     public ReactiveCommand<Unit, Unit> DarkThemeCommand { get; }
     
     public ReactiveCommand<Unit, Unit> CheckForUpdatesCommand { get; }
+    public ReactiveCommand<Unit, Unit> ReportCommand { get; }
     public ReactiveCommand<Unit, Unit> ContactUsCommand { get; }
     public ReactiveCommand<Unit, Unit> AboutCommand { get; }
-
-    /*
-        Create New
-        Open
-        Import
-        Save
-        Save As
-        Export
-        Last Autosave
-        Exit
-        
-        Undo
-        Redo
-        Image Properties
-        Settings
-        
-        Zoom In
-        Zoom Out
-        Reset Zoom
-        Standart
-        Fullscreen
-        White Theme
-        Dark Theme
-
-        Check For Updates
-        Contact Us
-        About
-     */
 
     public MenuCommandsVM()
     {
@@ -96,14 +72,16 @@ public class MenuCommandsVM : ReactiveObject
         ZoomInCommand = ReactiveCommand.Create(OnZoomIn, isDocumentOpen);
         ZoomOutCommand = ReactiveCommand.Create(OnZoomOut, isDocumentOpen);
         ResetZoomCommand = ReactiveCommand.Create(OnResetZoom, isDocumentOpen);
+        ResetLayout = ReactiveCommand.Create(OnResetLayout, isDocumentOpen);
         StandartCommand = ReactiveCommand.Create(OnStandart, isFullScreen);
         FullScreenCommand = ReactiveCommand.Create(OnFullScreen, isFullScreen.Select(x => !x));
         LightThemeCommand = ReactiveCommand.Create(OnLightTheme);
         DarkThemeCommand = ReactiveCommand.Create(OnDarkTheme);
         
         CheckForUpdatesCommand = ReactiveCommand.Create(OnCheckForUpdates);
-        ContactUsCommand = ReactiveCommand.Create(OnContactUs);
-        AboutCommand = ReactiveCommand.Create(OnAbout);
+        ReportCommand = ReactiveCommand.Create(() => OpenUrl("https://github.com/red-rc/PixelArtEditor/issues"));
+        ContactUsCommand = ReactiveCommand.Create(() => OpenUrl("https://mail.google.com/mail/u/0/?to=redthar7@gmail.com&fs=1&tf=cm"));
+        AboutCommand = ReactiveCommand.Create(() => OpenUrl("https://github.com/red-rc/PixelArtEditor"));
     }
     
     private void OnOpen()
@@ -126,8 +104,9 @@ public class MenuCommandsVM : ReactiveObject
     private async void OnExport()
     {
         if (Services.Navigation.GetViewModel() is not EditorVM editorVM) return;
-        Services.ExportPreview.PreviewBitmap = editorVM.GetBitmap();
+        Services.ImageData.BitmapPixelData = editorVM.GetPixelData();
         await ActionService.ShowExportWindowAsync();
+        Services.ImageData.BitmapPixelData = null;
     }
 
     private void OnLastAutosave()
@@ -145,14 +124,9 @@ public class MenuCommandsVM : ReactiveObject
     private async void OnImageProperties()
     {
         if (Services.Navigation.GetViewModel() is not EditorVM editorVM) return;
-        Services.ExportPreview.PreviewBitmap = editorVM.GetBitmap();
+        Services.ImageData.BitmapPixelData = editorVM.GetPixelData();
         await ActionService.ShowImagePropertiesWindowAsync();
-
-        if (Services.RenderInvalidation.BitmapDirty)
-        {
-            editorVM.SetInitBitmap(Services.ExportPreview.PreviewBitmap!);
-            Services.RenderInvalidation.BitmapDirty = false;
-        }
+        Services.ImageData.BitmapPixelData = null;
     }
 
     private static void OnZoomIn()
@@ -174,6 +148,11 @@ public class MenuCommandsVM : ReactiveObject
         editorVM.Offset = Vector2.Zero;
     }
 
+    private static void OnResetLayout()
+    {
+        Services.Settings.Layout = Resources.DefaultLayout;
+    }
+
     private static void OnStandart() => Services.WindowState.Current = Services.WindowState.PreviousWindowState;
 
     private static void OnFullScreen() => Services.WindowState.Current = WindowState.FullScreen;
@@ -192,11 +171,16 @@ public class MenuCommandsVM : ReactiveObject
     {
     }
 
-    private void OnContactUs()
+    private static void OpenUrl(string url)
     {
-    }
-
-    private void OnAbout()
-    {
+        try
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = url,
+                UseShellExecute = true
+            });
+        }
+        catch (Exception) {  }
     }
 }

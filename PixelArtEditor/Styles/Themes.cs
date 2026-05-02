@@ -111,13 +111,14 @@ public class DarkTheme : BaseTheme
         Resources["GrayHoverColor"] = Color.Parse("Gray");
         Resources["GrayPressedColor"] = Color.Parse("#4a4a4a");
 
-        Resources["UiColor"] = Color.Parse("#383838");
-        Resources["UiHoverColor"] = Color.Parse("DimGray");
-        Resources["UiPressedColor"] = Color.Parse("#1b1b1b");
+        Resources["UiColor"] = Color.Parse("#2e2e2e");
+        Resources["UiHoverColor"] = Color.Parse("#444444");
+        Resources["UiPressedColor"] = Color.Parse("#181818");
 
         Resources["MinimizeIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/WindowButtons/minimize-icon.png");
         Resources["MaximizeIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/WindowButtons/maximize-icon.png");
         Resources["CloseIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/WindowButtons/close-icon.png");
+        Resources["CloseIconHover"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/WindowButtons/close-icon.png");
 
         Resources["PenIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/EditButtons/pen.png");
         Resources["ColorPickerIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/EditButtons/colorpicker.png");
@@ -145,20 +146,21 @@ public class LightTheme : BaseTheme
         Resources["BackgroundColor"] = Color.Parse("#f0f0f0");
         Resources["SecondaryBackgroundColor"] = Color.Parse("#f7f7f7");
         Resources["TertiaryBackgroundColor"] = Color.Parse("#f5f5f5");
-        Resources["BackgroundHoverColor"] = Color.Parse("#ebebeb");
-        Resources["BackgroundPressedColor"] = Color.Parse("#e0e0e0");
+        Resources["BackgroundHoverColor"] = Color.Parse("#e3e3e3");
+        Resources["BackgroundPressedColor"] = Color.Parse("#dadada");
 
         Resources["GrayColor"] = Color.Parse("#a0a0a0");
         Resources["GrayHoverColor"] = Color.Parse("#888888");
         Resources["GrayPressedColor"] = Color.Parse("#666666");
 
-        Resources["UiColor"] = Color.Parse("#f7f7f7");
-        Resources["UiHoverColor"] = Color.Parse("#f0f0f0");
-        Resources["UiPressedColor"] = Color.Parse("#e8e8e8");
+        Resources["UiColor"] = Color.Parse("#e5e5e5");
+        Resources["UiHoverColor"] = Color.Parse("#d9d9d9");
+        Resources["UiPressedColor"] = Color.Parse("#cecece");
 
         Resources["MinimizeIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Light/WindowButtons/minimize-icon.png");
         Resources["MaximizeIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Light/WindowButtons/maximize-icon.png");
         Resources["CloseIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Light/WindowButtons/close-icon.png");
+        Resources["CloseIconHover"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/WindowButtons/close-icon.png");
 
         Resources["PenIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Light/EditButtons/pen.png");
         Resources["ColorPickerIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Light/EditButtons/colorpicker.png");
@@ -194,13 +196,14 @@ public class GrayTheme : BaseTheme
         Resources["GrayHoverColor"] = Color.Parse("#888888");
         Resources["GrayPressedColor"] = Color.Parse("#505050");
 
-        Resources["UiColor"] = Color.Parse("#3a3a3a");
-        Resources["UiHoverColor"] = Color.Parse("#5a5a5a");
-        Resources["UiPressedColor"] = Color.Parse("#252525");
+        Resources["UiColor"] = Color.Parse("#404040");
+        Resources["UiHoverColor"] = Color.Parse("#545454");
+        Resources["UiPressedColor"] = Color.Parse("#2e2e2e");
 
         Resources["MinimizeIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/WindowButtons/minimize-icon.png");
         Resources["MaximizeIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/WindowButtons/maximize-icon.png");
         Resources["CloseIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/WindowButtons/close-icon.png");
+        Resources["CloseIconHover"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/WindowButtons/close-icon.png");
 
         Resources["PenIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/EditButtons/pen.png");
         Resources["ColorPickerIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/EditButtons/colorpicker.png");

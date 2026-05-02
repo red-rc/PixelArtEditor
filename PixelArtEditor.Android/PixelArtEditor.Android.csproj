@@ -9,7 +9,7 @@
 	<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
 	<AndroidPackageFormat>apk</AndroidPackageFormat>
 	<AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
-	<JavaSdkDirectory>D:\Developer Stuff\Java\</JavaSdkDirectory>
+	<JavaSdkDirectory>D:\Developer Stuff\Java</JavaSdkDirectory>
 	<AndroidSdkDirectory>D:\Developer Stuff\AndroidSDK</AndroidSdkDirectory>
   </PropertyGroup>
 

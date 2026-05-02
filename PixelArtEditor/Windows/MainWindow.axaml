@@ -60,6 +60,7 @@
                         <MenuItem Command="{Binding Menu.ZoomInCommand}" Header="{DynamicResource MenuZoomIn}" />
                         <MenuItem Command="{Binding Menu.ZoomOutCommand}" Header="{DynamicResource MenuZoomOut}" />
                         <MenuItem Command="{Binding Menu.ResetZoomCommand}" Header="{DynamicResource MenuResetZoom}" />
+                        <MenuItem Command="{Binding Menu.ResetLayout}" Header="{DynamicResource MenuResetLayout}" />
                         <Separator />
                         <MenuItem Command="{Binding Menu.StandartCommand}" Header="Standart" />
                         <MenuItem Command="{Binding Menu.FullScreenCommand}" Header="FullScreen" />
@@ -69,17 +70,18 @@
 
                     <MenuItem Header="Help">
                         <MenuItem Command="{Binding Menu.CheckForUpdatesCommand}" Header="{DynamicResource MenuCheckForUpdates}" />
+                        <MenuItem Command="{Binding Menu.ReportCommand}" Header="{DynamicResource Report}" />
                         <MenuItem Command="{Binding Menu.ContactUsCommand}" Header="{DynamicResource MenuContactUs}" />
                         <MenuItem Command="{Binding Menu.AboutCommand}" Header="{DynamicResource MenuAbout}" />
                     </MenuItem>
 
                 </Menu>
                 <Border
+                    Grid.Column="2"
                     Background="Transparent"
-                    PointerPressed="OnPointerPressed"
                     PointerMoved="OnPointerMoved"
-                    PointerReleased="OnPointerReleased"
-                    Grid.Column="2" />
+                    PointerPressed="OnPointerPressed"
+                    PointerReleased="OnPointerReleased" />
                 <StackPanel
                     Grid.Column="3"
                     HorizontalAlignment="Right"
@@ -117,8 +119,7 @@
                             Width="10"
                             Height="10"
                             HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Source="{DynamicResource CloseIcon}" />
+                            VerticalAlignment="Center" />
                     </Button>
                 </StackPanel>
             </Grid>

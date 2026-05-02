@@ -32,24 +32,29 @@
         Background="{DynamicResource SecondaryBackgroundColor}">
         <StackPanel DockPanel.Dock="Top" Spacing="10">
             <StackPanel>
-                <TextBlock
-                    HorizontalAlignment="Center"
-                    Text="{DynamicResource CrWinWidth}" />
-                <ui:NumberBox Classes="NumberBox" Width="60" Value="{Binding SelectedWidth, Mode=TwoWay}" />
+                <TextBlock HorizontalAlignment="Center" Text="{DynamicResource CrWinWidth}" />
+                <ui:NumberBox
+                    Width="60"
+                    Classes="NumberBox"
+                    Value="{Binding Width, Mode=TwoWay}" />
             </StackPanel>
             <StackPanel>
                 <ui:InstantToggleButton
-                    HorizontalAlignment="Center"
-                    Classes="ProportionButton"
                     Width="30"
                     Height="18"
-                    IsChecked="{Binding EnableProportion}">
-                    <Image Width="18" Height="9" Source="{DynamicResource ChainIcon}" />
-                </ui:InstantToggleButton>
-                <TextBlock
                     HorizontalAlignment="Center"
-                    Text="{DynamicResource CrWinHeight}" />
-                <ui:NumberBox Classes="NumberBox" Width="60" Value="{Binding SelectedHeight, Mode=TwoWay}" />
+                    Classes="ProportionButton"
+                    IsChecked="{Binding EnableProportion}">
+                    <Image
+                        Width="14"
+                        Height="7"
+                        Source="{DynamicResource ChainIcon}" />
+                </ui:InstantToggleButton>
+                <TextBlock HorizontalAlignment="Center" Text="{DynamicResource CrWinHeight}" />
+                <ui:NumberBox
+                    Width="60"
+                    Classes="NumberBox"
+                    Value="{Binding Height, Mode=TwoWay}" />
             </StackPanel>
         </StackPanel>
     </DockPanel>

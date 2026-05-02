@@ -1,7 +1,8 @@
-using System;
-using System.ComponentModel;
 using Avalonia.Media;
 using PixelArtEditor.Other;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace PixelArtEditor.AppServices;
 
@@ -63,6 +64,20 @@ public sealed class SettingsService : ISettingsService
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Theme)));
         }
     }
+
+    private List<PanelLayout> _layout = [];
+    public List<PanelLayout> Layout
+    {
+        get => _layout;
+        set
+        {
+            if (_layout == value) return;
+            _layout = value;
+            Save();
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Layout)));
+        }
+    }
+
     public event PropertyChangedEventHandler? PropertyChanged;
 
     public void Load()
@@ -88,6 +103,7 @@ public sealed class SettingsService : ISettingsService
         AutosaveFrequency = 10;
         AccentColor = Color.Parse("DodgerBlue");
         Theme = "System";
+        Layout = Resources.DefaultLayout;
     }
 
     public void Save()

@@ -5,13 +5,13 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="clr-namespace:PixelArtEditor.UI"
-    xmlns:vm="clr-namespace:PixelArtEditor.ViewModels"
     xmlns:view="clr-namespace:PixelArtEditor.Views"
+    xmlns:vm="clr-namespace:PixelArtEditor.ViewModels"
     Title="{DynamicResource CrWinTitle}"
-    Width="550"
+    Width="725"
     Height="450"
     d:DesignHeight="450"
-    d:DesignWidth="550"
+    d:DesignWidth="725"
     x:DataType="vm:CreateDialogVM"
     Background="{DynamicResource BackgroundColor}"
     CanResize="False"
@@ -52,31 +52,25 @@
             Margin="20,50,20,0"
             ColumnDefinitions="250,Auto,10,Auto"
             DockPanel.Dock="Top">
-            <ui:CreatePreview
+            <ui:Preview
                 Grid.Column="0"
                 Margin="30,40,0,0"
                 Parameters="{Binding LivePreviewParams}" />
 
-            <StackPanel Spacing="10" Grid.Column="1">
-                <TextBlock
-                    Classes="Header"
-                    Text="Basic" />
+            <StackPanel Grid.Column="1" Spacing="10">
+                <TextBlock Classes="Header" Text="Basic" />
                 <view:ImageSizeView DataContext="{Binding ImageProperties}" />
 
                 <StackPanel>
-                    <TextBlock
-                        HorizontalAlignment="Center"
-                        Text="{DynamicResource CrWinBackgroundColor}" />
+                    <TextBlock TextAlignment="Center" HorizontalAlignment="Center" Text="{DynamicResource CrWinBackgroundColor}" />
                     <ColorPicker
                         Width="100"
                         HorizontalAlignment="Center"
-                        Color="{Binding SelectedColor, Mode=TwoWay}" />
+                        Color="{Binding BackgroundColor, Mode=TwoWay}" />
                 </StackPanel>
             </StackPanel>
-            <StackPanel Spacing="10" Grid.Column="3">
-                <TextBlock
-                    Classes="Header"
-                    Text="Advanced" />
+            <StackPanel Grid.Column="3" Spacing="10">
+                <TextBlock Classes="Header" Text="Advanced" />
                 <view:ImagePropertiesView DataContext="{Binding ImageProperties}" />
             </StackPanel>
         </Grid>

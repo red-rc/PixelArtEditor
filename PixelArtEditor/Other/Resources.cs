@@ -2,7 +2,6 @@
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Media;
-using Avalonia.Media.Imaging;
 using PixelArtEditor.AppServices;
 using PixelArtEditor.Styles;
 using System;
@@ -17,6 +16,14 @@ public static class Resources
 {
     public const string ConfigPath = "config.json";
     public const string ThemesPath = "themes.json";
+
+    public static List<PanelLayout> DefaultLayout { get; } =
+    [
+        new() { Name = "OptionsPanel", Row = 0, Col = 0 },
+        new() { Name = "LayerPanel",   Row = 1, Col = 2 },
+        new() { Name = "Toolbar",      Row = 1, Col = 0 },
+        new() { Name = "CanvasPanel",  Row = 1, Col = 1 }
+    ];
 
     public static BaseTheme[] ThemeOptions { get; private set; } = [];
     public static Dictionary<string, string> LanguageOptions { get; private set; } = [];

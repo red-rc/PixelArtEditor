@@ -5,13 +5,13 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="clr-namespace:PixelArtEditor.UI"
-    xmlns:vm="clr-namespace:PixelArtEditor.ViewModels"
     xmlns:view="clr-namespace:PixelArtEditor.Views"
+    xmlns:vm="clr-namespace:PixelArtEditor.ViewModels"
     Title="Export"
-    Width="550"
+    Width="600"
     Height="400"
     d:DesignHeight="400"
-    d:DesignWidth="550"
+    d:DesignWidth="600"
     x:DataType="vm:ExportDialogVM"
     Background="{DynamicResource BackgroundColor}"
     CanResize="False"
@@ -48,14 +48,14 @@
         VerticalAlignment="Stretch"
         Background="{DynamicResource SecondaryBackgroundColor}">
         <Grid
-            DockPanel.Dock="Top"
             Margin="20,30,20,0"
-            ColumnDefinitions="250,Auto">
-            <ui:ExportPreview
+            ColumnDefinitions="250,Auto"
+            DockPanel.Dock="Top">
+            <ui:Preview
                 Grid.Column="0"
                 Margin="30,20,0,0"
                 Parameters="{Binding LivePreviewParams}" />
-            <StackPanel Spacing="10" Grid.Column="1">
+            <StackPanel Grid.Column="1" Spacing="10">
                 <view:ImagePropertiesView DataContext="{Binding ImageProperties}" />
             </StackPanel>
         </Grid>

@@ -1,7 +1,6 @@
 using Avalonia;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
-using Avalonia.Platform;
 using System;
 using System.Collections.Generic;
 
@@ -9,21 +8,7 @@ namespace PixelArtEditor.AppServices;
 
 public static class BitmapService
 {
-    public static byte[] CreatePixelData(short width, short height, Color background)
-    {
-        var pixelData = new byte[height * width * 4];
-
-        for (var i = 0; i < pixelData.Length; i += 4)
-        {
-            pixelData[i + 0] = background.B;
-            pixelData[i + 1] = background.G;
-            pixelData[i + 2] = background.R;
-            pixelData[i + 3] = background.A;
-        }
-        return pixelData;
-    }
-    
-    public static byte[] CreateZeroPixelData(short width, short height)
+    public static byte[] CreateCheckerBoardPixelData(int width, int height)
     {
         var pixelData = new byte[height * width * 4];
         
@@ -67,94 +52,15 @@ public static class BitmapService
         }
     }
 
-    public static WriteableBitmap CreateBitmap(short width, short height, AlphaFormat alphaFormat = AlphaFormat.Unpremul)
+    public static WriteableBitmap CreateBitmap(int width, int height, byte[] pixelData)
     {
-        return new WriteableBitmap(new PixelSize(width, height), new Vector(96, 96), PixelFormat.Bgra8888, alphaFormat);
-    }
-
-    public static WriteableBitmap CreateBitmap(short width, short height, byte[] pixelData)
-    {
-        var wb = new WriteableBitmap(new PixelSize(width, height), new Vector(96, 96), PixelFormat.Bgra8888, AlphaFormat.Unpremul);
+        var wb = new WriteableBitmap(new PixelSize(width, height), new Vector(96, 96));
         SetPixelData(wb, pixelData);
 
         return wb;
     }
 
-    public static WriteableBitmap CreateBitmap(short width, short height, byte[] pixelData, Vector dpi, AlphaFormat alphaFormat)
-    {
-        var wb = new WriteableBitmap(new PixelSize(width, height), dpi, PixelFormat.Bgra8888, alphaFormat);
-        SetPixelData(wb, pixelData);
-
-        return wb;
-    }
-
-    public static void UpdateBitmapProperties(ref WriteableBitmap wb, short newWidth, short newHeight, Vector dpi, AlphaFormat alphaFormat)
-    {
-        if (wb == null || wb.Format == null) return;
-
-        var copyWidth = Math.Min(wb.PixelSize.Width, newWidth);
-        var copyHeight = Math.Min(wb.PixelSize.Height, newHeight);
-
-        var bpp = wb.Format.Value.BitsPerPixel / 8;
-
-        var newRowBytes = ((newWidth * bpp + 3) / 4) * 4;
-        var newPixelData = new byte[newRowBytes * newHeight];
-
-        using var fb = wb.Lock();
-
-        unsafe
-        {
-            byte* srcBase = (byte*)fb.Address;
-
-            fixed (byte* dstBase = newPixelData)
-            {
-                for (int y = 0; y < copyHeight; y++)
-                {
-                    Buffer.MemoryCopy(
-                        srcBase + y * fb.RowBytes,
-                        dstBase + y * newRowBytes,
-                        newRowBytes,
-                        copyWidth * bpp
-                    );
-                }
-            }
-        }
-
-        wb = CreateBitmap(newWidth, newHeight, newPixelData, dpi, alphaFormat);
-    }
-
-    public static byte[] GetPixelData(WriteableBitmap wb)
-    {
-        if (wb.Format == null) throw new InvalidOperationException("Bitmap format is null.");
-
-        var width = wb.PixelSize.Width;
-        var height = wb.PixelSize.Height;
-        var bytesPerPixel = wb.Format.Value.BitsPerPixel / 8;
-
-        byte[] pixelData = new byte[width * height * bytesPerPixel];
-
-        unsafe
-        {
-            using var fb = wb.Lock();
-
-            fixed (byte* dstBase = pixelData)
-            {
-                for (var y = 0; y < height; y++)
-                {
-                    Buffer.MemoryCopy(
-                        (byte*)fb.Address + y * fb.RowBytes,
-                        dstBase + y * width * bytesPerPixel,
-                        width * bytesPerPixel,
-                        width * bytesPerPixel
-                    );
-                }
-            }
-        }
-
-        return pixelData;
-    }
-
-    public static Color GetPixelColor(byte[] pixelData, short width, PixelPoint pixel)
+    public static Color GetPixelColor(byte[] pixelData, int width, PixelPoint pixel)
     {
         var stride = width * 4;
         var index = pixel.Y * stride + pixel.X * 4;
@@ -169,7 +75,7 @@ public static class BitmapService
         return Color.FromArgb(a, r, g, b);
     }
 
-    public static unsafe void FillSimilarPixels(WriteableBitmap? wb, byte[] pixelData, short width, short height, PixelPoint startPixel, Color newColor)
+    public static unsafe void FillSimilarPixels(WriteableBitmap? wb, byte[] pixelData, int width, int height, PixelPoint startPixel, Color newColor)
     {
         if (wb == null) return;
 
@@ -225,5 +131,22 @@ public static class BitmapService
         }
 
         SetPixelData(wb, pixelData);
+    }
+
+    public static byte[] ResizePixelData(byte[] src, int oldWidth, int oldHeight, int newWidth, int newHeight)
+    {
+        var bytesPerPixel = 4;
+        var copyWidth = Math.Min(oldWidth, newWidth);
+        var copyHeight = Math.Min(oldHeight, newHeight);
+        var newData = new byte[newWidth * newHeight * bytesPerPixel];
+
+        for (var y = 0; y < copyHeight; y++)
+        {
+            var srcOffset = y * oldWidth * bytesPerPixel;
+            var dstOffset = y * newWidth * bytesPerPixel;
+            Buffer.BlockCopy(src, srcOffset, newData, dstOffset, copyWidth * bytesPerPixel);
+        }
+
+        return newData;
     }
 }
