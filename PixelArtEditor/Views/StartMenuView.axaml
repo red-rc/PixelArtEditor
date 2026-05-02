@@ -46,7 +46,7 @@
                 VerticalAlignment="Bottom"
                 FontSize="14"
                 Foreground="Gray"
-                Text="{DynamicResource TextBlockV100}" />
+                Text="{DynamicResource AppVersion}" />
         </Grid>
     </DockPanel>
 </UserControl>

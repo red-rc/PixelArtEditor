@@ -46,11 +46,11 @@
                 Parameters="{Binding LivePreviewParams}" />
 
             <StackPanel Grid.Column="1" Spacing="10">
-                <TextBlock Classes="Header" Text="{DynamicResource TextBlockSize}" />
+                <TextBlock Classes="Header" Text="{DynamicResource ImgPropSize}" />
                 <view:ImageSizeView DataContext="{Binding ImageProperties}" />
             </StackPanel>
             <StackPanel Grid.Column="3" Spacing="10">
-                <TextBlock Classes="Header" Text="{DynamicResource TextBlockAdvanced2}" />
+                <TextBlock Classes="Header" Text="{DynamicResource CrWinAdvanced2}" />
                 <view:ImagePropertiesView DataContext="{Binding ImageProperties}" />
             </StackPanel>
         </Grid>

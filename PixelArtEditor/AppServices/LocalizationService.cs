@@ -101,6 +101,18 @@ public static class LocalizationService
             ["GenViewAutosaveEvery"] = "Autosave every",
             ["GenViewSeconds"] = "seconds",
 
+            ["ImgPropDpiXY"] = "DPI (x, y)",
+            ["ImgPropColorMode"] = "Color Mode",
+            ["ImgPropBitDepth"] = "Bit Depth",
+            ["ImgPropAlphaFormat"] = "Alpha Format",
+            ["ImgPropColorSpaces"] = "Color Spaces",
+            ["ImgPropBigEndian"] = "Big Endian",
+            ["AppVersion"] = "v1.0.0",
+            ["CrWinBasic"] = "Basic",
+            ["CrWinAdvanced"] = "Advanced",
+            ["ExportConfirm"] = "Confirm",
+            ["ImgPropSize"] = "Size",
+
             ["Language"] = "English"
         };
 

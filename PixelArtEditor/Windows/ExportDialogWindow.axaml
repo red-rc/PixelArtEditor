@@ -84,7 +84,7 @@
                 VerticalAlignment="Stretch"
                 Classes="BlueButton"
                 Command="{Binding ConfirmCommand}"
-                Content="{DynamicResource ButtonConfirm}"
+                Content="{DynamicResource ExportConfirm}"
                 FontSize="20" />
         </Grid>
     </DockPanel>
