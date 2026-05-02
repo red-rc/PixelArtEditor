@@ -65,7 +65,7 @@ public static class BitmapService
         var stride = width * 4;
         var index = pixel.Y * stride + pixel.X * 4;
 
-        if (index < 0 || index + 3 >= pixelData.Length) return Colors.Transparent;
+        if ((uint)(index + 3) >= (uint)pixelData.Length) return Colors.Transparent;
 
         var b = pixelData[index + 0];
         var g = pixelData[index + 1];

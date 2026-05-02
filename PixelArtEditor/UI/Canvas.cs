@@ -93,8 +93,8 @@ public class Canvas : Control
     private bool _previewDirty = true;
     private CancellationTokenSource? _previewCts;
 
-    private short BitmapWidth => (short)(_renderBitmap?.PixelSize.Width ?? 0);
-    private short BitmapHeight => (short)(_renderBitmap?.PixelSize.Height ?? 0);
+    private int BitmapWidth => _renderBitmap?.PixelSize.Width ?? 0;
+    private int BitmapHeight => _renderBitmap?.PixelSize.Height ?? 0;
 
     public Canvas()
     {

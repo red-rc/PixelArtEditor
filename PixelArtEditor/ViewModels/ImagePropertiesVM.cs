@@ -25,19 +25,8 @@ public class ImagePropertiesVM : ReactiveObject
         ImageProperties.WhenAnyValue(x => x.LivePreviewParams)
             .Subscribe(_ => this.RaisePropertyChanged(nameof(LivePreviewParams)));
 
-        // заповнюємо з поточної моделі
         if (_originalModel is not null)
-        {
-            ImageProperties.Width = _originalModel.Width;
-            ImageProperties.Height = _originalModel.Height;
-            ImageProperties.ColorMode = _originalModel.Mode;
-            ImageProperties.BitDepth = _originalModel.BitDepth;
-            ImageProperties.ColorSpace = _originalModel.ColorSpace;
-            ImageProperties.AlphaFormat = _originalModel.Alpha;
-            ImageProperties.DpiX = _originalModel.DpiX;
-            ImageProperties.DpiY = _originalModel.DpiY;
-            ImageProperties.BigEndian = _originalModel.BigEndian;
-        }
+            ImageProperties.LoadFrom(_originalModel);
 
         ResetCommand = ReactiveCommand.Create(ResetToOriginal);
 
@@ -66,13 +55,7 @@ public class ImagePropertiesVM : ReactiveObject
                 Services.ImageData.NotifyPixelDataChanged();
             }
 
-            _originalModel.Mode = ImageProperties.ColorMode;
-            _originalModel.BitDepth = ImageProperties.BitDepth;
-            _originalModel.ColorSpace = ImageProperties.ColorSpace;
-            _originalModel.Alpha = ImageProperties.AlphaFormat;
-            _originalModel.DpiX = ImageProperties.DpiX;
-            _originalModel.DpiY = ImageProperties.DpiY;
-            _originalModel.BigEndian = ImageProperties.BigEndian;
+            ImageProperties.SaveTo(_originalModel);
 
             dialog.Close();
         });
@@ -81,15 +64,6 @@ public class ImagePropertiesVM : ReactiveObject
     private void ResetToOriginal()
     {
         if (_originalModel is null) return;
-
-        ImageProperties.Width = _originalModel.Width;
-        ImageProperties.Height = _originalModel.Height;
-        ImageProperties.ColorMode = _originalModel.Mode;
-        ImageProperties.BitDepth = _originalModel.BitDepth;
-        ImageProperties.ColorSpace = _originalModel.ColorSpace;
-        ImageProperties.AlphaFormat = _originalModel.Alpha;
-        ImageProperties.DpiX = _originalModel.DpiX;
-        ImageProperties.DpiY = _originalModel.DpiY;
-        ImageProperties.BigEndian = _originalModel.BigEndian;
+        ImageProperties.LoadFrom(_originalModel);
     }
 }

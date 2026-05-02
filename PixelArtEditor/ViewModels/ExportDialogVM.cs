@@ -26,19 +26,8 @@ public class ExportDialogVM : ReactiveObject
         ImageProperties.WhenAnyValue(x => x.LivePreviewParams)
             .Subscribe(_ => this.RaisePropertyChanged(nameof(LivePreviewParams)));
 
-        // заповнюємо з поточної моделі
-        if (_originalModel is not null)
-        {
-            ImageProperties.Width = _originalModel.Width;
-            ImageProperties.Height = _originalModel.Height;
-            ImageProperties.ColorMode = _originalModel.Mode;
-            ImageProperties.BitDepth = _originalModel.BitDepth;
-            ImageProperties.ColorSpace = _originalModel.ColorSpace;
-            ImageProperties.AlphaFormat = _originalModel.Alpha;
-            ImageProperties.DpiX = _originalModel.DpiX;
-            ImageProperties.DpiY = _originalModel.DpiY;
-            ImageProperties.BigEndian = _originalModel.BigEndian;
-        }
+        if (_originalModel is not null) 
+            ImageProperties.LoadFrom(_originalModel);
 
         ConfirmCommand = ReactiveCommand.CreateFromTask(async () =>
         {

@@ -7,7 +7,7 @@ public class ImageDataService
 {
     public event Action? PixelDataChanged;
     public void NotifyPixelDataChanged() => PixelDataChanged?.Invoke();
-    public byte[]? BitmapPixelData { get; set; } = null!;
+    public byte[]? BitmapPixelData { get; set; }
 
     private PixelModel? _model;
 

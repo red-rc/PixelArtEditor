@@ -158,26 +158,12 @@ public class ImagePropertiesUCVM : ReactiveObject
         set => this.RaiseAndSetIfChanged(ref _bigEndian, value);
     }
 
-    private static T StringToEnum<T>(string value) where T : Enum
+    private static T StringToEnum<T>(string value) where T : struct, Enum
     {
-        return value switch
-        {
-            "RGBA" => (T)(object)ColorMode.RGBA,
-            "RGB" => (T)(object)ColorMode.RGB,
-            "Indexed" => (T)(object)ColorMode.Indexed,
-            "Grayscale" => (T)(object)ColorMode.Grayscale,
-            "Bit16" => (T)(object)BitDepth.Bit16,
-            "Bit8" => (T)(object)BitDepth.Bit8,
-            "Bit4" => (T)(object)BitDepth.Bit4,
-            "Bit1" => (T)(object)BitDepth.Bit1,
-            "RGB565" => (T)(object)BitDepth.RGB565,
-            "sRGB" => (T)(object)ColorSpace.sRGB,
-            "Linear" => (T)(object)ColorSpace.Linear,
-            "None" => (T)(object)AlphaFormat.None,
-            "Straight" => (T)(object)AlphaFormat.Straight,
-            "Premultiplied" => (T)(object)AlphaFormat.Premultiplied,
-            _ => throw new ArgumentException($"Unknown color mode: {value}"),
-        };
+        if (Enum.TryParse<T>(value, ignoreCase: false, out var result))
+            return result;
+
+        throw new ArgumentException($"Unknown value '{value}' for enum {typeof(T).Name}");
     }
 
     private PixelModel _livePreviewParams = new();
