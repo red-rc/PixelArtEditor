@@ -40,7 +40,7 @@
         Background="{DynamicResource SecondaryBackgroundColor}">
         <StackPanel Grid.Column="0" Spacing="10">
             <StackPanel>
-                <TextBlock HorizontalAlignment="Center" Text="DPI (x, y)" />
+                <TextBlock HorizontalAlignment="Center" Text="{DynamicResource TextBlockDpixY}" />
                 <StackPanel
                     HorizontalAlignment="Center"
                     Orientation="Horizontal"
@@ -50,7 +50,7 @@
                 </StackPanel>
             </StackPanel>
             <StackPanel>
-                <TextBlock HorizontalAlignment="Center" Text="Color Mode" />
+                <TextBlock HorizontalAlignment="Center" Text="{DynamicResource TextBlockColorMode}" />
                 <StackPanel
                     HorizontalAlignment="Center"
                     Orientation="Horizontal"
@@ -60,7 +60,7 @@
                 </StackPanel>
             </StackPanel>
             <StackPanel>
-                <TextBlock HorizontalAlignment="Center" Text="Bit Depth" />
+                <TextBlock HorizontalAlignment="Center" Text="{DynamicResource TextBlockBitDepth}" />
                 <StackPanel
                     HorizontalAlignment="Center"
                     Orientation="Horizontal"
@@ -72,7 +72,7 @@
         </StackPanel>
         <StackPanel Grid.Column="1" Spacing="10">
 			<StackPanel>
-                <TextBlock HorizontalAlignment="Center" Text="Alpha Format" />
+                <TextBlock HorizontalAlignment="Center" Text="{DynamicResource TextBlockAlphaFormat}" />
                 <StackPanel
                     HorizontalAlignment="Center"
                     Orientation="Horizontal"
@@ -82,7 +82,7 @@
                 </StackPanel>
 			</StackPanel>
             <StackPanel>
-                <TextBlock HorizontalAlignment="Center" Text="Color Spaces" />
+                <TextBlock HorizontalAlignment="Center" Text="{DynamicResource TextBlockColorSpaces}" />
                 <StackPanel
                     HorizontalAlignment="Center"
                     Orientation="Horizontal"
@@ -92,7 +92,7 @@
                 </StackPanel>
             </StackPanel>
             <StackPanel Margin="10,0,0,0" HorizontalAlignment="Center" Orientation="Horizontal" Spacing="10">
-                <TextBlock VerticalAlignment="Center" Text="Big Endian" />
+                <TextBlock VerticalAlignment="Center" Text="{DynamicResource TextBlockBigEndian}" />
                 <CheckBox IsChecked="{Binding BigEndian, Mode=TwoWay}" />
             </StackPanel>
         </StackPanel>
