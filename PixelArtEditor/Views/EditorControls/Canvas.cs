@@ -96,7 +96,7 @@ public class Canvas : Control, ICanvasContext
     private ImageBrush? _checkerboardBrush;
 
     public LayerManager LayerManager { get; set; }
-    public LayerModel? ActiveLayer => throw new NotImplementedException();
+    public LayerModel? ActiveLayer => LayerManager.ActiveLayer;
     public Dictionary<LayerModel, LayerRenderCache> RenderCache { get; } = [];
 
     public Canvas()

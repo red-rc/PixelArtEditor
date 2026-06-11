@@ -27,6 +27,9 @@ public class LayerManager
         if (e.OldItems is not null)
             foreach (LayerModel layer in e.OldItems)
                 LayerRemoved?.Invoke(layer);
+
+        if (ActiveLayer is null || !Layers.Contains(ActiveLayer))
+            ActiveLayer = Layers.Count > 0 ? Layers[0] : null;
     }
 
     public byte[] GetCompositePixelData(int width, int height)

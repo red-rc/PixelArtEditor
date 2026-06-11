@@ -210,7 +210,7 @@ public class ImagePropertiesUCVM : ReactiveObject
 
         _layer = new LayerModel(
             LivePreviewParams.Width, 
-            LivePreviewParams.Height, 
+            LivePreviewParams.Height,
             BitmapService.RGBAToBGRA(LivePreviewParams.Data), 
             "Preview Layer"
         );

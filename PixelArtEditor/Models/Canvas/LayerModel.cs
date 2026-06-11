@@ -5,12 +5,12 @@ using System.Runtime.CompilerServices;
 
 namespace PixelArtEditor.Models.Canvas;
 
-public class LayerModel(int width, int height, byte[] data, string name) : INotifyPropertyChanged
+public class LayerModel(int width, int height, byte[] pixelData, string name) : INotifyPropertyChanged
 {
     public int Width { get; set; } = width;
     public int Height { get; set; } = height;
-    public byte[] PixelData { get; set; } = data;
-    public WriteableBitmap RenderBitmap { get; set; } = BitmapService.CreateBitmap(width, height, data);
+    public byte[] PixelData { get; set; } = pixelData;
+    public WriteableBitmap RenderBitmap { get; set; } = BitmapService.CreateBitmap(width, height, pixelData);
     public WriteableBitmap? PreviewBitmap { get; set; }
 
     public string Name { get; set; } = name;

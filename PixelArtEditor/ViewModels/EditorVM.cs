@@ -6,7 +6,6 @@ using PixelArtEditor.Models.Tools;
 using PixelArtEditor.Views.EditorControls;
 using ReactiveUI;
 using System;
-using System.Collections.Generic;
 using System.Numerics;
 
 namespace PixelArtEditor.ViewModels;
@@ -26,7 +25,7 @@ public class EditorVM : ReactiveObject
     {
         if (_canvas?.ActiveLayer is not null && _canvas?.ActiveLayer.PixelData is not null)
         {
-            _model.Data = _canvas.ActiveLayer.PixelData;
+            _model.Data = _canvas.LayerManager.GetCompositePixelData(Model.Width, Model.Height);
             this.RaisePropertyChanged(nameof(Model));
         }
 
