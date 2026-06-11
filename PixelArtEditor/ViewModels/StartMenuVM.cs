@@ -1,6 +1,6 @@
 ﻿using ReactiveUI;
 using System.Reactive;
-using PixelArtEditor.AppServices;
+using PixelArtEditor.AppServices.Shell;
 
 namespace PixelArtEditor.ViewModels;
 

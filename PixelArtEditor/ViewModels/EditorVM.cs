@@ -1,10 +1,12 @@
 using Avalonia;
 using Avalonia.Media;
-using PixelArtEditor.AppServices;
-using PixelArtEditor.Other;
-using PixelArtEditor.UI;
+using PixelArtEditor.AppServices.Canvas;
+using PixelArtEditor.Models.Canvas;
+using PixelArtEditor.Models.Tools;
+using PixelArtEditor.Views.EditorControls;
 using ReactiveUI;
 using System;
+using System.Collections.Generic;
 using System.Numerics;
 
 namespace PixelArtEditor.ViewModels;
@@ -13,7 +15,28 @@ public class EditorVM : ReactiveObject
 {
     private Canvas? _canvas;
 
-    public byte[]? GetPixelData() => _canvas?.GetPixelData();
+    private PixelModel _model;
+    public PixelModel Model
+    {
+        get => _model;
+        set => this.RaiseAndSetIfChanged(ref _model, value);
+    }
+
+    public PixelModel GetPreparedModel()
+    {
+        if (_canvas?.ActiveLayer is not null && _canvas?.ActiveLayer.PixelData is not null)
+        {
+            _model.Data = _canvas.ActiveLayer.PixelData;
+            this.RaisePropertyChanged(nameof(Model));
+        }
+
+        return _model;
+    }
+
+    public LayerManager LayerManager
+    {
+        get => _canvas?.LayerManager ?? new LayerManager();
+    }
 
     private double _lastPanelWidth = -1;
     private double _lastPanelHeight = -1;
@@ -156,8 +179,9 @@ public class EditorVM : ReactiveObject
             });
     }
 
-    public EditorVM()
+    public EditorVM(PixelModel model)
     {
+        _model = model;
         AdjustCanvas(_lastPanelWidth, _lastPanelHeight);
     }
 
@@ -201,8 +225,8 @@ public class EditorVM : ReactiveObject
 
     public void AdjustCanvas(double width, double height)
     {
-        var modelWidth = Services.ImageData.Model?.Width ?? 0;
-        var modelHeight = Services.ImageData.Model?.Height ?? 0;
+        var modelWidth = Model?.Width ?? 0;
+        var modelHeight = Model?.Height ?? 0;
 
         if (width <= 0 || height <= 0 || modelWidth <= 0 || modelHeight <= 0) return;
 

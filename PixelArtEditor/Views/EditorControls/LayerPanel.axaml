@@ -1,0 +1,40 @@
+<UserControl 
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="using:PixelArtEditor.UI"
+    mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
+    x:Class="PixelArtEditor.Views.EditorControls.LayerPanel"
+    xmlns:vm="clr-namespace:PixelArtEditor.ViewModels"
+    x:DataType="vm:LayerPanelVM"
+    d:Background="{DynamicResource BackgroundColor}">
+
+    <UserControl.Styles>
+        <Style Selector="StackPanel.LayerItem">
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Background" Value="Transparent"/>
+        </Style>
+    </UserControl.Styles>
+
+    <DockPanel>
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="5">
+            <TextBlock Text="Layers" FontWeight="Bold" FontSize="16"/>
+            <StackPanel Classes="LayerItem">
+                <ItemsControl ItemsSource="{Binding Layers}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="vm:LayerItemVM">
+                            <StackPanel Classes="LayerItem" Orientation="Horizontal" IsVisible="{Binding IsVisible}">
+                                <ui:Preview Layer="{Binding Layer}" Size="48"/>
+                                <TextBlock Text="{Binding LayerName}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5,0"/>
+                                <Button Content="Hide" Command="{Binding HideCommand}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </StackPanel>
+        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Margin="5">
+        </StackPanel>
+    </DockPanel>
+</UserControl>

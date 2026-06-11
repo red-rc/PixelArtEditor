@@ -1,4 +1,5 @@
-﻿using PixelArtEditor.Other;
+﻿using PixelArtEditor.AppServices.Canvas;
+using PixelArtEditor.Models.Canvas;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
@@ -11,15 +12,15 @@ public class ImagePropertiesUCVM : ReactiveObject
     private float _imageProportion = 0f;
     private bool _isUpdating = false;
 
-    private int _Width = 32;
+    private int _width = 32;
     public int Width
     {
-        get => _Width;
+        get => _width;
         set
         {
             if (_isUpdating)
             {
-                this.RaiseAndSetIfChanged(ref _Width, value);
+                this.RaiseAndSetIfChanged(ref _width, value);
                 return;
             }
             _isUpdating = true;
@@ -28,20 +29,20 @@ public class ImagePropertiesUCVM : ReactiveObject
                 var newHeight = (int)(value / _imageProportion);
                 if (newHeight > 0) Height = newHeight;
             }
-            this.RaiseAndSetIfChanged(ref _Width, value);
+            this.RaiseAndSetIfChanged(ref _width, value);
             _isUpdating = false;
         }
     }
 
-    private int _Height = 32;
+    private int _height = 32;
     public int Height
     {
-        get => _Height;
+        get => _height;
         set
         {
             if (_isUpdating)
             {
-                this.RaiseAndSetIfChanged(ref _Height, value);
+                this.RaiseAndSetIfChanged(ref _height, value);
                 return;
             }
             _isUpdating = true;
@@ -50,7 +51,7 @@ public class ImagePropertiesUCVM : ReactiveObject
                 var newWidth = (int)(value * _imageProportion);
                 if (newWidth > 0) Width = newWidth;
             }
-            this.RaiseAndSetIfChanged(ref _Height, value);
+            this.RaiseAndSetIfChanged(ref _height, value);
             _isUpdating = false;
         }
     }
@@ -173,6 +174,13 @@ public class ImagePropertiesUCVM : ReactiveObject
         private set => this.RaiseAndSetIfChanged(ref _livePreviewParams, value);
     }
 
+    private LayerModel _layer = null!;
+    public LayerModel Layer
+    {
+        get => _layer;
+        private set => this.RaiseAndSetIfChanged(ref _layer, value);
+    }
+
     private bool _isUpdatingPreview = false;
 
     public ImagePropertiesUCVM()
@@ -199,6 +207,13 @@ public class ImagePropertiesUCVM : ReactiveObject
             BigEndian = BigEndian,
             Data = []
         };
+
+        _layer = new LayerModel(
+            LivePreviewParams.Width, 
+            LivePreviewParams.Height, 
+            BitmapService.RGBAToBGRA(LivePreviewParams.Data), 
+            "Preview Layer"
+        );
 
         _isUpdatingPreview = false;
     }

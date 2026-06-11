@@ -1,5 +1,5 @@
 using Avalonia.Media;
-using PixelArtEditor.Other;
+using PixelArtEditor.Models.Dock;
 using System.Collections.Generic;
 using System.ComponentModel;
 

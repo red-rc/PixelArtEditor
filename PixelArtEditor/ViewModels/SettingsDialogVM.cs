@@ -1,7 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Media;
 using PixelArtEditor.AppServices;
-using PixelArtEditor.Other;
 using ReactiveUI;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +12,7 @@ public class SettingsDialogVM : ReactiveObject
 {
     private static readonly ISettingsService _settings = Services.Settings;
 
-    public static IEnumerable<KeyValuePair<string, string>> LanguagePairs => Resources.LanguageOptions;
+    public static IEnumerable<KeyValuePair<string, string>> LanguagePairs => ResourceManager.LanguageOptions;
 
     public KeyValuePair<string, string> Language
     {
@@ -92,7 +91,7 @@ public class SettingsDialogVM : ReactiveObject
         }
     }
 
-    public List<string> ThemeOptions { get; set; } = [.. Resources.ThemeOptions.Select(t => t.Name)];
+    public List<string> ThemeOptions { get; set; } = [.. ResourceManager.ThemeOptions.Select(t => t.Name)];
 
     public string Theme
     {

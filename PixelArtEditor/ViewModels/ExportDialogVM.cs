@@ -1,6 +1,6 @@
 ﻿using Avalonia.Controls;
-using PixelArtEditor.AppServices;
-using PixelArtEditor.Other;
+using PixelArtEditor.AppServices.Image;
+using PixelArtEditor.Models.Canvas;
 using ReactiveUI;
 using System;
 using System.Reactive;
@@ -13,21 +13,27 @@ public class ExportDialogVM : ReactiveObject
     public ImagePropertiesUCVM ImageProperties { get; }
     public PixelModel LivePreviewParams => ImageProperties.LivePreviewParams;
 
-    private readonly PixelModel? _originalModel = Services.ImageData.Model;
+    public LayerModel Layer => ImageProperties.Layer;
+
+    private readonly PixelModel _model = null!;
 
     public ReactiveCommand<Unit, Unit> CancelCommand { get; }
     public ReactiveCommand<Unit, Unit> ConfirmCommand { get; }
 
 
-    public ExportDialogVM(Window dialog)
+    public ExportDialogVM(Window dialog, PixelModel model)
     {
+        _model = model;
         ImageProperties = new ImagePropertiesUCVM();
 
         ImageProperties.WhenAnyValue(x => x.LivePreviewParams)
-            .Subscribe(_ => this.RaisePropertyChanged(nameof(LivePreviewParams)));
+            .Subscribe(_ =>
+            {
+                ImageProperties.LivePreviewParams.Data = _model.Data;
+                this.RaisePropertyChanged(nameof(LivePreviewParams));
+            });
 
-        if (_originalModel is not null) 
-            ImageProperties.LoadFrom(_originalModel);
+        ImageProperties.LoadFrom(_model);
 
         ConfirmCommand = ReactiveCommand.CreateFromTask(async () =>
         {

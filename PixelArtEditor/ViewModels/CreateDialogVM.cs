@@ -1,7 +1,8 @@
 using Avalonia.Controls;
 using Avalonia.Media;
-using PixelArtEditor.AppServices;
-using PixelArtEditor.Other;
+using PixelArtEditor.AppServices.Canvas;
+using PixelArtEditor.AppServices.Image;
+using PixelArtEditor.Models.Canvas;
 using ReactiveUI;
 using System;
 using System.Reactive;
@@ -25,6 +26,13 @@ public class CreateDialogVM : ReactiveObject
     {
         get => _livePreviewParams;
         private set => this.RaiseAndSetIfChanged(ref _livePreviewParams, value);
+    }
+
+    private LayerModel _layer = null!;
+    public LayerModel Layer
+    {
+        get => _layer;
+        private set => this.RaiseAndSetIfChanged(ref _layer, value);
     }
 
     public ReactiveCommand<Unit, Unit> CreateCommand { get; }
@@ -82,5 +90,11 @@ public class CreateDialogVM : ReactiveObject
             // дані пікселів з фоновим кольором для preview
             Data = PixelModelService.CreateRgba32(base_.Width, base_.Height, BackgroundColor)
         };
+
+        _layer = new LayerModel(
+            LivePreviewParams.Width, 
+            LivePreviewParams.Height, 
+            BitmapService.RGBAToBGRA(LivePreviewParams.Data), 
+            "Preview Layer");
     }
 }

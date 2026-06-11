@@ -2,46 +2,71 @@
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
-using PixelArtEditor.AppServices;
-using PixelArtEditor.Other;
-using SixLabors.ImageSharp.ColorSpaces;
+using PixelArtEditor.AppServices.Canvas;
+using PixelArtEditor.Models.Canvas;
 
 namespace PixelArtEditor.UI;
 
 public class Preview : Control
 {
-    public static readonly StyledProperty<PixelModel> ParametersProperty =
-        AvaloniaProperty.Register<Preview, PixelModel>(nameof(Parameters));
+    public static readonly StyledProperty<LayerModel> LayerProperty =
+        AvaloniaProperty.Register<Preview, LayerModel>(nameof(Layer));
 
-    public PixelModel Parameters
+    public LayerModel Layer
     {
-        get => GetValue(ParametersProperty);
-        set => SetValue(ParametersProperty, value);
+        get => GetValue(LayerProperty);
+        set => SetValue(LayerProperty, value);
     }
 
-    private byte[]? _lastPixelModelData;
-    private bool ConvertToBgra;
+    public static readonly StyledProperty<bool> IsAlreadyBgraProperty =
+        AvaloniaProperty.Register<Preview, bool>(nameof(IsAlreadyBgra), defaultValue: false);
+
+    public bool IsAlreadyBgra
+    {
+        get => GetValue(IsAlreadyBgraProperty);
+        set => SetValue(IsAlreadyBgraProperty, value);
+    }
+
+    public static readonly StyledProperty<int?> SizeProperty =
+        AvaloniaProperty.Register<Preview, int?>(nameof(Size));
+
+    public int? Size
+    {
+        get => GetValue(SizeProperty);
+        set => SetValue(SizeProperty, value);
+    }
 
     private ImageBrush? _checkerboardBrush;
     private WriteableBitmap? _renderBitmap;
-    
+
+    private byte[]? _pixelData;
+    private int _initBitmapWidth;
+    private int _initBitmapHeight;
+
     public Preview()
     {
         RenderOptions.SetBitmapInterpolationMode(this, BitmapInterpolationMode.None);
-        ParametersProperty.Changed.AddClassHandler<Preview>((sender, _) => sender.InvalidateVisual());
+        LayerProperty.Changed.AddClassHandler<Preview>((sender, _) => sender.InvalidateVisual());
     }
     
     public override void Render(DrawingContext context)
     {
         base.Render(context);
         
-        if (Parameters is not { Width: > 0, Height: > 0 }) return;
+        if (Layer is not { Width: > 0, Height: > 0 }) return;
 
-        var ratio = (double)Parameters.Width / Parameters.Height;
+        if (_initBitmapWidth == 0 || _initBitmapHeight == 0)
+        {
+            _initBitmapWidth = Layer.Width;
+            _initBitmapHeight = Layer.Height;
+        }
+
+        var ratio = (double)Layer.Width / Layer.Height;
         if (double.IsInfinity(ratio) || double.IsNaN(ratio)) ratio = 1;
 
-        var rect = 200 / ratio > 200 ? new Rect((200 - 200 * ratio) / 2, 0, 200 * ratio, 200) : 
-            new Rect(0, (200 - 200 / ratio) / 2, 200, 200 / ratio);
+        Size ??= 200;
+        var rect = Size / ratio > Size ? new Rect((double)(Size - Size * ratio) / 2, 0, (double)Size * ratio, (double)Size) : 
+            new Rect(0, (double)(Size - Size / ratio) / 2, (double)Size, (double)Size / ratio);
         
         _checkerboardBrush ??= new ImageBrush(BitmapService.CreateBitmap(8, 8, BitmapService.CreateCheckerBoardPixelData(8, 8)))
         {
@@ -50,61 +75,34 @@ public class Preview : Control
             DestinationRect = new RelativeRect(0, 0, 64, 64, RelativeUnit.Absolute)
         };
 
-        byte[] pixelData;
-        if ((Services.ImageData?.BitmapPixelData?.Length ?? 0) > 0)
+        if (!ReferenceEquals(Layer.PixelData, _pixelData) || _pixelData is null)
         {
-            pixelData = Services.ImageData!.BitmapPixelData!;
+            _pixelData = Layer.PixelData;
+            if (!IsAlreadyBgra && _pixelData.Length > 0)
+                BitmapService.RGBAToBGRA(_pixelData);
+            _renderBitmap?.Dispose();
+            _renderBitmap = null;
+        }
+
+        if (_pixelData is not { Length: > 0 }) return;
+
+        if (_renderBitmap is not null)
+        {
+            if (_renderBitmap.Size.Width != Layer.Width || _renderBitmap.Size.Height != Layer.Height)
+            {
+                var bitmapData = BitmapService.ResizePixelData(
+                    _pixelData,
+                    _initBitmapWidth,
+                    _initBitmapHeight,
+                    Layer.Width, Layer.Height);
+
+                _renderBitmap = BitmapService.CreateBitmap(Layer.Width, Layer.Height, bitmapData);
+            }
         }
         else
         {
-            pixelData = Parameters.Data ?? [];
-            ConvertToBgra = true;
+            _renderBitmap = BitmapService.CreateBitmap(Layer.Width, Layer.Height, _pixelData);
         }
-
-        // перестворюємо якщо розмір змінився або bitmap ще не створений
-        if (_renderBitmap is null
-            || _renderBitmap.PixelSize.Width != Parameters.Width
-            || _renderBitmap.PixelSize.Height != Parameters.Height
-            || !ReferenceEquals(_lastPixelModelData, pixelData))
-        {
-            _renderBitmap?.Dispose();
-
-            var expectedSize = Parameters.Width * Parameters.Height * 4;
-            byte[] data;
-
-            if (pixelData.Length == expectedSize)
-            {
-                if (ConvertToBgra)
-                {
-                    data = new byte[pixelData.Length];
-                    for (var i = 0; i < pixelData.Length; i += 4)
-                    {
-                        data[i + 0] = pixelData[i + 2]; // B ← R
-                        data[i + 1] = pixelData[i + 1]; // G
-                        data[i + 2] = pixelData[i + 0]; // R ← B
-                        data[i + 3] = pixelData[i + 3]; // A
-                    }
-                }
-                else
-                {
-                    data = pixelData;
-                }
-            }
-            else
-            {
-                var oldWidth = Services.ImageData?.Model?.Width ?? Parameters.Width;
-                var oldHeight = Services.ImageData?.Model?.Height ?? Parameters.Height;
-
-                data = BitmapService.ResizePixelData(
-                    pixelData,
-                    oldWidth, oldHeight,
-                    Parameters.Width, Parameters.Height);
-            }
-
-            _renderBitmap = BitmapService.CreateBitmap(Parameters.Width, Parameters.Height, data);
-        }
-
-        _lastPixelModelData = pixelData;
 
         context.FillRectangle(_checkerboardBrush, rect);
         context.DrawImage(_renderBitmap, rect);

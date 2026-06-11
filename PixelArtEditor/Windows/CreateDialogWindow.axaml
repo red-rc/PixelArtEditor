@@ -55,7 +55,8 @@
             <ui:Preview
                 Grid.Column="0"
                 Margin="30,40,0,0"
-                Parameters="{Binding LivePreviewParams}" />
+                Layer="{Binding Layer}"
+                IsAlreadyBgra="False" />
 
             <StackPanel Grid.Column="1" Spacing="10">
                 <TextBlock Classes="Header" Text="{DynamicResource CrWinBasic}" />

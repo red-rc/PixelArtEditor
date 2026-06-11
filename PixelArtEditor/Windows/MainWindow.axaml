@@ -11,7 +11,7 @@
     x:DataType="vm:MainWindowVM"
     Background="{DynamicResource BackgroundColor}"
     ExtendClientAreaToDecorationsHint="True"
-    Icon="/Assets/avalonia-logo.ico"
+    Icon="/Assets/logo.ico"
     SystemDecorations="None"
     TransparencyLevelHint="AcrylicBlur"
     WindowStartupLocation="CenterScreen"
@@ -28,11 +28,11 @@
                     Width="30"
                     Height="30">
                     <Image
-                        Width="16"
-                        Height="16"
+                        Width="20"
+                        Height="20"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        Source="/Assets/avalonia-logo.ico" />
+                        Source="/Assets/logo.ico" />
                 </Border>
                 <Menu Grid.Column="1" HorizontalAlignment="Left">
                     <MenuItem Header="File">

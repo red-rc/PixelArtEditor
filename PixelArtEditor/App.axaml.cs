@@ -2,6 +2,8 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using PixelArtEditor.AppServices;
+using PixelArtEditor.AppServices.Image;
+using PixelArtEditor.AppServices.Shell;
 using PixelArtEditor.ViewModels;
 using PixelArtEditor.Windows;
 
@@ -15,11 +17,11 @@ public class App : Application
 
         // Do not change the order of these initializations, they depend on each other
         Services.Navigation = new NavigationService();
-        Services.WindowState = new WindowStateService();
+        Services.WindowState = new WindowStateManager();
 
-        Other.Resources.Initialize();
-        Services.Settings = SettingsService.GetInstance;
-        Services.ImageData = new ImageDataService();
+        AppServices.ResourceManager.Initialize();
+        Services.Settings = SettingsManager.GetInstance;
+        Services.ModelData = new ModelManager();
     }
     
     public override void OnFrameworkInitializationCompleted()

@@ -53,8 +53,9 @@
             DockPanel.Dock="Top">
             <ui:Preview
                 Grid.Column="0"
+                IsAlreadyBgra="True"
                 Margin="30,20,0,0"
-                Parameters="{Binding LivePreviewParams}" />
+                Layer="{Binding Layer}" />
             <StackPanel Grid.Column="1" Spacing="10">
                 <view:ImagePropertiesView DataContext="{Binding ImageProperties}" />
             </StackPanel>

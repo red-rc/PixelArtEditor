@@ -1,6 +1,6 @@
 using Avalonia.Controls;
 using PixelArtEditor.AppServices;
-using PixelArtEditor.Other;
+using PixelArtEditor.AppServices.Shell;
 using ReactiveUI;
 using System;
 using System.Diagnostics;
@@ -104,9 +104,7 @@ public class MenuCommandsVM : ReactiveObject
     private async void OnExport()
     {
         if (Services.Navigation.GetViewModel() is not EditorVM editorVM) return;
-        Services.ImageData.BitmapPixelData = editorVM.GetPixelData();
-        await ActionService.ShowExportWindowAsync();
-        Services.ImageData.BitmapPixelData = null;
+        await ActionService.ShowExportWindowAsync(editorVM.GetPreparedModel());
     }
 
     private void OnLastAutosave()
@@ -124,9 +122,7 @@ public class MenuCommandsVM : ReactiveObject
     private async void OnImageProperties()
     {
         if (Services.Navigation.GetViewModel() is not EditorVM editorVM) return;
-        Services.ImageData.BitmapPixelData = editorVM.GetPixelData();
-        await ActionService.ShowImagePropertiesWindowAsync();
-        Services.ImageData.BitmapPixelData = null;
+        await ActionService.ShowImagePropertiesWindowAsync(editorVM.GetPreparedModel());
     }
 
     private static void OnZoomIn()
@@ -150,7 +146,7 @@ public class MenuCommandsVM : ReactiveObject
 
     private static void OnResetLayout()
     {
-        Services.Settings.Layout = Resources.DefaultLayout;
+        Services.Settings.Layout = ResourceManager.DefaultLayout;
     }
 
     private static void OnStandart() => Services.WindowState.Current = Services.WindowState.PreviousWindowState;

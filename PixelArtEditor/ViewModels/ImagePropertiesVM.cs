@@ -1,6 +1,8 @@
 using Avalonia.Controls;
 using PixelArtEditor.AppServices;
-using PixelArtEditor.Other;
+using PixelArtEditor.AppServices.Canvas;
+using PixelArtEditor.AppServices.Image;
+using PixelArtEditor.Models.Canvas;
 using ReactiveUI;
 using System;
 using System.Reactive;
@@ -11,59 +13,55 @@ public class ImagePropertiesVM : ReactiveObject
 {
     public ImagePropertiesUCVM ImageProperties { get; }
     public PixelModel LivePreviewParams => ImageProperties.LivePreviewParams;
-
-    private readonly PixelModel? _originalModel = Services.ImageData.Model;
-
+    public LayerModel Layer => ImageProperties.Layer;
+    private readonly PixelModel _model = null!;  
+    
     public ReactiveCommand<Unit, Unit> ResetCommand { get; }
     public ReactiveCommand<Unit, Unit> CancelCommand { get; }
     public ReactiveCommand<Unit, Unit> SaveCommand { get; }
 
-    public ImagePropertiesVM(Window dialog)
+    public ImagePropertiesVM(Window dialog, PixelModel model)
     {
+        _model = model;
         ImageProperties = new ImagePropertiesUCVM();
 
         ImageProperties.WhenAnyValue(x => x.LivePreviewParams)
-            .Subscribe(_ => this.RaisePropertyChanged(nameof(LivePreviewParams)));
+            .Subscribe(_ => 
+            {  
+                ImageProperties.LivePreviewParams.Data = _model.Data;
+                this.RaisePropertyChanged(nameof(LivePreviewParams));
+            });
 
-        if (_originalModel is not null)
-            ImageProperties.LoadFrom(_originalModel);
+        ImageProperties.LoadFrom(_model);
 
-        ResetCommand = ReactiveCommand.Create(ResetToOriginal);
+        ResetCommand = ReactiveCommand.Create(() => ImageProperties.LoadFrom(_model));
 
         CancelCommand = ReactiveCommand.Create(() =>
         {
-            ResetToOriginal();
+            ImageProperties.LoadFrom(_model);
             dialog.Close();
         });
 
         SaveCommand = ReactiveCommand.Create(() =>
         {
-            if (_originalModel is null) return;
-
             var newWidth = ImageProperties.Width;
             var newHeight = ImageProperties.Height;
 
             // якщо розмір змінився — ресайзимо пікселі
-            if ((newWidth != _originalModel.Width || newHeight != _originalModel.Height) && Services.ImageData.BitmapPixelData is not null)
+            if ((newWidth != _model.Width || newHeight != _model.Height) && _model.Data is not null)
             {
-                Services.ImageData.BitmapPixelData = BitmapService.ResizePixelData(
-                    Services.ImageData.BitmapPixelData,
-                    _originalModel.Width, _originalModel.Height,
+                _model.Data = BitmapService.ResizePixelData(
+                    _model.Data,
+                    _model.Width, _model.Height,
                     newWidth, newHeight);
-                _originalModel.Width = newWidth;
-                _originalModel.Height = newHeight;
-                Services.ImageData.NotifyPixelDataChanged();
+                _model.Width = newWidth;
+                _model.Height = newHeight;
+                Services.ModelData.NotifyModelChanged();
             }
 
-            ImageProperties.SaveTo(_originalModel);
+            ImageProperties.SaveTo(_model);
 
             dialog.Close();
         });
-    }
-
-    private void ResetToOriginal()
-    {
-        if (_originalModel is null) return;
-        ImageProperties.LoadFrom(_originalModel);
     }
 }

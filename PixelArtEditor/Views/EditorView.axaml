@@ -4,20 +4,13 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:ui="clr-namespace:PixelArtEditor.UI"
+    xmlns:controls="clr-namespace:PixelArtEditor.Views.EditorControls"
     xmlns:vm="clr-namespace:PixelArtEditor.ViewModels"
-    d:DesignHeight="450"
-    d:DesignWidth="800"
+    d:DesignHeight="720"
+    d:DesignWidth="1380"
     x:DataType="vm:EditorVM"
     Background="{DynamicResource BackgroundColor}"
     mc:Ignorable="d">
-
-    <UserControl.Styles>
-        <Style Selector="ui|InstantToggleButton">
-            <Setter Property="Width" Value="40" />
-            <Setter Property="Height" Value="40" />
-        </Style>
-    </UserControl.Styles>
 
     <Grid Name="Root" PointerMoved="Root_PointerMoved">
         <Grid
@@ -35,10 +28,11 @@
                 PointerPressed="Panel_PointerPressed"
                 PointerReleased="Panel_PointerReleased"
                 Tag="Horizontal" />
-            <Panel
-                Name="LayerPanel"
+            <Grid
+                Name="SidePanel"
                 Grid.Row="1"
                 Grid.Column="2"
+                RowDefinitions="Auto,*"
                 Width="300"
                 Background="{DynamicResource BackgroundColor}"
                 PointerMoved="Panel_PointerMoved"
@@ -46,90 +40,30 @@
                 PointerReleased="Panel_PointerReleased"
                 Tag="Vertical">
                 <Border
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Top"
-                    BorderBrush="#444444"
+                    Grid.Row="0"
+                    BorderBrush="{DynamicResource BackgroundPressedColor}"
                     BorderThickness="0,0,0,3">
 
                     <Viewbox Height="350" Stretch="Fill">
                         <ColorView Color="{Binding PickedColor}" />
                     </Viewbox>
                 </Border>
-                <Border HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-            </Panel>
-            <Panel
-                Name="Toolbar"
+
+                <controls:LayerPanel 
+                    Grid.Row="1" 
+                    LayerManager="{Binding LayerManager}" 
+                    HorizontalAlignment="Stretch" 
+                    VerticalAlignment="Stretch" />
+            </Grid>
+
+            <controls:Toolbar
+                Name="ToolbarPanel"
                 Grid.Row="1"
                 Grid.Column="0"
-                Width="40"
-                Background="{DynamicResource BackgroundColor}"
                 PointerMoved="Panel_PointerMoved"
                 PointerPressed="Panel_PointerPressed"
                 PointerReleased="Panel_PointerReleased"
-                Tag="Vertical">
-                <StackPanel x:Name="ToolbarStackPanel">
-                    <ui:InstantToggleButton
-                        HorizontalAlignment="Center"
-                        Classes="ToolButton"
-                        IsChecked="{Binding IsPenEnabled}"
-                        Tag="Pen">
-                        <Image
-                            Width="18"
-                            Height="18"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Source="{DynamicResource PenIcon}" />
-                    </ui:InstantToggleButton>
-                    <ui:InstantToggleButton
-                        HorizontalAlignment="Center"
-                        Classes="ToolButton"
-                        IsChecked="{Binding IsColorPickerEnabled}"
-                        Tag="ColorPicker">
-                        <Image
-                            Width="18"
-                            Height="18"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Source="{DynamicResource ColorPickerIcon}" />
-                    </ui:InstantToggleButton>
-                    <ui:InstantToggleButton
-                        HorizontalAlignment="Center"
-                        Classes="ToolButton"
-                        IsChecked="{Binding IsFillEnabled}"
-                        Tag="Fill">
-                        <Image
-                            Width="18"
-                            Height="18"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Source="{DynamicResource FillIcon}" />
-                    </ui:InstantToggleButton>
-                    <ui:InstantToggleButton
-                        HorizontalAlignment="Center"
-                        Classes="ToolButton"
-                        IsChecked="{Binding IsEraserEnabled}"
-                        Tag="Eraser">
-                        <Image
-                            Width="18"
-                            Height="18"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Source="{DynamicResource EraserIcon}" />
-                    </ui:InstantToggleButton>
-                    <ui:InstantToggleButton
-                        HorizontalAlignment="Center"
-                        Classes="ToolButton"
-                        IsChecked="{Binding IsHandEnabled}"
-                        Tag="Hand">
-                        <Image
-                            Width="18"
-                            Height="18"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Source="{DynamicResource HandIcon}" />
-                    </ui:InstantToggleButton>
-                </StackPanel>
-            </Panel>
+                Tag="Vertical" />
             <Panel
                 Name="CanvasPanel"
                 Grid.Row="1"
@@ -142,8 +76,9 @@
                 PointerWheelChanged="CanvasPanel_OnPointerWheelChanged"
                 SizeChanged="CanvasPanel_OnSizeChanged"
                 Tag="Vertical">
-                <ui:Canvas
+                <controls:Canvas
                     x:Name="CanvasControl"
+                    Model="{Binding Model}"
                     PickedColor="{Binding PickedColor, Mode=TwoWay}"
                     Scale="{Binding Scale}"
                     SelectedTool="{Binding SelectedTool}"
