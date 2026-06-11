@@ -1,6 +1,5 @@
 using Avalonia.Controls;
 using Avalonia.Media;
-using PixelArtEditor.AppServices.Canvas;
 using PixelArtEditor.AppServices.Image;
 using PixelArtEditor.Models.Canvas;
 using ReactiveUI;
@@ -20,13 +19,7 @@ public class CreateDialogVM : ReactiveObject
 
     public ImagePropertiesUCVM ImageProperties { get; }
 
-    // LivePreviewParams тепер береться з ImageProperties і розширюється кольором
-    private PixelModel _livePreviewParams = new();
-    public PixelModel LivePreviewParams
-    {
-        get => _livePreviewParams;
-        private set => this.RaiseAndSetIfChanged(ref _livePreviewParams, value);
-    }
+    public PixelModel LivePreviewParams => ImageProperties.LivePreviewParams;
 
     private LayerModel _layer = null!;
     public LayerModel Layer
@@ -44,10 +37,6 @@ public class CreateDialogVM : ReactiveObject
 
         CreateCommand = ReactiveCommand.Create(() =>
         {
-            var data = PixelModelService.CreateRgba32(
-                ImageProperties.Width,
-                ImageProperties.Height,
-                BackgroundColor);
 
             dialog.Close(new PixelModel
             {
@@ -60,41 +49,41 @@ public class CreateDialogVM : ReactiveObject
                 BigEndian = ImageProperties.BigEndian,
                 DpiX = ImageProperties.DpiX,
                 DpiY = ImageProperties.DpiY,
-                Data = data
+                Data = ImageProperties.PixelData
             });
         });
 
         CancelCommand = ReactiveCommand.Create(dialog.Close);
 
-        // підписуємось на зміни ImageProperties і Color
-        ImageProperties.Changed.Subscribe(_ => UpdateLivePreview());
-        this.WhenAnyValue(x => x.BackgroundColor).Subscribe(_ => UpdateLivePreview());
-        UpdateLivePreview();
+        ImageProperties.WhenAnyValue(
+            x => x.Width,
+            x => x.Height
+        )
+        .Subscribe(_ =>
+        {
+            ImageProperties.PixelData = PixelModelService.CreateRgba32(
+                ImageProperties.Width,
+                ImageProperties.Height,
+                BackgroundColor);
+            UpdateLayer();
+        });
+
+        this.WhenAnyValue(x => x.BackgroundColor).Subscribe(color =>
+        {
+            ImageProperties.PixelData = PixelModelService.CreateRgba32(
+                ImageProperties.Width,
+                ImageProperties.Height,
+                color);
+            UpdateLayer();
+        });
     }
 
-    private void UpdateLivePreview()
+    private void UpdateLayer()
     {
-        // беремо базовий LivePreviewParams з ImageProperties і додаємо колір
-        var base_ = ImageProperties.LivePreviewParams;
-        LivePreviewParams = new PixelModel
-        {
-            Width = base_.Width,
-            Height = base_.Height,
-            Mode = base_.Mode,
-            BitDepth = base_.BitDepth,
-            ColorSpace = base_.ColorSpace,
-            Alpha = base_.Alpha,
-            DpiX = base_.DpiX,
-            DpiY = base_.DpiY,
-            BigEndian = base_.BigEndian,
-            // дані пікселів з фоновим кольором для preview
-            Data = PixelModelService.CreateRgba32(base_.Width, base_.Height, BackgroundColor)
-        };
-
-        _layer = new LayerModel(
-            LivePreviewParams.Width, 
-            LivePreviewParams.Height, 
-            BitmapService.RGBAToBGRA(LivePreviewParams.Data), 
+        Layer = new LayerModel(
+            ImageProperties.Width,
+            ImageProperties.Height,
+            ImageProperties.PixelData,
             "Preview Layer");
     }
 }

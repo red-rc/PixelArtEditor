@@ -13,7 +13,20 @@ public class ImagePropertiesVM : ReactiveObject
 {
     public ImagePropertiesUCVM ImageProperties { get; }
     public PixelModel LivePreviewParams => ImageProperties.LivePreviewParams;
-    public LayerModel Layer => ImageProperties.Layer;
+
+    private LayerModel _layer = null!;
+    public LayerModel Layer
+    {
+        get => _layer;
+        set
+        {
+            if (_layer == value) return;
+
+            _layer = value;
+            this.RaisePropertyChanged(nameof(Layer));
+        }
+    }
+
     private readonly PixelModel _model = null!;  
     
     public ReactiveCommand<Unit, Unit> ResetCommand { get; }
@@ -25,11 +38,22 @@ public class ImagePropertiesVM : ReactiveObject
         _model = model;
         ImageProperties = new ImagePropertiesUCVM();
 
-        ImageProperties.WhenAnyValue(x => x.LivePreviewParams)
-            .Subscribe(_ => 
-            {  
-                ImageProperties.LivePreviewParams.Data = _model.Data;
-                this.RaisePropertyChanged(nameof(LivePreviewParams));
+        ImageProperties.WhenAnyValue(
+                x => x.Width,
+                x => x.Height,
+                x => x.PixelData
+            )
+            .Subscribe(_ =>
+            {
+                var preview = ImageProperties.LivePreviewParams;
+
+                if (preview?.Data == null || preview.Data.Length == 0) return;
+
+                Layer = new LayerModel(
+                    preview.Width,
+                    preview.Height,
+                    preview.Data,
+                    "Preview Layer");
             });
 
         ImageProperties.LoadFrom(_model);
@@ -47,13 +71,12 @@ public class ImagePropertiesVM : ReactiveObject
             var newWidth = ImageProperties.Width;
             var newHeight = ImageProperties.Height;
 
-            // якщо розмір змінився — ресайзимо пікселі
             if ((newWidth != _model.Width || newHeight != _model.Height) && _model.Data is not null)
             {
-                _model.Data = BitmapService.ResizePixelData(
+                _model.Data = BitmapService.SwapRB(BitmapService.ResizePixelData(
                     _model.Data,
                     _model.Width, _model.Height,
-                    newWidth, newHeight);
+                    newWidth, newHeight));
                 _model.Width = newWidth;
                 _model.Height = newHeight;
                 Services.ModelData.NotifyModelChanged();

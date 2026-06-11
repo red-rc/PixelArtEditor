@@ -46,13 +46,11 @@ public class Preview : Control
     public Preview()
     {
         RenderOptions.SetBitmapInterpolationMode(this, BitmapInterpolationMode.None);
-        LayerProperty.Changed.AddClassHandler<Preview>((sender, _) => sender.InvalidateVisual());
+        LayerProperty.Changed.AddClassHandler<Preview>((sender, _) => OnLayerChanged());
     }
-    
-    public override void Render(DrawingContext context)
+
+    private void OnLayerChanged()
     {
-        base.Render(context);
-        
         if (Layer is not { Width: > 0, Height: > 0 }) return;
 
         if (_initBitmapWidth == 0 || _initBitmapHeight == 0)
@@ -61,12 +59,49 @@ public class Preview : Control
             _initBitmapHeight = Layer.Height;
         }
 
+        if (!ReferenceEquals(Layer.PixelData, _pixelData) || _pixelData is null)
+        {
+            _pixelData = Layer.PixelData;
+
+            if (!IsAlreadyBgra && _pixelData.Length > 0)
+                _pixelData = BitmapService.SwapRB(_pixelData);
+
+            _renderBitmap?.Dispose();
+            _renderBitmap = null;
+        }
+
+        if (_pixelData is not { Length: > 0 }) return;
+
+        if (_renderBitmap is null)
+        {
+            _renderBitmap = BitmapService.CreateBitmap(Layer.Width, Layer.Height, _pixelData);
+        }
+        else if (_renderBitmap.PixelSize.Width != Layer.Width || _renderBitmap.PixelSize.Height != Layer.Height)
+        {
+            var resized = BitmapService.ResizePixelData(
+                _pixelData,
+                _initBitmapWidth, _initBitmapHeight,
+                Layer.Width, Layer.Height);
+
+            _renderBitmap.Dispose();
+            _renderBitmap = BitmapService.CreateBitmap(Layer.Width, Layer.Height, resized);
+        }
+
+        InvalidateVisual();
+    }
+
+    public override void Render(DrawingContext context)
+    {
+        base.Render(context);
+
+        if (_renderBitmap is null) return;
+
         var ratio = (double)Layer.Width / Layer.Height;
         if (double.IsInfinity(ratio) || double.IsNaN(ratio)) ratio = 1;
 
-        Size ??= 200;
-        var rect = Size / ratio > Size ? new Rect((double)(Size - Size * ratio) / 2, 0, (double)Size * ratio, (double)Size) : 
-            new Rect(0, (double)(Size - Size / ratio) / 2, (double)Size, (double)Size / ratio);
+        var size = Size ?? 200;
+        var rect = size / ratio > size ? new Rect((double)(size - size * ratio) / 2, 0, size * ratio, size) : 
+            new Rect(0, (double)(size - size / ratio) / 2, size, size / ratio);
         
         _checkerboardBrush ??= new ImageBrush(BitmapService.CreateBitmap(8, 8, BitmapService.CreateCheckerBoardPixelData(8, 8)))
         {
@@ -74,35 +109,6 @@ public class Preview : Control
             Stretch = Stretch.Fill,
             DestinationRect = new RelativeRect(0, 0, 64, 64, RelativeUnit.Absolute)
         };
-
-        if (!ReferenceEquals(Layer.PixelData, _pixelData) || _pixelData is null)
-        {
-            _pixelData = Layer.PixelData;
-            if (!IsAlreadyBgra && _pixelData.Length > 0)
-                BitmapService.RGBAToBGRA(_pixelData);
-            _renderBitmap?.Dispose();
-            _renderBitmap = null;
-        }
-
-        if (_pixelData is not { Length: > 0 }) return;
-
-        if (_renderBitmap is not null)
-        {
-            if (_renderBitmap.Size.Width != Layer.Width || _renderBitmap.Size.Height != Layer.Height)
-            {
-                var bitmapData = BitmapService.ResizePixelData(
-                    _pixelData,
-                    _initBitmapWidth,
-                    _initBitmapHeight,
-                    Layer.Width, Layer.Height);
-
-                _renderBitmap = BitmapService.CreateBitmap(Layer.Width, Layer.Height, bitmapData);
-            }
-        }
-        else
-        {
-            _renderBitmap = BitmapService.CreateBitmap(Layer.Width, Layer.Height, _pixelData);
-        }
 
         context.FillRectangle(_checkerboardBrush, rect);
         context.DrawImage(_renderBitmap, rect);

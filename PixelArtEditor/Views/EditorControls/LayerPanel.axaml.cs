@@ -22,6 +22,7 @@ public partial class LayerPanel : UserControl
 
         LayerManagerProperty.Changed.AddClassHandler<LayerPanel>((sender, _) =>
         {
+            if (sender.LayerManager is null) return;
             sender.DataContext = new LayerPanelVM(sender.LayerManager);
         });
     }

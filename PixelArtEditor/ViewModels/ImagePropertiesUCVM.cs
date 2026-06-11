@@ -167,18 +167,18 @@ public class ImagePropertiesUCVM : ReactiveObject
         throw new ArgumentException($"Unknown value '{value}' for enum {typeof(T).Name}");
     }
 
+    private byte[] _pixelData = [];
+    public byte[] PixelData
+    {
+        get => _pixelData;
+        set => this.RaiseAndSetIfChanged(ref _pixelData, value);
+    }
+
     private PixelModel _livePreviewParams = new();
     public PixelModel LivePreviewParams
     {
         get => _livePreviewParams;
         private set => this.RaiseAndSetIfChanged(ref _livePreviewParams, value);
-    }
-
-    private LayerModel _layer = null!;
-    public LayerModel Layer
-    {
-        get => _layer;
-        private set => this.RaiseAndSetIfChanged(ref _layer, value);
     }
 
     private bool _isUpdatingPreview = false;
@@ -205,15 +205,8 @@ public class ImagePropertiesUCVM : ReactiveObject
             DpiX = DpiX,
             DpiY = DpiY,
             BigEndian = BigEndian,
-            Data = []
+            Data = PixelData
         };
-
-        _layer = new LayerModel(
-            LivePreviewParams.Width, 
-            LivePreviewParams.Height,
-            BitmapService.RGBAToBGRA(LivePreviewParams.Data), 
-            "Preview Layer"
-        );
 
         _isUpdatingPreview = false;
     }

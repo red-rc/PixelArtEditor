@@ -135,7 +135,7 @@ public class Canvas : Control, ICanvasContext
         LayerManager.Layers.Add(new LayerModel(
             Model.Width,
             Model.Height,
-            BitmapService.RGBAToBGRA(Model.Data),
+            BitmapService.SwapRB(Model.Data),
             "Layer 1"));
 
         var layer = LayerManager.Layers[0];
@@ -203,7 +203,7 @@ public class Canvas : Control, ICanvasContext
         {
             context.DrawImage(
                 layer.PreviewBitmap,
-                new Rect(0, 0, layer.PreviewBitmap.PixelSize.Width, layer.PreviewBitmap.PixelSize.Height),
+                new Rect(0, 0, layer.Width, layer.Height),
                 new Rect(offsetX, offsetY, bmpW, bmpH)
             );
         }
@@ -211,7 +211,7 @@ public class Canvas : Control, ICanvasContext
         {
             context.DrawImage(
                 layer.RenderBitmap,
-                new Rect(0, 0, layer.RenderBitmap.PixelSize.Width, layer.RenderBitmap.PixelSize.Height),
+                new Rect(0, 0, layer.Width, layer.Height),
                 new Rect(offsetX, offsetY, bmpW, bmpH)
             );
         }

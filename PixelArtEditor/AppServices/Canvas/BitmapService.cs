@@ -136,22 +136,21 @@ public static class BitmapService
 
     public static byte[] ResizePixelData(byte[] src, int oldWidth, int oldHeight, int newWidth, int newHeight)
     {
-        var bytesPerPixel = 4;
         var copyWidth = Math.Min(oldWidth, newWidth);
         var copyHeight = Math.Min(oldHeight, newHeight);
-        var newData = new byte[newWidth * newHeight * bytesPerPixel];
+        var newData = new byte[newWidth * newHeight * 4];
 
         for (var y = 0; y < copyHeight; y++)
         {
-            var srcOffset = y * oldWidth * bytesPerPixel;
-            var dstOffset = y * newWidth * bytesPerPixel;
-            Buffer.BlockCopy(src, srcOffset, newData, dstOffset, copyWidth * bytesPerPixel);
+            var srcOffset = y * oldWidth * 4;
+            var dstOffset = y * newWidth * 4;
+            Buffer.BlockCopy(src, srcOffset, newData, dstOffset, copyWidth * 4);
         }
 
         return newData;
     }
 
-    public static byte[] RGBAToBGRA(byte[] rgba)
+    public static byte[] SwapRB(byte[] rgba)
     {
         var bgra = new byte[rgba.Length];
         for (var i = 0; i < rgba.Length; i += 4)
@@ -161,7 +160,6 @@ public static class BitmapService
             bgra[i + 2] = rgba[i + 0]; // R ← B
             bgra[i + 3] = rgba[i + 3]; // A
         }
-        bgra.AsSpan().CopyTo(rgba);
 
         return bgra;
     }
