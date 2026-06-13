@@ -20,20 +20,17 @@ public class LayerItemVM(LayerModel layer) : ReactiveObject
         get => _isVisible;
         set => this.RaiseAndSetIfChanged(ref _isVisible, value);
     }
-
-    private IBrush _background = new SolidColorBrush(Colors.Transparent);
-    public IBrush Background
-    {
-        get => _background;
-        set => this.RaiseAndSetIfChanged(ref _background, value);
-    }
 }
 
 public class LayerPanelVM : ReactiveObject
 {
     private LayerManager? _layerManager;
     public ObservableCollection<LayerItemVM> LayerItems { get; } = [];
-    public ReactiveCommand<Unit, Unit> AddLayerCommand { get; }
+    public ReactiveCommand<Unit, Unit> AddCommand { get; }
+    public ReactiveCommand<Unit, Unit> RemoveCommand { get; }
+    public ReactiveCommand<Unit, Unit> DuplicateCommand { get; }
+    public ReactiveCommand<Unit, Unit> CreateGroupCommand { get; }
+
 
     private LayerItemVM? _selectedLayer;
     public LayerItemVM? SelectedLayer
@@ -42,26 +39,73 @@ public class LayerPanelVM : ReactiveObject
         set
         {
             if (value == _selectedLayer || value is null) return;
-
-            _selectedLayer?.Background = new SolidColorBrush(Colors.Transparent);
-
             _layerManager!.ActiveLayer = value.Layer;
-            value.Background = GetLayerBackground(value.Layer, _layerManager!);
             this.RaiseAndSetIfChanged(ref _selectedLayer, value);
+        }
+    }
+
+    private ObservableCollection<LayerItemVM>? _selectedLayers;
+    public ObservableCollection<LayerItemVM>? SelectedLayers
+    {
+        get => _selectedLayers;
+        set
+        {
+            if (value == _selectedLayers || value is null) return;
+            this.RaiseAndSetIfChanged(ref _selectedLayers, value);
         }
     }
 
     public LayerPanelVM()
     {
-        AddLayerCommand = ReactiveCommand.Create(() => 
+        AddCommand = ReactiveCommand.Create(() => 
         { 
             if (_layerManager?.Layers is null || _layerManager.Layers.Count == 0) return;
+
             _layerManager.Layers.Add(new LayerModel(
                 _layerManager.Layers[0].Width,
                 _layerManager.Layers[0].Height,
                 new byte[_layerManager.Layers[0].PixelData.Length],
                 $"Layer {_layerManager.Layers.Count + 1}"
             ));
+        });
+        RemoveCommand = ReactiveCommand.Create(() => 
+        { 
+            if (_layerManager?.Layers is null || _layerManager.Layers.Count == 0) return;
+            if (SelectedLayers is null || SelectedLayers.Count == 0) return;
+
+            foreach (var layerItem in SelectedLayers.ToList())
+            {
+                _layerManager.Layers.Remove(layerItem.Layer);
+            }
+        });
+        DuplicateCommand = ReactiveCommand.Create(() => 
+        { 
+            if (_layerManager?.Layers is null || _layerManager.Layers.Count == 0) return;
+            if (_layerManager.ActiveLayer is null) return;
+
+            var name = _layerManager.ActiveLayer.Name + " - Copy";
+
+            if (_layerManager.Layers.Any(l => l.Name == name))
+            {
+                var copyIndex = 1;
+                while (_layerManager.Layers.Any(l => l.Name == $"{name} ({copyIndex})"))
+                {
+                    copyIndex++;
+                }
+                name = $"{name} ({copyIndex})";
+            }
+
+            _layerManager.Layers.Add(new LayerModel(
+                _layerManager.ActiveLayer.Width,
+                _layerManager.ActiveLayer.Height,
+                (byte[])_layerManager.ActiveLayer.PixelData.Clone(),
+                name
+            ));
+        });
+        CreateGroupCommand = ReactiveCommand.Create(() => 
+        { 
+            if (_layerManager?.Layers is null || _layerManager.Layers.Count == 0) return;
+            // Implementation for creating a group
         });
     }
 
@@ -91,13 +135,5 @@ public class LayerPanelVM : ReactiveObject
         };
 
         SelectedLayer = LayerItems[0];
-    }
-
-    private static SolidColorBrush GetLayerBackground(LayerModel layer, LayerManager manager)
-    {
-        var color = layer == manager.ActiveLayer
-            ? Application.Current?.Resources["PrimaryColor"] as Color? ?? Colors.Blue : Colors.Transparent;
-
-        return new SolidColorBrush(color);
     }
 }

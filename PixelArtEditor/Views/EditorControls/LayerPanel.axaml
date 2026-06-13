@@ -15,26 +15,32 @@
             <TextBlock Margin="10,10,10,5" Text="Layers" FontWeight="Bold" FontSize="16"/>
         </StackPanel>
         <StackPanel Grid.Row="1">
-            <ListBox ItemsSource="{Binding LayerItems}" SelectedItem="{Binding SelectedLayer}" Background="{DynamicResource BackgroundColor}">
-                    <ListBox.Styles>
-                        <Style Selector="ListBoxItem">
-                            <Setter Property="Padding" Value="0"/>
-                            <Setter Property="Background" Value="Transparent"/>
-                        </Style>
-                        <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
-                            <Setter Property="Background" Value="Transparent"/>
-                        </Style>
-                        <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
-                            <Setter Property="Background" Value="Transparent"/>
-                        </Style>
-                        <Style Selector="ListBoxItem:selected:pointerover /template/ ContentPresenter">
-                            <Setter Property="Background" Value="Transparent"/>
-                        </Style>
-                    </ListBox.Styles>
+            <ListBox ItemsSource="{Binding LayerItems}" 
+                     SelectedItems="{Binding SelectedLayers}" 
+                     SelectedItem="{Binding SelectedLayer}" 
+                     Background="{DynamicResource BackgroundColor}"
+                     SelectionMode="Multiple">
+                <ListBox.Styles>
+                    <Style Selector="ListBoxItem">
+                        <Setter Property="Padding" Value="5"/>
+                    </Style>
+
+                    <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+                        <Setter Property="Background" Value="{DynamicResource PrimaryColor}"/>
+                    </Style>
+
+                    <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
+                        <Setter Property="Background" Value="{DynamicResource BackgroundHoverColor}"/>
+                    </Style>
+                    
+                    <Style Selector="ListBoxItem:selected:pointerover /template/ ContentPresenter">
+                        <Setter Property="Background" Value="{DynamicResource PrimaryHoverColor}"/>
+                    </Style>
+                </ListBox.Styles>
 
                 <ListBox.ItemTemplate>
                     <DataTemplate x:DataType="vm:LayerItemVM">
-                        <StackPanel Background="{Binding Background}" Orientation="Horizontal">
+                        <StackPanel Orientation="Horizontal">
                             <ui:Preview Margin="5" Layer="{Binding Layer}" IsAlreadyBgra="True" Size="36" Width="36" Height="36"/>
                             <TextBlock Classes="LayerItemText" Text="{Binding LayerName}" Margin="5,0,5,0"/>
                             <ui:InstantToggleButton Classes="LayerItemButton" IsChecked="{Binding IsVisible}">
@@ -46,11 +52,14 @@
             </ListBox>
         </StackPanel>
         <StackPanel Grid.Row="2" 
-                    Background="{DynamicResource BackgroundColor}" 
-                    VerticalAlignment="Bottom" 
-                    HorizontalAlignment="Stretch" 
-                    Orientation="Horizontal">
-            <Button Classes="ActionButton" Content="+" Command="{Binding AddLayerCommand}" HorizontalAlignment="Left" Margin="5" />
+                Background="{DynamicResource BackgroundColor}" 
+                VerticalAlignment="Bottom" 
+                HorizontalAlignment="Stretch" 
+                Orientation="Horizontal">
+            <Button Classes="ActionButton" Content="+" Command="{Binding AddCommand}" HorizontalAlignment="Left" Margin="5" />
+            <Button Classes="ActionButton" Content="-" Command="{Binding RemoveCommand}" HorizontalAlignment="Left" Margin="5" />
+            <Button Classes="ActionButton" Content="d" Command="{Binding DuplicateCommand}" HorizontalAlignment="Left" Margin="5" />
+            <Button Classes="ActionButton" Content="g" Command="{Binding CreateGroupCommand}" HorizontalAlignment="Left" Margin="5" />
         </StackPanel>
     </Grid>
 </UserControl>
