@@ -4,6 +4,7 @@ using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using PixelArtEditor.AppServices.Canvas;
 using PixelArtEditor.Models.Canvas;
+using System.ComponentModel;
 
 namespace PixelArtEditor.UI;
 
@@ -87,7 +88,16 @@ public class Preview : Control
             _renderBitmap = BitmapService.CreateBitmap(Layer.Width, Layer.Height, resized);
         }
 
+        Layer.PropertyChanged -= Layer_PropertyChanged;
+        Layer.PropertyChanged += Layer_PropertyChanged;
+
         InvalidateVisual();
+    }
+
+    private void Layer_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName is nameof(LayerModel.PixelData))
+            OnLayerChanged();
     }
 
     public override void Render(DrawingContext context)

@@ -32,9 +32,11 @@ public class EditorVM : ReactiveObject
         return _model;
     }
 
+    private LayerManager _layerManager = new ();
     public LayerManager LayerManager
     {
-        get => _canvas?.LayerManager ?? new LayerManager();
+        get => _layerManager;
+        private set => this.RaiseAndSetIfChanged(ref _layerManager, value);
     }
 
     private double _lastPanelWidth = -1;
@@ -166,6 +168,7 @@ public class EditorVM : ReactiveObject
     public void SetCanvas(Canvas canvas)
     {
         _canvas = canvas;
+        LayerManager = canvas.LayerManager;
 
         _canvas.WhenAnyValue(x => x.CurrentPixelCoord)
             .Subscribe(coord =>

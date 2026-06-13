@@ -45,5 +45,6 @@ public static class ToolManager
 
         context.RenderCache[layer].RenderBitmapDirty = true;
         context.RenderCache[layer].PreviewDirty = true;
+        layer.NotifyPixelDataChanged();
     }
 }

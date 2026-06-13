@@ -129,18 +129,24 @@ public class Canvas : Control, ICanvasContext
     {
         if (Model is null) return;
 
-        LayerManager.Layers.Clear();
-        RenderCache.Clear();
+        //LayerManager.Layers.Clear();
+        //RenderCache.Clear();
 
-        LayerManager.Layers.Add(new LayerModel(
-            Model.Width,
-            Model.Height,
-            BitmapService.SwapRB(Model.Data),
-            "Layer 1"));
+        if (LayerManager.Layers.Count == 0)
+        {
+            LayerManager.Layers.Add(new LayerModel(
+                Model.Width,
+                Model.Height,
+                BitmapService.SwapRB(Model.Data),
+                "Layer 1"));
 
-        var layer = LayerManager.Layers[0];
-        RenderCache[layer].RenderBitmapDirty = false;
-        RenderCache[layer].PreviewDirty = true;
+            var layer = LayerManager.Layers[0];
+            RenderCache[layer].RenderBitmapDirty = false;
+            RenderCache[layer].PreviewDirty = true;
+        }
+
+        LayerManager.ResizeLayers(Model.Width, Model.Height);
+
         InvalidateVisual();
     }
 

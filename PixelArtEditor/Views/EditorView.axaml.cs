@@ -42,6 +42,7 @@ public partial class EditorView : UserControl
             if (DataContext is EditorVM vm)
             {
                 vm.SetCanvas(CanvasControl);
+                LayerPanelControl.LayerManager = CanvasControl.LayerManager;
             }
 
             Services.ModelData.ModelChanged += () =>

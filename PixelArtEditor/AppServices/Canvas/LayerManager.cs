@@ -18,6 +18,19 @@ public class LayerManager
         Layers.CollectionChanged += OnCollectionChanged;
     }
 
+    public void ResizeLayers(int newWidth, int newHeight)
+    {
+        foreach (var layer in Layers)
+        {
+            var resized = BitmapService.ResizePixelData(layer.PixelData, layer.Width, layer.Height, newWidth, newHeight);
+            layer.Width = newWidth;
+            layer.Height = newHeight;
+            layer.RenderBitmap?.Dispose();
+            layer.RenderBitmap = BitmapService.CreateBitmap(newWidth, newHeight, resized);
+            layer.PixelData = resized;
+        }
+    }
+
     private void OnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
         if (e.NewItems is not null)

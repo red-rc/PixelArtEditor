@@ -7,6 +7,8 @@ namespace PixelArtEditor.Views.EditorControls;
 
 public partial class LayerPanel : UserControl
 {
+    private readonly LayerPanelVM? _vm;
+
     public static readonly StyledProperty<LayerManager> LayerManagerProperty =
         AvaloniaProperty.Register<LayerPanel, LayerManager>(nameof(LayerManager));
 
@@ -18,12 +20,14 @@ public partial class LayerPanel : UserControl
 
     public LayerPanel()
     {
+        _vm = new LayerPanelVM();
+        DataContext = _vm;
+
         InitializeComponent();
 
         LayerManagerProperty.Changed.AddClassHandler<LayerPanel>((sender, _) =>
         {
-            if (sender.LayerManager is null) return;
-            sender.DataContext = new LayerPanelVM(sender.LayerManager);
+            sender._vm?.SetLayerManager(sender.LayerManager);
         });
     }
 }

@@ -9,7 +9,17 @@ public class LayerModel(int width, int height, byte[] pixelData, string name) : 
 {
     public int Width { get; set; } = width;
     public int Height { get; set; } = height;
-    public byte[] PixelData { get; set; } = pixelData;
+    private byte[] _pixelData = pixelData;
+
+    public byte[] PixelData
+    {
+        get => _pixelData;
+        set
+        {
+            _pixelData = value;
+            OnPropertyChanged();
+        }
+    }
     public WriteableBitmap RenderBitmap { get; set; } = BitmapService.CreateBitmap(width, height, pixelData);
     public WriteableBitmap? PreviewBitmap { get; set; }
 
@@ -19,14 +29,22 @@ public class LayerModel(int width, int height, byte[] pixelData, string name) : 
     public bool IsVisible
     {
         get => _isVisible;
-        set { _isVisible = value; OnPropertyChanged(); }
+        set 
+        { 
+            _isVisible = value; 
+            OnPropertyChanged(); 
+        }
     }
 
     private float _opacity = 1.0f;
     public float Opacity
     {
         get => _opacity;
-        set { _opacity = value; OnPropertyChanged(); }
+        set 
+        { 
+            _opacity = value; 
+            OnPropertyChanged(); 
+        }
     }
 
     public bool IsLocked { get; set; } = false;
@@ -34,4 +52,6 @@ public class LayerModel(int width, int height, byte[] pixelData, string name) : 
     public event PropertyChangedEventHandler? PropertyChanged;
     private void OnPropertyChanged([CallerMemberName] string? name = null)
         => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+
+    public void NotifyPixelDataChanged() => OnPropertyChanged(nameof(PixelData));
 }
