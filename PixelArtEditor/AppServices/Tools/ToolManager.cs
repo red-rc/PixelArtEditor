@@ -22,7 +22,7 @@ public static class ToolManager
 
     public static void UpdatePixelData(ICanvasContext context, int x, int y, Color color)
     {
-        var layer = context.ActiveLayer;
+        var layer = context.LayerManager.ActiveLayer;
         if (layer is null || layer.PixelData is null) return;
 
         var stride = context.Model.Width * 4;

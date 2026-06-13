@@ -37,7 +37,6 @@ public class CreateDialogVM : ReactiveObject
 
         CreateCommand = ReactiveCommand.Create(() =>
         {
-
             dialog.Close(new PixelModel
             {
                 Width = ImageProperties.Width,
@@ -62,8 +61,8 @@ public class CreateDialogVM : ReactiveObject
         .Subscribe(_ =>
         {
             ImageProperties.PixelData = PixelModelService.CreateRgba32(
-                ImageProperties.Width,
-                ImageProperties.Height,
+                ImageProperties.LivePreviewParams.Width,
+                ImageProperties.LivePreviewParams.Height,
                 BackgroundColor);
             UpdateLayer();
         });
@@ -71,8 +70,8 @@ public class CreateDialogVM : ReactiveObject
         this.WhenAnyValue(x => x.BackgroundColor).Subscribe(color =>
         {
             ImageProperties.PixelData = PixelModelService.CreateRgba32(
-                ImageProperties.Width,
-                ImageProperties.Height,
+                ImageProperties.LivePreviewParams.Width,
+                ImageProperties.LivePreviewParams.Height,
                 color);
             UpdateLayer();
         });
@@ -81,9 +80,9 @@ public class CreateDialogVM : ReactiveObject
     private void UpdateLayer()
     {
         Layer = new LayerModel(
-            ImageProperties.Width,
-            ImageProperties.Height,
-            ImageProperties.PixelData,
+            ImageProperties.LivePreviewParams.Width,
+            ImageProperties.LivePreviewParams.Height,
+            ImageProperties.LivePreviewParams.Data,
             "Preview Layer");
     }
 }

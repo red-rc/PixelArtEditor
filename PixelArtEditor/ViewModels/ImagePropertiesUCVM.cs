@@ -1,5 +1,4 @@
-﻿using PixelArtEditor.AppServices.Canvas;
-using PixelArtEditor.Models.Canvas;
+﻿using PixelArtEditor.Models.Canvas;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;

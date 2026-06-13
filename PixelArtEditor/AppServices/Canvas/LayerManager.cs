@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
+﻿using System.Collections.ObjectModel;
 using PixelArtEditor.Models.Canvas;
 
 namespace PixelArtEditor.AppServices.Canvas;
@@ -9,14 +7,6 @@ public class LayerManager
 {
     public ObservableCollection<LayerModel> Layers { get; } = [];
     public LayerModel? ActiveLayer { get; set; }
-
-    public event Action<LayerModel>? LayerAdded;
-    public event Action<LayerModel>? LayerRemoved;
-
-    public LayerManager()
-    {
-        Layers.CollectionChanged += OnCollectionChanged;
-    }
 
     public void ResizeLayers(int newWidth, int newHeight)
     {
@@ -29,20 +19,6 @@ public class LayerManager
             layer.RenderBitmap = BitmapService.CreateBitmap(newWidth, newHeight, resized);
             layer.PixelData = resized;
         }
-    }
-
-    private void OnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
-    {
-        if (e.NewItems is not null)
-            foreach (LayerModel layer in e.NewItems)
-                LayerAdded?.Invoke(layer);
-
-        if (e.OldItems is not null)
-            foreach (LayerModel layer in e.OldItems)
-                LayerRemoved?.Invoke(layer);
-
-        if (ActiveLayer is null || !Layers.Contains(ActiveLayer))
-            ActiveLayer = Layers.Count > 0 ? Layers[0] : null;
     }
 
     public byte[] GetCompositePixelData(int width, int height)

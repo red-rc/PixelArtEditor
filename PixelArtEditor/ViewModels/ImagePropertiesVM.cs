@@ -6,6 +6,7 @@ using PixelArtEditor.Models.Canvas;
 using ReactiveUI;
 using System;
 using System.Reactive;
+using System.Reactive.Linq;
 
 namespace PixelArtEditor.ViewModels;
 
@@ -31,7 +32,7 @@ public class ImagePropertiesVM : ReactiveObject
     
     public ReactiveCommand<Unit, Unit> ResetCommand { get; }
     public ReactiveCommand<Unit, Unit> CancelCommand { get; }
-    public ReactiveCommand<Unit, Unit> SaveCommand { get; }
+    public ReactiveCommand<Unit, Unit> SaveCommand { get; } 
 
     public ImagePropertiesVM(Window dialog, PixelModel model)
     {
@@ -40,19 +41,21 @@ public class ImagePropertiesVM : ReactiveObject
 
         ImageProperties.WhenAnyValue(
                 x => x.Width,
-                x => x.Height,
-                x => x.PixelData
+                x => x.Height
             )
             .Subscribe(_ =>
             {
-                var preview = ImageProperties.LivePreviewParams;
+                if (ImageProperties.LivePreviewParams?.Data == null || ImageProperties.LivePreviewParams.Data.Length == 0) return;
 
-                if (preview?.Data == null || preview.Data.Length == 0) return;
+                ImageProperties.LivePreviewParams.Data = BitmapService.ResizePixelData(
+                    ImageProperties.LivePreviewParams.Data,
+                    _model.Width, _model.Height,
+                    ImageProperties.LivePreviewParams.Width, ImageProperties.LivePreviewParams.Height);
 
                 Layer = new LayerModel(
-                    preview.Width,
-                    preview.Height,
-                    preview.Data,
+                    ImageProperties.LivePreviewParams.Width,
+                    ImageProperties.LivePreviewParams.Height,
+                    ImageProperties.LivePreviewParams.Data,
                     "Preview Layer");
             });
 

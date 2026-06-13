@@ -96,15 +96,25 @@ public class Canvas : Control, ICanvasContext
     private ImageBrush? _checkerboardBrush;
 
     public LayerManager LayerManager { get; set; }
-    public LayerModel? ActiveLayer => LayerManager.ActiveLayer;
     public Dictionary<LayerModel, LayerRenderCache> RenderCache { get; } = [];
 
     public Canvas()
     {
         LayerManager = new LayerManager();
 
-        LayerManager.LayerAdded += layer => RenderCache[layer] = new LayerRenderCache();
-        LayerManager.LayerRemoved += layer => { RenderCache[layer].PreviewCts?.Cancel(); RenderCache.Remove(layer); };
+        LayerManager.Layers.CollectionChanged += (_, e) =>
+        {
+            if (e.NewItems is not null)
+                foreach (LayerModel layer in e.NewItems)
+                    RenderCache[layer] = new LayerRenderCache();
+
+            if (e.OldItems is not null)
+                foreach (LayerModel layer in e.OldItems)
+                {
+                    RenderCache[layer].PreviewCts?.Cancel();
+                    RenderCache.Remove(layer);
+                }
+        };
 
         RenderOptions.SetBitmapInterpolationMode(this, BitmapInterpolationMode.None);
 
@@ -128,9 +138,6 @@ public class Canvas : Control, ICanvasContext
     private void OnModelChanged()
     {
         if (Model is null) return;
-
-        //LayerManager.Layers.Clear();
-        //RenderCache.Clear();
 
         if (LayerManager.Layers.Count == 0)
         {

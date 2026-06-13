@@ -329,4 +329,42 @@
         <Setter Property="FontWeight" Value="SemiBold" />
     </Style>
 
+        <Style Selector="StackPanel.LayerItem">
+        <Setter Property="Background" Value="Transparent"/>
+    </Style>
+
+    <Style Selector="ui|InstantToggleButton.LayerItemButton">
+        <Setter Property="Width" Value="18"/>
+        <Setter Property="Height" Value="18"/>
+    </Style>
+
+    <Style Selector="TextBlock.LayerItemText">
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="FontFamily" Value="{DynamicResource HeadingFont}"/>
+        <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}"/>
+        <Setter Property="FontSize" Value="14"/>
+    </Style>
+
+    <Style Selector="Button.ActionButton">
+        <Setter Property="FontFamily" Value="{DynamicResource AppFont}"/>
+        <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}"/>
+        <Setter Property="FontSize" Value="24"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Width" Value="30"/>
+        <Setter Property="Height" Value="30"/>
+        <Setter Property="Background" Value="Transparent"/>
+
+        <Style Selector="^:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource BackgroundHoverColor}"/>
+            <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}"/> 
+        </Style>
+        
+        <Style Selector="^:pressed /template/ ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource DimGray}"/>
+            <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}"/>
+        </Style>
+    </Style>
+
 </Styles>

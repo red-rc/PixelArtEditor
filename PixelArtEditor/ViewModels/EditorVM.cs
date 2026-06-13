@@ -23,9 +23,9 @@ public class EditorVM : ReactiveObject
 
     public PixelModel GetPreparedModel()
     {
-        if (_canvas?.ActiveLayer is not null && _canvas?.ActiveLayer.PixelData is not null)
+        if (_canvas is not null)
         {
-            _model.Data = _canvas.LayerManager.GetCompositePixelData(Model.Width, Model.Height);
+            _model.Data = LayerManager.GetCompositePixelData(Model.Width, Model.Height);
             this.RaisePropertyChanged(nameof(Model));
         }
 

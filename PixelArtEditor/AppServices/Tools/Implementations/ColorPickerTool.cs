@@ -25,7 +25,7 @@ public class ColorPickerTool : ITool
 
     private static void PickColor(ICanvasContext context)
     {
-        var layer = context.ActiveLayer;
+        var layer = context.LayerManager.ActiveLayer;
         if (layer is null || context.HoverPixel is null) return;
 
         context.PickedColor = BitmapService.GetPixelColor(layer.PixelData, layer.Width, context.HoverPixel.Value);

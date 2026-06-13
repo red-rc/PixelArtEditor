@@ -15,7 +15,6 @@ public interface ICanvasContext
 
     LayerManager LayerManager { get; }
     Dictionary<LayerModel, LayerRenderCache> RenderCache { get; }
-    LayerModel? ActiveLayer { get; }
 
     Vector2 Offset { get; }
     double Scale { get; }

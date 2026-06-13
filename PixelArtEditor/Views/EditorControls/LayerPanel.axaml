@@ -10,42 +10,47 @@
     x:DataType="vm:LayerPanelVM"
     d:Background="{DynamicResource BackgroundColor}">
 
-    <UserControl.Styles>
-        <Style Selector="StackPanel.LayerItem">
-            <Setter Property="Background" Value="Transparent"/>
-        </Style>
-        <Style Selector="ui|InstantToggleButton.LayerItemButton">
-            <Setter Property="Width" Value="18"/>
-            <Setter Property="Height" Value="18"/>
-        </Style>
-        <Style Selector="TextBlock.LayerItemText">
-            <Setter Property="HorizontalAlignment" Value="Center"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="FontFamily" Value="{DynamicResource AppFont}"/>
-            <Setter Property="FontSize" Value="14"/>
-        </Style>
-    </UserControl.Styles>
-
-    <DockPanel>
-        <StackPanel DockPanel.Dock="Top" Orientation="Vertical">
+    <Grid RowDefinitions="40, *, 50">
+        <StackPanel Grid.Row="0" Background="{DynamicResource BackgroundColor}">
             <TextBlock Margin="10,10,10,5" Text="Layers" FontWeight="Bold" FontSize="16"/>
-            <StackPanel Classes="LayerItem">
-                <ItemsControl ItemsSource="{Binding Layers}">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate x:DataType="vm:LayerItemVM">
-                            <StackPanel Classes="LayerItem" Background="{Binding Background}" Orientation="Horizontal">
-                                <ui:Preview Margin="5" Layer="{Binding Layer}" Size="36" Width="36" Height="36"/>
-                                <TextBlock Classes="LayerItemText" Text="{Binding LayerName}" Margin="5,0,0,0"/>
-                                <ui:InstantToggleButton Classes="LayerItemButton" IsChecked="{Binding IsVisible}">
-                                    <Image Width="14" Height="14" Source="{DynamicResource ColorPickerIcon}" />
-                                </ui:InstantToggleButton>
-                            </StackPanel>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </StackPanel>
         </StackPanel>
-        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Margin="5">
+        <StackPanel Grid.Row="1">
+            <ListBox ItemsSource="{Binding LayerItems}" SelectedItem="{Binding SelectedLayer}" Background="{DynamicResource BackgroundColor}">
+                    <ListBox.Styles>
+                        <Style Selector="ListBoxItem">
+                            <Setter Property="Padding" Value="0"/>
+                            <Setter Property="Background" Value="Transparent"/>
+                        </Style>
+                        <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+                            <Setter Property="Background" Value="Transparent"/>
+                        </Style>
+                        <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
+                            <Setter Property="Background" Value="Transparent"/>
+                        </Style>
+                        <Style Selector="ListBoxItem:selected:pointerover /template/ ContentPresenter">
+                            <Setter Property="Background" Value="Transparent"/>
+                        </Style>
+                    </ListBox.Styles>
+
+                <ListBox.ItemTemplate>
+                    <DataTemplate x:DataType="vm:LayerItemVM">
+                        <StackPanel Background="{Binding Background}" Orientation="Horizontal">
+                            <ui:Preview Margin="5" Layer="{Binding Layer}" IsAlreadyBgra="True" Size="36" Width="36" Height="36"/>
+                            <TextBlock Classes="LayerItemText" Text="{Binding LayerName}" Margin="5,0,5,0"/>
+                            <ui:InstantToggleButton Classes="LayerItemButton" IsChecked="{Binding IsVisible}">
+                                <Image Width="14" Height="14" Source="{DynamicResource ColorPickerIcon}" Margin="10,0,10,0" />
+                            </ui:InstantToggleButton>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
         </StackPanel>
-    </DockPanel>
+        <StackPanel Grid.Row="2" 
+                    Background="{DynamicResource BackgroundColor}" 
+                    VerticalAlignment="Bottom" 
+                    HorizontalAlignment="Stretch" 
+                    Orientation="Horizontal">
+            <Button Classes="ActionButton" Content="+" Command="{Binding AddLayerCommand}" HorizontalAlignment="Left" Margin="5" />
+        </StackPanel>
+    </Grid>
 </UserControl>

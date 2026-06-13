@@ -25,7 +25,7 @@ public class FillTool : ITool
 
     private static void Fill(ICanvasContext context)
     {
-        var layer = context.ActiveLayer;
+        var layer = context.LayerManager.ActiveLayer;
         if (layer is null || context.HoverPixel is null) return;
 
         BitmapService.FillSimilarPixels(layer.RenderBitmap, layer.PixelData,

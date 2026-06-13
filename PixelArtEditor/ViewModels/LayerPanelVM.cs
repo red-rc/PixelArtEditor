@@ -5,10 +5,11 @@ using PixelArtEditor.Models.Canvas;
 using ReactiveUI;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reactive;
 
 namespace PixelArtEditor.ViewModels;
 
-public class LayerItemVM(LayerModel layer, IBrush background) : ReactiveObject
+public class LayerItemVM(LayerModel layer) : ReactiveObject
 {
     public LayerModel Layer { get; } = layer;
     public string LayerName { get; } = layer.Name;
@@ -20,7 +21,7 @@ public class LayerItemVM(LayerModel layer, IBrush background) : ReactiveObject
         set => this.RaiseAndSetIfChanged(ref _isVisible, value);
     }
 
-    private IBrush _background = background;
+    private IBrush _background = new SolidColorBrush(Colors.Transparent);
     public IBrush Background
     {
         get => _background;
@@ -30,36 +31,72 @@ public class LayerItemVM(LayerModel layer, IBrush background) : ReactiveObject
 
 public class LayerPanelVM : ReactiveObject
 {
-    public ObservableCollection<LayerItemVM> Layers { get; } = [];
+    private LayerManager? _layerManager;
+    public ObservableCollection<LayerItemVM> LayerItems { get; } = [];
+    public ReactiveCommand<Unit, Unit> AddLayerCommand { get; }
+
+    private LayerItemVM? _selectedLayer;
+    public LayerItemVM? SelectedLayer
+    {
+        get => _selectedLayer;
+        set
+        {
+            if (value == _selectedLayer || value is null) return;
+
+            _selectedLayer?.Background = new SolidColorBrush(Colors.Transparent);
+
+            _layerManager!.ActiveLayer = value.Layer;
+            value.Background = GetLayerBackground(value.Layer, _layerManager!);
+            this.RaiseAndSetIfChanged(ref _selectedLayer, value);
+        }
+    }
+
+    public LayerPanelVM()
+    {
+        AddLayerCommand = ReactiveCommand.Create(() => 
+        { 
+            if (_layerManager?.Layers is null || _layerManager.Layers.Count == 0) return;
+            _layerManager.Layers.Add(new LayerModel(
+                _layerManager.Layers[0].Width,
+                _layerManager.Layers[0].Height,
+                new byte[_layerManager.Layers[0].PixelData.Length],
+                $"Layer {_layerManager.Layers.Count + 1}"
+            ));
+        });
+    }
 
     public void SetLayerManager(LayerManager layerManager)
     {
-        Layers.Clear();
+        _layerManager = layerManager;
+        LayerItems.Clear();
 
         if (layerManager is null) return;
 
         foreach (var layer in layerManager.Layers)
-            Layers.Add(new LayerItemVM(layer, GetLayerBackground(layer, layerManager)));
+            LayerItems.Add(new LayerItemVM(layer));
 
         layerManager.Layers.CollectionChanged += (_, e) =>
         {
             if (e.NewItems is not null)
+            {
                 foreach (LayerModel layer in e.NewItems)
-                    Layers.Add(new LayerItemVM(layer, GetLayerBackground(layer, layerManager)));
-
+                    LayerItems.Insert(0, new LayerItemVM(layer));
+            }
             if (e.OldItems is not null)
                 foreach (LayerModel layer in e.OldItems)
                 {
-                    var vm = Layers.FirstOrDefault(x => x.Layer == layer);
-                    if (vm is not null) Layers.Remove(vm);
+                    var vm = LayerItems.FirstOrDefault(x => x.Layer == layer);
+                    if (vm is not null) LayerItems.Remove(vm);
                 }
         };
+
+        SelectedLayer = LayerItems[0];
     }
 
     private static SolidColorBrush GetLayerBackground(LayerModel layer, LayerManager manager)
     {
         var color = layer == manager.ActiveLayer
-            ? Application.Current?.Resources["PrimaryPressedColor"] as Color? ?? Colors.Blue : Colors.Transparent;
+            ? Application.Current?.Resources["PrimaryColor"] as Color? ?? Colors.Blue : Colors.Transparent;
 
         return new SolidColorBrush(color);
     }

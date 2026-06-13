@@ -41,8 +41,6 @@ public class Preview : Control
     private WriteableBitmap? _renderBitmap;
 
     private byte[]? _pixelData;
-    private int _initBitmapWidth;
-    private int _initBitmapHeight;
 
     public Preview()
     {
@@ -54,39 +52,15 @@ public class Preview : Control
     {
         if (Layer is not { Width: > 0, Height: > 0 }) return;
 
-        if (_initBitmapWidth == 0 || _initBitmapHeight == 0)
-        {
-            _initBitmapWidth = Layer.Width;
-            _initBitmapHeight = Layer.Height;
-        }
+        _pixelData = Layer.PixelData;
 
-        if (!ReferenceEquals(Layer.PixelData, _pixelData) || _pixelData is null)
-        {
-            _pixelData = Layer.PixelData;
-
-            if (!IsAlreadyBgra && _pixelData.Length > 0)
-                _pixelData = BitmapService.SwapRB(_pixelData);
-
-            _renderBitmap?.Dispose();
-            _renderBitmap = null;
-        }
+        if (!IsAlreadyBgra && _pixelData.Length > 0)
+            _pixelData = BitmapService.SwapRB(_pixelData);
 
         if (_pixelData is not { Length: > 0 }) return;
 
-        if (_renderBitmap is null)
-        {
-            _renderBitmap = BitmapService.CreateBitmap(Layer.Width, Layer.Height, _pixelData);
-        }
-        else if (_renderBitmap.PixelSize.Width != Layer.Width || _renderBitmap.PixelSize.Height != Layer.Height)
-        {
-            var resized = BitmapService.ResizePixelData(
-                _pixelData,
-                _initBitmapWidth, _initBitmapHeight,
-                Layer.Width, Layer.Height);
-
-            _renderBitmap.Dispose();
-            _renderBitmap = BitmapService.CreateBitmap(Layer.Width, Layer.Height, resized);
-        }
+        _renderBitmap?.Dispose();
+        _renderBitmap = BitmapService.CreateBitmap(Layer.Width, Layer.Height, _pixelData);
 
         Layer.PropertyChanged -= Layer_PropertyChanged;
         Layer.PropertyChanged += Layer_PropertyChanged;
