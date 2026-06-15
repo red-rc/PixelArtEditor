@@ -39,6 +39,8 @@ public class ImagePropertiesVM : ReactiveObject
         _model = model;
         ImageProperties = new ImagePropertiesUCVM();
 
+        ImageProperties.LoadFrom(_model);
+
         ImageProperties.WhenAnyValue(
                 x => x.Width,
                 x => x.Height
@@ -58,8 +60,6 @@ public class ImagePropertiesVM : ReactiveObject
                     ImageProperties.LivePreviewParams.Data,
                     "Preview Layer");
             });
-
-        ImageProperties.LoadFrom(_model);
 
         ResetCommand = ReactiveCommand.Create(() => ImageProperties.LoadFrom(_model));
 

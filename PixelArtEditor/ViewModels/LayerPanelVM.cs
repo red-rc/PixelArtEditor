@@ -4,6 +4,7 @@ using PixelArtEditor.AppServices.Canvas;
 using PixelArtEditor.Models.Canvas;
 using ReactiveUI;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Reactive;
 
@@ -125,35 +126,55 @@ public class LayerPanelVM : ReactiveObject
         });
     }
 
-    public void SetLayerManager(LayerManager layerManager)
+    public void SetLayerManager(LayerManager? layerManager)
     {
+        if (layerManager is null)
+        {
+            ClearCurrentManager();
+            return;
+        }
+
+        if (_layerManager == layerManager) return;
         _layerManager = layerManager;
-        LayerItems.Clear();
 
-        if (layerManager is null) return;
+        _layerManager.Layers.CollectionChanged += OnLayersChanged;
 
-        foreach (var layer in layerManager.Layers)
+        foreach (var layer in _layerManager.Layers)
         {
             LayerItems.Add(new LayerItemVM(layer));
             _originalWidth = layer.Width;
             _originalHeight = layer.Height;
         }
 
-        layerManager.Layers.CollectionChanged += (_, e) =>
-        {
-            if (e.NewItems is not null)
-            {
-                foreach (LayerModel layer in e.NewItems)
-                    LayerItems.Insert(0, new LayerItemVM(layer));
-            }
-            if (e.OldItems is not null)
-                foreach (LayerModel layer in e.OldItems)
-                {
-                    var vm = LayerItems.FirstOrDefault(x => x.Layer == layer);
-                    if (vm is not null) LayerItems.Remove(vm);
-                }
-        };
+        SelectedLayer = LayerItems.FirstOrDefault();
+    }
 
-        SelectedLayer = LayerItems[0];
+    private void OnLayersChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        if (e.NewItems is not null)
+        {
+            foreach (LayerModel layer in e.NewItems)
+                LayerItems.Insert(0, new LayerItemVM(layer));
+        }
+
+        if (e.OldItems is not null)
+        {
+            foreach (LayerModel layer in e.OldItems)
+            {
+                var layerItem = LayerItems.FirstOrDefault(x => x.Layer == layer);
+                if (layerItem is not null)
+                    LayerItems.Remove(layerItem);
+            }
+        }
+    }
+
+    private void ClearCurrentManager()
+    {
+        if (_layerManager is not null && _layerManager.Layers is not null)
+            _layerManager.Layers.CollectionChanged -= OnLayersChanged;
+
+        _layerManager = null;
+        SelectedLayer = null;
+        LayerItems.Clear();
     }
 }

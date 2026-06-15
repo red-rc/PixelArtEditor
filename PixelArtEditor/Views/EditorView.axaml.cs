@@ -37,14 +37,10 @@ public partial class EditorView : UserControl
         _dockManager = new DockManager(FloatingHost, _layoutManager.ApplyGridDefinitions);
         _tooltipManager = new TooltipManager(Tooltip, TooltipText, RectHost);
 
+        this.DataContextChanged += OnDataContextChanged;
+
         AttachedToVisualTree += (s, e) =>
         {
-            if (DataContext is EditorVM vm)
-            {
-                vm.SetCanvas(CanvasControl);
-                LayerPanelControl.LayerManager = CanvasControl.LayerManager;
-            }
-
             Services.ModelData.ModelChanged += () =>
             {
                 Dispatcher.UIThread.Post(() =>
@@ -65,6 +61,19 @@ public partial class EditorView : UserControl
 
             MainLayout.LayoutUpdated += OnMainLayoutLayoutUpdated;
         };
+    }
+
+    private void OnDataContextChanged(object? sender, EventArgs e)
+    {
+        if (DataContext is EditorVM vm)
+        {
+            LayerPanelControl.LayerManager = null;
+
+            vm.SetCanvas(CanvasControl);
+            LayerPanelControl.LayerManager = CanvasControl.LayerManager;
+
+            vm.AdjustCanvas(CanvasPanel.Bounds.Width, CanvasPanel.Bounds.Height);
+        }
     }
 
     private void CanvasPanel_OnSizeChanged(object? sender, SizeChangedEventArgs e)
