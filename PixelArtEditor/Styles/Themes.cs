@@ -7,6 +7,7 @@ using Avalonia.Platform;
 using Avalonia.Styling;
 using System;
 using System.IO;
+using PixelArtEditor.Helpers;
 
 namespace PixelArtEditor.Styles;
 
@@ -59,8 +60,8 @@ public abstract class BaseTheme
     public void ChangeAccentColor(Color newColor)
     {
         Resources["PrimaryColor"] = newColor;
-        Resources["PrimaryHoverColor"] = ColorExtensions.AdjustBrightness(newColor, 0.2);
-        Resources["PrimaryPressedColor"] = ColorExtensions.AdjustBrightness(newColor, -0.2);
+        Resources["PrimaryHoverColor"] = ColorHelper.AdjustBrightness(newColor, 0.2);
+        Resources["PrimaryPressedColor"] = ColorHelper.AdjustBrightness(newColor, -0.2);
 
         if (Application.Current != null)
         {
@@ -85,6 +86,32 @@ public abstract class BaseTheme
 
         Resources["AppFont"] = new FontFamily("avares://PixelArtEditor/Assets/Fonts/OpenSans-Regular.ttf");
         Resources["HeadingFont"] = new FontFamily("avares://PixelArtEditor/Assets/Fonts/Poppins-SemiBold.ttf");
+    }
+
+    public void SetDarkIcons()
+    {
+        Resources["MinimizeIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/WindowButtons/minimize-icon.png");
+        Resources["MaximizeIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/WindowButtons/maximize-icon.png");
+        Resources["CloseIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/WindowButtons/close-icon.png");
+        Resources["CloseIconHover"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/WindowButtons/close-icon.png");
+
+        Resources["PenIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/EditButtons/pen.png");
+        Resources["ColorPickerIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/EditButtons/colorpicker.png");
+        Resources["FillIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/EditButtons/fill.png");
+        Resources["EraserIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/EditButtons/eraser.png");
+        Resources["HandIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/EditButtons/hand.png");
+
+        Resources["AddIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/LayerButtons/add.png");
+        Resources["RemoveIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/LayerButtons/remove.png");
+        Resources["DuplicateIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/LayerButtons/duplicate.png");
+        Resources["GroupIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/LayerButtons/group.png");
+
+        Resources["ShowIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/LayerButtons/show.png");
+        Resources["HideIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/LayerButtons/hide.png");
+        Resources["LockIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/LayerButtons/lock.png");
+        Resources["UnlockIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/LayerButtons/unlock.png");
+
+        Resources["ChainIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/UIElements/chain.png");
     }
 }
 
@@ -115,18 +142,7 @@ public class DarkTheme : BaseTheme
         Resources["UiHoverColor"] = Color.Parse("#444444");
         Resources["UiPressedColor"] = Color.Parse("#181818");
 
-        Resources["MinimizeIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/WindowButtons/minimize-icon.png");
-        Resources["MaximizeIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/WindowButtons/maximize-icon.png");
-        Resources["CloseIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/WindowButtons/close-icon.png");
-        Resources["CloseIconHover"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/WindowButtons/close-icon.png");
-
-        Resources["PenIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/EditButtons/pen.png");
-        Resources["ColorPickerIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/EditButtons/colorpicker.png");
-        Resources["FillIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/EditButtons/fill.png");
-        Resources["EraserIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/EditButtons/eraser.png");
-        Resources["HandIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/EditButtons/hand.png");
-
-        Resources["ChainIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/UIElements/chain.png");
+        SetDarkIcons();
     }
 }
 
@@ -168,6 +184,16 @@ public class LightTheme : BaseTheme
         Resources["EraserIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Light/EditButtons/eraser.png");
         Resources["HandIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Light/EditButtons/hand.png");
 
+        Resources["AddIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Light/LayerButtons/add.png");
+        Resources["RemoveIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Light/LayerButtons/remove.png");
+        Resources["DuplicateIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Light/LayerButtons/duplicate.png");
+        Resources["GroupIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Light/LayerButtons/group.png");
+
+        Resources["ShowIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Light/LayerButtons/show.png");
+        Resources["HideIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Light/LayerButtons/hide.png");
+        Resources["LockIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Light/LayerButtons/lock.png");
+        Resources["UnlockIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Light/LayerButtons/unlock.png");
+
         Resources["ChainIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Light/UIElements/chain.png");
     }
 }
@@ -200,18 +226,7 @@ public class GrayTheme : BaseTheme
         Resources["UiHoverColor"] = Color.Parse("#545454");
         Resources["UiPressedColor"] = Color.Parse("#2e2e2e");
 
-        Resources["MinimizeIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/WindowButtons/minimize-icon.png");
-        Resources["MaximizeIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/WindowButtons/maximize-icon.png");
-        Resources["CloseIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/WindowButtons/close-icon.png");
-        Resources["CloseIconHover"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/WindowButtons/close-icon.png");
-
-        Resources["PenIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/EditButtons/pen.png");
-        Resources["ColorPickerIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/EditButtons/colorpicker.png");
-        Resources["FillIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/EditButtons/fill.png");
-        Resources["EraserIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/EditButtons/eraser.png");
-        Resources["HandIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/EditButtons/hand.png");
-
-        Resources["ChainIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/UIElements/chain.png");
+        SetDarkIcons();
     }
 }
 
@@ -237,29 +252,5 @@ public class SystemTheme : BaseTheme
         {
             Resources[key] = _currentTheme.Resources[key];
         }
-    }
-}
-
-public static class ColorExtensions
-{
-    public static Color AdjustBrightness(this Color color, double factor)
-    {
-        byte r, g, b;
-
-        if (factor > 0)
-        {
-            r = (byte)(color.R + (255 - color.R) * factor);
-            g = (byte)(color.G + (255 - color.G) * factor);
-            b = (byte)(color.B + (255 - color.B) * factor);
-        }
-        else
-        {
-            double k = 1 + factor;
-            r = (byte)(color.R * k);
-            g = (byte)(color.G * k);
-            b = (byte)(color.B * k);
-        }
-
-        return Color.FromArgb(color.A, r, g, b);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Media;
 using PixelArtEditor.AppServices.Canvas;
 using PixelArtEditor.Models.Canvas;
