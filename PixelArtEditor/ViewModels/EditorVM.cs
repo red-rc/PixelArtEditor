@@ -168,6 +168,9 @@ public class EditorVM : ReactiveObject
     public void SetCanvas(Canvas canvas)
     {
         _canvas = canvas;
+
+        canvas.ResetLayerManager();
+        canvas.InitializeWithModel(_model);
         LayerManager = canvas.LayerManager;
 
         _canvas.WhenAnyValue(x => x.CurrentPixelCoord)

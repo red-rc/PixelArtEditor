@@ -106,7 +106,10 @@ public class Canvas : Control, ICanvasContext
         {
             if (e.NewItems is not null)
                 foreach (LayerModel layer in e.NewItems)
+                {
                     RenderCache[layer] = new LayerRenderCache();
+                    layer.PropertyChanged += (_, _) => InvalidateVisual();
+                }
 
             if (e.OldItems is not null)
                 foreach (LayerModel layer in e.OldItems)
@@ -114,6 +117,8 @@ public class Canvas : Control, ICanvasContext
                     RenderCache[layer].PreviewCts?.Cancel();
                     RenderCache.Remove(layer);
                 }
+
+            InvalidateVisual();
         };
 
         RenderOptions.SetBitmapInterpolationMode(this, BitmapInterpolationMode.None);
@@ -137,22 +142,30 @@ public class Canvas : Control, ICanvasContext
 
     private void OnModelChanged()
     {
-        if (Model is null) return;
-
-        if (LayerManager.Layers.Count == 0)
-        {
-            LayerManager.Layers.Add(new LayerModel(
-                Model.Width,
-                Model.Height,
-                BitmapService.SwapRB(Model.Data),
-                "Layer 1"));
-
-            var layer = LayerManager.Layers[0];
-            RenderCache[layer].RenderBitmapDirty = false;
-            RenderCache[layer].PreviewDirty = true;
-        }
-
+        if (Model is null || LayerManager.Layers.Count == 0) return;
         LayerManager.ResizeLayers(Model.Width, Model.Height);
+        InvalidateVisual();
+    }
+
+    public void ResetLayerManager()
+    {
+        LayerManager.Layers.Clear();
+        RenderCache.Clear();
+        LayerManager.ActiveLayer = null;
+    }
+
+    public void InitializeWithModel(PixelModel model)
+    {
+        LayerManager.Layers.Add(new LayerModel(
+            model.Width,
+            model.Height,
+            BitmapService.SwapRB(model.Data),
+            "Layer 1"));
+
+        var layer = LayerManager.Layers[0];
+        LayerManager.ActiveLayer = layer;
+        RenderCache[layer].RenderBitmapDirty = false;
+        RenderCache[layer].PreviewDirty = true;
 
         InvalidateVisual();
     }
@@ -162,12 +175,12 @@ public class Canvas : Control, ICanvasContext
         base.OnPointerMoved(e);
 
         CurrentPixelCoord = CanvasHelper.GetPixelCoord(this, this, e);
-
         if (CurrentPixelCoord == HoverPixel) return;
-
         HoverPixel = CurrentPixelCoord;
 
         if (!_isLeftPressed) return;
+        if (LayerManager.ActiveLayer is { IsVisible: false } or { IsLocked: true }) return;
+
         _currentTool.OnPointerMoved(this);
     }
 
@@ -176,8 +189,10 @@ public class Canvas : Control, ICanvasContext
         base.OnPointerPressed(e);
 
         if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed) return;
-        _isLeftPressed = true;
 
+        if (LayerManager.ActiveLayer is { IsVisible: false } or { IsLocked: true }) return;
+
+        _isLeftPressed = true;
         _currentTool.OnPointerPressed(this);
     }
     
@@ -274,8 +289,6 @@ public class Canvas : Control, ICanvasContext
     public override void Render(DrawingContext context)
     {
         base.Render(context);
-
-        if (LayerManager.Layers.Count == 0) return;
 
         var ((bmpW, bmpH), (offsetX, offsetY)) = CanvasHelper.GetBitmapRenderInfo(this);
         if (bmpW <= 0 || bmpH <= 0) return;

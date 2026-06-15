@@ -13,8 +13,7 @@ public static class ActionService
         var model = await DialogService.ShowDialogAsync<CreateDialogWindow, PixelModel>();
         if (model == null) return;
 
-        if (Services.Navigation.GetViewModel() is not EditorVM)
-            Services.Navigation.NavigateTo(new EditorVM(model));
+        Services.Navigation.NavigateTo(new EditorVM(model));
     }
 
     public static async Task ShowImportWindowAsync()
@@ -22,8 +21,7 @@ public static class ActionService
         var model = await ImageImportService.ImportImageAsync();
         if (model == null) return;
 
-        if (Services.Navigation.GetViewModel() is not EditorVM)
-            Services.Navigation.NavigateTo(new EditorVM(model));
+        Services.Navigation.NavigateTo(new EditorVM(model));
     }
 
     public static async Task ShowExportWindowAsync(PixelModel model)

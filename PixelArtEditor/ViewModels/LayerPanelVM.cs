@@ -18,7 +18,22 @@ public class LayerItemVM(LayerModel layer) : ReactiveObject
     public bool IsVisible
     {
         get => _isVisible;
-        set => this.RaiseAndSetIfChanged(ref _isVisible, value);
+        set 
+        {
+            Layer.IsVisible = value;
+            this.RaiseAndSetIfChanged(ref _isVisible, value);
+        }
+    }
+
+    private bool _isLocked = layer.IsLocked;
+    public bool IsLocked
+    {
+        get => _isLocked;
+        set 
+        {
+            Layer.IsLocked = value;
+            this.RaiseAndSetIfChanged(ref _isLocked, value);
+        }
     }
 }
 
@@ -26,6 +41,9 @@ public class LayerPanelVM : ReactiveObject
 {
     private LayerManager? _layerManager;
     public ObservableCollection<LayerItemVM> LayerItems { get; } = [];
+    private int _originalWidth;
+    private int _originalHeight;
+
     public ReactiveCommand<Unit, Unit> AddCommand { get; }
     public ReactiveCommand<Unit, Unit> RemoveCommand { get; }
     public ReactiveCommand<Unit, Unit> DuplicateCommand { get; }
@@ -59,12 +77,12 @@ public class LayerPanelVM : ReactiveObject
     {
         AddCommand = ReactiveCommand.Create(() => 
         { 
-            if (_layerManager?.Layers is null || _layerManager.Layers.Count == 0) return;
+            if (_layerManager?.Layers is null) return;
 
             _layerManager.Layers.Add(new LayerModel(
-                _layerManager.Layers[0].Width,
-                _layerManager.Layers[0].Height,
-                new byte[_layerManager.Layers[0].PixelData.Length],
+                _originalWidth,
+                _originalHeight,
+                new byte[_originalWidth * _originalHeight * 4],
                 $"Layer {_layerManager.Layers.Count + 1}"
             ));
         });
@@ -74,9 +92,7 @@ public class LayerPanelVM : ReactiveObject
             if (SelectedLayers is null || SelectedLayers.Count == 0) return;
 
             foreach (var layerItem in SelectedLayers.ToList())
-            {
                 _layerManager.Layers.Remove(layerItem.Layer);
-            }
         });
         DuplicateCommand = ReactiveCommand.Create(() => 
         { 
@@ -117,7 +133,11 @@ public class LayerPanelVM : ReactiveObject
         if (layerManager is null) return;
 
         foreach (var layer in layerManager.Layers)
+        {
             LayerItems.Add(new LayerItemVM(layer));
+            _originalWidth = layer.Width;
+            _originalHeight = layer.Height;
+        }
 
         layerManager.Layers.CollectionChanged += (_, e) =>
         {
