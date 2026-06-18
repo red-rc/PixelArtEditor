@@ -10,7 +10,7 @@
     x:DataType="vm:LayerPanelVM"
     d:Background="{DynamicResource BackgroundColor}">
 
-    <Grid RowDefinitions="40, *, 50">
+    <Grid RowDefinitions="40, *, 50" PointerMoved="Grid_PointerMoved" PointerExited="Grid_PointerExited">
         <StackPanel Grid.Row="0" Background="{DynamicResource BackgroundColor}">
             <TextBlock Margin="10,10,10,5" Text="Layers" FontWeight="Bold" FontSize="16"/>
         </StackPanel>
@@ -41,12 +41,10 @@
                     <Style Selector="ListBoxItem ui|InstantToggleButton.LayerItemButton:pointerover /template/ ContentPresenter">
                         <Setter Property="Background" Value="{DynamicResource GrayColor}"/>
                     </Style>
-                    
-                    <Style Selector="ListBoxItem ui|InstantToggleButton.LayerItemButton:checked /template/ ContentPresenter">
-                        <Setter Property="Background" Value="{DynamicResource PrimaryColor}"/>
-                    </Style>
-                    <Style Selector="ListBoxItem ui|InstantToggleButton.LayerItemButton:pointerover:checked /template/ ContentPresenter">
-                        <Setter Property="Background" Value="{DynamicResource PrimaryHoverColor}"/>
+
+                    <Style Selector="Image">
+                        <Setter Property="Width" Value="18" />
+                        <Setter Property="Height" Value="18" />
                     </Style>
 
                 </ListBox.Styles>
@@ -56,34 +54,56 @@
                         <StackPanel Orientation="Horizontal">
                             <ui:Preview Margin="5" Layer="{Binding Layer}" IsAlreadyBgra="True" Size="36" Width="36" Height="36"/>
                             <TextBlock Classes="LayerItemText" Text="{Binding LayerName}" Margin="5,0,5,0"/>
-                            <ui:InstantToggleButton Classes="LayerItemButton" IsChecked="{Binding IsVisible}" Margin="5,0,5,0">
-                                <Image Width="12" Height="12" Source="{Binding VisibleIconSource}" />
+                            <ui:InstantToggleButton Classes="LayerItemButton"  Tag="Hide/Show" IsChecked="{Binding IsVisible}" Margin="5,0,5,0">
+                                <Image Source="{Binding VisibleIconSource}" />
                             </ui:InstantToggleButton>
-                             <ui:InstantToggleButton Classes="LayerItemButton" IsChecked="{Binding IsLocked}" Margin="2,0,5,0">
-                                <Image Width="12" Height="12" Source="{Binding LockedIconSource}" />
+                             <ui:InstantToggleButton Classes="LayerItemButton" Tag="Lock/Unlock" IsChecked="{Binding IsLocked}" Margin="2,0,5,0">
+                                <Image Source="{Binding LockedIconSource}" />
                             </ui:InstantToggleButton>
                         </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
         </StackPanel>
-        <StackPanel Grid.Row="2" 
+        <StackPanel 
+                Grid.Row="2" 
+                x:Name="ActionPanel"
                 Background="{DynamicResource BackgroundColor}" 
                 VerticalAlignment="Bottom" 
                 HorizontalAlignment="Stretch" 
                 Orientation="Horizontal">
-            <Button Classes="ActionButton" Command="{Binding AddCommand}" HorizontalAlignment="Left" Margin="5">
-                <Image Width="12" Height="12" Source="{DynamicResource AddIcon}" />
+            <Button Classes="ActionButton"  Tag="AddNewLayer" Command="{Binding AddCommand}" HorizontalAlignment="Left">
+                <Image Source="{DynamicResource AddIcon}" />
             </Button>
-            <Button Classes="ActionButton" Command="{Binding RemoveCommand}" HorizontalAlignment="Left" Margin="5">
-                <Image Width="12" Height="12" Source="{DynamicResource RemoveIcon}" />
+            <Button Classes="ActionButton"  Tag="RemoveLayer" Command="{Binding RemoveCommand}" HorizontalAlignment="Left">
+                <Image Source="{DynamicResource RemoveIcon}" />
             </Button>
-            <Button Classes="ActionButton" Command="{Binding DuplicateCommand}" HorizontalAlignment="Left" Margin="5">
-                <Image Width="12" Height="12" Source="{DynamicResource DuplicateIcon}" />
+            <Button Classes="ActionButton" Tag="DuplicateLayer" Command="{Binding DuplicateCommand}" HorizontalAlignment="Left">
+                <Image Source="{DynamicResource DuplicateIcon}" />
             </Button>
-            <Button Classes="ActionButton" Command="{Binding CreateGroupCommand}" HorizontalAlignment="Left" Margin="5">
-                <Image Width="12" Height="12" Source="{DynamicResource GroupIcon}" />
+            <Button Classes="ActionButton" Tag="CreateNewGroup" Command="{Binding CreateGroupCommand}" HorizontalAlignment="Left">
+                <Image Source="{DynamicResource GroupIcon}" />
+            </Button>
+            <Button Classes="ActionButton" Tag="MoveToTheTop" Command="{Binding UpCommand}" HorizontalAlignment="Left">
+                <Image Source="{DynamicResource UpIcon}" />
+            </Button>
+            <Button Classes="ActionButton" Tag="MoveToTheBottom" Command="{Binding DownCommand}" HorizontalAlignment="Left">
+                <Image Source="{DynamicResource DownIcon}" />
             </Button>
         </StackPanel>
+        <Canvas x:Name="RectHost" />
+        <Canvas Name="TooltipHost">
+            <Border
+                x:Name="Tooltip"
+                Padding="5"
+                Background="{DynamicResource UiColor}"
+                CornerRadius="5"
+                IsVisible="false">
+                <TextBlock
+                    x:Name="TooltipText"
+                    FontSize="14"
+                    Foreground="{DynamicResource ForegroundColor}" />
+            </Border>
+        </Canvas>
     </Grid>
 </UserControl>

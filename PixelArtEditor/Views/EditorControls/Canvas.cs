@@ -295,7 +295,7 @@ public class Canvas : Control, ICanvasContext
 
         foreach (var layer in LayerManager.Layers)
         {
-            var cache = RenderCache[layer];
+            if (!RenderCache.TryGetValue(layer, out var cache)) continue;
 
             if (cache.RenderBitmapDirty)
             {

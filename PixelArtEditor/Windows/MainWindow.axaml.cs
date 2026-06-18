@@ -27,6 +27,9 @@ public partial class MainWindow : Window
 
     private void Resize(object? sender, PointerPressedEventArgs e)
     {
+        if (Services.WindowState.Current == WindowState.FullScreen ||
+            Services.WindowState.Current == WindowState.Maximized) return;
+
         var point = e.GetPosition(this);
 
         var left = point.X <= EdgeSize;
@@ -51,7 +54,12 @@ public partial class MainWindow : Window
 
     private void UpdateCursor(object? sender, PointerEventArgs e)
     {
-        if (!CanResize) return;
+        if (!CanResize || Services.WindowState.Current == WindowState.FullScreen ||
+            Services.WindowState.Current == WindowState.Maximized)
+        {
+            Cursor = new Cursor(StandardCursorType.Arrow);
+            return;
+        }
 
         var point = e.GetPosition(this);
 

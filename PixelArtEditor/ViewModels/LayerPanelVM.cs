@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
+using PixelArtEditor.AppServices;
 using PixelArtEditor.AppServices.Canvas;
 using PixelArtEditor.Models.Canvas;
 using ReactiveUI;
@@ -24,6 +25,7 @@ public class LayerItemVM(LayerModel layer) : ReactiveObject
         {
             Layer.IsVisible = value;
             this.RaiseAndSetIfChanged(ref _isVisible, value);
+            this.RaisePropertyChanged(nameof(VisibleIconSource));
         }
     }
 
@@ -35,7 +37,22 @@ public class LayerItemVM(LayerModel layer) : ReactiveObject
         {
             Layer.IsLocked = value;
             this.RaiseAndSetIfChanged(ref _isLocked, value);
+            this.RaisePropertyChanged(nameof(LockedIconSource));
         }
+    }
+
+    public IImage? VisibleIconSource => IsVisible
+    ? Application.Current?.Resources["ShowIcon"] as IImage
+    : Application.Current?.Resources["HideIcon"] as IImage;
+
+    public IImage? LockedIconSource => IsLocked
+        ? Application.Current?.Resources["LockIcon"] as IImage
+        : Application.Current?.Resources["UnlockIcon"] as IImage;
+
+    public void RefreshIcons()
+    {
+        this.RaisePropertyChanged(nameof(VisibleIconSource));
+        this.RaisePropertyChanged(nameof(LockedIconSource));
     }
 }
 
@@ -50,6 +67,8 @@ public class LayerPanelVM : ReactiveObject
     public ReactiveCommand<Unit, Unit> RemoveCommand { get; }
     public ReactiveCommand<Unit, Unit> DuplicateCommand { get; }
     public ReactiveCommand<Unit, Unit> CreateGroupCommand { get; }
+    public ReactiveCommand<Unit, Unit> UpCommand { get; }
+    public ReactiveCommand<Unit, Unit> DownCommand { get; }
 
 
     private LayerItemVM? _selectedLayer;
@@ -77,6 +96,13 @@ public class LayerPanelVM : ReactiveObject
 
     public LayerPanelVM()
     {
+        Services.Settings.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName != nameof(ISettingsService.Theme)) return;
+            foreach (var item in LayerItems)
+                item.RefreshIcons();
+        };
+
         AddCommand = ReactiveCommand.Create(() => 
         { 
             if (_layerManager?.Layers is null) return;
@@ -125,6 +151,20 @@ public class LayerPanelVM : ReactiveObject
             if (_layerManager?.Layers is null || _layerManager.Layers.Count == 0) return;
             // Implementation for creating a group
         });
+        UpCommand = ReactiveCommand.Create(() =>
+        {
+            if (_layerManager?.Layers is null || _layerManager.Layers.Count <= 1 || _layerManager.ActiveLayer is null) return;
+
+            var layer = _layerManager.ActiveLayer;
+            _layerManager.Layers.Move(_layerManager.Layers.IndexOf(layer), 0);
+        });
+        DownCommand = ReactiveCommand.Create(() =>
+        {
+            if (_layerManager?.Layers is null || _layerManager.Layers.Count <= 1 || _layerManager.ActiveLayer is null) return;
+
+            var layer = _layerManager.ActiveLayer;
+            _layerManager.Layers.Move(_layerManager.Layers.IndexOf(layer), _layerManager.Layers.Count - 1);
+        });
     }
 
     public void SetLayerManager(LayerManager? layerManager)
@@ -152,10 +192,16 @@ public class LayerPanelVM : ReactiveObject
 
     private void OnLayersChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
+        if (e.Action == NotifyCollectionChangedAction.Move)
+        {
+            LayerItems.Move(e.OldStartingIndex, e.NewStartingIndex);
+            return;
+        }
+
         if (e.NewItems is not null)
         {
             foreach (LayerModel layer in e.NewItems)
-                LayerItems.Insert(0, new LayerItemVM(layer));
+                LayerItems.Add(new LayerItemVM(layer));
         }
 
         if (e.OldItems is not null)

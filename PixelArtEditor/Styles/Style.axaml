@@ -162,7 +162,11 @@
     </Style>
 
     <Style Selector="Button.WindowBaseButton:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-        <Setter Property="Background" Value="{DynamicResource BackgroundHoverColor}" />
+        <Setter Property="Background" Value="{DynamicResource UiColor}" />
+    </Style>
+
+    <Style Selector="Button.WindowBaseButton:pressed /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource UiHoverColor}" />
     </Style>
 
     <Style Selector="Button.WindowCloseButton">
@@ -313,10 +317,6 @@
         <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}" />
     </Style>
 
-    <Style Selector="MenuItem:disabled">
-        <Setter Property="Foreground" Value="{DynamicResource DisabledForegroundColor}" />
-    </Style>
-
     <Style Selector="TextBlock">
         <Setter Property="FontFamily" Value="{DynamicResource AppFont}" />
     </Style>
@@ -336,9 +336,9 @@
     </Style>
 
     <Style Selector="ui|InstantToggleButton.LayerItemButton">
-        <Setter Property="Width" Value="18"/>
-        <Setter Property="Height" Value="18"/>
-        <Setter Property="Padding" Value="2"/>
+        <Setter Property="Width" Value="24"/>
+        <Setter Property="Height" Value="24"/>
+        <Setter Property="Padding" Value="5"/>
         <Setter Property="CornerRadius" Value="2.5"/>
     </Style>
 
@@ -355,9 +355,9 @@
         <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}"/>
         <Setter Property="FontSize" Value="24"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
-        <Setter Property="Padding" Value="0"/>
-        <Setter Property="Width" Value="30"/>
-        <Setter Property="Height" Value="30"/>
+        <Setter Property="Padding" Value="10"/>
+        <Setter Property="Width" Value="40"/>
+        <Setter Property="Height" Value="40"/>
         <Setter Property="Background" Value="Transparent"/>
 
         <Style Selector="^:pointerover /template/ ContentPresenter">
@@ -366,7 +366,7 @@
         </Style>
         
         <Style Selector="^:pressed /template/ ContentPresenter">
-            <Setter Property="Background" Value="{DynamicResource DimGray}"/>
+            <Setter Property="Background" Value="{DynamicResource GrayColor}"/>
             <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}"/>
         </Style>
     </Style>

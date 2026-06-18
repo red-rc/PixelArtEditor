@@ -22,6 +22,7 @@
         "G": 115,
         "B": 204
       },
+      "MenuFlyoutItemBackground": "Transparent",
       "AppFont": {
         "Name": "avares://PixelArtEditor/Assets/Fonts/OpenSans-Regular.ttf",
         "FamilyNames": [
@@ -122,6 +123,24 @@
         "G": 24,
         "B": 24
       },
+      "MenuFlyoutItemBackgroundPointerOver": {
+        "A": 255,
+        "R": 46,
+        "G": 46,
+        "B": 46
+      },
+      "MenuFlyoutItemBackgroundPressed": {
+        "A": 255,
+        "R": 46,
+        "G": 46,
+        "B": 46
+      },
+      "MenuFlyoutPresenterBackground": {
+        "A": 255,
+        "R": 30,
+        "G": 30,
+        "B": 30
+      },
       "MinimizeIcon": {
         "Dpi": {
           "X": 96.0,
@@ -320,6 +339,226 @@
         },
         "AlphaFormat": 0
       },
+      "AddIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "RemoveIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "DuplicateIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "GroupIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "ShowIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "HideIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "LockIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "UnlockIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "UpIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "DownIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
       "ChainIcon": {
         "Dpi": {
           "X": 96.0,
@@ -367,6 +606,7 @@
         "G": 115,
         "B": 204
       },
+      "MenuFlyoutItemBackground": "Transparent",
       "AppFont": {
         "Name": "avares://PixelArtEditor/Assets/Fonts/OpenSans-Regular.ttf",
         "FamilyNames": [
@@ -467,6 +707,24 @@
         "G": 206,
         "B": 206
       },
+      "MenuFlyoutItemBackgroundPointerOver": {
+        "A": 255,
+        "R": 229,
+        "G": 229,
+        "B": 229
+      },
+      "MenuFlyoutItemBackgroundPressed": {
+        "A": 255,
+        "R": 229,
+        "G": 229,
+        "B": 229
+      },
+      "MenuFlyoutPresenterBackground": {
+        "A": 255,
+        "R": 245,
+        "G": 245,
+        "B": 245
+      },
       "MinimizeIcon": {
         "Dpi": {
           "X": 96.0,
@@ -665,6 +923,226 @@
         },
         "AlphaFormat": 0
       },
+      "AddIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "RemoveIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "DuplicateIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "GroupIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "ShowIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "HideIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "LockIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "UnlockIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "UpIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "DownIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
       "ChainIcon": {
         "Dpi": {
           "X": 96.0,
@@ -712,6 +1190,7 @@
         "G": 115,
         "B": 204
       },
+      "MenuFlyoutItemBackground": "Transparent",
       "AppFont": {
         "Name": "avares://PixelArtEditor/Assets/Fonts/OpenSans-Regular.ttf",
         "FamilyNames": [
@@ -812,6 +1291,24 @@
         "G": 46,
         "B": 46
       },
+      "MenuFlyoutItemBackgroundPointerOver": {
+        "A": 255,
+        "R": 64,
+        "G": 64,
+        "B": 64
+      },
+      "MenuFlyoutItemBackgroundPressed": {
+        "A": 255,
+        "R": 64,
+        "G": 64,
+        "B": 64
+      },
+      "MenuFlyoutPresenterBackground": {
+        "A": 255,
+        "R": 46,
+        "G": 46,
+        "B": 46
+      },
       "MinimizeIcon": {
         "Dpi": {
           "X": 96.0,
@@ -1010,6 +1507,226 @@
         },
         "AlphaFormat": 0
       },
+      "AddIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "RemoveIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "DuplicateIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "GroupIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "ShowIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "HideIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "LockIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "UnlockIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "UpIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "DownIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
       "ChainIcon": {
         "Dpi": {
           "X": 96.0,
@@ -1057,6 +1774,7 @@
         "G": 115,
         "B": 204
       },
+      "MenuFlyoutItemBackground": "Transparent",
       "AppFont": {
         "Name": "avares://PixelArtEditor/Assets/Fonts/OpenSans-Regular.ttf",
         "FamilyNames": [
@@ -1157,6 +1875,24 @@
         "G": 206,
         "B": 206
       },
+      "MenuFlyoutItemBackgroundPointerOver": {
+        "A": 255,
+        "R": 229,
+        "G": 229,
+        "B": 229
+      },
+      "MenuFlyoutItemBackgroundPressed": {
+        "A": 255,
+        "R": 229,
+        "G": 229,
+        "B": 229
+      },
+      "MenuFlyoutPresenterBackground": {
+        "A": 255,
+        "R": 245,
+        "G": 245,
+        "B": 245
+      },
       "MinimizeIcon": {
         "Dpi": {
           "X": 96.0,
@@ -1334,6 +2070,226 @@
         "AlphaFormat": 0
       },
       "HandIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "AddIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "RemoveIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "DuplicateIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "GroupIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "ShowIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "HideIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "LockIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "UnlockIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "UpIcon": {
+        "Dpi": {
+          "X": 96.0,
+          "Y": 96.0,
+          "Length": 135.7645019878171,
+          "SquaredLength": 18432.0
+        },
+        "Size": {
+          "AspectRatio": 1.0,
+          "Width": 18.0,
+          "Height": 18.0
+        },
+        "PixelSize": {
+          "AspectRatio": 1.0,
+          "Width": 18,
+          "Height": 18
+        },
+        "Format": {
+          "BitsPerPixel": 32
+        },
+        "AlphaFormat": 0
+      },
+      "DownIcon": {
         "Dpi": {
           "X": 96.0,
           "Y": 96.0,

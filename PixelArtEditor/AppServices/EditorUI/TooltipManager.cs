@@ -1,10 +1,12 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Media;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace PixelArtEditor.AppServices.EditorUI;
 
@@ -41,10 +43,29 @@ public class TooltipManager(Control tooltipControl, TextBlock tooltipText, Panel
             await Task.Delay(500, token);
             if (token.IsCancellationRequested) return;
 
-            Avalonia.Controls.Canvas.SetLeft(_tooltipControl, _lastPointerPos.X + 10);
-            Avalonia.Controls.Canvas.SetTop(_tooltipControl, _lastPointerPos.Y + 5);
+            _tooltipText.Text = string.Concat(tag.Select((c, i) => 
+                i > 0 && char.IsUpper(c) && tag.ToString()[i - 1] != '/' ? " " + c : c.ToString()));
 
-            _tooltipText.Text = string.Concat(tag.Select((c, i) => i > 0 && char.IsUpper(c) ? " " + c : c.ToString()));
+            var formatted = new FormattedText(
+                _tooltipText.Text,
+                System.Globalization.CultureInfo.CurrentCulture,
+                FlowDirection.LeftToRight,
+                Typeface.Default,
+                14,
+                Brushes.Black);
+
+            var textWidth = formatted.Width;
+            var right = _lastPointerPos.X > _tooltipHost.Bounds.Width - (textWidth + 10)
+                ? _lastPointerPos.X - (textWidth + 10)
+                : _lastPointerPos.X + 5;
+
+            var top = _lastPointerPos.Y > _tooltipHost.Bounds.Height - 25
+                ? _lastPointerPos.Y - 25
+                : _lastPointerPos.Y + 5;
+
+            Avalonia.Controls.Canvas.SetLeft(_tooltipControl, right);
+            Avalonia.Controls.Canvas.SetTop(_tooltipControl, top);
+
             _tooltipControl.IsVisible = true;
         }
         catch (TaskCanceledException) { }

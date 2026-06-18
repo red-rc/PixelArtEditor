@@ -11,11 +11,14 @@
     x:DataType="vm:MainWindowVM"
     Background="{DynamicResource BackgroundColor}"
     ExtendClientAreaToDecorationsHint="True"
-    Icon="/Assets/logo.ico"
     SystemDecorations="None"
+    Icon="/Assets/logo.ico"
     TransparencyLevelHint="AcrylicBlur"
     WindowStartupLocation="CenterScreen"
+    Padding="0,-1,0,0"
     mc:Ignorable="d">
+    <!-- Padding top=-1 fixes Avalonia Win32 1px native hit-test zone at top of window -->
+
     <DockPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <DockPanel
             Height="30"

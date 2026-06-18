@@ -84,6 +84,8 @@ public abstract class BaseTheme
         Resources["PrimaryHoverColor"] = Color.Parse("#4ba6ff");
         Resources["PrimaryPressedColor"] = Color.Parse("#1873cc");
 
+        Resources["MenuFlyoutItemBackground"] = new SolidColorBrush(Colors.Transparent);
+
         Resources["AppFont"] = new FontFamily("avares://PixelArtEditor/Assets/Fonts/OpenSans-Regular.ttf");
         Resources["HeadingFont"] = new FontFamily("avares://PixelArtEditor/Assets/Fonts/Poppins-SemiBold.ttf");
     }
@@ -110,6 +112,8 @@ public abstract class BaseTheme
         Resources["HideIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/LayerButtons/hide.png");
         Resources["LockIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/LayerButtons/lock.png");
         Resources["UnlockIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/LayerButtons/unlock.png");
+        Resources["UpIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/LayerButtons/up.png");
+        Resources["DownIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/LayerButtons/down.png");
 
         Resources["ChainIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/UIElements/chain.png");
     }
@@ -142,6 +146,10 @@ public class DarkTheme : BaseTheme
         Resources["UiHoverColor"] = Color.Parse("#444444");
         Resources["UiPressedColor"] = Color.Parse("#181818");
 
+        Resources["MenuFlyoutItemBackgroundPointerOver"] = Resources["UiColor"];
+        Resources["MenuFlyoutItemBackgroundPressed"] = Resources["UiColor"];
+        Resources["MenuFlyoutPresenterBackground"] = Resources["TertiaryBackgroundColor"];
+
         SetDarkIcons();
     }
 }
@@ -173,6 +181,10 @@ public class LightTheme : BaseTheme
         Resources["UiHoverColor"] = Color.Parse("#d9d9d9");
         Resources["UiPressedColor"] = Color.Parse("#cecece");
 
+        Resources["MenuFlyoutItemBackgroundPointerOver"] = Resources["UiColor"];
+        Resources["MenuFlyoutItemBackgroundPressed"] = Resources["UiColor"];
+        Resources["MenuFlyoutPresenterBackground"] = Resources["TertiaryBackgroundColor"];
+
         Resources["MinimizeIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Light/WindowButtons/minimize-icon.png");
         Resources["MaximizeIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Light/WindowButtons/maximize-icon.png");
         Resources["CloseIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Light/WindowButtons/close-icon.png");
@@ -193,6 +205,8 @@ public class LightTheme : BaseTheme
         Resources["HideIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Light/LayerButtons/hide.png");
         Resources["LockIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Light/LayerButtons/lock.png");
         Resources["UnlockIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Light/LayerButtons/unlock.png");
+        Resources["UpIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Light/LayerButtons/up.png");
+        Resources["DownIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Light/LayerButtons/down.png");
 
         Resources["ChainIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Light/UIElements/chain.png");
     }
@@ -225,6 +239,10 @@ public class GrayTheme : BaseTheme
         Resources["UiColor"] = Color.Parse("#404040");
         Resources["UiHoverColor"] = Color.Parse("#545454");
         Resources["UiPressedColor"] = Color.Parse("#2e2e2e");
+
+        Resources["MenuFlyoutItemBackgroundPointerOver"] = Resources["UiColor"];
+        Resources["MenuFlyoutItemBackgroundPressed"] = Resources["UiColor"];
+        Resources["MenuFlyoutPresenterBackground"] = Resources["TertiaryBackgroundColor"];
 
         SetDarkIcons();
     }

@@ -1,8 +1,8 @@
 from pathlib import Path
 from PIL import Image
 
-input_folder = Path("input")
-output_folder = Path("output")
+input_folder = Path(input("Введіть шлях до папки з PNG: ").strip())
+output_folder = input_folder.parent / f"{input_folder.name}_converted"
 
 output_folder.mkdir(exist_ok=True)
 
@@ -22,4 +22,5 @@ for png_file in input_folder.glob("*.png"):
 
     img.save(output_folder / png_file.name)
 
-print("Готово.")
+print(f"Готово. Результат збережено в: {output_folder}")
+input("Натисніть Enter для виходу...")
