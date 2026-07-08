@@ -59,7 +59,7 @@ public class TooltipManager(Control tooltipControl, TextBlock tooltipText, Panel
                 ? _lastPointerPos.X - (textWidth + 10)
                 : _lastPointerPos.X + 5;
 
-            var top = _lastPointerPos.Y > _tooltipHost.Bounds.Height - 25
+            var top = _lastPointerPos.Y > _tooltipHost.Bounds.Height - 30
                 ? _lastPointerPos.Y - 25
                 : _lastPointerPos.Y + 5;
 

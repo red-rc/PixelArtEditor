@@ -371,4 +371,26 @@
         </Style>
     </Style>
 
+    <Style Selector="ScrollBar">
+        <Setter Property="AllowAutoHide" Value="False" />
+    </Style>
+    
+    <Style Selector="ScrollBar /template/ Thumb">
+        <Setter Property="Background" Value="{DynamicResource GrayColor}" />
+        <Setter Property="RenderTransform" Value="none" />
+    </Style>
+
+    <Style Selector="ScrollBar[IsExpanded=True] /template/ Thumb Border">
+        <Setter Property="Background" Value="{DynamicResource GrayColor}" />
+    </Style>
+    
+    <Style Selector="ScrollBar[IsExpanded=True] /template/ Thumb:pointerover Border">
+        <Setter Property="Background" Value="{DynamicResource GrayHoverColor}" />
+    </Style>
+
+    <Style Selector="ScrollBar[IsExpanded=True] /template/ Rectangle#TrackRect">
+        <Setter Property="Fill" Value="{DynamicResource ScrollBackgroundColor}" />
+        <Setter Property="Opacity" Value="1" />
+    </Style>
+
 </Styles>

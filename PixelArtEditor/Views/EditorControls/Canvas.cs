@@ -12,6 +12,8 @@ using PixelArtEditor.Models.Canvas;
 using PixelArtEditor.Models.Tools;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Linq;
 using System.Numerics;
 
 namespace PixelArtEditor.Views.EditorControls;
@@ -104,6 +106,12 @@ public class Canvas : Control, ICanvasContext
 
         LayerManager.Layers.CollectionChanged += (_, e) =>
         {
+            if (e.Action == NotifyCollectionChangedAction.Move)
+            {
+                InvalidateVisual();
+                return;
+            }
+
             if (e.NewItems is not null)
                 foreach (LayerModel layer in e.NewItems)
                 {
@@ -293,7 +301,7 @@ public class Canvas : Control, ICanvasContext
         var ((bmpW, bmpH), (offsetX, offsetY)) = CanvasHelper.GetBitmapRenderInfo(this);
         if (bmpW <= 0 || bmpH <= 0) return;
 
-        foreach (var layer in LayerManager.Layers)
+        foreach (var layer in LayerManager.Layers.Reverse())
         {
             if (!RenderCache.TryGetValue(layer, out var cache)) continue;
 
@@ -309,7 +317,7 @@ public class Canvas : Control, ICanvasContext
 
         DrawCheckerBoard(context, offsetX, offsetY, bmpW, bmpH);
 
-        foreach (var layer in LayerManager.Layers)
+        foreach (var layer in LayerManager.Layers.Reverse())
             if (layer.IsVisible)
                 DrawBitmap(context, layer, offsetX, offsetY, bmpW, bmpH);
 

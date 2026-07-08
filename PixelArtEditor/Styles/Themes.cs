@@ -150,6 +150,8 @@ public class DarkTheme : BaseTheme
         Resources["MenuFlyoutItemBackgroundPressed"] = Resources["UiColor"];
         Resources["MenuFlyoutPresenterBackground"] = Resources["TertiaryBackgroundColor"];
 
+        Resources["ScrollBackgroundColor"] = Color.Parse("#282828");
+
         SetDarkIcons();
     }
 }
@@ -184,6 +186,8 @@ public class LightTheme : BaseTheme
         Resources["MenuFlyoutItemBackgroundPointerOver"] = Resources["UiColor"];
         Resources["MenuFlyoutItemBackgroundPressed"] = Resources["UiColor"];
         Resources["MenuFlyoutPresenterBackground"] = Resources["TertiaryBackgroundColor"];
+
+        Resources["ScrollBackgroundColor"] = Color.Parse("#e0e0e0");
 
         Resources["MinimizeIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Light/WindowButtons/minimize-icon.png");
         Resources["MaximizeIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Light/WindowButtons/maximize-icon.png");
@@ -239,6 +243,8 @@ public class GrayTheme : BaseTheme
         Resources["UiColor"] = Color.Parse("#404040");
         Resources["UiHoverColor"] = Color.Parse("#545454");
         Resources["UiPressedColor"] = Color.Parse("#2e2e2e");
+
+        Resources["ScrollBackgroundColor"] = Color.Parse("#383838");
 
         Resources["MenuFlyoutItemBackgroundPointerOver"] = Resources["UiColor"];
         Resources["MenuFlyoutItemBackgroundPressed"] = Resources["UiColor"];

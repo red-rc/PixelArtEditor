@@ -1,5 +1,4 @@
 ﻿using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Media;
 using PixelArtEditor.AppServices;
 using PixelArtEditor.AppServices.Canvas;
@@ -107,7 +106,7 @@ public class LayerPanelVM : ReactiveObject
         { 
             if (_layerManager?.Layers is null) return;
 
-            _layerManager.Layers.Add(new LayerModel(
+            _layerManager.Layers.Insert(0, new LayerModel(
                 _originalWidth,
                 _originalHeight,
                 new byte[_originalWidth * _originalHeight * 4],
@@ -201,7 +200,7 @@ public class LayerPanelVM : ReactiveObject
         if (e.NewItems is not null)
         {
             foreach (LayerModel layer in e.NewItems)
-                LayerItems.Add(new LayerItemVM(layer));
+                LayerItems.Insert(0, new LayerItemVM(layer));
         }
 
         if (e.OldItems is not null)

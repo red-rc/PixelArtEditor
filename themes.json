@@ -141,6 +141,12 @@
         "G": 30,
         "B": 30
       },
+      "ScrollBackgroundColor": {
+        "A": 255,
+        "R": 40,
+        "G": 40,
+        "B": 40
+      },
       "MinimizeIcon": {
         "Dpi": {
           "X": 96.0,
@@ -725,6 +731,12 @@
         "G": 245,
         "B": 245
       },
+      "ScrollBackgroundColor": {
+        "A": 255,
+        "R": 224,
+        "G": 224,
+        "B": 224
+      },
       "MinimizeIcon": {
         "Dpi": {
           "X": 96.0,
@@ -1290,6 +1302,12 @@
         "R": 46,
         "G": 46,
         "B": 46
+      },
+      "ScrollBackgroundColor": {
+        "A": 255,
+        "R": 56,
+        "G": 56,
+        "B": 56
       },
       "MenuFlyoutItemBackgroundPointerOver": {
         "A": 255,
@@ -1892,6 +1910,12 @@
         "R": 245,
         "G": 245,
         "B": 245
+      },
+      "ScrollBackgroundColor": {
+        "A": 255,
+        "R": 224,
+        "G": 224,
+        "B": 224
       },
       "MinimizeIcon": {
         "Dpi": {

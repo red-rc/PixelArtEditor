@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
+using Avalonia.VisualTree;
 using PixelArtEditor.Helpers;
 using PixelArtEditor.Models.Dock;
 using System;
@@ -7,18 +8,18 @@ using System.Linq;
 
 namespace PixelArtEditor.AppServices.EditorUI;
 
-public class DockManager(Panel floatingHost, Action applyGridDefinitions)
+public static class DockManager
 {
-    private readonly Panel _floatingHost = floatingHost;
-    private readonly Action _applyGridDefinitions = applyGridDefinitions;
-
-    public void Undock(Control panel)
+    public static void Undock(Control panel, Panel floatingHost)
     {
-        var parent = panel.Parent as Panel ?? throw new InvalidOperationException();
-        var pos = panel.TranslatePoint(new Point(0, 0), _floatingHost) ?? default;
+        panel.Width = panel.Bounds.Width;
+        panel.Height = panel.Bounds.Height;
+
+        var parent = panel.FindAncestorOfType<Panel>() ?? throw new InvalidOperationException();
+        var pos = panel.TranslatePoint(new Point(0, 0), floatingHost) ?? default;
 
         parent.Children.Remove(panel);
-        _floatingHost.Children.Add(panel);
+        floatingHost.Children.Add(panel);
 
         Avalonia.Controls.Canvas.SetLeft(panel, pos.X);
         Avalonia.Controls.Canvas.SetTop(panel, pos.Y);
@@ -31,9 +32,12 @@ public class DockManager(Panel floatingHost, Action applyGridDefinitions)
 
         if (!state.OriginalParent.Children.Contains(panel))
             state.OriginalParent.Children.Add(panel);
+
+        panel.ClearValue(Control.WidthProperty);
+        panel.ClearValue(Control.HeightProperty);
     }
 
-    public void ReorderElements(Panel parent, Control dragged, byte targetIndex, DockOrientation orientation, DockState dockState)
+    public static void ReorderElements(Panel parent, Control dragged, byte targetIndex, DockOrientation orientation, DockState dockState, Action applyGridDefinitions)
     {
         var items = parent.Children.OfType<Control>()
             .Where(c => c is not null && (DockHelper.MatchesOrientation(c, dockState.Orientation) || c.Name == "CanvasPanel"))
@@ -54,6 +58,6 @@ public class DockManager(Panel floatingHost, Action applyGridDefinitions)
                 Grid.SetRow(items[i], i);
         }
 
-        _applyGridDefinitions();
+        applyGridDefinitions();
     }
 }

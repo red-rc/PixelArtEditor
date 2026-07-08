@@ -3,16 +3,17 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 using PixelArtEditor.AppServices;
 using PixelArtEditor.AppServices.EditorUI;
 using PixelArtEditor.Helpers;
 using PixelArtEditor.Models.Dock;
+using PixelArtEditor.UI;
 using PixelArtEditor.ViewModels;
 using System;
 using System.Linq;
 using System.Numerics;
 using System.Reactive.Linq;
-using System.Threading.Tasks;
 
 namespace PixelArtEditor.Views;
 
@@ -20,11 +21,11 @@ public partial class EditorView : UserControl
 {
     private DockState? _dockState;
 
+    private Point _mousePressPos;
+    private bool _pressedOnPanel;
     private bool _dragging;
-    private bool _pointerDown;
 
     private readonly LayoutManager _layoutManager;
-    private readonly DockManager _dockManager;
     private readonly TooltipManager _tooltipManager;
 
     private EditorVM? ViewModel => DataContext as EditorVM;
@@ -34,7 +35,6 @@ public partial class EditorView : UserControl
         InitializeComponent();
 
         _layoutManager = new LayoutManager(MainLayout, RectHost, CanvasPanel);
-        _dockManager = new DockManager(FloatingHost, _layoutManager.ApplyGridDefinitions);
         _tooltipManager = new TooltipManager(Tooltip, TooltipText, RectHost);
 
         this.DataContextChanged += OnDataContextChanged;
@@ -135,51 +135,59 @@ public partial class EditorView : UserControl
 
     private void OnMainLayoutLayoutUpdated(object? sender, EventArgs e) => _layoutManager.UpdateRectPositions();
 
-    private void Root_PointerMoved(object? sender, PointerEventArgs e) => 
-        _tooltipManager.OnPointerMoved(e, ToolbarPanel.StackPanel.Children.OfType<Control>());
+    private void Root_PointerMoved(object? sender, PointerEventArgs e)
+    {
+        var buttons = LayerPanelControl.GetVisualDescendants().OfType<Button>()
+            .Concat(ToolbarPanel.StackPanel.Children.OfType<Button>());
+
+        _tooltipManager.OnPointerMoved(e, buttons);
+    } 
 
     private async void Panel_PointerPressed(object? sender, PointerPressedEventArgs e)
     {
-        if (sender is not Control dragged || !e.GetCurrentPoint(this).Properties.IsLeftButtonPressed) return;
-        
-        _pointerDown = true;
-        await Task.Delay(500);
-    
-        if (!_pointerDown) return;
-    
-        _dockState ??= DockHelper.GetDockState(dragged);
-        _dockManager.Undock(dragged);
+        if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed || _dragging) return;
 
-        _dragging = true;
-    
-        var rectsToHighlight = _dockState.Orientation == DockOrientation.Vertical ? _layoutManager.VerticalRects : _layoutManager.HorizontalRects;
-
-        rectsToHighlight.ForEach(rect => rect.Fill = rect.GetValue(LayoutManager.DockInfoProperty)?.Orientation == _dockState.Orientation ?
-            new SolidColorBrush(Application.Current?.Resources["PrimaryPressedColor"] as Color? ?? Colors.Blue) : rect.Fill);
-    
-        e.Pointer.Capture(dragged);
+        var source = e.Source as Control;
+        _pressedOnPanel = source is not (Button or InstantToggleButton or TextBox or ComboBox or ListBox or ListBoxItem);
+        _mousePressPos = e.GetPosition(this);
     }
 
     private void Panel_PointerMoved(object? sender, PointerEventArgs e)
     {
-        if (!_dragging || sender is not Control dragged) return;
+        if (sender is not Control draggedPanel || !e.GetCurrentPoint(this).Properties.IsLeftButtonPressed || !_pressedOnPanel) return;
+
+        var mousePos = e.GetPosition(this);
+        var dx = mousePos.X - _mousePressPos.X;
+        var dy = mousePos.Y - _mousePressPos.Y;
+
+        if (dx * dx + dy * dy < 100) return;
+
+        if (!_dragging)
+        {
+            _dockState ??= DockHelper.GetDockState(draggedPanel);
+            DockManager.Undock(draggedPanel, FloatingHost);
+
+            var rectsToHighlight = _dockState.Orientation == DockOrientation.Vertical ? _layoutManager.VerticalRects : _layoutManager.HorizontalRects;
+
+            rectsToHighlight.ForEach(rect => rect.Fill = rect.GetValue(LayoutManager.DockInfoProperty)?.Orientation == _dockState.Orientation ?
+                new SolidColorBrush(Application.Current?.Resources["PrimaryPressedColor"] as Color? ?? Colors.Blue) : rect.Fill);
+
+            e.Pointer.Capture(draggedPanel);
+        }
+
+        _dragging = true;
 
         var pos = e.GetPosition(FloatingHost);
-        Canvas.SetLeft(dragged, pos.X);
-        Canvas.SetTop(dragged, pos.Y);
+        Canvas.SetLeft(draggedPanel, pos.X);
+        Canvas.SetTop(draggedPanel, pos.Y);
     }
 
     private void Panel_PointerReleased(object? sender, PointerReleasedEventArgs e)
     {
-        _pointerDown = false;
-    
-        if (sender is not Control dragged || _dockState is null)
-        {
-            _dragging = false;
-            return;
-        }
-
+        _pressedOnPanel = false;
         _dragging = false;
+
+        if (sender is not Control draggedPanel || _dockState is null) return;
         e.Pointer.Capture(null);
 
         var docked = false;
@@ -191,10 +199,10 @@ public partial class EditorView : UserControl
 
             if (dockInfo is null || _dockState is null) continue;
 
-            if (rect.Bounds.Inflate(10).Contains(e.GetPosition(RectHost)))
+            if (rect.Bounds.Inflate(30).Contains(e.GetPosition(RectHost)))
             {
-                DockManager.Redock(dragged, _dockState);
-                _dockManager.ReorderElements(_dockState.OriginalParent, dragged, dockInfo.Index, dockInfo.Orientation, _dockState);
+                DockManager.Redock(draggedPanel, _dockState);
+                DockManager.ReorderElements(_dockState.OriginalParent, draggedPanel, dockInfo.Index, dockInfo.Orientation, _dockState, _layoutManager.ApplyGridDefinitions);
 
                 Services.Settings.Layout = [.. MainLayout.Children
                     .OfType<Control>()
@@ -213,9 +221,9 @@ public partial class EditorView : UserControl
 
         if (!docked)
         {
-            DockManager.Redock(dragged, _dockState!);
-            Grid.SetRow(dragged, _dockState!.Row);
-            Grid.SetColumn(dragged, _dockState!.Column);
+            DockManager.Redock(draggedPanel, _dockState!);
+            Grid.SetRow(draggedPanel, _dockState!.Row);
+            Grid.SetColumn(draggedPanel, _dockState!.Column);
         }
 
         _layoutManager.UpdateRectPositions();
