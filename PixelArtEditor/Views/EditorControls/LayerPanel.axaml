@@ -89,10 +89,10 @@
             <Button Classes="ActionButton" Tag="CreateNewGroup" Command="{Binding CreateGroupCommand}" HorizontalAlignment="Left">
                 <Image Source="{DynamicResource GroupIcon}" />
             </Button>
-            <Button Classes="ActionButton" Tag="MoveToTheTop" Command="{Binding UpCommand}" HorizontalAlignment="Left">
+            <Button Classes="ActionButton" Tag="MoveToTheTop" Command="{Binding ToTheTopCommand}" HorizontalAlignment="Left">
                 <Image Source="{DynamicResource UpIcon}" />
             </Button>
-            <Button Classes="ActionButton" Tag="MoveToTheBottom" Command="{Binding DownCommand}" HorizontalAlignment="Left">
+            <Button Classes="ActionButton" Tag="MoveToTheBottom" Command="{Binding ToTheBottomCommand}" HorizontalAlignment="Left">
                 <Image Source="{DynamicResource DownIcon}" />
             </Button>
         </StackPanel>

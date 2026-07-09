@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
@@ -10,6 +11,7 @@ using PixelArtEditor.Helpers;
 using PixelArtEditor.Models.Dock;
 using PixelArtEditor.UI;
 using PixelArtEditor.ViewModels;
+using PixelArtEditor.Views.EditorControls;
 using System;
 using System.Linq;
 using System.Numerics;
@@ -37,6 +39,8 @@ public partial class EditorView : UserControl
         _layoutManager = new LayoutManager(MainLayout, RectHost, CanvasPanel);
         _tooltipManager = new TooltipManager(Tooltip, TooltipText, RectHost);
 
+        AddHandler(KeyDownEvent, OnLayerHotkeys, RoutingStrategies.Tunnel);
+
         this.DataContextChanged += OnDataContextChanged;
 
         AttachedToVisualTree += (s, e) =>
@@ -63,6 +67,47 @@ public partial class EditorView : UserControl
         };
     }
 
+    private async void OnLayerHotkeys(object? sender, KeyEventArgs e)
+    {
+        var vm = LayerPanelControl.ViewModel;
+
+        if (e.KeyModifiers == KeyModifiers.Control && e.Key == Key.N)
+        {
+            if (await vm.AddCommand.CanExecute.FirstAsync())
+                vm.AddCommand.Execute().Subscribe();
+
+            e.Handled = true;
+        }
+        else if (e.KeyModifiers == KeyModifiers.Control && e.Key == Key.D)
+        {
+            if (await vm.DuplicateCommand.CanExecute.FirstAsync())
+                vm.DuplicateCommand.Execute().Subscribe();
+
+            e.Handled = true;
+        }
+        else if (e.KeyModifiers == KeyModifiers.Control && e.Key == Key.Up)
+        {
+            if (await vm.UpCommand.CanExecute.FirstAsync())
+                vm.UpCommand.Execute().Subscribe();
+
+            e.Handled = true;
+        }
+        else if (e.KeyModifiers == KeyModifiers.Control && e.Key == Key.Down)
+        {
+            if (await vm.DownCommand.CanExecute.FirstAsync())
+                vm.DownCommand.Execute().Subscribe();
+
+            e.Handled = true;
+        }
+        else if (e.Key == Key.Delete)
+        {
+            if (await vm.RemoveCommand.CanExecute.FirstAsync())
+                vm.RemoveCommand.Execute().Subscribe();
+
+            e.Handled = true;
+        }
+    }
+
     private void OnDataContextChanged(object? sender, EventArgs e)
     {
         if (DataContext is EditorVM vm)
@@ -73,6 +118,8 @@ public partial class EditorView : UserControl
             LayerPanelControl.LayerManager = CanvasControl.LayerManager;
 
             vm.AdjustCanvas(CanvasPanel.Bounds.Width, CanvasPanel.Bounds.Height);
+
+            Dispatcher.UIThread.Post(() => Root.Focus());
         }
     }
 
@@ -178,8 +225,8 @@ public partial class EditorView : UserControl
         _dragging = true;
 
         var pos = e.GetPosition(FloatingHost);
-        Canvas.SetLeft(draggedPanel, pos.X);
-        Canvas.SetTop(draggedPanel, pos.Y);
+        Avalonia.Controls.Canvas.SetLeft(draggedPanel, pos.X);
+        Avalonia.Controls.Canvas.SetTop(draggedPanel, pos.Y);
     }
 
     private void Panel_PointerReleased(object? sender, PointerReleasedEventArgs e)

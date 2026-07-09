@@ -12,7 +12,7 @@
     Background="{DynamicResource BackgroundColor}"
     mc:Ignorable="d">
 
-    <Grid Name="Root" PointerMoved="Root_PointerMoved">
+    <Grid Name="Root" Focusable="True" PointerMoved="Root_PointerMoved">
         <Grid
             Name="MainLayout"
             ColumnDefinitions="Auto,*,Auto"

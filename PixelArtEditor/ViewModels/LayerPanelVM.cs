@@ -4,10 +4,12 @@ using PixelArtEditor.AppServices;
 using PixelArtEditor.AppServices.Canvas;
 using PixelArtEditor.Models.Canvas;
 using ReactiveUI;
+using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Reactive;
+using System.Xml.Linq;
 
 namespace PixelArtEditor.ViewModels;
 
@@ -68,6 +70,8 @@ public class LayerPanelVM : ReactiveObject
     public ReactiveCommand<Unit, Unit> CreateGroupCommand { get; }
     public ReactiveCommand<Unit, Unit> UpCommand { get; }
     public ReactiveCommand<Unit, Unit> DownCommand { get; }
+    public ReactiveCommand<Unit, Unit> ToTheTopCommand { get; }
+    public ReactiveCommand<Unit, Unit> ToTheBottomCommand { get; }
 
 
     private LayerItemVM? _selectedLayer;
@@ -76,9 +80,12 @@ public class LayerPanelVM : ReactiveObject
         get => _selectedLayer;
         set
         {
-            if (value == _selectedLayer || value is null) return;
-            _layerManager!.ActiveLayer = value.Layer;
+            if (value == _selectedLayer) return;
+
             this.RaiseAndSetIfChanged(ref _selectedLayer, value);
+
+            if (value is not null && _layerManager is not null)
+                _layerManager.ActiveLayer = value.Layer;
         }
     }
 
@@ -106,12 +113,18 @@ public class LayerPanelVM : ReactiveObject
         { 
             if (_layerManager?.Layers is null) return;
 
-            _layerManager.Layers.Insert(0, new LayerModel(
+            var newLayer = new LayerModel(
                 _originalWidth,
                 _originalHeight,
                 new byte[_originalWidth * _originalHeight * 4],
                 $"Layer {_layerManager.Layers.Count + 1}"
-            ));
+            );
+
+            var targetIndex = _layerManager.ActiveLayer is null ? 0 : Math.Max(0, _layerManager.Layers.IndexOf(_layerManager.ActiveLayer));
+            _layerManager.Layers.Insert(targetIndex, newLayer);
+
+            SelectedLayer = LayerItems.FirstOrDefault(x => x.Layer == newLayer);
+
         });
         RemoveCommand = ReactiveCommand.Create(() => 
         { 
@@ -120,6 +133,9 @@ public class LayerPanelVM : ReactiveObject
 
             foreach (var layerItem in SelectedLayers.ToList())
                 _layerManager.Layers.Remove(layerItem.Layer);
+
+            if (_layerManager.ActiveLayer is null || !_layerManager.Layers.Contains(_layerManager.ActiveLayer))
+                _layerManager.ActiveLayer = _layerManager.Layers.FirstOrDefault();
         });
         DuplicateCommand = ReactiveCommand.Create(() => 
         { 
@@ -128,9 +144,10 @@ public class LayerPanelVM : ReactiveObject
 
             var name = _layerManager.ActiveLayer.Name + " - Copy";
 
+            int copyIndex = 1;
+
             if (_layerManager.Layers.Any(l => l.Name == name))
             {
-                var copyIndex = 1;
                 while (_layerManager.Layers.Any(l => l.Name == $"{name} ({copyIndex})"))
                 {
                     copyIndex++;
@@ -138,12 +155,15 @@ public class LayerPanelVM : ReactiveObject
                 name = $"{name} ({copyIndex})";
             }
 
-            _layerManager.Layers.Add(new LayerModel(
+            var newLayer = new LayerModel(
                 _layerManager.ActiveLayer.Width,
                 _layerManager.ActiveLayer.Height,
                 (byte[])_layerManager.ActiveLayer.PixelData.Clone(),
                 name
-            ));
+            );
+
+            var targetIndex = _layerManager.Layers.IndexOf(_layerManager.ActiveLayer) - (copyIndex - 1);
+            _layerManager.Layers.Insert(targetIndex, newLayer);
         });
         CreateGroupCommand = ReactiveCommand.Create(() => 
         { 
@@ -153,11 +173,25 @@ public class LayerPanelVM : ReactiveObject
         UpCommand = ReactiveCommand.Create(() =>
         {
             if (_layerManager?.Layers is null || _layerManager.Layers.Count <= 1 || _layerManager.ActiveLayer is null) return;
+            var index = _layerManager.Layers.IndexOf(_layerManager.ActiveLayer);
+            if (index > 0)
+                _layerManager.Layers.Move(index, index - 1);
+        });
+        DownCommand = ReactiveCommand.Create(() =>
+        {
+            if (_layerManager?.Layers is null || _layerManager.Layers.Count <= 1 || _layerManager.ActiveLayer is null) return;
+            var index = _layerManager.Layers.IndexOf(_layerManager.ActiveLayer);
+            if (index < _layerManager.Layers.Count - 1)
+                _layerManager.Layers.Move(index, index + 1);
+        });
+        ToTheTopCommand = ReactiveCommand.Create(() =>
+        {
+            if (_layerManager?.Layers is null || _layerManager.Layers.Count <= 1 || _layerManager.ActiveLayer is null) return;
 
             var layer = _layerManager.ActiveLayer;
             _layerManager.Layers.Move(_layerManager.Layers.IndexOf(layer), 0);
         });
-        DownCommand = ReactiveCommand.Create(() =>
+        ToTheBottomCommand = ReactiveCommand.Create(() =>
         {
             if (_layerManager?.Layers is null || _layerManager.Layers.Count <= 1 || _layerManager.ActiveLayer is null) return;
 
@@ -193,14 +227,18 @@ public class LayerPanelVM : ReactiveObject
     {
         if (e.Action == NotifyCollectionChangedAction.Move)
         {
+            var activeLayer = _layerManager?.ActiveLayer;
             LayerItems.Move(e.OldStartingIndex, e.NewStartingIndex);
+            SelectedLayer = LayerItems.First(x => x.Layer == activeLayer);
+
             return;
         }
 
         if (e.NewItems is not null)
         {
+            var index = e.NewStartingIndex;
             foreach (LayerModel layer in e.NewItems)
-                LayerItems.Insert(0, new LayerItemVM(layer));
+                LayerItems.Insert(index++, new LayerItemVM(layer));
         }
 
         if (e.OldItems is not null)

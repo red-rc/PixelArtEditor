@@ -3,7 +3,6 @@ using Avalonia.Controls;
 using Avalonia.Controls.Presenters;
 using Avalonia.Input;
 using Avalonia.Interactivity;
-using Avalonia.Media;
 using Avalonia.Media.Transformation;
 using Avalonia.VisualTree;
 using PixelArtEditor.AppServices.Canvas;
@@ -17,6 +16,7 @@ namespace PixelArtEditor.Views.EditorControls;
 public partial class LayerPanel : UserControl
 {
     private readonly LayerPanelVM? _vm;
+    public LayerPanelVM ViewModel => _vm!;
 
     public static readonly StyledProperty<LayerManager?> LayerManagerProperty =
         AvaloniaProperty.Register<LayerPanel, LayerManager?>(nameof(LayerManager));
