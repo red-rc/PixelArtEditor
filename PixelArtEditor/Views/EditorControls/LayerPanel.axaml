@@ -18,6 +18,7 @@
             x:Name="LayerListBox"
             Grid.Row="1"
             ItemsSource="{Binding LayerItems}"
+            PointerPressed="LayerListBox_PointerPressed"
             SelectedItem="{Binding SelectedLayer}" 
             Background="{DynamicResource BackgroundColor}"
             SelectionMode="Multiple">
@@ -89,10 +90,10 @@
             <Button Classes="ActionButton" Tag="CreateNewGroup" Command="{Binding CreateGroupCommand}" HorizontalAlignment="Left">
                 <Image Source="{DynamicResource GroupIcon}" />
             </Button>
-            <Button Classes="ActionButton" Tag="MoveToTheTop" Command="{Binding ToTheTopCommand}" HorizontalAlignment="Left">
+            <Button Classes="ActionButton" Tag="MoveToTheTop" Click="OnToTheTopClick" HorizontalAlignment="Left">
                 <Image Source="{DynamicResource UpIcon}" />
             </Button>
-            <Button Classes="ActionButton" Tag="MoveToTheBottom" Command="{Binding ToTheBottomCommand}" HorizontalAlignment="Left">
+            <Button Classes="ActionButton" Tag="MoveToTheBottom" Click="OnToTheBottomClick" HorizontalAlignment="Left">
                 <Image Source="{DynamicResource DownIcon}" />
             </Button>
         </StackPanel>

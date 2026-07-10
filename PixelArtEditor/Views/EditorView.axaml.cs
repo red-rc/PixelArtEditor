@@ -11,7 +11,6 @@ using PixelArtEditor.Helpers;
 using PixelArtEditor.Models.Dock;
 using PixelArtEditor.UI;
 using PixelArtEditor.ViewModels;
-using PixelArtEditor.Views.EditorControls;
 using System;
 using System.Linq;
 using System.Numerics;
@@ -71,41 +70,33 @@ public partial class EditorView : UserControl
     {
         var vm = LayerPanelControl.ViewModel;
 
-        if (e.KeyModifiers == KeyModifiers.Control && e.Key == Key.N)
+        switch (e.KeyModifiers, e.Key)
         {
-            if (await vm.AddCommand.CanExecute.FirstAsync())
+            case (KeyModifiers.Control, Key.N):
                 vm.AddCommand.Execute().Subscribe();
+                break;
 
-            e.Handled = true;
-        }
-        else if (e.KeyModifiers == KeyModifiers.Control && e.Key == Key.D)
-        {
-            if (await vm.DuplicateCommand.CanExecute.FirstAsync())
+            case (KeyModifiers.Control, Key.D):
                 vm.DuplicateCommand.Execute().Subscribe();
+                break;
 
-            e.Handled = true;
-        }
-        else if (e.KeyModifiers == KeyModifiers.Control && e.Key == Key.Up)
-        {
-            if (await vm.UpCommand.CanExecute.FirstAsync())
-                vm.UpCommand.Execute().Subscribe();
+            case (KeyModifiers.Control, Key.Up):
+                LayerPanelControl.MoveSelectedStep(-1);
+                break;
 
-            e.Handled = true;
-        }
-        else if (e.KeyModifiers == KeyModifiers.Control && e.Key == Key.Down)
-        {
-            if (await vm.DownCommand.CanExecute.FirstAsync())
-                vm.DownCommand.Execute().Subscribe();
+            case (KeyModifiers.Control, Key.Down):
+                LayerPanelControl.MoveSelectedStep(1);
+                break;
 
-            e.Handled = true;
-        }
-        else if (e.Key == Key.Delete)
-        {
-            if (await vm.RemoveCommand.CanExecute.FirstAsync())
+            case (_, Key.Delete):
                 vm.RemoveCommand.Execute().Subscribe();
-
-            e.Handled = true;
+                break;
+            default:
+                return;
         }
+
+        e.Handled = true;
+        Dispatcher.UIThread.Post(() => Root.Focus());
     }
 
     private void OnDataContextChanged(object? sender, EventArgs e)
@@ -127,6 +118,8 @@ public partial class EditorView : UserControl
     {
         if (ViewModel == null || e.NewSize.Width <= 0 || e.NewSize.Height <= 0) return;
         ViewModel.AdjustCanvas(e.NewSize.Width, e.NewSize.Height);
+
+        Dispatcher.UIThread.Post(() => Root.Focus(), DispatcherPriority.Input);
     }
 
     private void CanvasPanel_OnPointerWheelChanged(object? sender, PointerWheelEventArgs e)

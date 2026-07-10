@@ -1,4 +1,5 @@
 ﻿using Avalonia;
+using Avalonia.Interactivity;
 using Avalonia.Media;
 using PixelArtEditor.AppServices;
 using PixelArtEditor.AppServices.Canvas;
@@ -9,7 +10,6 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Reactive;
-using System.Xml.Linq;
 
 namespace PixelArtEditor.ViewModels;
 
@@ -68,10 +68,6 @@ public class LayerPanelVM : ReactiveObject
     public ReactiveCommand<Unit, Unit> RemoveCommand { get; }
     public ReactiveCommand<Unit, Unit> DuplicateCommand { get; }
     public ReactiveCommand<Unit, Unit> CreateGroupCommand { get; }
-    public ReactiveCommand<Unit, Unit> UpCommand { get; }
-    public ReactiveCommand<Unit, Unit> DownCommand { get; }
-    public ReactiveCommand<Unit, Unit> ToTheTopCommand { get; }
-    public ReactiveCommand<Unit, Unit> ToTheBottomCommand { get; }
 
 
     private LayerItemVM? _selectedLayer;
@@ -170,34 +166,6 @@ public class LayerPanelVM : ReactiveObject
             if (_layerManager?.Layers is null || _layerManager.Layers.Count == 0) return;
             // Implementation for creating a group
         });
-        UpCommand = ReactiveCommand.Create(() =>
-        {
-            if (_layerManager?.Layers is null || _layerManager.Layers.Count <= 1 || _layerManager.ActiveLayer is null) return;
-            var index = _layerManager.Layers.IndexOf(_layerManager.ActiveLayer);
-            if (index > 0)
-                _layerManager.Layers.Move(index, index - 1);
-        });
-        DownCommand = ReactiveCommand.Create(() =>
-        {
-            if (_layerManager?.Layers is null || _layerManager.Layers.Count <= 1 || _layerManager.ActiveLayer is null) return;
-            var index = _layerManager.Layers.IndexOf(_layerManager.ActiveLayer);
-            if (index < _layerManager.Layers.Count - 1)
-                _layerManager.Layers.Move(index, index + 1);
-        });
-        ToTheTopCommand = ReactiveCommand.Create(() =>
-        {
-            if (_layerManager?.Layers is null || _layerManager.Layers.Count <= 1 || _layerManager.ActiveLayer is null) return;
-
-            var layer = _layerManager.ActiveLayer;
-            _layerManager.Layers.Move(_layerManager.Layers.IndexOf(layer), 0);
-        });
-        ToTheBottomCommand = ReactiveCommand.Create(() =>
-        {
-            if (_layerManager?.Layers is null || _layerManager.Layers.Count <= 1 || _layerManager.ActiveLayer is null) return;
-
-            var layer = _layerManager.ActiveLayer;
-            _layerManager.Layers.Move(_layerManager.Layers.IndexOf(layer), _layerManager.Layers.Count - 1);
-        });
     }
 
     public void SetLayerManager(LayerManager? layerManager)
@@ -227,10 +195,7 @@ public class LayerPanelVM : ReactiveObject
     {
         if (e.Action == NotifyCollectionChangedAction.Move)
         {
-            var activeLayer = _layerManager?.ActiveLayer;
             LayerItems.Move(e.OldStartingIndex, e.NewStartingIndex);
-            SelectedLayer = LayerItems.First(x => x.Layer == activeLayer);
-
             return;
         }
 
