@@ -6,6 +6,7 @@ using Avalonia.Interactivity;
 using Avalonia.Media.Transformation;
 using Avalonia.VisualTree;
 using PixelArtEditor.AppServices.Canvas;
+using PixelArtEditor.AppServices.EditorUI;
 using PixelArtEditor.Models.Canvas;
 using PixelArtEditor.ViewModels;
 using System;
@@ -38,10 +39,12 @@ public partial class LayerPanel : UserControl
 
     private int _itemHeight;
 
-    private void OnToTheTopClick(object? sender, RoutedEventArgs e) => MoveSelected(toTop: true);
-    private void OnToTheBottomClick(object? sender, RoutedEventArgs e) => MoveSelected(toTop: false);
-    private void OnUpClick(object? sender, RoutedEventArgs e) => MoveSelectedStep(-1);
-    private void OnDownClick(object? sender, RoutedEventArgs e) => MoveSelectedStep(1);
+    private readonly LayerReorderService _layerReorderService;
+
+    private void OnToTheTopClick(object? sender, RoutedEventArgs e) => _layerReorderService.MoveSelected(LayerManager, true);
+    private void OnToTheBottomClick(object? sender, RoutedEventArgs e) => _layerReorderService.MoveSelected(LayerManager, false);
+    public void OnUpClick(object? sender, RoutedEventArgs e) => _layerReorderService.MoveSelectedStep(LayerManager, -1);
+    public void OnDownClick(object? sender, RoutedEventArgs e) => _layerReorderService.MoveSelectedStep(LayerManager, 1);
 
     public LayerPanel()
     {
@@ -49,96 +52,12 @@ public partial class LayerPanel : UserControl
         DataContext = _vm;
         InitializeComponent();
 
+        _layerReorderService = new LayerReorderService(_vm, LayerListBox);
+
         LayerListBox.AddHandler(PointerPressedEvent, OnItemPointerPressed, RoutingStrategies.Tunnel);
         LayerListBox.AddHandler(PointerMovedEvent, OnItemPointerMoved, RoutingStrategies.Tunnel);
         LayerListBox.AddHandler(PointerReleasedEvent, OnItemPointerReleased, RoutingStrategies.Tunnel);
         LayerListBox.SelectionChanged += OnSelectionChanged;
-    }
-
-    private void MoveSelected(bool toTop)
-    {
-        if (LayerManager?.Layers is null || LayerManager.Layers.Count <= 1) return;
-
-        var selected = LayerListBox.SelectedItems?.OfType<LayerItemVM>().ToList();
-        if (selected is null || selected.Count == 0) return;
-
-        var ordered = selected
-            .OrderBy(x => _vm!.LayerItems.IndexOf(x))
-            .Select(x => x.Layer)
-            .ToList();
-
-        if (toTop)
-        {
-            for (var i = 0; i < ordered.Count; i++)
-            {
-                var current = LayerManager.Layers.IndexOf(ordered[i]);
-                if (current != i)
-                    LayerManager.Layers.Move(current, i);
-            }
-        }
-        else
-        {
-            for (var i = ordered.Count - 1; i >= 0; i--)
-            {
-                var target = LayerManager.Layers.Count - 1 - (ordered.Count - 1 - i);
-                var current = LayerManager.Layers.IndexOf(ordered[i]);
-                if (current != target)
-                    LayerManager.Layers.Move(current, target);
-            }
-        }
-
-        RestoreSelection(ordered);
-    }
-
-    public void MoveSelectedStep(int direction)
-    {
-        if (LayerManager?.Layers is null || LayerManager.Layers.Count <= 1) return;
-
-        var selected = LayerListBox.SelectedItems?.OfType<LayerItemVM>().ToList();
-        if (selected is null || selected.Count == 0) return;
-
-        var ordered = selected
-            .OrderBy(x => _vm!.LayerItems.IndexOf(x))
-            .Select(x => x.Layer)
-            .ToList();
-
-        var indices = ordered.Select(l => LayerManager.Layers.IndexOf(l)).ToList();
-
-        if (direction < 0)
-        {
-            if (indices[0] == 0) return;
-
-            foreach (var layer in ordered)
-            {
-                var index = LayerManager.Layers.IndexOf(layer);
-                if (ordered.Contains(LayerManager.Layers[index - 1])) continue;
-
-                LayerManager.Layers.Move(index, index - 1);
-            }
-        }
-        else
-        {
-            if (indices[^1] == LayerManager.Layers.Count - 1) return;
-
-            foreach (var layer in ordered.AsEnumerable().Reverse())
-            {
-                var index = LayerManager.Layers.IndexOf(layer);
-                if (ordered.Contains(LayerManager.Layers[index + 1])) continue;
-
-                LayerManager.Layers.Move(index, index + 1);
-            }
-        }
-
-        RestoreSelection(ordered);
-    }
-
-    private void RestoreSelection(IEnumerable<LayerModel> layers)
-    {
-        var items = _vm!.LayerItems.Where(li => layers.Contains(li.Layer)).ToList();
-
-        LayerListBox.SelectedItems?.Clear();
-        foreach (var item in items)
-            LayerListBox.SelectedItems?.Add(item);
     }
 
     private void LayerListBox_PointerPressed(object? sender, PointerPressedEventArgs e) => LayerListBox.SelectedItems?.Clear();

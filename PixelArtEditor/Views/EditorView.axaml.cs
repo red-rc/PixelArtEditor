@@ -81,11 +81,11 @@ public partial class EditorView : UserControl
                 break;
 
             case (KeyModifiers.Control, Key.Up):
-                LayerPanelControl.MoveSelectedStep(-1);
+                LayerPanelControl.OnUpClick(null, e);
                 break;
 
             case (KeyModifiers.Control, Key.Down):
-                LayerPanelControl.MoveSelectedStep(1);
+                LayerPanelControl.OnDownClick(null, e);
                 break;
 
             case (_, Key.Delete):
