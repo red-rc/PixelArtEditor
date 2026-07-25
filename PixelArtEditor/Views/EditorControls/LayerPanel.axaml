@@ -6,14 +6,27 @@
     xmlns:ui="using:PixelArtEditor.UI"
     mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
     x:Class="PixelArtEditor.Views.EditorControls.LayerPanel"
+    xmlns:model="clr-namespace:PixelArtEditor.Models.LayerPanel"
     xmlns:vm="clr-namespace:PixelArtEditor.ViewModels"
     x:DataType="vm:LayerPanelVM"
     d:Background="{DynamicResource BackgroundColor}">
 
     <Grid RowDefinitions="40, *, 50">
-        <StackPanel Grid.Row="0" Background="{DynamicResource BackgroundColor}">
-            <TextBlock Margin="10,10,10,5" Text="Layers" FontWeight="Bold" FontSize="16"/>
-        </StackPanel>
+        <Grid Grid.Row="0" ColumnDefinitions="*, Auto" Background="{DynamicResource BackgroundColor}">
+            <TextBlock Grid.Column="0" Margin="10,10,10,5" Text="Layers" FontWeight="Bold" FontSize="16"/>
+            <StackPanel Grid.Column="1" Margin="0,0,30,0" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                <TextBlock Margin="0,5,5,0" Text="Opacity:" FontSize="14"/>
+                <ui:NumberBox
+                    Classes="NumberBox"
+                    ShowButtonSpinner="False"
+                    Minimum="0"
+                    Maximum="100"
+                    Value="{Binding Opacity, Mode=TwoWay}"
+                    Width="35" 
+                    Height="25" />
+                <TextBlock Text="%" Margin="5,0,0,0" FontSize="20"/>
+            </StackPanel>
+        </Grid>
         <ListBox 
             x:Name="LayerListBox"
             Grid.Row="1"
@@ -57,10 +70,19 @@
             </ListBox.Styles>
 
             <ListBox.ItemTemplate>
-                <DataTemplate x:DataType="vm:LayerItemVM">
+                <DataTemplate x:DataType="model:LayerItem">
                     <StackPanel Orientation="Horizontal">
                         <ui:Preview Margin="5" Layer="{Binding Layer}" IsAlreadyBgra="True" Size="36" Width="36" Height="36"/>
-                        <TextBlock Classes="LayerItemText" Text="{Binding LayerName}" Margin="5,0,5,0"/>
+                       <Grid>
+                            <TextBlock Classes="LayerItemText" Text="{Binding LayerName}" Margin="5,0,5,0"
+                                IsVisible="{Binding !IsEditing}"
+                                DoubleTapped="TextBlock_DoubleTapped"/>
+                            <TextBox Classes="MyTextBox" Text="{Binding LayerName}" Margin="5,0,5,0" Height="25" FontSize="14"
+                                Name="RenameTextBox"
+                                IsVisible="{Binding IsEditing}"
+                                KeyDown="RenameTextBox_KeyDown"
+                                LostFocus="RenameTextBox_LostFocus"/>
+                        </Grid>
                         <ui:InstantToggleButton Classes="LayerItemButton"  Tag="Hide/Show" IsChecked="{Binding IsVisible}" Margin="5,0,5,0">
                             <Image Source="{Binding VisibleIconSource}" />
                         </ui:InstantToggleButton>
@@ -97,6 +119,20 @@
                 <Image Source="{DynamicResource DownIcon}" />
             </Button>
         </StackPanel>
+
         <Canvas x:Name="FloatingHost" IsHitTestVisible="True" />
+        <Canvas x:Name="BadgeHost" IsHitTestVisible="False">
+            <Border 
+                Name="CountBadge"
+                IsVisible="false"
+                Padding="5"
+                Background="{DynamicResource UiColor}"
+                CornerRadius="5">
+                <TextBlock
+                    Name="CountBadgeText"
+                    FontSize="14"
+                    Foreground="{DynamicResource ForegroundColor}" />
+            </Border>
+        </Canvas>
     </Grid>
 </UserControl>

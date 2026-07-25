@@ -13,18 +13,19 @@
     x:DataType="vm:ImagePropertiesUCVM"
     Background="{DynamicResource BackgroundColor}"
     mc:Ignorable="d">
+
     <UserControl.Styles>
         <Style Selector="TextBlock">
             <Setter Property="FontSize" Value="16" />
             <Setter Property="FontFamily" Value="sans-serif" />
         </Style>
-        <Style Selector="ui|NumberBox">
+        <Style Selector="NumericUpDown.NumberBox">
             <Setter Property="FontSize" Value="14" />
             <Setter Property="ShowButtonSpinner" Value="False" />
-            <Setter Property="Minimum" Value="0" />
+            <Setter Property="Minimum" Value="1" />
             <Setter Property="Maximum" Value="8192" />
             <Setter Property="Height" Value="30" />
-            <Setter Property="MinWidth" Value="55" />
+            <Setter Property="Width" Value="55" />
         </Style>
         <Style Selector="ComboBox">
             <Setter Property="Width" Value="120" />

@@ -1,6 +1,7 @@
 ﻿using Avalonia.Controls;
 using PixelArtEditor.AppServices.Canvas;
 using PixelArtEditor.Models.Canvas;
+using PixelArtEditor.Models.LayerPanel;
 using PixelArtEditor.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -16,7 +17,7 @@ public class LayerReorderService(LayerPanelVM vm, ListBox layerListBox)
     {
         if (layerManager?.Layers is null || layerManager.Layers.Count <= 1) return;
 
-        var selected = _layerListBox.SelectedItems?.OfType<LayerItemVM>().ToList();
+        var selected = _layerListBox.SelectedItems?.OfType<LayerItem>().ToList();
         if (selected is null || selected.Count == 0) return;
 
         var ordered = selected
@@ -51,7 +52,7 @@ public class LayerReorderService(LayerPanelVM vm, ListBox layerListBox)
     {
         if (layerManager?.Layers is null || layerManager.Layers.Count <= 1) return;
 
-        var selected = _layerListBox.SelectedItems?.OfType<LayerItemVM>().ToList();
+        var selected = _layerListBox.SelectedItems?.OfType<LayerItem>().ToList();
         if (selected is null || selected.Count == 0) return;
 
         var ordered = selected

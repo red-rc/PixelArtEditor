@@ -13,6 +13,7 @@ using PixelArtEditor.Models.Tools;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using System.Numerics;
 
@@ -116,7 +117,7 @@ public class Canvas : Control, ICanvasContext
                 foreach (LayerModel layer in e.NewItems)
                 {
                     RenderCache[layer] = new LayerRenderCache();
-                    layer.PropertyChanged += (_, _) => InvalidateVisual();
+                    layer.PropertyChanged += Layer_PropertyChanged;
                 }
 
             if (e.OldItems is not null)
@@ -124,6 +125,8 @@ public class Canvas : Control, ICanvasContext
                 {
                     RenderCache[layer].PreviewCts?.Cancel();
                     RenderCache.Remove(layer);
+
+                    layer.PropertyChanged -= Layer_PropertyChanged;
                 }
 
             InvalidateVisual();
@@ -138,14 +141,25 @@ public class Canvas : Control, ICanvasContext
         this.GetObservable(ScaleProperty).Subscribe(_ => InvalidateVisual());
     }
 
+    private void Layer_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        var layer = (LayerModel)sender!;
+
+        if (e.PropertyName == nameof(LayerModel.Opacity))
+        {
+            RenderCache[layer].RenderBitmapDirty = true;
+            RenderCache[layer].PreviewDirty = true;
+        }
+
+        InvalidateVisual();
+    }
+
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
         base.OnPropertyChanged(change);
 
         if (change.Property == SelectedToolProperty)
-        {
             _currentTool = ToolManager.Get((ToolType)change.NewValue!);
-        }
     }
 
     private void OnModelChanged()
@@ -307,7 +321,12 @@ public class Canvas : Control, ICanvasContext
 
             if (cache.RenderBitmapDirty)
             {
-                BitmapService.SetPixelData(layer.RenderBitmap, layer.PixelData);
+                var pixelData = layer.PixelData.ToArray();
+
+                for (var i = 0; i < pixelData.Length; i += 4)
+                    pixelData[i + 3] = (byte)(pixelData[i + 3] * layer.Opacity);
+
+                BitmapService.SetPixelData(layer.RenderBitmap, pixelData);
                 cache.RenderBitmapDirty = false;
                 cache.PreviewDirty = true;
             }

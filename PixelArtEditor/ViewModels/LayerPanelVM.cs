@@ -1,9 +1,7 @@
-﻿using Avalonia;
-using Avalonia.Interactivity;
-using Avalonia.Media;
-using PixelArtEditor.AppServices;
+﻿using PixelArtEditor.AppServices;
 using PixelArtEditor.AppServices.Canvas;
 using PixelArtEditor.Models.Canvas;
+using PixelArtEditor.Models.LayerPanel;
 using ReactiveUI;
 using System;
 using System.Collections.ObjectModel;
@@ -13,54 +11,10 @@ using System.Reactive;
 
 namespace PixelArtEditor.ViewModels;
 
-public class LayerItemVM(LayerModel layer) : ReactiveObject
-{
-    public LayerModel Layer { get; } = layer;
-    public string LayerName { get; } = layer.Name;
-
-    private bool _isVisible = layer.IsVisible;
-    public bool IsVisible
-    {
-        get => _isVisible;
-        set 
-        {
-            Layer.IsVisible = value;
-            this.RaiseAndSetIfChanged(ref _isVisible, value);
-            this.RaisePropertyChanged(nameof(VisibleIconSource));
-        }
-    }
-
-    private bool _isLocked = layer.IsLocked;
-    public bool IsLocked
-    {
-        get => _isLocked;
-        set 
-        {
-            Layer.IsLocked = value;
-            this.RaiseAndSetIfChanged(ref _isLocked, value);
-            this.RaisePropertyChanged(nameof(LockedIconSource));
-        }
-    }
-
-    public IImage? VisibleIconSource => IsVisible
-    ? Application.Current?.Resources["ShowIcon"] as IImage
-    : Application.Current?.Resources["HideIcon"] as IImage;
-
-    public IImage? LockedIconSource => IsLocked
-        ? Application.Current?.Resources["LockIcon"] as IImage
-        : Application.Current?.Resources["UnlockIcon"] as IImage;
-
-    public void RefreshIcons()
-    {
-        this.RaisePropertyChanged(nameof(VisibleIconSource));
-        this.RaisePropertyChanged(nameof(LockedIconSource));
-    }
-}
-
 public class LayerPanelVM : ReactiveObject
 {
     private LayerManager? _layerManager;
-    public ObservableCollection<LayerItemVM> LayerItems { get; } = [];
+    public ObservableCollection<LayerItem> LayerItems { get; } = [];
     private int _originalWidth;
     private int _originalHeight;
 
@@ -70,8 +24,8 @@ public class LayerPanelVM : ReactiveObject
     public ReactiveCommand<Unit, Unit> CreateGroupCommand { get; }
 
 
-    private LayerItemVM? _selectedLayer;
-    public LayerItemVM? SelectedLayer
+    private LayerItem? _selectedLayer;
+    public LayerItem? SelectedLayer
     {
         get => _selectedLayer;
         set
@@ -82,17 +36,30 @@ public class LayerPanelVM : ReactiveObject
 
             if (value is not null && _layerManager is not null)
                 _layerManager.ActiveLayer = value.Layer;
+
+            this.RaisePropertyChanged(nameof(Opacity));
         }
     }
 
-    private ObservableCollection<LayerItemVM>? _selectedLayers;
-    public ObservableCollection<LayerItemVM>? SelectedLayers
+    private ObservableCollection<LayerItem>? _selectedLayers;
+    public ObservableCollection<LayerItem>? SelectedLayers
     {
         get => _selectedLayers;
         set
         {
             if (value == _selectedLayers || value is null) return;
             this.RaiseAndSetIfChanged(ref _selectedLayers, value);
+        }
+    }
+
+    public byte Opacity
+    {
+        get => (byte)((_layerManager?.ActiveLayer?.Opacity ?? 1f) * 100);
+        set
+        {
+            if (_layerManager?.ActiveLayer is null) return;
+            _layerManager.ActiveLayer.Opacity = value / 100f;
+            this.RaisePropertyChanged(nameof(Opacity));
         }
     }
 
@@ -183,7 +150,7 @@ public class LayerPanelVM : ReactiveObject
 
         foreach (var layer in _layerManager.Layers)
         {
-            LayerItems.Add(new LayerItemVM(layer));
+            LayerItems.Add(new LayerItem(layer));
             _originalWidth = layer.Width;
             _originalHeight = layer.Height;
         }
@@ -203,7 +170,7 @@ public class LayerPanelVM : ReactiveObject
         {
             var index = e.NewStartingIndex;
             foreach (LayerModel layer in e.NewItems)
-                LayerItems.Insert(index++, new LayerItemVM(layer));
+                LayerItems.Insert(index++, new LayerItem(layer));
         }
 
         if (e.OldItems is not null)

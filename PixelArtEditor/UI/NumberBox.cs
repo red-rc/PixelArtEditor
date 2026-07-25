@@ -31,23 +31,22 @@ namespace PixelArtEditor.UI
             base.OnApplyTemplate(e);
 
             var textBox = e.NameScope.Find<TextBox>("PART_TextBox");
-            if (textBox is not null)
-            {
-                textBox.TextChanged += (s, ev) =>
-                {
-                    if (string.IsNullOrWhiteSpace(textBox.Text))
-                    {
-                        _suppressLastValidUpdate = true;
-                        Value = 0m;
-                        _suppressLastValidUpdate = false;
+            if (textBox is null) return;
 
-                        Dispatcher.UIThread.Post(() =>
-                        {
-                            try { textBox.SelectAll(); } catch { }
-                        }, DispatcherPriority.Background);
-                    }
-                };
-            }
+            textBox.TextChanged += (s, ev) =>
+            {
+                if (string.IsNullOrWhiteSpace(textBox.Text))
+                {
+                    _suppressLastValidUpdate = true;
+                    Value = 1m;
+                    _suppressLastValidUpdate = false;
+
+                    Dispatcher.UIThread.Post(() =>
+                    {
+                        try { textBox.SelectAll(); } catch { }
+                    }, DispatcherPriority.Background);
+                }
+            };
         }
 
         protected override void OnLostFocus(RoutedEventArgs e)

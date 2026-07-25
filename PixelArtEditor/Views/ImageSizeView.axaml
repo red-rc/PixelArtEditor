@@ -13,6 +13,7 @@
     x:DataType="vm:ImagePropertiesUCVM"
     Background="{DynamicResource BackgroundColor}"
     mc:Ignorable="d">
+
     <UserControl.Styles>
         <Style Selector="TextBlock">
             <Setter Property="FontSize" Value="16" />

@@ -30,11 +30,10 @@ public class LayerManager
             if (!layer.IsVisible) continue;
 
             var src = layer.PixelData;
-            var alpha = layer.Opacity;
 
             for (var i = 0; i < result.Length; i += 4)
             {
-                var srcA = src[i + 3] / 255f * alpha;
+                var srcA = src[i + 3] / 255f * layer.Opacity;
                 var dstA = result[i + 3] / 255f;
 
                 var outA = srcA + dstA * (1f - srcA);

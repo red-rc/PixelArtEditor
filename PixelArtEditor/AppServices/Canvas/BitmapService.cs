@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
+using Avalonia.Platform;
 using System;
 using System.Collections.Generic;
 
@@ -54,7 +55,7 @@ public static class BitmapService
 
     public static WriteableBitmap CreateBitmap(int width, int height, byte[] pixelData)
     {
-        var wb = new WriteableBitmap(new PixelSize(width, height), new Vector(96, 96));
+        var wb = new WriteableBitmap(new PixelSize(width, height), new Vector(96, 96), PixelFormat.Bgra8888, AlphaFormat.Unpremul);
         SetPixelData(wb, pixelData);
 
         return wb;

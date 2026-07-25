@@ -42,7 +42,7 @@ public class LayerModel(int width, int height, byte[] pixelData, string name) : 
         get => _opacity;
         set 
         { 
-            _opacity = value; 
+            _opacity = value;
             OnPropertyChanged(); 
         }
     }

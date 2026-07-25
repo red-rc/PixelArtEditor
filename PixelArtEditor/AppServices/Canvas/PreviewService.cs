@@ -68,6 +68,10 @@ public static class PreviewService
         Task.Run(() =>
         {
             var buffer = ArrayPool<byte>.Shared.Rent(size);
+
+            for (var i = 0; i < buffer.Length; i += 4)
+                buffer[i + 3] = (byte)(buffer[i + 3] * layer.Opacity);
+
             try
             {
                 DownscaleNearest(layer.PixelData!, context.Model.Width, context.Model.Height, buffer, width, height, token);
