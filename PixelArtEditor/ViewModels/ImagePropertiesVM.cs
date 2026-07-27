@@ -3,10 +3,7 @@ using PixelArtEditor.AppServices;
 using PixelArtEditor.AppServices.Canvas;
 using PixelArtEditor.AppServices.Image;
 using PixelArtEditor.Models.Canvas;
-using ReactiveUI;
 using System;
-using System.Reactive;
-using System.Reactive.Linq;
 
 namespace PixelArtEditor.ViewModels;
 
@@ -30,9 +27,9 @@ public class ImagePropertiesVM : ReactiveObject
 
     private readonly PixelModel _model = null!;  
     
-    public ReactiveCommand<Unit, Unit> ResetCommand { get; }
-    public ReactiveCommand<Unit, Unit> CancelCommand { get; }
-    public ReactiveCommand<Unit, Unit> SaveCommand { get; } 
+    public ReactiveCommand<RxVoid, RxVoid> ResetCommand { get; }
+    public ReactiveCommand<RxVoid, RxVoid> CancelCommand { get; }
+    public ReactiveCommand<RxVoid, RxVoid> SaveCommand { get; } 
 
     public ImagePropertiesVM(Window dialog, PixelModel model)
     {

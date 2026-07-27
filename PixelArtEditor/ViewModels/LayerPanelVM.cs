@@ -2,12 +2,10 @@
 using PixelArtEditor.AppServices.Canvas;
 using PixelArtEditor.Models.Canvas;
 using PixelArtEditor.Models.LayerPanel;
-using ReactiveUI;
 using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
-using System.Reactive;
 
 namespace PixelArtEditor.ViewModels;
 
@@ -18,10 +16,10 @@ public class LayerPanelVM : ReactiveObject
     private int _originalWidth;
     private int _originalHeight;
 
-    public ReactiveCommand<Unit, Unit> AddCommand { get; }
-    public ReactiveCommand<Unit, Unit> RemoveCommand { get; }
-    public ReactiveCommand<Unit, Unit> DuplicateCommand { get; }
-    public ReactiveCommand<Unit, Unit> CreateGroupCommand { get; }
+    public ReactiveCommand<RxVoid, RxVoid> AddCommand { get; }
+    public ReactiveCommand<RxVoid, RxVoid> RemoveCommand { get; }
+    public ReactiveCommand<RxVoid, RxVoid> DuplicateCommand { get; }
+    public ReactiveCommand<RxVoid, RxVoid> CreateGroupCommand { get; }
 
 
     private LayerItem? _selectedLayer;
@@ -67,7 +65,7 @@ public class LayerPanelVM : ReactiveObject
     {
         Services.Settings.PropertyChanged += (_, e) =>
         {
-            if (e.PropertyName != nameof(ISettingsService.Theme)) return;
+            if (e.PropertyName != nameof(ISettingsManager.Theme)) return;
             foreach (var item in LayerItems)
                 item.RefreshIcons();
         };

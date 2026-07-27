@@ -21,7 +21,7 @@ namespace PixelArtEditor.Views.EditorControls;
 
 public class Canvas : Control, ICanvasContext
 {
-    private static readonly ISettingsService _settings = Services.Settings;
+    private static readonly ISettingsManager _settings = Services.Settings;
     private readonly Pen _gridPen = new(new SolidColorBrush(_settings.GridColor));
     private bool _isLeftPressed;
 

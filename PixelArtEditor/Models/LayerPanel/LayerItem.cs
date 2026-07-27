@@ -1,7 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Media;
 using PixelArtEditor.Models.Canvas;
-using ReactiveUI;
 
 namespace PixelArtEditor.Models.LayerPanel;
 

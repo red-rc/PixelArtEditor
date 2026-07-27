@@ -2,11 +2,11 @@
     <Style Selector="Button">
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="BorderThickness" Value="0" />
     </Style>
     <Style Selector="Button.BlueButton">
         <Setter Property="Background" Value="{DynamicResource PrimaryColor}" />
         <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />
-        <Setter Property="BorderThickness" Value="0" />
         <Setter Property="CornerRadius" Value="25" />
         <Setter Property="FontSize" Value="22.5" />
         <Setter Property="FontWeight" Value="DemiBold" />
@@ -69,59 +69,64 @@
         <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />
     </Style>
 
-     <Style Selector="NumericUpDown.NumberBox">
+     <Style Selector="NumericUpDown">
         <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />
         <Setter Property="Background" Value="{DynamicResource BackgroundColor}" />
-        <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}" /> 
+        <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="CornerRadius" Value="2.5" />
         <Setter Property="MinWidth" Value="20" />
         <Setter Property="MinHeight" Value="20" />
-        <Setter Property="Padding" Value="4,0" />
+        <Setter Property="Padding" Value="0" />
     </Style>
     
-    <Style Selector="NumericUpDown.NumberBox /template/ ButtonSpinner#PART_Spinner">
+    <Style Selector="NumericUpDown /template/ TextBox#PART_TextBox">
         <Setter Property="MinWidth" Value="20" />
         <Setter Property="MinHeight" Value="20" />
     </Style>
+
+    <Style Selector="NumericUpDown /template/ ButtonSpinner#PART_Spinner">
+        <Setter Property="Background" Value="{DynamicResource BackgroundColor}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="2.5" />
+    </Style>
     
-    <Style Selector="NumericUpDown.NumberBox:pointerover /template/ ButtonSpinner#PART_Spinner">
+    <Style Selector="NumericUpDown:pointerover /template/ ButtonSpinner#PART_Spinner">
         <Setter Property="Background" Value="{DynamicResource BackgroundHoverColor}" />
     </Style>
     
-    <Style Selector="NumericUpDown.NumberBox:focus /template/ ButtonSpinner#PART_Spinner">
-        <Setter Property="Background" Value="{DynamicResource BackgroundPressedColor}" />
+    <Style Selector="NumericUpDown:focus-within /template/ ButtonSpinner#PART_Spinner">
         <Setter Property="BorderBrush" Value="{DynamicResource PrimaryColor}" />
         <Setter Property="BorderThickness" Value="2.5" />
     </Style>
-    
-    <Style Selector="NumericUpDown.NumberBox /template/ TextBox#PART_TextBox">
-        <Setter Property="MinWidth" Value="0" />
-        <Setter Property="MinHeight" Value="0" />
-        <Setter Property="VerticalContentAlignment" Value="Center" />
+    <Style Selector="NumericUpDown:focus-within:pointerover /template/ ButtonSpinner#PART_Spinner">
+        <Setter Property="BorderBrush" Value="{DynamicResource PrimaryColor}" />
     </Style>
 
-    <Style Selector="TextBox.MyTextBox">
+    <Style Selector="TextBox">
         <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />
         <Setter Property="MinWidth" Value="50"/>
         <Setter Property="MaxWidth" Value="125"/>
         <Setter Property="MinHeight" Value="20" />
         <Setter Property="Padding" Value="4,0" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="SelectionBrush" Value="{DynamicResource PrimaryColor}" />
     </Style>
     
-    <Style Selector="TextBox.MyTextBox /template/ Border#PART_BorderElement">
+    <Style Selector="TextBox /template/ Border#PART_BorderElement">
         <Setter Property="Background" Value="{DynamicResource BackgroundColor}" />
         <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="CornerRadius" Value="2.5" />
     </Style>
     
-    <Style Selector="TextBox.MyTextBox:pointerover /template/ Border#PART_BorderElement">
+    <Style Selector="TextBox:pointerover /template/ Border#PART_BorderElement">
         <Setter Property="Background" Value="{DynamicResource BackgroundHoverColor}" />
     </Style>
     
-    <Style Selector="TextBox.MyTextBox:focus /template/ Border#PART_BorderElement">
+    <Style Selector="TextBox:focus /template/ Border#PART_BorderElement">
         <Setter Property="Background" Value="{DynamicResource BackgroundPressedColor}" />
         <Setter Property="BorderBrush" Value="{DynamicResource PrimaryColor}" />
         <Setter Property="BorderThickness" Value="2.5" />
@@ -135,7 +140,7 @@
         <Setter Property="CornerRadius" Value="2.5" />
     </Style>
 
-    <Style Selector="ComboBox:pointerover /template/ Border#Background">
+    <Style Selector="ComboBox:pointerover">
         <Setter Property="Background" Value="{DynamicResource BackgroundHoverColor}" />
     </Style>
 
@@ -305,6 +310,10 @@
         <Setter Property="Background" Value="{DynamicResource PrimaryPressedColor}" />
     </Style>
 
+    <Style Selector="ListBox">
+        <Setter Property="BorderThickness" Value="0" />
+    </Style>
+
     <Style Selector="ListBox ListBoxItem Border">
         <Setter Property="Background" Value="Transparent" />
     </Style>
@@ -315,6 +324,15 @@
 
     <Style Selector="ListBox ListBoxItem:selected ContentPresenter">
         <Setter Property="Background" Value="{DynamicResource PrimaryColor}" />
+    </Style>
+
+    <Style Selector="ColorPicker">
+        <Setter Property="CornerRadius" Value="2.5" />
+    </Style>
+
+    <Style Selector="ColorPicker:pointerover">
+        <Setter Property="Background" Value="{DynamicResource BackgroundColor}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}" />
     </Style>
 
     <Style Selector="ColorPicker RadioButton">
@@ -412,6 +430,78 @@
     <Style Selector="ScrollBar[IsExpanded=True] /template/ Rectangle#TrackRect">
         <Setter Property="Fill" Value="{DynamicResource ScrollBackgroundColor}" />
         <Setter Property="Opacity" Value="1" />
+    </Style>
+
+    <Style Selector="Button.MenuButton">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />
+        <Setter Property="FontFamily" Value="{DynamicResource AppFont}" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Padding" Value="10,6" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+    </Style>
+    <Style Selector="Button.MenuButton:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource UiColor}" />
+    </Style>
+    <Style Selector="Button.MenuButton:pressed /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource UiColor}" />
+    </Style>
+    <Style Selector="Button.MenuButton.MenuOpen /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource UiColor}" />
+    </Style>
+    
+    <Style Selector="Separator.MenuSeparator">
+        <Setter Property="Background" Value="{DynamicResource GrayColor}" />
+        <Setter Property="Height" Value="1" />
+        <Setter Property="Margin" Value="2" />
+    </Style>
+    
+    <Style Selector="Button.MenuEntry">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />
+        <Setter Property="FontFamily" Value="{DynamicResource AppFont}" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Padding" Value="10,6" />
+        <Setter Property="CornerRadius" Value="4" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
+    </Style>
+    <Style Selector="Button.MenuEntry:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource UiColor}" />
+    </Style>
+    <Style Selector="Button.MenuEntry:pressed /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource UiColor}" />
+    </Style>
+
+    <Style Selector="Border.MenuBorder">
+        <Setter Property="Background" Value="{DynamicResource TertiaryBackgroundColor}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource GrayColor}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="4" />
+        <Setter Property="Padding" Value="4" />
+    </Style>
+
+    <Style Selector="FlyoutPresenter">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="CornerRadius" Value="0" />
+    </Style>
+
+    <Style Selector="CheckBox">
+        <Setter Property="Background" Value="{DynamicResource BackgroundColor}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="2.5" />
+    </Style>
+    <Style Selector="CheckBox:pointerover">
+        <Setter Property="Background" Value="{DynamicResource BackgroundHoverColor}" />
+    </Style>
+    <Style Selector="CheckBox:checked">
+        <Setter Property="Background" Value="{DynamicResource PrimaryColor}" />
+    </Style>
+    <Style Selector="CheckBox:checked /template/ Path#checkMark">
+        <Setter Property="Fill" Value="{DynamicResource ForegroundColor}" />
     </Style>
 
 </Styles>

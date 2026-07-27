@@ -5,7 +5,7 @@ using System.ComponentModel;
 
 namespace PixelArtEditor.AppServices;
 
-public interface ISettingsService
+public interface ISettingsManager
 {
     string Language { get; set; }
     int GridMaxSize { get; set; }

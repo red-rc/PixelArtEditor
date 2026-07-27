@@ -1,16 +1,14 @@
 using Avalonia.Controls;
 using Avalonia.Media;
 using PixelArtEditor.AppServices;
-using ReactiveUI;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reactive;
 
 namespace PixelArtEditor.ViewModels;
 
 public class SettingsDialogVM : ReactiveObject
 {
-    private static readonly ISettingsService _settings = Services.Settings;
+    private static readonly ISettingsManager _settings = Services.Settings;
 
     public static IEnumerable<KeyValuePair<string, string>> LanguagePairs => ResourceManager.LanguageOptions;
 
@@ -111,9 +109,9 @@ public class SettingsDialogVM : ReactiveObject
         set => this.RaiseAndSetIfChanged(ref _selectedTabIndex, value);
     }
 
-    public ReactiveCommand<Unit, Unit> ResetCommand { get; }
-    public ReactiveCommand<Unit, Unit> CancelCommand { get; }
-    public ReactiveCommand<Unit, Unit> SaveCommand { get; }
+    public ReactiveCommand<RxVoid, RxVoid> ResetCommand { get; }
+    public ReactiveCommand<RxVoid, RxVoid> CancelCommand { get; }
+    public ReactiveCommand<RxVoid, RxVoid> SaveCommand { get; }
 
     public SettingsDialogVM(Window dialog)
     {
@@ -136,7 +134,7 @@ public class SettingsDialogVM : ReactiveObject
     {
         _settings.Load();
             
-        foreach (var prop in typeof(ISettingsService).GetProperties())
+        foreach (var prop in typeof(ISettingsManager).GetProperties())
         {
             this.RaisePropertyChanged(prop.Name);
         }

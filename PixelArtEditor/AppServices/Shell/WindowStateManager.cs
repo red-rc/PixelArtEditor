@@ -1,6 +1,5 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Threading;
-using ReactiveUI;
 
 namespace PixelArtEditor.AppServices.Shell;
 

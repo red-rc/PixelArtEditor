@@ -2,9 +2,7 @@ using Avalonia.Controls;
 using Avalonia.Media;
 using PixelArtEditor.AppServices.Image;
 using PixelArtEditor.Models.Canvas;
-using ReactiveUI;
 using System;
-using System.Reactive;
 
 namespace PixelArtEditor.ViewModels;
 
@@ -28,8 +26,8 @@ public class CreateDialogVM : ReactiveObject
         private set => this.RaiseAndSetIfChanged(ref _layer, value);
     }
 
-    public ReactiveCommand<Unit, Unit> CreateCommand { get; }
-    public ReactiveCommand<Unit, Unit> CancelCommand { get; }
+    public ReactiveCommand<RxVoid, RxVoid> CreateCommand { get; }
+    public ReactiveCommand<RxVoid, RxVoid> CancelCommand { get; }
 
     public CreateDialogVM(Window dialog)
     {

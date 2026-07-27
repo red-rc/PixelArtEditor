@@ -1,10 +1,7 @@
 ﻿using Avalonia.Controls;
 using PixelArtEditor.AppServices.Image;
 using PixelArtEditor.Models.Canvas;
-using ReactiveUI;
 using System;
-using System.Reactive;
-using System.Reactive.Linq;
 
 namespace PixelArtEditor.ViewModels;
 
@@ -28,8 +25,8 @@ public class ExportDialogVM : ReactiveObject
 
     private readonly PixelModel _model = null!;
 
-    public ReactiveCommand<Unit, Unit> CancelCommand { get; }
-    public ReactiveCommand<Unit, Unit> ConfirmCommand { get; }
+    public ReactiveCommand<RxVoid, RxVoid> CancelCommand { get; }
+    public ReactiveCommand<RxVoid, RxVoid> ConfirmCommand { get; }
 
 
     public ExportDialogVM(Window dialog, PixelModel model)

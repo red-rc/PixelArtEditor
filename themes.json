@@ -2,7 +2,7 @@
   {
     "Name": "Dark",
     "Variant": "Dark",
-    "StylePath": "avares://PixelArtEditor/Styles/Style.axaml",
+    "StylePath": "avares://PixelArtEditor/Styles/SimpleStyle.axaml",
     "Resources": {
       "PrimaryColor": {
         "A": 255,
@@ -592,7 +592,7 @@
   {
     "Name": "Light",
     "Variant": "Light",
-    "StylePath": "avares://PixelArtEditor/Styles/Style.axaml",
+    "StylePath": "avares://PixelArtEditor/Styles/SimpleStyle.axaml",
     "Resources": {
       "PrimaryColor": {
         "A": 255,
@@ -1182,7 +1182,7 @@
   {
     "Name": "Gray",
     "Variant": "Dark",
-    "StylePath": "avares://PixelArtEditor/Styles/Style.axaml",
+    "StylePath": "avares://PixelArtEditor/Styles/SimpleStyle.axaml",
     "Resources": {
       "PrimaryColor": {
         "A": 255,
@@ -1772,7 +1772,7 @@
   {
     "Name": "System",
     "Variant": "Light",
-    "StylePath": "avares://PixelArtEditor/Styles/Style.axaml",
+    "StylePath": "avares://PixelArtEditor/Styles/SimpleStyle.axaml",
     "Resources": {
       "PrimaryColor": {
         "A": 255,

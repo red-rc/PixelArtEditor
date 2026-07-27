@@ -40,7 +40,7 @@ public abstract class BaseTheme
 
     private static string LoadDefaultStyle()
     {
-        using var stream = typeof(BaseTheme).Assembly.GetManifestResourceStream("PixelArtEditor.Styles.Style.axaml");
+        using var stream = typeof(BaseTheme).Assembly.GetManifestResourceStream("PixelArtEditor.PixelArtEditor.Styles.SimpleStyle.axaml");
         using var reader = new StreamReader(stream!);
         return reader.ReadToEnd();
     }
@@ -123,7 +123,7 @@ public class DarkTheme : BaseTheme
 {
     public override string Name => "Dark";
     public override ThemeVariant Variant => ThemeVariant.Dark;
-    public override string StylePath => "avares://PixelArtEditor/Styles/Style.axaml";
+    public override string StylePath => "avares://PixelArtEditor/Styles/SimpleStyle.axaml";
     public DarkTheme()
     {
         SetDefaults();
@@ -160,7 +160,7 @@ public class LightTheme : BaseTheme
 {
     public override string Name => "Light";
     public override ThemeVariant Variant => ThemeVariant.Light;
-    public override string StylePath => "avares://PixelArtEditor/Styles/Style.axaml";
+    public override string StylePath => "avares://PixelArtEditor/Styles/SimpleStyle.axaml";
     public LightTheme()
     {
         SetDefaults();
@@ -220,7 +220,7 @@ public class GrayTheme : BaseTheme
 {
     public override string Name => "Gray";
     public override ThemeVariant Variant => ThemeVariant.Dark;
-    public override string StylePath => "avares://PixelArtEditor/Styles/Style.axaml";
+    public override string StylePath => "avares://PixelArtEditor/Styles/SimpleStyle.axaml";
 
     public GrayTheme()
     {
@@ -259,7 +259,7 @@ public class SystemTheme : BaseTheme
     private readonly BaseTheme? _currentTheme;
     public override string Name => "System";
     public override ThemeVariant Variant => _currentTheme?.Variant ?? ThemeVariant.Default;
-    public override string StylePath => "avares://PixelArtEditor/Styles/Style.axaml";
+    public override string StylePath => "avares://PixelArtEditor/Styles/SimpleStyle.axaml";
 
     public SystemTheme()
     {

@@ -350,7 +350,7 @@ public partial class LayerPanel : UserControl
         }
     }
 
-    private void RenameTextBox_LostFocus(object? sender, RoutedEventArgs e)
+    private void RenameTextBox_LostFocus(object? sender, FocusChangedEventArgs e)
     {
         var textBox = (TextBox)sender!;
         (textBox.DataContext as LayerItem)?.IsEditing = false;

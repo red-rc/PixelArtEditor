@@ -148,4 +148,16 @@ public partial class MainWindow : Window
         else
             Services.WindowState.Current = WindowState.FullScreen;
     }
+
+    private void OnMenuFlyoutOpened(object? sender, EventArgs e)
+    {
+        if (sender is Flyout { Target: Button btn })
+            btn.Classes.Add("MenuOpen");
+    }
+
+    private void OnMenuFlyoutClosed(object? sender, EventArgs e)
+    {
+        if (sender is Flyout { Target: Button btn })
+            btn.Classes.Remove("MenuOpen");
+    }
 }

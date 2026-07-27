@@ -61,9 +61,21 @@ public static class ResourceManager
 
         ThemeOptions = loadedThemes;
 
-        List<string> langKeys = [.. Directory.GetFiles("Localization", "*.yaml")
+        if (!Directory.Exists("Localization"))
+            Directory.CreateDirectory("Localization");
+
+        var files = Directory.GetFiles("Localization", "*.yaml");
+
+        if (files.Length == 0)
+        {
+            LocalizationService.SetDefaults();
+            files = Directory.GetFiles("Localization", "*.yaml");
+        }
+
+        List<string> langKeys = [.. files
             .Select(x => Path.GetFileNameWithoutExtension(x))
             .Where(x => x is not null && !string.IsNullOrEmpty(x) && LanguageNames.ContainsKey(x!))];
+
         LanguageOptions = langKeys.ToDictionary(x => x, y => LanguageNames[y]);
     }
 

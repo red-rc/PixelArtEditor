@@ -2,6 +2,7 @@
 using PixelArtEditor.AppServices.Serialization;
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace PixelArtEditor.AppServices;
 
@@ -120,6 +121,7 @@ public static class LocalizationService
         foreach (var kvp in dict)
             Application.Current.Resources[kvp.Key] = kvp.Value;
 
+        Directory.CreateDirectory("Localization");
         YamlService.Save(dict, "Localization/en.yaml");
     }
 }

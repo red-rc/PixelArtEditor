@@ -7,9 +7,9 @@ using System.ComponentModel;
 
 namespace PixelArtEditor.AppServices;
 
-public sealed class SettingsManager : ISettingsService
+public sealed class SettingsManager : ISettingsManager
 {
-    public static SettingsManager GetInstance { get; } = new(true);
+    public static SettingsManager GetInstance { get; } = new(false);
 
     private SettingsManager(bool load = false)
     {

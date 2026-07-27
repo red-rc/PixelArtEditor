@@ -14,7 +14,6 @@ using PixelArtEditor.ViewModels;
 using System;
 using System.Linq;
 using System.Numerics;
-using System.Reactive.Linq;
 
 namespace PixelArtEditor.Views;
 

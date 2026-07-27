@@ -1,45 +1,42 @@
 using Avalonia.Controls;
 using PixelArtEditor.AppServices;
 using PixelArtEditor.AppServices.Shell;
-using ReactiveUI;
 using System;
 using System.Diagnostics;
 using System.Numerics;
-using System.Reactive;
-using System.Reactive.Linq;
 
 namespace PixelArtEditor.ViewModels;
 
 public class MenuCommandsVM : ReactiveObject
 {
-    private static readonly ISettingsService _settings = Services.Settings;
-    public ReactiveCommand<Unit, Unit> CreateCommand { get; }
-    public ReactiveCommand<Unit, Unit> OpenCommand { get; }
-    public ReactiveCommand<Unit, Unit> ImportCommand { get; }
-    public ReactiveCommand<Unit, Unit> SaveCommand { get; }
-    public ReactiveCommand<Unit, Unit> SaveAsCommand { get; }
-    public ReactiveCommand<Unit, Unit> ExportCommand { get; }
-    public ReactiveCommand<Unit, Unit> LastAutosaveCommand { get; }
-    public ReactiveCommand<Unit, Unit> ExitCommand { get; }
+    private static readonly ISettingsManager _settings = Services.Settings;
+    public ReactiveCommand<RxVoid, RxVoid> CreateCommand { get; }
+    public ReactiveCommand<RxVoid, RxVoid> OpenCommand { get; }
+    public ReactiveCommand<RxVoid, RxVoid> ImportCommand { get; }
+    public ReactiveCommand<RxVoid, RxVoid> SaveCommand { get; }
+    public ReactiveCommand<RxVoid, RxVoid> SaveAsCommand { get; }
+    public ReactiveCommand<RxVoid, RxVoid> ExportCommand { get; }
+    public ReactiveCommand<RxVoid, RxVoid> LastAutosaveCommand { get; }
+    public ReactiveCommand<RxVoid, RxVoid> ExitCommand { get; }
   
-    public ReactiveCommand<Unit, Unit> UndoCommand { get; }
-    public ReactiveCommand<Unit, Unit> RedoCommand { get; }
-    public ReactiveCommand<Unit, Unit> ImagePropertiesCommand { get; }
-    public ReactiveCommand<Unit, Unit> SettingsCommand { get; }
+    public ReactiveCommand<RxVoid, RxVoid> UndoCommand { get; }
+    public ReactiveCommand<RxVoid, RxVoid> RedoCommand { get; }
+    public ReactiveCommand<RxVoid, RxVoid> ImagePropertiesCommand { get; }
+    public ReactiveCommand<RxVoid, RxVoid> SettingsCommand { get; }
     
-    public ReactiveCommand<Unit, Unit> ZoomInCommand { get; }
-    public ReactiveCommand<Unit, Unit> ZoomOutCommand { get; }
-    public ReactiveCommand<Unit, Unit> ResetZoomCommand { get; }
-    public ReactiveCommand<Unit, Unit> ResetLayout { get; }
-    public ReactiveCommand<Unit, Unit> StandartCommand { get; }
-    public ReactiveCommand<Unit, Unit> FullScreenCommand { get; }
-    public ReactiveCommand<Unit, Unit> LightThemeCommand { get; }
-    public ReactiveCommand<Unit, Unit> DarkThemeCommand { get; }
+    public ReactiveCommand<RxVoid, RxVoid> ZoomInCommand { get; }
+    public ReactiveCommand<RxVoid, RxVoid> ZoomOutCommand { get; }
+    public ReactiveCommand<RxVoid, RxVoid> ResetZoomCommand { get; }
+    public ReactiveCommand<RxVoid, RxVoid> ResetLayout { get; }
+    public ReactiveCommand<RxVoid, RxVoid> StandartCommand { get; }
+    public ReactiveCommand<RxVoid, RxVoid> FullScreenCommand { get; }
+    public ReactiveCommand<RxVoid, RxVoid> LightThemeCommand { get; }
+    public ReactiveCommand<RxVoid, RxVoid> DarkThemeCommand { get; }
     
-    public ReactiveCommand<Unit, Unit> CheckForUpdatesCommand { get; }
-    public ReactiveCommand<Unit, Unit> ReportCommand { get; }
-    public ReactiveCommand<Unit, Unit> ContactUsCommand { get; }
-    public ReactiveCommand<Unit, Unit> AboutCommand { get; }
+    public ReactiveCommand<RxVoid, RxVoid> CheckForUpdatesCommand { get; }
+    public ReactiveCommand<RxVoid, RxVoid> ReportCommand { get; }
+    public ReactiveCommand<RxVoid, RxVoid> ContactUsCommand { get; }
+    public ReactiveCommand<RxVoid, RxVoid> AboutCommand { get; }
 
     public MenuCommandsVM()
     {

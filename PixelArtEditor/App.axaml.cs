@@ -19,8 +19,11 @@ public class App : Application
         Services.Navigation = new NavigationService();
         Services.WindowState = new WindowStateManager();
 
-        AppServices.ResourceManager.Initialize();
-        Services.Settings = SettingsManager.GetInstance;
+        ResourceManager.Initialize();
+        var settings = SettingsManager.GetInstance;
+        settings.Load();
+
+        Services.Settings = settings;
         Services.ModelData = new ModelManager();
     }
     
@@ -35,5 +38,9 @@ public class App : Application
         }
 
         base.OnFrameworkInitializationCompleted();
+
+        #if DEBUG
+                this.AttachDeveloperTools();
+        #endif
     }
 }

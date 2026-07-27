@@ -4,7 +4,6 @@ using PixelArtEditor.AppServices.Canvas;
 using PixelArtEditor.Models.Canvas;
 using PixelArtEditor.Models.Tools;
 using PixelArtEditor.Views.EditorControls;
-using ReactiveUI;
 using System;
 using System.Numerics;
 
