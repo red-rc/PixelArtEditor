@@ -1,4 +1,6 @@
-﻿namespace PixelArtEditor.Models.Canvas;
+﻿using System;
+
+namespace PixelArtEditor.Models.Canvas;
 
 public enum ColorMode
 {
@@ -59,6 +61,9 @@ public class PixelModel
 
     public byte[] Data = [];
     public Palette? Palette;
+
+    public event Action? ModelChanged;
+    public void NotifyModelChanged() => ModelChanged?.Invoke();
 }
 
 // RGBA Bit8:    [R,G,B,A, R,G,B,A, ...]

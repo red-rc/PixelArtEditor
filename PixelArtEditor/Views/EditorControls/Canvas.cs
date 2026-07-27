@@ -34,6 +34,8 @@ public class Canvas : Control, ICanvasContext
         set => SetValue(ModelProperty, value);
     }
 
+    private PixelModel? _subscribedModel;
+
     public static readonly StyledProperty<Vector2> OffsetProperty =
         AvaloniaProperty.Register<Canvas, Vector2>(nameof(Offset));
 
@@ -134,7 +136,18 @@ public class Canvas : Control, ICanvasContext
 
         RenderOptions.SetBitmapInterpolationMode(this, BitmapInterpolationMode.None);
 
-        Services.ModelData.ModelChanged += OnModelChanged;
+        ModelProperty.Changed.AddClassHandler<Canvas>((sender, e) =>
+        {
+            if (_subscribedModel != null)
+                _subscribedModel.ModelChanged -= OnModelChanged;
+
+            _subscribedModel = sender.Model;
+
+            if (_subscribedModel != null)
+                _subscribedModel.ModelChanged += OnModelChanged;
+
+            sender.OnModelChanged();
+        });
 
         this.GetObservable(ModelProperty).Subscribe(_ => OnModelChanged());
         this.GetObservable(OffsetProperty).Subscribe(_ => InvalidateVisual());

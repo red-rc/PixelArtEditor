@@ -79,7 +79,7 @@ public class ImagePropertiesVM : ReactiveObject
                     newWidth, newHeight));
                 _model.Width = newWidth;
                 _model.Height = newHeight;
-                Services.ModelData.NotifyModelChanged();
+                _model.NotifyModelChanged();
             }
 
             ImageProperties.SaveTo(_model);

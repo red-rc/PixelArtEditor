@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Avalonia.Media;
 using PixelArtEditor.AppServices;
 using PixelArtEditor.AppServices.Image;
 using PixelArtEditor.AppServices.Shell;
@@ -24,7 +25,6 @@ public class App : Application
         settings.Load();
 
         Services.Settings = settings;
-        Services.ModelData = new ModelManager();
     }
     
     public override void OnFrameworkInitializationCompleted()

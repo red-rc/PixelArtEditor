@@ -8,6 +8,7 @@ using Avalonia.VisualTree;
 using PixelArtEditor.AppServices;
 using PixelArtEditor.AppServices.EditorUI;
 using PixelArtEditor.Helpers;
+using PixelArtEditor.Models.Canvas;
 using PixelArtEditor.Models.Dock;
 using PixelArtEditor.UI;
 using PixelArtEditor.ViewModels;
@@ -43,15 +44,6 @@ public partial class EditorView : UserControl
 
         AttachedToVisualTree += (s, e) =>
         {
-            Services.ModelData.ModelChanged += () =>
-            {
-                Dispatcher.UIThread.Post(() =>
-                {
-                    if (ViewModel is null || CanvasPanel.Bounds is not { Width: > 0, Height: > 0 }) return;
-                    ViewModel.AdjustCanvas(CanvasPanel.Bounds.Width, CanvasPanel.Bounds.Height);
-                });
-            };
-
             Services.Settings.PropertyChanged += (s, e) =>
             {
                 if (e.PropertyName != nameof(SettingsManager.Layout)) return;
@@ -109,7 +101,29 @@ public partial class EditorView : UserControl
 
             vm.AdjustCanvas(CanvasPanel.Bounds.Width, CanvasPanel.Bounds.Height);
 
+            PixelModel? subscribedModel = null;
+
+            vm.WhenAnyValue(x => x.Model).Subscribe(model =>
+            {
+                if (subscribedModel != null)
+                    subscribedModel.ModelChanged -= OnModelChangedHandler;
+
+                subscribedModel = model;
+
+                if (subscribedModel != null)
+                    subscribedModel.ModelChanged += OnModelChangedHandler;
+            });
+
             Dispatcher.UIThread.Post(() => Root.Focus());
+        }
+
+        void OnModelChangedHandler()
+        {
+            Dispatcher.UIThread.Post(() =>
+            {
+                if (ViewModel is null || CanvasPanel.Bounds is not { Width: > 0, Height: > 0 }) return;
+                ViewModel.AdjustCanvas(CanvasPanel.Bounds.Width, CanvasPanel.Bounds.Height);
+            });
         }
     }
 

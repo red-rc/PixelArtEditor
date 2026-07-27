@@ -1,5 +1,7 @@
-﻿using Avalonia.Controls;
+﻿using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Threading;
+using System;
 
 namespace PixelArtEditor.AppServices.Shell;
 
@@ -23,16 +25,7 @@ public sealed class WindowStateManager : ReactiveObject
                 else 
                     Dispatcher.UIThread.Post(() => _window.WindowState = value);
 
-                if (value == WindowState.Maximized || value == WindowState.FullScreen)
-                {
-                    _window.ExtendClientAreaToDecorationsHint = false;
-                    _window.CanResize = false;
-                }
-                else
-                {
-                    _window.ExtendClientAreaToDecorationsHint = true;
-                    _window.CanResize = true;
-                }
+                _window.CanResize = value != WindowState.Maximized && value != WindowState.FullScreen;
             }
 
             PreviousWindowState = _current;
@@ -44,5 +37,39 @@ public sealed class WindowStateManager : ReactiveObject
     {
         _window = window;
         Current = window.WindowState;
+
+        window.GetObservable(Window.WindowStateProperty).Subscribe(state =>
+        {
+            if (state == _current) return;
+            this.RaisePropertyChanged(nameof(Current));
+
+            if (state == WindowState.Normal)
+                ForceRelayout();
+        });
+    }
+    private void ForceRelayout()
+    {
+        Dispatcher.UIThread.Post(() =>
+        {
+            if (_window is null) return;
+
+            var width = _window.Bounds.Width;
+            var height = _window.Bounds.Height;
+
+            _window.Width = width + 1;
+            _window.Height = height;
+
+            Dispatcher.UIThread.Post(() =>
+            {
+                _window.Width = width;
+                _window.Height = height;
+
+                Dispatcher.UIThread.Post(() =>
+                {
+                    _window.ClearValue(Window.WidthProperty);
+                    _window.ClearValue(Window.HeightProperty);
+                }, DispatcherPriority.Loaded);
+            }, DispatcherPriority.Loaded);
+        }, DispatcherPriority.Loaded);
     }
 }
