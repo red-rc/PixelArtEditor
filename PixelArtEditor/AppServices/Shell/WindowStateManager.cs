@@ -53,23 +53,34 @@ public sealed class WindowStateManager : ReactiveObject
         {
             if (_window is null) return;
 
-            var width = _window.Bounds.Width;
-            var height = _window.Bounds.Height;
+            _window.ClearValue(Window.WidthProperty);
+            _window.ClearValue(Window.HeightProperty);
 
-            _window.Width = width + 1;
-            _window.Height = height;
+            _window.InvalidateMeasure();
+            _window.InvalidateArrange();
+            _window.InvalidateVisual();
+
+            if (_window.Content is Control content)
+            {
+                content.InvalidateMeasure();
+                content.InvalidateArrange();
+            }
 
             Dispatcher.UIThread.Post(() =>
             {
-                _window.Width = width;
+                var width = _window.Bounds.Width;
+                var height = _window.Bounds.Height;
+
+                _window.Width = width + 1;
                 _window.Height = height;
 
                 Dispatcher.UIThread.Post(() =>
                 {
-                    _window.ClearValue(Window.WidthProperty);
-                    _window.ClearValue(Window.HeightProperty);
-                }, DispatcherPriority.Loaded);
-            }, DispatcherPriority.Loaded);
-        }, DispatcherPriority.Loaded);
+                    _window.Width = width;
+                    _window.Height = height;
+                }, DispatcherPriority.Background);
+            }, DispatcherPriority.Background);
+
+        }, DispatcherPriority.Background);
     }
 }
