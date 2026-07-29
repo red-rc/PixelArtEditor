@@ -150,11 +150,13 @@ public class MenuCommandsVM : ReactiveObject
     private static void OnLightTheme()
     {
         if (_settings.Theme is not "Light") _settings.Theme = "Light";
+        _settings.Save();
     }
 
     private static void OnDarkTheme()
     {
         if (_settings.Theme is not "Dark") _settings.Theme = "Dark";
+        _settings.Save();
     }
 
     private void OnCheckForUpdates()

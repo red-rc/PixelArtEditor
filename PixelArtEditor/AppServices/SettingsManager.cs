@@ -45,9 +45,7 @@ public sealed class SettingsManager : ISettingsManager
             if (_accentColor == value) return;
             _accentColor = value;
             foreach (var theme in ResourceManager.ThemeOptions)
-            {
                 theme.ChangeAccentColor(value);
-            }
                 
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AccentColor)));
         }
