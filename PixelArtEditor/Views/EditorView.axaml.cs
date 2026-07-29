@@ -223,7 +223,7 @@ public partial class EditorView : UserControl
             var rectsToHighlight = _dockState.Orientation == DockOrientation.Vertical ? _layoutManager.VerticalRects : _layoutManager.HorizontalRects;
 
             rectsToHighlight.ForEach(rect => rect.Fill = rect.GetValue(LayoutManager.DockInfoProperty)?.Orientation == _dockState.Orientation ?
-                new SolidColorBrush(Application.Current?.Resources["PrimaryPressedColor"] as Color? ?? Colors.Blue) : rect.Fill);
+                new SolidColorBrush(Application.Current?.Resources["PrimaryPressColor"] as Color? ?? Colors.Blue) : rect.Fill);
 
             e.Pointer.Capture(draggedPanel);
         }
@@ -269,7 +269,7 @@ public partial class EditorView : UserControl
                 : MainLayout.RowDefinitions.Count;
 
             rect.Fill = (dockInfo.Index == 0 || dockInfo.Index == boundaryCount) ? new SolidColorBrush(Colors.Transparent) : 
-                new SolidColorBrush(Application.Current?.Resources["BackgroundPressedColor"] as Color? ?? Colors.DarkGray);
+                new SolidColorBrush(Application.Current?.Resources["BackgroundPressColor"] as Color? ?? Colors.DarkGray);
         }
 
         if (!docked)

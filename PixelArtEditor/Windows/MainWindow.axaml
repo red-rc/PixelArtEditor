@@ -75,20 +75,20 @@
                         </Button.Flyout>
                     </Button>
 
-                    <Button Classes="MenuButton" Content="View">
+                    <Button x:Name="MenuItem" Classes="MenuButton" Content="View">
                         <Button.Flyout>
                             <Flyout Placement="BottomEdgeAlignedLeft" Opened="OnMenuFlyoutOpened" Closed="OnMenuFlyoutClosed">
                                 <Border Classes="MenuBorder">
                                     <StackPanel>
-                                        <Button Classes="MenuEntry" Command="{Binding Menu.ZoomInCommand}" Content="{DynamicResource MenuZoomIn}" />
-                                        <Button Classes="MenuEntry" Command="{Binding Menu.ZoomOutCommand}" Content="{DynamicResource MenuZoomOut}" />
-                                        <Button Classes="MenuEntry" Command="{Binding Menu.ResetZoomCommand}" Content="{DynamicResource MenuResetZoom}" />
-                                        <Button Classes="MenuEntry" Command="{Binding Menu.ResetLayout}" Content="{DynamicResource MenuResetLayout}" />
+                                        <Button Classes="MenuEntry" Command="{Binding Menu.ZoomInCommand}" Content="{DynamicResource MenuZoomIn}" Click="CloseFileFlyout" />
+                                        <Button Classes="MenuEntry" Command="{Binding Menu.ZoomOutCommand}" Content="{DynamicResource MenuZoomOut}" Click="CloseFileFlyout" />
+                                        <Button Classes="MenuEntry" Command="{Binding Menu.ResetZoomCommand}" Content="{DynamicResource MenuResetZoom}" Click="CloseFileFlyout" />
+                                        <Button Classes="MenuEntry" Command="{Binding Menu.ResetLayout}" Content="{DynamicResource MenuResetLayout}" Click="CloseFileFlyout" />
                                         <Separator Classes="MenuSeparator" />
-                                        <Button Classes="MenuEntry" Command="{Binding Menu.StandartCommand}" Content="Standart" />
-                                        <Button Classes="MenuEntry" Command="{Binding Menu.FullScreenCommand}" Content="FullScreen" />
-                                        <Button Classes="MenuEntry" Command="{Binding Menu.LightThemeCommand}" Content="{DynamicResource MenuLightTheme}" />
-                                        <Button Classes="MenuEntry" Command="{Binding Menu.DarkThemeCommand}" Content="{DynamicResource MenuDarkTheme}" />
+                                        <Button Classes="MenuEntry" Command="{Binding Menu.StandartCommand}" Content="Standart" Click="CloseFileFlyout" />
+                                        <Button Classes="MenuEntry" Command="{Binding Menu.FullScreenCommand}" Content="FullScreen" Click="CloseFileFlyout" />
+                                        <Button Classes="MenuEntry" Command="{Binding Menu.LightThemeCommand}" Content="{DynamicResource MenuLightTheme}" Click="CloseFileFlyout" />
+                                        <Button Classes="MenuEntry" Command="{Binding Menu.DarkThemeCommand}" Content="{DynamicResource MenuDarkTheme}" Click="CloseFileFlyout" />
                                     </StackPanel>
                                 </Border>
                             </Flyout>

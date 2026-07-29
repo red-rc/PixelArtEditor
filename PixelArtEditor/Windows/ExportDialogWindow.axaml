@@ -83,7 +83,7 @@
                 Padding="30,0,30,0"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Stretch"
-                Classes="BlueButton"
+                Classes="CreateButton"
                 Command="{Binding ConfirmCommand}"
                 Content="{DynamicResource ExportConfirm}"
                 FontSize="20" />

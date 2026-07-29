@@ -41,7 +41,7 @@
                 Tag="Vertical">
                 <Border
                     Grid.Row="0"
-                    BorderBrush="{DynamicResource BackgroundPressedColor}"
+                    Classes="EditorBorder"
                     BorderThickness="0,0,0,3">
 
                     <Viewbox Height="350" Stretch="Fill">

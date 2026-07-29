@@ -92,11 +92,19 @@ public class LayerPanelVM : ReactiveObject
             if (_layerManager?.Layers is null || _layerManager.Layers.Count == 0) return;
             if (SelectedLayers is null || SelectedLayers.Count == 0) return;
 
+            var activeLayerItem = LayerItems.FirstOrDefault(x => x.Layer == _layerManager.ActiveLayer);
+            var activeLayerIndex = activeLayerItem is not null ? LayerItems.IndexOf(activeLayerItem) : -1;
+
             foreach (var layerItem in SelectedLayers.ToList())
                 _layerManager.Layers.Remove(layerItem.Layer);
 
-            if (_layerManager.ActiveLayer is null || !_layerManager.Layers.Contains(_layerManager.ActiveLayer))
-                _layerManager.ActiveLayer = _layerManager.Layers.FirstOrDefault();
+            if ((_layerManager.ActiveLayer is null || !_layerManager.Layers.Contains(_layerManager.ActiveLayer)) 
+                && LayerItems.Count > 0 && activeLayerIndex >= 0)
+            {
+                activeLayerIndex = Math.Min(activeLayerIndex, LayerItems.Count - 1);
+
+                SelectedLayer = LayerItems[activeLayerIndex];
+            }
         });
         DuplicateCommand = ReactiveCommand.Create(() => 
         { 

@@ -24,7 +24,7 @@
                 <Button
                     Padding="30,10,30,10"
                     HorizontalAlignment="Stretch"
-                    Classes="BlueButton"
+                    Classes="CreateButton"
                     Command="{Binding CreateCommand}"
                     Content="{DynamicResource StartViewCreate}" />
                 <Button

@@ -16,5 +16,27 @@
     "G": 144,
     "B": 255
   },
-  "Theme": "System"
+  "Theme": "System",
+  "Layout": [
+    {
+      "Name": "OptionsPanel",
+      "Row": 0,
+      "Col": 0
+    },
+    {
+      "Name": "LayerPanel",
+      "Row": 1,
+      "Col": 2
+    },
+    {
+      "Name": "Toolbar",
+      "Row": 1,
+      "Col": 0
+    },
+    {
+      "Name": "CanvasPanel",
+      "Row": 1,
+      "Col": 1
+    }
+  ]
 }

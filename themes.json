@@ -16,7 +16,7 @@
         "G": 166,
         "B": 255
       },
-      "PrimaryPressedColor": {
+      "PrimaryPressColor": {
         "A": 255,
         "R": 24,
         "G": 115,
@@ -81,7 +81,7 @@
         "G": 56,
         "B": 56
       },
-      "BackgroundPressedColor": {
+      "BackgroundPressColor": {
         "A": 255,
         "R": 20,
         "G": 20,
@@ -99,7 +99,7 @@
         "G": 128,
         "B": 128
       },
-      "GrayPressedColor": {
+      "GrayPressColor": {
         "A": 255,
         "R": 74,
         "G": 74,
@@ -117,7 +117,7 @@
         "G": 68,
         "B": 68
       },
-      "UiPressedColor": {
+      "UiPressColor": {
         "A": 255,
         "R": 24,
         "G": 24,
@@ -146,6 +146,12 @@
         "R": 40,
         "G": 40,
         "B": 40
+      },
+      "ShadowColor": {
+        "A": 128,
+        "R": 0,
+        "G": 0,
+        "B": 0
       },
       "MinimizeIcon": {
         "Dpi": {
@@ -606,7 +612,7 @@
         "G": 166,
         "B": 255
       },
-      "PrimaryPressedColor": {
+      "PrimaryPressColor": {
         "A": 255,
         "R": 24,
         "G": 115,
@@ -671,7 +677,7 @@
         "G": 227,
         "B": 227
       },
-      "BackgroundPressedColor": {
+      "BackgroundPressColor": {
         "A": 255,
         "R": 218,
         "G": 218,
@@ -689,7 +695,7 @@
         "G": 136,
         "B": 136
       },
-      "GrayPressedColor": {
+      "GrayPressColor": {
         "A": 255,
         "R": 102,
         "G": 102,
@@ -707,7 +713,7 @@
         "G": 217,
         "B": 217
       },
-      "UiPressedColor": {
+      "UiPressColor": {
         "A": 255,
         "R": 206,
         "G": 206,
@@ -736,6 +742,12 @@
         "R": 224,
         "G": 224,
         "B": 224
+      },
+      "ShadowColor": {
+        "A": 43,
+        "R": 0,
+        "G": 0,
+        "B": 0
       },
       "MinimizeIcon": {
         "Dpi": {
@@ -1196,7 +1208,7 @@
         "G": 166,
         "B": 255
       },
-      "PrimaryPressedColor": {
+      "PrimaryPressColor": {
         "A": 255,
         "R": 24,
         "G": 115,
@@ -1261,7 +1273,7 @@
         "G": 72,
         "B": 72
       },
-      "BackgroundPressedColor": {
+      "BackgroundPressColor": {
         "A": 255,
         "R": 30,
         "G": 30,
@@ -1279,7 +1291,7 @@
         "G": 136,
         "B": 136
       },
-      "GrayPressedColor": {
+      "GrayPressColor": {
         "A": 255,
         "R": 80,
         "G": 80,
@@ -1297,17 +1309,11 @@
         "G": 84,
         "B": 84
       },
-      "UiPressedColor": {
+      "UiPressColor": {
         "A": 255,
         "R": 46,
         "G": 46,
         "B": 46
-      },
-      "ScrollBackgroundColor": {
-        "A": 255,
-        "R": 56,
-        "G": 56,
-        "B": 56
       },
       "MenuFlyoutItemBackgroundPointerOver": {
         "A": 255,
@@ -1326,6 +1332,18 @@
         "R": 46,
         "G": 46,
         "B": 46
+      },
+      "ScrollBackgroundColor": {
+        "A": 255,
+        "R": 56,
+        "G": 56,
+        "B": 56
+      },
+      "ShadowColor": {
+        "A": 102,
+        "R": 0,
+        "G": 0,
+        "B": 0
       },
       "MinimizeIcon": {
         "Dpi": {
@@ -1786,7 +1804,7 @@
         "G": 166,
         "B": 255
       },
-      "PrimaryPressedColor": {
+      "PrimaryPressColor": {
         "A": 255,
         "R": 24,
         "G": 115,
@@ -1851,7 +1869,7 @@
         "G": 227,
         "B": 227
       },
-      "BackgroundPressedColor": {
+      "BackgroundPressColor": {
         "A": 255,
         "R": 218,
         "G": 218,
@@ -1869,7 +1887,7 @@
         "G": 136,
         "B": 136
       },
-      "GrayPressedColor": {
+      "GrayPressColor": {
         "A": 255,
         "R": 102,
         "G": 102,
@@ -1887,7 +1905,7 @@
         "G": 217,
         "B": 217
       },
-      "UiPressedColor": {
+      "UiPressColor": {
         "A": 255,
         "R": 206,
         "G": 206,
@@ -1916,6 +1934,12 @@
         "R": 224,
         "G": 224,
         "B": 224
+      },
+      "ShadowColor": {
+        "A": 43,
+        "R": 0,
+        "G": 0,
+        "B": 0
       },
       "MinimizeIcon": {
         "Dpi": {

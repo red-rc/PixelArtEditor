@@ -2,9 +2,13 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.LogicalTree;
+using Avalonia.Threading;
+using Avalonia.VisualTree;
 using PixelArtEditor.AppServices;
 using PixelArtEditor.ViewModels;
 using System;
+using System.Linq;
 
 namespace PixelArtEditor.Windows;
 
@@ -159,5 +163,10 @@ public partial class MainWindow : Window
     {
         if (sender is Flyout { Target: Button btn })
             btn.Classes.Remove("MenuOpen");
+    }
+
+    private void CloseFileFlyout(object? sender, RoutedEventArgs e)
+    {
+        Dispatcher.UIThread.Post(() => MenuItem.Flyout?.Hide(), DispatcherPriority.Background);
     }
 }

@@ -17,6 +17,12 @@
         </DataTemplate>
     </Application.DataTemplates>
 
+    <Application.Resources>
+        <SolidColorBrush x:Key="ThemeBorderHighBrush" Color="{DynamicResource BorderColor}" />
+        <SolidColorBrush x:Key="ThemeBackgroundBrush" Color="{DynamicResource TertiaryBackgroundColor}" />
+        <SolidColorBrush x:Key="ThemeBorderMidBrush" Color="{DynamicResource GrayColor}" />
+    </Application.Resources>
+
     <Application.Styles>
         <SimpleTheme />
         <StyleInclude Source="avares://Avalonia.Controls.ColorPicker/Themes/Simple/Simple.xaml" />

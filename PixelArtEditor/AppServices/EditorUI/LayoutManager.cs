@@ -93,7 +93,7 @@ public class LayoutManager(Grid mainLayout, Panel rectHost, Control canvasPanel)
                 rect.Bind(
                     Shape.FillProperty,
                     Observable.Select(
-                        rect.GetResourceObservable("BackgroundPressedColor"),
+                        rect.GetResourceObservable("BackgroundPressColor"),
                         c => c is Color color ? (IBrush)new SolidColorBrush(color) : Brushes.DarkGray
                     )
                 );
@@ -118,7 +118,7 @@ public class LayoutManager(Grid mainLayout, Panel rectHost, Control canvasPanel)
                 rect.Bind(
                     Shape.FillProperty,
                     Observable.Select(
-                        rect.GetResourceObservable("BackgroundPressedColor"),
+                        rect.GetResourceObservable("BackgroundPressColor"),
                         c => c is Color color ? (IBrush)new SolidColorBrush(color) : Brushes.DarkGray
                     )
                 );
