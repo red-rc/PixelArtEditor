@@ -17,4 +17,21 @@ public partial class SettingsDialogWindow : Window
             viewModel.OnClosing();
         };
     }
+
+    public void RestartWindow()
+    {
+        var position = Position;
+        var owner = Owner as Window;
+
+        Hide();
+
+        var currentVm = (SettingsDialogVM)DataContext!;
+        var newVm = new SettingsDialogVM(this) { SelectedTabIndex = currentVm.SelectedTabIndex };
+        DataContext = newVm;
+
+        Position = position;
+
+        if (owner is not null) Show(owner);
+        else Show();
+    }
 }

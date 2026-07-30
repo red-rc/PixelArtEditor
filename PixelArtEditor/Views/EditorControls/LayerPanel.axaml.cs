@@ -326,7 +326,7 @@ public partial class LayerPanel : UserControl
     {
         var textBlock = (TextBlock)sender!;
         var grid = textBlock.FindAncestorOfType<Grid>();
-        var textBox = grid?.FindControl<TextBox>("RenameTextBox");
+        var textBox = grid?.GetVisualDescendants().OfType<TextBox>().FirstOrDefault(t => t.Name == "RenameTextBox");
 
         (textBlock.DataContext as LayerItem)?.IsEditing = true;
         Dispatcher.UIThread.Post(() =>
@@ -345,8 +345,8 @@ public partial class LayerPanel : UserControl
             item?.IsEditing = false;
         else if (e.Key == Key.Escape)
         {
-                item?.LayerName = "";
-                item?.IsEditing = false;
+            item?.LayerName = "";
+            item?.IsEditing = false;
         }
     }
 

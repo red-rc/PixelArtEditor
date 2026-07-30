@@ -34,7 +34,7 @@
             Width="150"
             HorizontalAlignment="Left"
             DockPanel.Dock="Left">
-            <ListBox Background="{DynamicResource TertiaryBackgroundColor}" SelectedIndex="{Binding SelectedTabIndex, Mode=TwoWay}">
+            <ListBox Classes="SelectionListBox" SelectedIndex="{Binding SelectedTabIndex, Mode=TwoWay}">
                 <ListBoxItem
                     HorizontalContentAlignment="Center"
                     Classes="Heading"

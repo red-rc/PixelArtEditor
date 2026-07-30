@@ -77,7 +77,7 @@
                             <TextBlock Classes="LayerItemText" Text="{Binding LayerName}" Margin="5,0,5,0"
                                 IsVisible="{Binding !IsEditing}"
                                 DoubleTapped="TextBlock_DoubleTapped"/>
-                            <TextBox Classes="MyTextBox" Text="{Binding LayerName}" Margin="5,0,5,0" Height="25" FontSize="14"
+                            <TextBox Classes="RenameTextBox" Text="{Binding LayerName}" Margin="5,0,5,0" Height="25" FontSize="14"
                                 Name="RenameTextBox"
                                 IsVisible="{Binding IsEditing}"
                                 KeyDown="RenameTextBox_KeyDown"

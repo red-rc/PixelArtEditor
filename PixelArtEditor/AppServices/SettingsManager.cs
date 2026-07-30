@@ -60,6 +60,7 @@ public sealed class SettingsManager : ISettingsManager
             if (_theme == value) return;
             _theme = value;
             Array.Find(ResourceManager.ThemeOptions, x => x.Name == value)?.Apply();
+
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Theme)));
         }
     }

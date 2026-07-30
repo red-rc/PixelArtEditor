@@ -19,8 +19,8 @@
 
     <Application.Resources>
         <SolidColorBrush x:Key="ThemeBorderHighBrush" Color="{DynamicResource BorderColor}" />
-        <SolidColorBrush x:Key="ThemeBackgroundBrush" Color="{DynamicResource TertiaryBackgroundColor}" />
-        <SolidColorBrush x:Key="ThemeBorderMidBrush" Color="{DynamicResource GrayColor}" />
+        <SolidColorBrush x:Key="ThemeBackgroundBrush" Color="{DynamicResource UiColor}" />
+        <SolidColorBrush x:Key="ThemeBorderMidBrush" Color="{DynamicResource ShadowColor}" />
     </Application.Resources>
 
     <Application.Styles>

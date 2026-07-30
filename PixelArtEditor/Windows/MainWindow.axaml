@@ -40,7 +40,7 @@
                 <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Left">
                     <Button Classes="MenuButton" Content="File">
                         <Button.Flyout>
-                            <Flyout Placement="BottomEdgeAlignedLeft" Opened="OnMenuFlyoutOpened" Closed="OnMenuFlyoutClosed">
+                            <Flyout HorizontalOffset="-6" VerticalOffset="-6" Placement="BottomEdgeAlignedLeft" Opened="OnMenuFlyoutOpened" Closed="OnMenuFlyoutClosed">
                                 <Border Classes="MenuBorder">
                                     <StackPanel>
                                         <Button Classes="MenuEntry" Command="{Binding Menu.CreateCommand}" Content="{DynamicResource MenuCreateNew}" />
@@ -61,7 +61,7 @@
 
                     <Button Classes="MenuButton" Content="Edit">
                         <Button.Flyout>
-                            <Flyout Placement="BottomEdgeAlignedLeft" Opened="OnMenuFlyoutOpened" Closed="OnMenuFlyoutClosed">
+                            <Flyout HorizontalOffset="-6" VerticalOffset="-6" Placement="BottomEdgeAlignedLeft" Opened="OnMenuFlyoutOpened" Closed="OnMenuFlyoutClosed">
                                 <Border Classes="MenuBorder">
                                     <StackPanel>
                                         <Button Classes="MenuEntry" Command="{Binding Menu.UndoCommand}" Content="{DynamicResource MenuUndo}" />
@@ -77,7 +77,7 @@
 
                     <Button x:Name="MenuItem" Classes="MenuButton" Content="View">
                         <Button.Flyout>
-                            <Flyout Placement="BottomEdgeAlignedLeft" Opened="OnMenuFlyoutOpened" Closed="OnMenuFlyoutClosed">
+                            <Flyout HorizontalOffset="-6" VerticalOffset="-6" Placement="BottomEdgeAlignedLeft" Opened="OnMenuFlyoutOpened" Closed="OnMenuFlyoutClosed">
                                 <Border Classes="MenuBorder">
                                     <StackPanel>
                                         <Button Classes="MenuEntry" Command="{Binding Menu.ZoomInCommand}" Content="{DynamicResource MenuZoomIn}" Click="CloseFileFlyout" />
@@ -97,7 +97,7 @@
 
                     <Button Classes="MenuButton" Content="Help">
                         <Button.Flyout>
-                            <Flyout Placement="BottomEdgeAlignedLeft" Opened="OnMenuFlyoutOpened" Closed="OnMenuFlyoutClosed">
+                            <Flyout HorizontalOffset="-6" VerticalOffset="-6" Placement="BottomEdgeAlignedLeft" Opened="OnMenuFlyoutOpened" Closed="OnMenuFlyoutClosed">
                                 <Border Classes="MenuBorder">
                                     <StackPanel>
                                         <Button Classes="MenuEntry" Command="{Binding Menu.CheckForUpdatesCommand}" Content="{DynamicResource MenuCheckForUpdates}" />

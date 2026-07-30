@@ -1,8 +1,13 @@
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Media;
+using Avalonia.Threading;
+using Avalonia.VisualTree;
 using PixelArtEditor.AppServices;
+using PixelArtEditor.Windows;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace PixelArtEditor.ViewModels;
 
@@ -97,7 +102,11 @@ public class SettingsDialogVM : ReactiveObject
         set
         {
             if (_settings.Theme == value) return;
+
+            CloseThemeComboBoxPopup();
             _settings.Theme = value;
+
+            Dispatcher.UIThread.Post(_dialog.RestartWindow, DispatcherPriority.Background);
             this.RaisePropertyChanged();
         }
     }
@@ -109,11 +118,13 @@ public class SettingsDialogVM : ReactiveObject
         set => this.RaiseAndSetIfChanged(ref _selectedTabIndex, value);
     }
 
+    private readonly SettingsDialogWindow _dialog;
+
     public ReactiveCommand<RxVoid, RxVoid> ResetCommand { get; }
     public ReactiveCommand<RxVoid, RxVoid> CancelCommand { get; }
     public ReactiveCommand<RxVoid, RxVoid> SaveCommand { get; }
 
-    public SettingsDialogVM(Window dialog)
+    public SettingsDialogVM(SettingsDialogWindow dialog)
     {
         ResetCommand = ReactiveCommand.Create(OnClosing);
         CancelCommand = ReactiveCommand.Create(() =>
@@ -128,6 +139,18 @@ public class SettingsDialogVM : ReactiveObject
         });
 
         _selectedTabIndex = 0;
+
+        _dialog = dialog;
+    }
+
+    private void CloseThemeComboBoxPopup()
+    {
+        var popupField = typeof(ComboBox).GetFields(BindingFlags.NonPublic | BindingFlags.Instance)
+            .FirstOrDefault(field => field.FieldType == typeof(Popup));
+
+        foreach (var comboBox in _dialog.GetVisualDescendants().OfType<ComboBox>())
+            if (popupField?.GetValue(comboBox) is Popup { IsOpen: true } popup)
+                popup.IsOpen = false;
     }
 
     public void OnClosing()
@@ -135,8 +158,6 @@ public class SettingsDialogVM : ReactiveObject
         _settings.Load();
             
         foreach (var prop in typeof(ISettingsManager).GetProperties())
-        {
             this.RaisePropertyChanged(prop.Name);
-        }
     }
 }

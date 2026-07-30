@@ -4,6 +4,7 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 using System;
 
 namespace PixelArtEditor.UI
@@ -55,6 +56,28 @@ namespace PixelArtEditor.UI
             base.OnLostFocus(e);
 
             if (!Value.HasValue || Value == 0) Value = _lastValidValue;
+        }
+
+        protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+        {
+            base.OnAttachedToVisualTree(e);
+
+            var topLevel = TopLevel.GetTopLevel(this);
+            topLevel?.AddHandler(PointerPressedEvent, OnTopLevelPointerPressed, RoutingStrategies.Tunnel);
+        }
+
+        protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+        {
+            base.OnDetachedFromVisualTree(e);
+
+            var topLevel = TopLevel.GetTopLevel(this);
+            topLevel?.RemoveHandler(PointerPressedEvent, OnTopLevelPointerPressed);
+        }
+
+        private void OnTopLevelPointerPressed(object? sender, PointerPressedEventArgs e)
+        {
+            if (e.Source is Visual visual && this.IsVisualAncestorOf(visual)) return;
+            TopLevel.GetTopLevel(this)?.FocusManager?.Focus(null);
         }
     }
 }

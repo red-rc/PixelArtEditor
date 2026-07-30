@@ -42,6 +42,8 @@ public class Preview : Control
 
     private byte[]? _pixelData;
 
+    private BoxShadows _shadow = Application.Current?.Resources["CardShadow"] as BoxShadows? ?? default;
+
     public Preview()
     {
         RenderOptions.SetBitmapInterpolationMode(this, BitmapInterpolationMode.None);
@@ -94,6 +96,7 @@ public class Preview : Control
             DestinationRect = new RelativeRect(0, 0, 64, 64, RelativeUnit.Absolute)
         };
 
+        context.DrawRectangle(null, null, rect, 0, 0, _shadow);
         context.FillRectangle(_checkerboardBrush, rect);
         context.DrawImage(_renderBitmap, rect);
     }

@@ -7,7 +7,7 @@ using Avalonia.Platform;
 using Avalonia.Styling;
 using System;
 using System.IO;
-using PixelArtEditor.Helpers;
+using ColorHelper = PixelArtEditor.Helpers.ColorHelper;
 
 namespace PixelArtEditor.Styles;
 
@@ -189,7 +189,7 @@ public class DarkTheme : BaseTheme
 
         Resources["ScrollBackgroundColor"] = Color.Parse("#282828");
 
-        Resources["ShadowColor"] = Color.Parse("#80000000");
+        Resources["ShadowColor"] = Color.Parse("#2B000000");
 
         SetDarkIcons();
     }
@@ -268,7 +268,7 @@ public class GrayTheme : BaseTheme
 
         Resources["ScrollBackgroundColor"] = Color.Parse("#383838");
 
-        Resources["ShadowColor"] = Color.Parse("#66000000");
+        Resources["ShadowColor"] = Color.Parse("#2B000000");
 
         SetDarkIcons();
     }
