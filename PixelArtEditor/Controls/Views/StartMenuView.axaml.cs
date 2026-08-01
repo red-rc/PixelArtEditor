@@ -1,6 +1,6 @@
 using Avalonia.Controls;
 
-namespace PixelArtEditor.Views;
+namespace PixelArtEditor.Controls.Views;
 
 public partial class StartMenuView : UserControl
 {

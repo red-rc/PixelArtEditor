@@ -1,9 +1,9 @@
 using Avalonia;
 using Avalonia.Media;
 using PixelArtEditor.AppServices.Canvas;
+using PixelArtEditor.Controls.Editor;
 using PixelArtEditor.Models.Canvas;
 using PixelArtEditor.Models.Tools;
-using PixelArtEditor.Views.EditorControls;
 using System;
 using System.Numerics;
 

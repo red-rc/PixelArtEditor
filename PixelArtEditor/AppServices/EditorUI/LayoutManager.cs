@@ -2,8 +2,8 @@
 using Avalonia.Controls;
 using Avalonia.Controls.Shapes;
 using Avalonia.Media;
+using PixelArtEditor.Controls.Views;
 using PixelArtEditor.Models.Dock;
-using PixelArtEditor.Views;
 using System.Collections.Generic;
 using System.Linq;
 

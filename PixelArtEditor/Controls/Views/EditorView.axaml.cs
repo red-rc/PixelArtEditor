@@ -16,7 +16,7 @@ using System;
 using System.Linq;
 using System.Numerics;
 
-namespace PixelArtEditor.Views;
+namespace PixelArtEditor.Controls.Views;
 
 public partial class EditorView : UserControl
 {
@@ -108,13 +108,11 @@ public partial class EditorView : UserControl
 
             vm.WhenAnyValue(x => x.Model).Subscribe(model =>
             {
-                if (subscribedModel != null)
-                    subscribedModel.ModelChanged -= OnModelChangedHandler;
+                subscribedModel?.ModelChanged -= OnModelChangedHandler;
 
                 subscribedModel = model;
 
-                if (subscribedModel != null)
-                    subscribedModel.ModelChanged += OnModelChangedHandler;
+                subscribedModel?.ModelChanged += OnModelChangedHandler;
             });
 
             Dispatcher.UIThread.Post(() => Root.Focus());

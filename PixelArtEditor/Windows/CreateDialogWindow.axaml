@@ -5,7 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="clr-namespace:PixelArtEditor.UI"
-    xmlns:view="clr-namespace:PixelArtEditor.Views"
+    xmlns:controls="clr-namespace:PixelArtEditor.Controls.Image"
     xmlns:vm="clr-namespace:PixelArtEditor.ViewModels"
     Title="{DynamicResource CrWinTitle}"
     Width="725"
@@ -60,7 +60,7 @@
 
             <StackPanel Grid.Column="1" Spacing="10">
                 <TextBlock Classes="Header" Text="{DynamicResource CrWinBasic}" />
-                <view:ImageSizeView DataContext="{Binding ImageProperties}" />
+                <controls:SizePanel DataContext="{Binding ImageProperties}" />
 
                 <StackPanel>
                     <TextBlock TextAlignment="Center" HorizontalAlignment="Center" Text="{DynamicResource CrWinBackgroundColor}" />
@@ -73,7 +73,7 @@
             </StackPanel>
             <StackPanel Grid.Column="3" Spacing="10">
                 <TextBlock Classes="Header" Text="{DynamicResource CrWinAdvanced}" />
-                <view:ImagePropertiesView DataContext="{Binding ImageProperties}" />
+                <controls:PropertiesPanel DataContext="{Binding ImageProperties}" />
             </StackPanel>
         </Grid>
         <Grid

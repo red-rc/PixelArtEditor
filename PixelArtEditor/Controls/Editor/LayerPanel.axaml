@@ -5,7 +5,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="using:PixelArtEditor.UI"
     mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
-    x:Class="PixelArtEditor.Views.EditorControls.LayerPanel"
+    x:Class="PixelArtEditor.Controls.Editor.LayerPanel"
     xmlns:model="clr-namespace:PixelArtEditor.Models.LayerPanel"
     xmlns:vm="clr-namespace:PixelArtEditor.ViewModels"
     x:DataType="vm:LayerPanelVM"

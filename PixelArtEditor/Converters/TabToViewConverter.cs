@@ -1,5 +1,5 @@
 ﻿using Avalonia.Data.Converters;
-using PixelArtEditor.Views.SettingsViews;
+using PixelArtEditor.Controls.Settings;
 using System;
 using System.Globalization;
 

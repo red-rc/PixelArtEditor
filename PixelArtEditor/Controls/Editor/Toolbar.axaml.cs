@@ -1,6 +1,6 @@
 using Avalonia.Controls;
 
-namespace PixelArtEditor.Views.EditorControls;
+namespace PixelArtEditor.Controls.Editor;
 
 public partial class Toolbar : UserControl
 {

@@ -4,16 +4,16 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:PixelArtEditor"
     xmlns:viewModels="clr-namespace:PixelArtEditor.ViewModels"
-    xmlns:views1="clr-namespace:PixelArtEditor.Views">
+    xmlns:controls="clr-namespace:PixelArtEditor.Controls.Views">
     <!--  "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options.  -->
 
     <Application.DataTemplates>
         <local:ViewLocator />
         <DataTemplate DataType="{x:Type viewModels:StartMenuVM}">
-            <views1:StartMenuView />
+            <controls:StartMenuView />
         </DataTemplate>
         <DataTemplate DataType="{x:Type viewModels:EditorVM}">
-            <views1:EditorView />
+            <controls:EditorView />
         </DataTemplate>
     </Application.DataTemplates>
 

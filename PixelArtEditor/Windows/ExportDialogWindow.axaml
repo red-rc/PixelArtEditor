@@ -5,7 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="clr-namespace:PixelArtEditor.UI"
-    xmlns:view="clr-namespace:PixelArtEditor.Views"
+    xmlns:controls="clr-namespace:PixelArtEditor.Controls.Image"
     xmlns:vm="clr-namespace:PixelArtEditor.ViewModels"
     Title="Export"
     Width="600"
@@ -57,7 +57,7 @@
                 Margin="30,20,0,0"
                 Layer="{Binding Layer}" />
             <StackPanel Grid.Column="1" Spacing="10">
-                <view:ImagePropertiesView DataContext="{Binding ImageProperties}" />
+                <controls:PropertiesPanel DataContext="{Binding ImageProperties}" />
             </StackPanel>
         </Grid>
         <Grid

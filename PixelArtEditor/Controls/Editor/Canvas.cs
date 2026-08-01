@@ -17,7 +17,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Numerics;
 
-namespace PixelArtEditor.Views.EditorControls;
+namespace PixelArtEditor.Controls.Editor;
 
 public class Canvas : Control, ICanvasContext
 {

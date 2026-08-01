@@ -1,6 +1,6 @@
 using Avalonia.Controls;
 
-namespace PixelArtEditor.Views.SettingsViews;
+namespace PixelArtEditor.Controls.Settings;
 
 public partial class GeneralView : UserControl
 {
