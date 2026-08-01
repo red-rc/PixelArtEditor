@@ -216,7 +216,7 @@
             <Setter Property="Background" Value="{DynamicResource BackgroundHoverColor}" />
         </Style>
         <Style Selector="^:focus /template/ Border#border">
-            <Setter Property="Background" Value="{DynamicResource BackgroundPressColor}" />
+            <Setter Property="Background" Value="{DynamicResource BackgroundHoverColor}" />
             <Setter Property="BorderBrush" Value="{DynamicResource PrimaryColor}" />
             <Setter Property="BoxShadow" Value="{DynamicResource CardShadow}" />
         </Style>
@@ -491,11 +491,14 @@
 
     <Style Selector="Border.MenuBorder">
         <Setter Property="Background" Value="{DynamicResource UiColor}" />
-        <Setter Property="BorderBrush" Value="{DynamicResource ShadowColor}" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="CornerRadius" Value="4" />
+        <Setter Property="CornerRadius" Value="5" />
         <Setter Property="Padding" Value="4" />
         <Setter Property="BoxShadow" Value="{DynamicResource CardShadow}" />
+    </Style>
+
+    <Style Selector="Border.MenuBorder.ColorView">
+        <Setter Property="Background" Value="{DynamicResource BackgroundColor}" />
+        <Setter Property="Padding" Value="0" />
     </Style>
 
     <Style Selector="FlyoutPresenter">
@@ -510,66 +513,35 @@
     <Style Selector="ColorPicker">
         <Setter Property="CornerRadius" Value="2.5" />
         <Setter Property="ClipToBounds" Value="False" />
-        
+    
         <Style Selector="^ DropDownButton">
             <Setter Property="Background" Value="{DynamicResource BackgroundColor}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}" />
             <Setter Property="ClipToBounds" Value="False" />
-
+    
+            <Style Selector="^ /template/ Border#RootBorder">
+                <Setter Property="ClipToBounds" Value="False" />
+            </Style>
+    
+            <Style Selector="^:flyout-open /template/ Border#RootBorder">
+                <Setter Property="Background" Value="{DynamicResource BackgroundHoverColor}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource PrimaryColor}" />
+                <Setter Property="BoxShadow" Value="{DynamicResource CardShadow}" />
+            </Style>
+    
             <Style Selector="^:pointerover /template/ Border#RootBorder">
                 <Setter Property="Background" Value="{DynamicResource BackgroundHoverColor}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}" />
             </Style>
+    
             <Style Selector="^:pressed /template/ Border#RootBorder">
                 <Setter Property="Background" Value="{DynamicResource BackgroundHoverColor}" />
             </Style>
         </Style>
     </Style>
 
-    <Style Selector="ColorPicker:pointerover">
-        <Setter Property="Background" Value="{DynamicResource BackgroundColor}" />
-        <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}" />
-    </Style>
-
-    <Style Selector="DropDownButton /template/ Border#RootBorder">
-        <Setter Property="ClipToBounds" Value="False" />
-    </Style>
-    <Style Selector="DropDownButton:focus-visible /template/ Border#RootBorder">
-        <Setter Property="BoxShadow" Value="{DynamicResource CardShadow}" />
-    </Style>
-
-    <Style Selector="ColorPicker RadioButton">
-        <Setter Property="Background" Value="{DynamicResource UiColor}" />
-        <Setter Property="CornerRadius" Value="2.5" />
-    </Style>
-
-    <Style Selector="ColorPicker RadioButton:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-        <Setter Property="Background" Value="{DynamicResource UiHoverColor}" />
-    </Style>
-
-    <Style Selector="ColorPicker RadioButton:pressed /template/ ContentPresenter#PART_ContentPresenter">
-        <Setter Property="Background" Value="{DynamicResource UiPressColor}" />
-    </Style>
-
-    <Style Selector="ColorPicker RadioButton:checked /template/ ContentPresenter#PART_ContentPresenter">
-        <Setter Property="Background" Value="{DynamicResource PrimaryColor}" />
-    </Style>
-
-    <Style Selector="ColorPicker DropDownButton">
-        <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}" />
-    </Style>
-
-    <Style Selector="ColorPicker DropDownButton:pointerover /template/ Border#RootBorder">
-        <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}" />
-    </Style>
-
-    <Style Selector="ColorPicker DropDownButton:pressed /template/ Border#RootBorder">
-        <Setter Property="Background" Value="{DynamicResource BackgroundHoverColor}" />
-        <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}" />
-    </Style>
-
-    <Style Selector="ColorPicker DropDownButton:flyout-open /template/ Border#RootBorder">
-        <Setter Property="Background" Value="{DynamicResource BackgroundHoverColor}" />
-        <Setter Property="BorderBrush" Value="{DynamicResource PrimaryColor}" />
-        <Setter Property="BorderThickness" Value="1" />
+    <Style Selector="TabControl#PART_TabControl[TabStripPlacement=Top]">
+        <Setter Property="Padding" Value="0" />
     </Style>
 
 </Styles>

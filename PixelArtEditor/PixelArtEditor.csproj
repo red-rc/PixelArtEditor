@@ -10,6 +10,7 @@
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />
     <AvaloniaResource Include="Styles\ColorViewOverride.axaml" />
+    <AvaloniaResource Include="Styles\ColorPickerOverride.axaml" />
   </ItemGroup>
 
   <ItemGroup>

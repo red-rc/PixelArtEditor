@@ -27,5 +27,6 @@
         <SimpleTheme />
         <StyleInclude Source="avares://Avalonia.Controls.ColorPicker/Themes/Simple/Simple.xaml" />
         <StyleInclude Source="avares://PixelArtEditor/Styles/ColorViewOverride.axaml" />
+        <StyleInclude Source="avares://PixelArtEditor/Styles/ColorPickerOverride.axaml" />
     </Application.Styles>
 </Application>

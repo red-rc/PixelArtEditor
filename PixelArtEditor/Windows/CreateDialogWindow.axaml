@@ -65,6 +65,7 @@
                 <StackPanel>
                     <TextBlock TextAlignment="Center" HorizontalAlignment="Center" Text="{DynamicResource CrWinBackgroundColor}" />
                     <ColorPicker
+                        x:Name="BackgroundColorPicker"
                         Width="100"
                         HorizontalAlignment="Center"
                         Color="{Binding BackgroundColor, Mode=TwoWay}" />

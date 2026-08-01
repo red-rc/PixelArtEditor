@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using PixelArtEditor.Helpers;
 using PixelArtEditor.ViewModels;
 
 namespace PixelArtEditor.Windows;
@@ -9,5 +10,7 @@ public partial class CreateDialogWindow : Window
     {
         InitializeComponent();
         DataContext = new CreateDialogVM(this);
+
+        ColorPickerStyleFixer.Fix(BackgroundColorPicker);
     }
 }
