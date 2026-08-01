@@ -26,6 +26,9 @@ public partial class EditorView : UserControl
     private bool _pressedOnPanel;
     private bool _dragging;
 
+    private double _dragOffsetX;
+    private double _dragOffsetY;
+
     private readonly LayoutManager _layoutManager;
     private readonly TooltipManager _tooltipManager;
 
@@ -209,14 +212,17 @@ public partial class EditorView : UserControl
     {
         if (sender is not Control draggedPanel || !e.GetCurrentPoint(this).Properties.IsLeftButtonPressed || !_pressedOnPanel) return;
 
-        var mousePos = e.GetPosition(this);
-        var dx = mousePos.X - _mousePressPos.X;
-        var dy = mousePos.Y - _mousePressPos.Y;
-
-        if (dx * dx + dy * dy < 100) return;
-
         if (!_dragging)
         {
+            var mousePos = e.GetPosition(this);
+            var dx = mousePos.X - _mousePressPos.X;
+            var dy = mousePos.Y - _mousePressPos.Y;
+
+            if (dx * dx + dy * dy < 100) return;
+
+            _dragOffsetX = e.GetPosition(draggedPanel).X;
+            _dragOffsetY = e.GetPosition(draggedPanel).Y;
+
             _dockState ??= DockHelper.GetDockState(draggedPanel);
             DockManager.Undock(draggedPanel, FloatingHost);
 
@@ -231,8 +237,8 @@ public partial class EditorView : UserControl
         _dragging = true;
 
         var pos = e.GetPosition(FloatingHost);
-        Avalonia.Controls.Canvas.SetLeft(draggedPanel, pos.X);
-        Avalonia.Controls.Canvas.SetTop(draggedPanel, pos.Y);
+        Canvas.SetLeft(draggedPanel, pos.X - _dragOffsetX);
+        Canvas.SetTop(draggedPanel, pos.Y - _dragOffsetY);
     }
 
     private void Panel_PointerReleased(object? sender, PointerReleasedEventArgs e)

@@ -9,7 +9,7 @@
   
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />
-    <AvaloniaResource Include="Styles\WindowDecorationsOverride.axaml" />
+    <AvaloniaResource Include="Styles\ColorViewOverride.axaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,7 +30,7 @@
     <PackageReference Include="SixLabors.ImageSharp" />
     <PackageReference Include="SkiaSharp" />
     <PackageReference Include="YamlDotNet" />
-    <PackageReference Include="Avalonia.Desktop"/>
+    <PackageReference Include="Avalonia.Desktop" />
     <PackageReference Include="System.Reactive" />
   </ItemGroup>
 

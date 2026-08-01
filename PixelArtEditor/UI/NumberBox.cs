@@ -40,7 +40,7 @@ namespace PixelArtEditor.UI
                 if (string.IsNullOrWhiteSpace(textBox.Text))
                 {
                     _suppressLastValidUpdate = true;
-                    Value = 1m;
+                    Value = Minimum;
                     _suppressLastValidUpdate = false;
 
                     Dispatcher.UIThread.Post(() =>
@@ -54,8 +54,7 @@ namespace PixelArtEditor.UI
         protected override void OnLostFocus(FocusChangedEventArgs e)
         {
             base.OnLostFocus(e);
-
-            if (!Value.HasValue || Value == 0) Value = _lastValidValue;
+            if (!Value.HasValue || Value < Minimum) Value = _lastValidValue;
         }
 
         protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)

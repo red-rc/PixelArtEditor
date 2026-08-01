@@ -183,6 +183,14 @@
         </Style>
     </Style>
 
+    <Style Selector="NumericUpDown DataValidationErrors">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <ContentPresenter Content="{TemplateBinding Content}" />
+            </ControlTemplate>
+        </Setter>
+    </Style>
+
     <!-- ================= TextBox ================= -->
     <Style Selector="TextBox">
         <Setter Property="SelectionBrush" Value="{DynamicResource PrimaryColor}" />
@@ -212,6 +220,10 @@
             <Setter Property="BorderBrush" Value="{DynamicResource PrimaryColor}" />
             <Setter Property="BoxShadow" Value="{DynamicResource CardShadow}" />
         </Style>
+    </Style>
+
+    <Style Selector="TextBox.RenameTextBox.HexInput /template/ Border#border">
+        <Setter Property="CornerRadius" Value="0,2.5,2.5,0" />
     </Style>
 
     <!-- ================= ComboBox ================= -->
@@ -274,6 +286,9 @@
         </Style>
         <Style Selector="^:checked">
             <Setter Property="Background" Value="{DynamicResource PrimaryColor}" />
+        </Style>
+        <Style Selector="^:checked:pointerover">
+            <Setter Property="Background" Value="{DynamicResource PrimaryHoverColor}" />
         </Style>
         <Style Selector="^:checked /template/ Path#checkMark">
             <Setter Property="Fill" Value="{DynamicResource ForegroundColor}" />
@@ -490,64 +505,7 @@
         <Setter Property="CornerRadius" Value="0" />
     </Style>
 
-    <!-- ================= Editor / Layer panel misc ================= -->
-    <Style Selector="Border.EditorBorder">
-        <Setter Property="BorderBrush" Value="{DynamicResource BackgroundPressColor}" />
-    </Style>
-
-    <!-- ================= ColorView / ColorPicker (Fluent chrome, not yet fixed on Simple) ================= -->
-    <Style Selector="ColorView RadioButton">
-        <Setter Property="Background" Value="{DynamicResource UiColor}" />
-        <Setter Property="CornerRadius" Value="2.5" />
-    </Style>
-
-    <Style Selector="ColorView RadioButton:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-        <Setter Property="Background" Value="{DynamicResource UiHoverColor}" />
-    </Style>
-
-    <Style Selector="ColorView RadioButton:pressed /template/ ContentPresenter#PART_ContentPresenter">
-        <Setter Property="Background" Value="{DynamicResource UiPressColor}" />
-    </Style>
-
-    <Style Selector="ColorView RadioButton:checked /template/ ContentPresenter#PART_ContentPresenter">
-        <Setter Property="Background" Value="{DynamicResource PrimaryColor}" />
-    </Style>
-
-    <Style Selector="ColorView TabItem">
-        <Setter Property="Background" Value="{DynamicResource UiColor}" />
-    </Style>
-
-    <Style Selector="ColorView TabItem:pointerover /template/ Border#PART_SelectedPipe">
-        <Setter Property="IsVisible" Value="False" />
-    </Style>
-
-    <Style Selector="ColorView TabItem:selected /template/ Border#PART_SelectedPipe">
-        <Setter Property="IsVisible" Value="False" />
-    </Style>
-
-    <Style Selector="ColorView TabItem:pressed /template/ Border#PART_SelectedPipe">
-        <Setter Property="IsVisible" Value="False" />
-    </Style>
-
-    <Style Selector="ColorView TabItem:pointerover">
-        <Setter Property="Background" Value="{DynamicResource UiHoverColor}" />
-    </Style>
-
-    <Style Selector="ColorView TabItem:pressed /template/ Border">
-        <Setter Property="Background" Value="{DynamicResource UiPressColor}" />
-    </Style>
-
-    <Style Selector="ColorView TabItem:selected">
-        <Setter Property="Background" Value="{DynamicResource PrimaryColor}" />
-    </Style>
-
-    <Style Selector="ColorView TabItem:pointerover:selected /template/ Border#PART_LayoutRoot">
-        <Setter Property="Background" Value="{DynamicResource PrimaryHoverColor}" />
-    </Style>
-
-    <Style Selector="ColorView TabItem:focus-within:pressed /template/ Border#PART_LayoutRoot">
-        <Setter Property="Background" Value="{DynamicResource PrimaryPressColor}" />
-    </Style>
+    <!-- ================= ColorPicker (Fluent chrome, not yet fixed on Simple) ================= -->
 
     <Style Selector="ColorPicker">
         <Setter Property="CornerRadius" Value="2.5" />

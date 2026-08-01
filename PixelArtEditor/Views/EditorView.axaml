@@ -41,12 +41,10 @@
                 Tag="Vertical">
                 <Border
                     Grid.Row="0"
-                    Classes="EditorBorder"
+                    BorderBrush="{DynamicResource BackgroundPressColor}"
                     BorderThickness="0,0,0,3">
 
-                    <Viewbox Height="350" Stretch="Fill">
-                        <ColorView Color="{Binding PickedColor}" />
-                    </Viewbox>
+                    <ColorView Color="{Binding PickedColor}" />
                 </Border>
 
                 <controls:LayerPanel 
