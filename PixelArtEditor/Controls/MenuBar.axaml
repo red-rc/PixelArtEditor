@@ -6,77 +6,45 @@
              mc:Ignorable="d" d:DesignWidth="30" d:DesignHeight="1280"
              x:Class="PixelArtEditor.Controls.MenuBar"
              x:DataType="vm:MainWindowVM">
-    <StackPanel Orientation="Horizontal">
-        <Button Classes="MenuButton" Content="File">
-            <Button.Flyout>
-                <Flyout HorizontalOffset="-6" VerticalOffset="-6" Placement="BottomEdgeAlignedLeft" Opened="OnMenuFlyoutOpened" Closed="OnMenuFlyoutClosed">
-                    <Border Classes="MenuBorder">
-                        <StackPanel>
-                            <Button Classes="MenuEntry" Command="{Binding Menu.CreateCommand}" Content="{DynamicResource MenuCreateNew}" />
-                            <Button Classes="MenuEntry" Command="{Binding Menu.OpenCommand}" Content="{DynamicResource MenuOpen}" />
-                            <Button Classes="MenuEntry" Command="{Binding Menu.ImportCommand}" Content="{DynamicResource MenuImport}" />
-                            <Separator Classes="MenuSeparator" />
-                            <Button Classes="MenuEntry" Command="{Binding Menu.SaveCommand}" Content="{DynamicResource MenuSave}" />
-                            <Button Classes="MenuEntry" Command="{Binding Menu.SaveAsCommand}" Content="{DynamicResource MenuSaveAs}" />
-                            <Button Classes="MenuEntry" Command="{Binding Menu.ExportCommand}" Content="{DynamicResource MenuExport}" />
-                            <Separator Classes="MenuSeparator" />
-                            <Button Classes="MenuEntry" Command="{Binding Menu.LastAutosaveCommand}" Content="{DynamicResource MenuLastAutosave}" />
-                            <Button Classes="MenuEntry" Command="{Binding Menu.ExitCommand}" Content="{DynamicResource MenuExit}" />
-                        </StackPanel>
-                    </Border>
-                </Flyout>
-            </Button.Flyout>
-        </Button>
+    <Menu>
+        <MenuItem Header="File">
+            <MenuItem Command="{Binding Menu.CreateCommand}" Header="{DynamicResource MenuCreateNew}" />
+            <MenuItem Command="{Binding Menu.OpenCommand}" Header="{DynamicResource MenuOpen}" />
+            <MenuItem Command="{Binding Menu.ImportCommand}" Header="{DynamicResource MenuImport}" />
+            <Separator />
+            <MenuItem Command="{Binding Menu.SaveCommand}" Header="{DynamicResource MenuSave}" />
+            <MenuItem Command="{Binding Menu.SaveAsCommand}" Header="{DynamicResource MenuSaveAs}" />
+            <MenuItem Command="{Binding Menu.ExportCommand}" Header="{DynamicResource MenuExport}" />
+            <Separator />
+            <MenuItem Command="{Binding Menu.LastAutosaveCommand}" Header="{DynamicResource MenuLastAutosave}" />
+            <MenuItem Command="{Binding Menu.ExitCommand}" Header="{DynamicResource MenuExit}" />
+        </MenuItem>
 
-        <Button Classes="MenuButton" Content="Edit">
-            <Button.Flyout>
-                <Flyout HorizontalOffset="-6" VerticalOffset="-6" Placement="BottomEdgeAlignedLeft" Opened="OnMenuFlyoutOpened" Closed="OnMenuFlyoutClosed">
-                    <Border Classes="MenuBorder">
-                        <StackPanel>
-                            <Button Classes="MenuEntry" Command="{Binding Menu.UndoCommand}" Content="{DynamicResource MenuUndo}" />
-                            <Button Classes="MenuEntry" Command="{Binding Menu.RedoCommand}" Content="{DynamicResource MenuRedo}" />
-                            <Button Classes="MenuEntry" Command="{Binding Menu.ImagePropertiesCommand}" Content="{DynamicResource MenuImageProperties}" />
-                            <Separator Classes="MenuSeparator" />
-                            <Button Classes="MenuEntry" Command="{Binding Menu.SettingsCommand}" Content="{DynamicResource MenuSettings}" />
-                        </StackPanel>
-                    </Border>
-                </Flyout>
-            </Button.Flyout>
-        </Button>
+        <MenuItem Header="Edit">
+            <MenuItem Command="{Binding Menu.UndoCommand}" Header="{DynamicResource MenuUndo}" />
+            <MenuItem Command="{Binding Menu.RedoCommand}" Header="{DynamicResource MenuRedo}" />
+            <MenuItem Command="{Binding Menu.ImagePropertiesCommand}" Header="{DynamicResource MenuImageProperties}" />
+            <Separator />
+            <MenuItem Command="{Binding Menu.SettingsCommand}" Header="{DynamicResource MenuSettings}" />
+        </MenuItem>
 
-        <Button x:Name="MenuItem" Classes="MenuButton" Content="View">
-            <Button.Flyout>
-                <Flyout HorizontalOffset="-6" VerticalOffset="-6" Placement="BottomEdgeAlignedLeft" Opened="OnMenuFlyoutOpened" Closed="OnMenuFlyoutClosed">
-                    <Border Classes="MenuBorder">
-                        <StackPanel>
-                            <Button Classes="MenuEntry" Command="{Binding Menu.ZoomInCommand}" Content="{DynamicResource MenuZoomIn}" Click="CloseFileFlyout" />
-                            <Button Classes="MenuEntry" Command="{Binding Menu.ZoomOutCommand}" Content="{DynamicResource MenuZoomOut}" Click="CloseFileFlyout" />
-                            <Button Classes="MenuEntry" Command="{Binding Menu.ResetZoomCommand}" Content="{DynamicResource MenuResetZoom}" Click="CloseFileFlyout" />
-                            <Button Classes="MenuEntry" Command="{Binding Menu.ResetLayout}" Content="{DynamicResource MenuResetLayout}" Click="CloseFileFlyout" />
-                            <Separator Classes="MenuSeparator" />
-                            <Button Classes="MenuEntry" Command="{Binding Menu.StandartCommand}" Content="Standart" Click="CloseFileFlyout" />
-                            <Button Classes="MenuEntry" Command="{Binding Menu.FullScreenCommand}" Content="FullScreen" Click="CloseFileFlyout" />
-                            <Button Classes="MenuEntry" Command="{Binding Menu.LightThemeCommand}" Content="{DynamicResource MenuLightTheme}" Click="CloseFileFlyout" />
-                            <Button Classes="MenuEntry" Command="{Binding Menu.DarkThemeCommand}" Content="{DynamicResource MenuDarkTheme}" Click="CloseFileFlyout" />
-                        </StackPanel>
-                    </Border>
-                </Flyout>
-            </Button.Flyout>
-        </Button>
+        <MenuItem Header="View">
+            <MenuItem Command="{Binding Menu.ZoomInCommand}" Header="{DynamicResource MenuZoomIn}" />
+            <MenuItem Command="{Binding Menu.ZoomOutCommand}" Header="{DynamicResource MenuZoomOut}" />
+            <MenuItem Command="{Binding Menu.ResetZoomCommand}" Header="{DynamicResource MenuResetZoom}" />
+            <MenuItem Command="{Binding Menu.ResetLayout}" Header="{DynamicResource MenuResetLayout}" />
+            <Separator />
+            <MenuItem Command="{Binding Menu.StandartCommand}" Header="Standart" />
+            <MenuItem Command="{Binding Menu.FullScreenCommand}" Header="FullScreen" />
+            <MenuItem Command="{Binding Menu.LightThemeCommand}" Header="{DynamicResource MenuLightTheme}" />
+            <MenuItem Command="{Binding Menu.DarkThemeCommand}" Header="{DynamicResource MenuDarkTheme}" />
+        </MenuItem>
 
-        <Button Classes="MenuButton" Content="Help">
-            <Button.Flyout>
-                <Flyout HorizontalOffset="-6" VerticalOffset="-6" Placement="BottomEdgeAlignedLeft" Opened="OnMenuFlyoutOpened" Closed="OnMenuFlyoutClosed">
-                    <Border Classes="MenuBorder">
-                        <StackPanel>
-                            <Button Classes="MenuEntry" Command="{Binding Menu.CheckForUpdatesCommand}" Content="{DynamicResource MenuCheckForUpdates}" />
-                            <Button Classes="MenuEntry" Command="{Binding Menu.ReportCommand}" Content="{DynamicResource Report}" />
-                            <Button Classes="MenuEntry" Command="{Binding Menu.ContactUsCommand}" Content="{DynamicResource MenuContactUs}" />
-                            <Button Classes="MenuEntry" Command="{Binding Menu.AboutCommand}" Content="{DynamicResource MenuAbout}" />
-                        </StackPanel>
-                    </Border>
-                </Flyout>
-            </Button.Flyout>
-        </Button>
-    </StackPanel>
+        <MenuItem Header="Help">
+            <MenuItem Command="{Binding Menu.CheckForUpdatesCommand}" Header="{DynamicResource MenuCheckForUpdates}" />
+            <MenuItem Command="{Binding Menu.ReportCommand}" Header="{DynamicResource Report}" />
+            <MenuItem Command="{Binding Menu.ContactUsCommand}" Header="{DynamicResource MenuContactUs}" />
+            <MenuItem Command="{Binding Menu.AboutCommand}" Header="{DynamicResource MenuAbout}" />
+        </MenuItem>
+    </Menu>
 </UserControl>

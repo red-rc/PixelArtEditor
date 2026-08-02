@@ -41,7 +41,7 @@
                 <controls:MenuBar
                     Grid.Column="1"
                     HorizontalAlignment="Left"
-                    VerticalAlignment="Center" />
+                    VerticalAlignment="Stretch" />
                 <Border
                     Grid.Column="2"
                     Background="Transparent"

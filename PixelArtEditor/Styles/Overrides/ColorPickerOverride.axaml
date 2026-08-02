@@ -1,10 +1,7 @@
 <Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="using:Avalonia.Controls"
-        xmlns:converters="using:Avalonia.Controls.Converters"
         xmlns:primitives="using:Avalonia.Controls.Primitives"
-        xmlns:pc="using:Avalonia.Controls.Primitives.Converters"
-        xmlns:globalization="using:System.Globalization"
         xmlns:ui="using:PixelArtEditor.UI"
         x:CompileBindings="False">
     <Styles.Resources>
@@ -60,7 +57,7 @@
                   <DropDownButton.Flyout>
                     <Flyout Placement="{DynamicResource ColorPickerFlyoutPlacement}">
 
-                      <Border Classes="MenuBorder ColorView">
+                      <Border Classes="MenuBorder">
                         <!-- The following is copy-pasted from the ColorView's control template.
                              It MUST always be kept in sync with the ColorView (which is master).
                              Note the only changes are resources specific to the ColorPicker. -->

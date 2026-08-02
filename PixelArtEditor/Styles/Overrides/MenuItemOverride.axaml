@@ -1,0 +1,105 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:sys="clr-namespace:System;assembly=netstandard"
+        xmlns:conv="clr-namespace:Avalonia.Controls.Converters;assembly=Avalonia.Controls"
+        x:CompileBindings="False">
+    <Styles.Resources>
+        <ResourceDictionary>
+          <conv:PlatformKeyGestureConverter x:Key="KeyGestureConverter" />
+        
+          <ControlTheme x:Key="{x:Type MenuItem}"
+                        TargetType="MenuItem">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="6 0" />
+            <Setter Property="Template">
+              <ControlTemplate>
+                <Border Name="root"
+                        Background="{DynamicResource UiColor}"
+                        Padding="10,6"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="0"
+                        CornerRadius="5">
+                  <Grid>
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition Width="*" />
+                      <ColumnDefinition Width="Auto"
+                                        SharedSizeGroup="MenuItemIGT" />
+                      <ColumnDefinition Width="20" />
+                    </Grid.ColumnDefinitions>
+                    <ContentPresenter Name="PART_HeaderPresenter"
+                                      Grid.Column="0"
+                                      Margin="{TemplateBinding Padding}"
+                                      VerticalAlignment="Center"
+                                      Content="{TemplateBinding Header}"
+                                      ContentTemplate="{TemplateBinding HeaderTemplate}">
+                      <ContentPresenter.DataTemplates>
+                        <DataTemplate DataType="sys:String">
+                            <AccessText 
+                                Text="{Binding}" 
+                                Foreground="{DynamicResource ForegroundColor}"
+                                FontFamily="{DynamicResource AppFont}" 
+                                FontSize="14" />
+                        </DataTemplate>
+                      </ContentPresenter.DataTemplates>
+                    </ContentPresenter>
+                    <TextBlock x:Name="PART_InputGestureText"
+                               Grid.Column="1"
+                               VerticalAlignment="Center"
+                               Text="{TemplateBinding InputGesture,
+                                                      Converter={StaticResource KeyGestureConverter}}" />
+                    <Popup Name="PART_Popup"
+                           IsLightDismissEnabled="False"
+                           IsOpen="{TemplateBinding IsSubMenuOpen,
+                                                    Mode=TwoWay}"
+                           Placement="RightEdgeAlignedTop">
+                      <Border Background="{DynamicResource UiColor}"
+                              BorderBrush="Transparent"
+                              CornerRadius="5"
+                              Padding="4"
+                              BoxShadow="{DynamicResource CardShadow}"
+                              BorderThickness="0">
+                        <ScrollViewer Theme="{StaticResource SimpleMenuScrollViewer}">
+                          <ItemsPresenter Name="PART_ItemsPresenter"
+                                          Margin="2"
+                                          Grid.IsSharedSizeScope="True"
+                                          ItemsPanel="{TemplateBinding ItemsPanel}" />
+                        </ScrollViewer>
+                      </Border>
+                    </Popup>
+                  </Grid>
+                </Border>
+              </ControlTemplate>
+            </Setter>
+        
+            <Style Selector="^:separator">
+              <Setter Property="Template">
+                <ControlTemplate>
+                  <Separator />
+                </ControlTemplate>
+              </Setter>
+            </Style>
+        
+            <Style Selector="^:pointerover /template/ Border#root">
+              <Setter Property="Background" Value="{DynamicResource UiHoverColor}" />
+            </Style>
+
+            <Style Selector="^:open /template/ Border#root">
+              <Setter Property="Background" Value="{DynamicResource UiHoverColor}" />
+            </Style>
+
+            <Style Selector="^:pressed /template/ Border#root">
+              <Setter Property="Background" Value="{DynamicResource UiPressColor}" />
+            </Style>
+        
+            <Style Selector="^:empty /template/ Path#rightArrow">
+              <Setter Property="IsVisible" Value="False" />
+            </Style>
+        
+            <Style Selector="^:disabled">
+              <Setter Property="Opacity" Value="{DynamicResource ThemeDisabledOpacity}" />
+            </Style>
+          </ControlTheme>
+        </ResourceDictionary>
+    </Styles.Resources>
+</Styles>

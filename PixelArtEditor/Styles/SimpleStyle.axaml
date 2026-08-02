@@ -446,59 +446,18 @@
     </Style>
 
     <!-- ================= Top menu (Button + Flyout) ================= -->
-    <Style Selector="Button.MenuButton">
-        <Setter Property="Background" Value="{DynamicResource TertiaryBackgroundColor}" />
-        <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />
-        <Setter Property="FontFamily" Value="{DynamicResource AppFont}" />
-        <Setter Property="FontSize" Value="14" />
-        <Setter Property="Padding" Value="10,6" />
-        <Setter Property="HorizontalAlignment" Value="Stretch" />
 
-        <Style Selector="^:pointerover /template/ ContentPresenter">
-            <Setter Property="Background" Value="{DynamicResource UiColor}" />
-        </Style>
-        <Style Selector="^:pressed /template/ ContentPresenter">
-            <Setter Property="Background" Value="{DynamicResource UiColor}" />
-        </Style>
-        <Style Selector="^.MenuOpen /template/ ContentPresenter">
-            <Setter Property="Background" Value="{DynamicResource UiColor}" />
-        </Style>
-    </Style>
-
-    <Style Selector="Button.MenuEntry">
-        <Setter Property="Background" Value="{DynamicResource UiColor}" />
-        <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />
-        <Setter Property="FontFamily" Value="{DynamicResource AppFont}" />
-        <Setter Property="FontSize" Value="14" />
-        <Setter Property="Padding" Value="10,6" />
-        <Setter Property="CornerRadius" Value="4" />
-        <Setter Property="HorizontalAlignment" Value="Stretch" />
-        <Setter Property="HorizontalContentAlignment" Value="Left" />
-
-        <Style Selector="^:pointerover /template/ ContentPresenter">
-            <Setter Property="Background" Value="{DynamicResource UiHoverColor}" />
-        </Style>
-        <Style Selector="^:pressed /template/ ContentPresenter">
-            <Setter Property="Background" Value="{DynamicResource UiPressColor}" />
-        </Style>
-    </Style>
-
-    <Style Selector="Separator.MenuSeparator">
+    <Style Selector="MenuItem Separator">
         <Setter Property="Background" Value="{DynamicResource GrayColor}" />
         <Setter Property="Height" Value="1" />
         <Setter Property="Margin" Value="2" />
     </Style>
 
     <Style Selector="Border.MenuBorder">
-        <Setter Property="Background" Value="{DynamicResource UiColor}" />
-        <Setter Property="CornerRadius" Value="5" />
-        <Setter Property="Padding" Value="4" />
-        <Setter Property="BoxShadow" Value="{DynamicResource CardShadow}" />
-    </Style>
-
-    <Style Selector="Border.MenuBorder.ColorView">
         <Setter Property="Background" Value="{DynamicResource BackgroundColor}" />
         <Setter Property="Padding" Value="0" />
+        <Setter Property="CornerRadius" Value="5" />
+        <Setter Property="BoxShadow" Value="{DynamicResource CardShadow}" />
     </Style>
 
     <Style Selector="FlyoutPresenter">
