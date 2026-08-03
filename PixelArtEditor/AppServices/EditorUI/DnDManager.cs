@@ -54,6 +54,23 @@ public class DnDManager(ListBox layerListBox, Avalonia.Controls.Canvas floatingH
 
             FloatingHost.Children.Add(preview);
         }
+
+        CollapseGap();
+    }
+
+    private void CollapseGap()
+    {
+        if (DraggedItems.Count <= 3) return;
+
+        var firstDraggedIndex = LayerListBox.Items.IndexOf(DraggedLayerItems.FirstOrDefault());
+
+        for (var i = firstDraggedIndex + 1; i < LayerListBox.ItemCount; i++)
+        {
+            if (LayerListBox.Items[i] is not LayerItem item || DraggedLayerItems.Any(li => li.Layer == item.Layer)) continue;
+
+            if (LayerListBox.ContainerFromIndex(i) is ListBoxItem listBoxItem)
+                listBoxItem.RenderTransform = TransformOperations.Parse($"translateY(-{(DraggedItems.Count - 1) * ItemHeight}px)");
+        }
     }
 
     public void AutoScrollIfNeeded(PointerEventArgs e)
@@ -81,12 +98,25 @@ public class DnDManager(ListBox layerListBox, Avalonia.Controls.Canvas floatingH
         var scrollOffset = GetScrollViewer()?.Offset.Y ?? 0;
         var y = e.GetPosition(LayerListBox).Y + scrollOffset;
 
+        var baseGap = DraggedItems.Count > 3 ? (DraggedItems.Count - 1) * ItemHeight : 0;
+
+        var sourceNonSelectedIndex = 0;
+        foreach (var layer in LayerManager.Layers)
+        {
+            if (DraggedLayerItems.Any(li => li.Layer == layer)) break;
+            sourceNonSelectedIndex++;
+        }
+
         var nonSelectedIndex = 0;
         for (var i = 0; i < LayerListBox.ItemCount; i++)
         {
             if (LayerListBox.Items[i] is not LayerItem item || DraggedItems.Any(d => d.DataContext == item)) continue;
 
-            if (y < i * ItemHeight + ItemHeight / 2.0)
+            var itemTop = i * ItemHeight;
+            if (nonSelectedIndex >= sourceNonSelectedIndex)
+                itemTop -= baseGap;
+
+            if (y < itemTop + ItemHeight / 2.0)
                 return nonSelectedIndex;
 
             nonSelectedIndex++;
@@ -100,6 +130,7 @@ public class DnDManager(ListBox layerListBox, Avalonia.Controls.Canvas floatingH
         if (TargetIndex is null) return;
 
         var stackCount = DraggedItems.Count > 3 ? 1 : DraggedItems.Count;
+        var baseGap = DraggedItems.Count > 3 ? (DraggedItems.Count - 1) * ItemHeight : 0;
 
         var sourceNonSelectedIndex = 0;
         foreach (var layer in LayerManager!.Layers)
@@ -116,11 +147,11 @@ public class DnDManager(ListBox layerListBox, Avalonia.Controls.Canvas floatingH
 
             if (LayerListBox.ContainerFromIndex(i) is ListBoxItem listBoxItem)
             {
-                double targetY = 0;
+                double targetY = nonSelectedIndex >= sourceNonSelectedIndex ? -baseGap : 0;
 
                 if (TargetIndex > sourceNonSelectedIndex && nonSelectedIndex >= sourceNonSelectedIndex
                     && nonSelectedIndex < TargetIndex)
-                    targetY = -stackCount * ItemHeight;
+                    targetY = -baseGap - stackCount * ItemHeight;
                 else if (TargetIndex < sourceNonSelectedIndex && nonSelectedIndex < sourceNonSelectedIndex
                     && nonSelectedIndex >= TargetIndex)
                     targetY = stackCount * ItemHeight;

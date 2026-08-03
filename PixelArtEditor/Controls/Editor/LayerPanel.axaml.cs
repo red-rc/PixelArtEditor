@@ -80,9 +80,10 @@ public partial class LayerPanel : UserControl
         if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed || _dragging || LayerManager?.Layers.Count <= 1) return;
 
         var pressedListBoxItem = (e.Source as Control)?.FindAncestorOfType<ListBoxItem>();
-        
+
         var selected = LayerListBox.SelectedItems?
                 .Cast<LayerItem>()
+                .OrderBy(LayerListBox.Items.IndexOf)
                 .Select(item => LayerListBox.ContainerFromItem(item) as ListBoxItem)
                 .OfType<ListBoxItem>()
                 .ToList() ?? [];
@@ -136,7 +137,7 @@ public partial class LayerPanel : UserControl
                 var top = Math.Clamp(
                     e.GetPosition(FloatingHost).Y + i * _dndManager.ItemHeight, 
                     i * _dndManager.ItemHeight, 
-                    LayerListBox.Bounds.Height - (FloatingHost.Children.Count - 1 - i) * _dndManager.ItemHeight);
+                    LayerListBox.Bounds.Height + i * _dndManager.ItemHeight);
                 Avalonia.Controls.Canvas.SetTop(FloatingHost.Children[i], top);
             }
         }

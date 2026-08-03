@@ -69,6 +69,12 @@
 
             </ListBox.Styles>
 
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel />
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+
             <ListBox.ItemTemplate>
                 <DataTemplate x:DataType="model:LayerItem">
                     <StackPanel Orientation="Horizontal">
