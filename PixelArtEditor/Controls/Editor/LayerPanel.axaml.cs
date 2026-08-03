@@ -1,18 +1,14 @@
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.Presenters;
 using Avalonia.Input;
 using Avalonia.Interactivity;
-using Avalonia.Media.Transformation;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using PixelArtEditor.AppServices.Canvas;
 using PixelArtEditor.AppServices.EditorUI;
-using PixelArtEditor.Models.Canvas;
 using PixelArtEditor.Models.LayerPanel;
 using PixelArtEditor.ViewModels;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
@@ -34,14 +30,9 @@ public partial class LayerPanel : UserControl
 
     private Point _mousePressPos;
     private bool _dragging;
-    private int _itemHeight;
-
-    private List<ListBoxItem> _draggedItems = [];
-    private int? _targetIndex;
 
     private readonly LayerReorderService _layerReorderService;
-
-    private ScrollViewer? _scrollViewer;
+    private readonly DnDManager _dndManager;
 
     private void OnToTheTopClick(object? sender, RoutedEventArgs e) => _layerReorderService.MoveSelected(LayerManager, true);
     private void OnToTheBottomClick(object? sender, RoutedEventArgs e) => _layerReorderService.MoveSelected(LayerManager, false);
@@ -55,17 +46,13 @@ public partial class LayerPanel : UserControl
         InitializeComponent();
 
         _layerReorderService = new LayerReorderService(_vm, LayerListBox);
+        _dndManager = new DnDManager(LayerListBox, FloatingHost, CountBadge, CountBadgeText);
 
         LayerListBox.AddHandler(PointerPressedEvent, OnItemPointerPressed, RoutingStrategies.Tunnel);
         LayerListBox.AddHandler(PointerMovedEvent, OnItemPointerMoved, RoutingStrategies.Tunnel);
         LayerListBox.AddHandler(PointerReleasedEvent, OnItemPointerReleased, RoutingStrategies.Tunnel);
         LayerListBox.SelectionChanged += OnSelectionChanged;
     }
-
-    private IEnumerable<LayerItem> DraggedLayerItems =>
-        _draggedItems.Select(d => d.DataContext).OfType<LayerItem>();
-    private ScrollViewer? GetScrollViewer() =>
-        _scrollViewer ??= LayerListBox.GetVisualDescendants().OfType<ScrollViewer>().FirstOrDefault();
 
     private void LayerListBox_PointerPressed(object? sender, PointerPressedEventArgs e) => LayerListBox.SelectedItems?.Clear();
     
@@ -82,7 +69,10 @@ public partial class LayerPanel : UserControl
         base.OnPropertyChanged(change);
 
         if (change.Property == LayerManagerProperty)
+        {
             _vm?.SetLayerManager(LayerManager);
+            _dndManager.LayerManager = LayerManager;
+        }
     }
 
     private void OnItemPointerPressed(object? sender, PointerPressedEventArgs e)
@@ -98,18 +88,18 @@ public partial class LayerPanel : UserControl
                 .ToList() ?? [];
 
         if (pressedListBoxItem is not null && !selected.Contains(pressedListBoxItem))
-            _draggedItems = [pressedListBoxItem];
+            _dndManager.DraggedItems = [pressedListBoxItem];
         else
-            _draggedItems = selected;
+            _dndManager.DraggedItems = selected;
 
         _mousePressPos = e.GetPosition(this);
-        _itemHeight = (int)(_draggedItems.FirstOrDefault()?.Bounds.Height ?? 0);
+        _dndManager.ItemHeight = (int)(_dndManager.DraggedItems.FirstOrDefault()?.Bounds.Height ?? 0);
     }
 
     private void OnItemPointerMoved(object? sender, PointerEventArgs e)
     {
         if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed
-            || LayerManager?.Layers.Count <= 1 || _draggedItems.Count <= 0) return;
+            || LayerManager?.Layers.Count <= 1 || _dndManager.DraggedItems.Count <= 0) return;
 
         var dx = e.GetPosition(this).X - _mousePressPos.X;
         var dy = e.GetPosition(this).Y - _mousePressPos.Y;
@@ -117,26 +107,26 @@ public partial class LayerPanel : UserControl
         if (!_dragging)
         {
             if (dx * dx + dy * dy < 100) return;
-            StartDragVisual();
+            _dndManager.StartDragVisual();
         }
 
         _dragging = true;
 
-        if (_draggedItems.Count > 3)
+        if (_dndManager.DraggedItems.Count > 3)
         {
             CountBadge.IsVisible = true;
-            CountBadgeText.Text = $"{_draggedItems.Count} layers";
+            CountBadgeText.Text = $"{_dndManager.DraggedItems.Count} layers";
             Avalonia.Controls.Canvas.SetLeft(CountBadge, e.GetPosition(this).X + 5);
             Avalonia.Controls.Canvas.SetTop(CountBadge, e.GetPosition(this).Y + 5);
         }
 
-        AutoScrollIfNeeded(e);
-        var target = GetTargetIndex(e);
+        _dndManager.AutoScrollIfNeeded(e);
+        var target = _dndManager.GetTargetIndex(e);
 
-        if (target != _targetIndex)
+        if (target != _dndManager.TargetIndex)
         {
-            _targetIndex = target;
-            AnimateItems();
+            _dndManager.TargetIndex = target;
+            _dndManager.AnimateItems();
         }
 
         if (FloatingHost.Children.Count > 0)
@@ -144,179 +134,23 @@ public partial class LayerPanel : UserControl
             for (var i = 0; i < FloatingHost.Children.Count; i++)
             {
                 var top = Math.Clamp(
-                    e.GetPosition(FloatingHost).Y + i * _itemHeight, 
-                    i * _itemHeight, 
-                    LayerListBox.Bounds.Height - (FloatingHost.Children.Count - 1 - i) * _itemHeight);
+                    e.GetPosition(FloatingHost).Y + i * _dndManager.ItemHeight, 
+                    i * _dndManager.ItemHeight, 
+                    LayerListBox.Bounds.Height - (FloatingHost.Children.Count - 1 - i) * _dndManager.ItemHeight);
                 Avalonia.Controls.Canvas.SetTop(FloatingHost.Children[i], top);
             }
-        }
-    }
-
-    private void StartDragVisual()
-    {
-        foreach (var item in _draggedItems)
-                item.Opacity = 0;
-
-        var stackCount = _draggedItems.Count > 3 ? 1 : _draggedItems.Count;
-
-        for (var i = 0; i < stackCount; i++)
-        {
-            var item = _draggedItems[i].DataContext as LayerItem;
-
-            var preview = new ContentPresenter
-            {
-                Content = item,
-                ContentTemplate = LayerListBox.ItemTemplate,
-                Opacity = 0.85,
-                ZIndex = -i
-            };
-
-            FloatingHost.Children.Add(preview);
-        }
-    }
-
-    private void AutoScrollIfNeeded(PointerEventArgs e)
-    {
-        var scrollViewer = GetScrollViewer();
-        if (scrollViewer is null) return;
-
-        var pos = e.GetPosition(LayerListBox);
-        const double edge = 20;
-        const double speed = 5;
-
-        if (pos.Y < edge)
-            scrollViewer.Offset = new Vector(scrollViewer.Offset.X, Math.Max(0, scrollViewer.Offset.Y - speed));
-        else if (pos.Y > LayerListBox.Bounds.Height - edge)
-        {
-            var offsetY = Math.Min(scrollViewer.Extent.Height - scrollViewer.Viewport.Height, scrollViewer.Offset.Y + speed);
-            scrollViewer.Offset = new Vector(scrollViewer.Offset.X, offsetY);
-        }
-    }
-
-    private int GetTargetIndex(PointerEventArgs e)
-    {
-        if (_itemHeight <= 0 || LayerManager is null) return 0;
-
-        var scrollOffset = GetScrollViewer()?.Offset.Y ?? 0;
-        var y = e.GetPosition(LayerListBox).Y + scrollOffset;
-
-        var nonSelectedIndex = 0;
-        for (var i = 0; i < LayerListBox.ItemCount; i++)
-        {
-            if (LayerListBox.Items[i] is not LayerItem item || _draggedItems.Any(d => d.DataContext == item)) continue;
-
-            if (y < i * _itemHeight + _itemHeight / 2.0)
-                return nonSelectedIndex;
-
-            nonSelectedIndex++;
-        }
-
-        return nonSelectedIndex;
-    }
-
-    private void AnimateItems()
-    {
-        if (_targetIndex is null) return;
-
-        var stackCount = _draggedItems.Count > 3 ? 1 : _draggedItems.Count;
-
-        var sourceNonSelectedIndex = 0;
-        foreach (var layer in LayerManager!.Layers)
-        {
-            if (DraggedLayerItems.Any(li => li.Layer == layer)) break;
-            sourceNonSelectedIndex++;
-        }
-
-        var nonSelectedIndex = 0;
-
-        for (var i = 0; i < LayerListBox.ItemCount; i++)
-        {
-            if (LayerListBox.Items[i] is not LayerItem item || DraggedLayerItems.Any(li => li.Layer == item.Layer)) continue;
-
-            if (LayerListBox.ContainerFromIndex(i) is ListBoxItem listBoxItem)
-            {
-                double targetY = 0;
-
-                if (_targetIndex > sourceNonSelectedIndex && nonSelectedIndex >= sourceNonSelectedIndex
-                    && nonSelectedIndex < _targetIndex)
-                    targetY = -stackCount * _itemHeight;
-                else if (_targetIndex < sourceNonSelectedIndex && nonSelectedIndex < sourceNonSelectedIndex
-                    && nonSelectedIndex >= _targetIndex)
-                    targetY = stackCount * _itemHeight;
-
-                listBoxItem.RenderTransform = TransformOperations.Parse($"translateY({targetY}px)");
-            }
-
-            nonSelectedIndex++;
         }
     }
 
     private void OnItemPointerReleased(object? sender, PointerReleasedEventArgs e)
     {
         _dragging = false;
-        ResetItemsTransform();
+        _dndManager.ResetItemsTransform();
 
-        if (_targetIndex.HasValue && _draggedItems.Count > 0 && LayerManager is not null)
-            MoveGroupTo(_targetIndex.Value);
+        if (_dndManager.TargetIndex.HasValue && _dndManager.DraggedItems.Count > 0 && LayerManager is not null)
+            _dndManager.MoveGroupTo(_dndManager.TargetIndex.Value);
 
-        CleanupDrag();
-    }
-
-    private void MoveGroupTo(int targetIndex)
-    {
-        var group = DraggedLayerItems.ToList();
-        var layers = LayerManager!.Layers;
-
-        var withoutGroup = layers.Where(l => !group.Any(g => g.Layer == l)).ToList();
-        withoutGroup.InsertRange(Math.Clamp(targetIndex, 0, withoutGroup.Count), group.Select(g => g.Layer));
-
-        for (var i = 0; i < withoutGroup.Count; i++)
-        {
-            var currentIndex = layers.IndexOf(withoutGroup[i]);
-            if (currentIndex != i)
-                layers.Move(currentIndex, i);
-        }
-
-        RestoreSelectionFor();
-    }
-
-    private void RestoreSelectionFor()
-    {
-        LayerListBox.SelectedItems?.Clear();
-
-        foreach (var item in DraggedLayerItems)
-            LayerListBox.SelectedItems?.Add(item);
-    }
-
-    private void CleanupDrag()
-    {
-        FloatingHost.Children.Clear();
-
-        foreach (var item in _draggedItems)
-            item.Opacity = 1;
-
-        _draggedItems.Clear();
-        _targetIndex = null;
-
-        if (CountBadge.IsVisible)
-        {
-            CountBadge.IsVisible = false;
-            CountBadgeText.Text = "0";
-        }
-    }
-
-    private void ResetItemsTransform()
-    {
-        for (var i = 0; i < LayerListBox.ItemCount; i++)
-        {
-            if (LayerListBox.ContainerFromIndex(i) is ListBoxItem listboxItem)
-            {
-                var transitions = listboxItem.Transitions;
-                listboxItem.Transitions = null;
-                listboxItem.RenderTransform = TransformOperations.Identity;
-                listboxItem.Transitions = transitions;
-            }
-        }
+        _dndManager.CleanupDrag();
     }
 
     private void TextBlock_DoubleTapped(object? sender, TappedEventArgs e)
