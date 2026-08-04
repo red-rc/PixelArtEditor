@@ -1,5 +1,6 @@
 ﻿using PixelArtEditor.AppServices;
 using PixelArtEditor.AppServices.Canvas;
+using PixelArtEditor.Helpers;
 using PixelArtEditor.Models.Canvas;
 using PixelArtEditor.Models.LayerPanel;
 using System;
@@ -18,19 +19,18 @@ public class LayerPanelVM : ReactiveObject
 
     public ReactiveCommand<RxVoid, RxVoid> AddCommand { get; }
     public ReactiveCommand<RxVoid, RxVoid> RemoveCommand { get; }
-    public ReactiveCommand<RxVoid, RxVoid> DuplicateCommand { get; }
     public ReactiveCommand<RxVoid, RxVoid> CreateGroupCommand { get; }
 
 
-    private LayerItem? _selectedLayer;
-    public LayerItem? SelectedLayer
+    private LayerItem? _selLayerItem;
+    public LayerItem? SelLayerItem
     {
-        get => _selectedLayer;
+        get => _selLayerItem;
         set
         {
-            if (value == _selectedLayer) return;
+            if (value == _selLayerItem) return;
 
-            this.RaiseAndSetIfChanged(ref _selectedLayer, value);
+            this.RaiseAndSetIfChanged(ref _selLayerItem, value);
 
             if (value is not null && _layerManager is not null)
                 _layerManager.ActiveLayer = value.Layer;
@@ -39,14 +39,14 @@ public class LayerPanelVM : ReactiveObject
         }
     }
 
-    private ObservableCollection<LayerItem>? _selectedLayers;
-    public ObservableCollection<LayerItem>? SelectedLayers
+    private ObservableCollection<LayerItem>? _selLayerItems;
+    public ObservableCollection<LayerItem>? SelLayerItems
     {
-        get => _selectedLayers;
+        get => _selLayerItems;
         set
         {
-            if (value == _selectedLayers || value is null) return;
-            this.RaiseAndSetIfChanged(ref _selectedLayers, value);
+            if (value == _selLayerItems || value is null) return;
+            this.RaiseAndSetIfChanged(ref _selLayerItems, value);
         }
     }
 
@@ -84,18 +84,18 @@ public class LayerPanelVM : ReactiveObject
             var targetIndex = _layerManager.ActiveLayer is null ? 0 : Math.Max(0, _layerManager.Layers.IndexOf(_layerManager.ActiveLayer));
             _layerManager.Layers.Insert(targetIndex, newLayer);
 
-            SelectedLayer = LayerItems.FirstOrDefault(x => x.Layer == newLayer);
+            SelLayerItem = LayerItems.FirstOrDefault(x => x.Layer == newLayer);
 
         });
         RemoveCommand = ReactiveCommand.Create(() => 
         { 
             if (_layerManager?.Layers is null || _layerManager.Layers.Count == 0) return;
-            if (SelectedLayers is null || SelectedLayers.Count == 0) return;
+            if (SelLayerItems is null || SelLayerItems.Count == 0) return;
 
             var activeLayerItem = LayerItems.FirstOrDefault(x => x.Layer == _layerManager.ActiveLayer);
             var activeLayerIndex = activeLayerItem is not null ? LayerItems.IndexOf(activeLayerItem) : -1;
 
-            foreach (var layerItem in SelectedLayers.ToList())
+            foreach (var layerItem in SelLayerItems.ToList())
                 _layerManager.Layers.Remove(layerItem.Layer);
 
             if ((_layerManager.ActiveLayer is null || !_layerManager.Layers.Contains(_layerManager.ActiveLayer)) 
@@ -103,36 +103,8 @@ public class LayerPanelVM : ReactiveObject
             {
                 activeLayerIndex = Math.Min(activeLayerIndex, LayerItems.Count - 1);
 
-                SelectedLayer = LayerItems[activeLayerIndex];
+                SelLayerItem = LayerItems[activeLayerIndex];
             }
-        });
-        DuplicateCommand = ReactiveCommand.Create(() => 
-        { 
-            if (_layerManager?.Layers is null || _layerManager.Layers.Count == 0) return;
-            if (_layerManager.ActiveLayer is null) return;
-
-            var name = _layerManager.ActiveLayer.Name + " - Copy";
-
-            int copyIndex = 1;
-
-            if (_layerManager.Layers.Any(l => l.Name == name))
-            {
-                while (_layerManager.Layers.Any(l => l.Name == $"{name} ({copyIndex})"))
-                {
-                    copyIndex++;
-                }
-                name = $"{name} ({copyIndex})";
-            }
-
-            var newLayer = new LayerModel(
-                _layerManager.ActiveLayer.Width,
-                _layerManager.ActiveLayer.Height,
-                (byte[])_layerManager.ActiveLayer.PixelData.Clone(),
-                name
-            );
-
-            var targetIndex = _layerManager.Layers.IndexOf(_layerManager.ActiveLayer) - (copyIndex - 1);
-            _layerManager.Layers.Insert(targetIndex, newLayer);
         });
         CreateGroupCommand = ReactiveCommand.Create(() => 
         { 
@@ -161,7 +133,7 @@ public class LayerPanelVM : ReactiveObject
             _originalHeight = layer.Height;
         }
 
-        SelectedLayer = LayerItems.FirstOrDefault();
+        SelLayerItem = LayerItems.FirstOrDefault();
     }
 
     private void OnLayersChanged(object? sender, NotifyCollectionChangedEventArgs e)
@@ -196,7 +168,7 @@ public class LayerPanelVM : ReactiveObject
             _layerManager.Layers.CollectionChanged -= OnLayersChanged;
 
         _layerManager = null;
-        SelectedLayer = null;
+        SelLayerItem = null;
         LayerItems.Clear();
     }
 }

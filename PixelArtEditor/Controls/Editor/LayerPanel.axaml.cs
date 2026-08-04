@@ -6,6 +6,7 @@ using Avalonia.Threading;
 using Avalonia.VisualTree;
 using PixelArtEditor.AppServices.Canvas;
 using PixelArtEditor.AppServices.EditorUI;
+using PixelArtEditor.AppServices.EditorUI.LayerCommands;
 using PixelArtEditor.Models.LayerPanel;
 using PixelArtEditor.ViewModels;
 using System;
@@ -31,13 +32,15 @@ public partial class LayerPanel : UserControl
     private Point _mousePressPos;
     private bool _dragging;
 
-    private readonly LayerReorderService _layerReorderService;
+    public readonly LayerCommands LayerCommands;
     private readonly DnDManager _dndManager;
 
-    private void OnToTheTopClick(object? sender, RoutedEventArgs e) => _layerReorderService.MoveSelected(LayerManager, true);
-    private void OnToTheBottomClick(object? sender, RoutedEventArgs e) => _layerReorderService.MoveSelected(LayerManager, false);
-    public void OnUpClick(object? sender, RoutedEventArgs e) => _layerReorderService.MoveSelectedStep(LayerManager, -1);
-    public void OnDownClick(object? sender, RoutedEventArgs e) => _layerReorderService.MoveSelectedStep(LayerManager, 1);
+    private void OnDuplicteClick(object? sender, RoutedEventArgs e) => LayerCommands.DuplicateCommand.Execute(LayerManager);
+
+    private void OnToTheTopClick(object? sender, RoutedEventArgs e) => LayerCommands.MoveCommand.Execute(LayerManager, true);
+    private void OnToTheBottomClick(object? sender, RoutedEventArgs e) => LayerCommands.MoveCommand.Execute(LayerManager, false);
+    public void OnUpClick(object? sender, RoutedEventArgs e) => LayerCommands.MoveStepCommand.Execute(LayerManager, -1);
+    public void OnDownClick(object? sender, RoutedEventArgs e) => LayerCommands.MoveStepCommand.Execute(LayerManager, 1);
 
     public LayerPanel()
     {
@@ -45,7 +48,7 @@ public partial class LayerPanel : UserControl
         DataContext = _vm;
         InitializeComponent();
 
-        _layerReorderService = new LayerReorderService(_vm, LayerListBox);
+        LayerCommands = new LayerCommands(_vm, LayerListBox);
         _dndManager = new DnDManager(LayerListBox, FloatingHost, CountBadge, CountBadgeText);
 
         LayerListBox.AddHandler(PointerPressedEvent, OnItemPointerPressed, RoutingStrategies.Tunnel);
@@ -60,7 +63,7 @@ public partial class LayerPanel : UserControl
     {
         if (_vm is null) return;
 
-        _vm.SelectedLayers = new ObservableCollection<LayerItem>(
+        _vm.SelLayerItems = new ObservableCollection<LayerItem>(
             LayerListBox.SelectedItems?.OfType<LayerItem>() ?? []);
     }
 

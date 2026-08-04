@@ -32,7 +32,7 @@
             Grid.Row="1"
             ItemsSource="{Binding LayerItems}"
             PointerPressed="LayerListBox_PointerPressed"
-            SelectedItem="{Binding SelectedLayer}" 
+            SelectedItem="{Binding SelLayerItem}" 
             Background="{DynamicResource BackgroundColor}"
             SelectionMode="Multiple">
             <ListBox.Styles>
@@ -112,7 +112,7 @@
             <Button Classes="ActionButton" Tag="RemoveLayer" Command="{Binding RemoveCommand}" HorizontalAlignment="Left">
                 <Image Source="{DynamicResource RemoveIcon}" />
             </Button>
-            <Button Classes="ActionButton" Tag="DuplicateLayer" Command="{Binding DuplicateCommand}" HorizontalAlignment="Left">
+            <Button Classes="ActionButton" Tag="DuplicateLayer" Click="OnDuplicteClick" HorizontalAlignment="Left">
                 <Image Source="{DynamicResource DuplicateIcon}" />
             </Button>
             <Button Classes="ActionButton" Tag="CreateNewGroup" Command="{Binding CreateGroupCommand}" HorizontalAlignment="Left">

@@ -71,7 +71,7 @@ public partial class EditorView : UserControl
                 break;
 
             case (KeyModifiers.Control, Key.D):
-                vm.DuplicateCommand.Execute().Subscribe();
+                LayerPanelControl.LayerCommands.DuplicateCommand.Execute(LayerPanelControl.LayerManager);
                 break;
 
             case (KeyModifiers.Control, Key.Up):
