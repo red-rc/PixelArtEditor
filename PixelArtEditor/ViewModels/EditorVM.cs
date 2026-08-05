@@ -168,9 +168,8 @@ public class EditorVM : ReactiveObject
     {
         _canvas = canvas;
 
-        canvas.ResetLayerManager();
-        canvas.InitializeWithModel(_model);
-        LayerManager = canvas.LayerManager;
+        LayerManager.InitializeFirstLayer(_model.Width, _model.Height, _model.Data, ""); // TODO: Make possible to get the name of the first layer in the future
+        canvas.AttachLayerManager(LayerManager);
 
         _canvas.WhenAnyValue(x => x.CurrentPixelCoord)
             .Subscribe(coord =>

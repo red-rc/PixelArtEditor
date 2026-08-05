@@ -8,6 +8,20 @@ public class LayerManager
     public ObservableCollection<LayerModel> Layers { get; } = [];
     public LayerModel? ActiveLayer { get; set; }
 
+    public LayerModel InitializeFirstLayer(int width, int height, byte[] pixelData, string layerName)
+    {
+        Layers.Clear();
+
+        if (layerName == "")
+            layerName = "Layer 1";
+
+        var layer = new LayerModel(width, height, BitmapService.SwapRB(pixelData), layerName);
+        Layers.Add(layer);
+        ActiveLayer = layer;
+
+        return layer;
+    }
+
     public void ResizeLayers(int newWidth, int newHeight)
     {
         foreach (var layer in Layers)

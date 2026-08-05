@@ -107,18 +107,18 @@ public partial class EditorView : UserControl
 
     private void OnDataContextChanged(object? sender, EventArgs e)
     {
-        if (DataContext is EditorVM vm)
+        if (ViewModel is not null)
         {
             LayerPanelControl.LayerManager = null;
 
-            vm.SetCanvas(CanvasControl);
-            LayerPanelControl.LayerManager = CanvasControl.LayerManager;
+            ViewModel.SetCanvas(CanvasControl);
+            LayerPanelControl.LayerManager = ViewModel.LayerManager;
 
-            vm.AdjustCanvas(CanvasPanel.Bounds.Width, CanvasPanel.Bounds.Height);
+            ViewModel.AdjustCanvas(CanvasPanel.Bounds.Width, CanvasPanel.Bounds.Height);
 
             PixelModel? subscribedModel = null;
 
-            vm.WhenAnyValue(x => x.Model).Subscribe(model =>
+            ViewModel.WhenAnyValue(x => x.Model).Subscribe(model =>
             {
                 subscribedModel?.ModelChanged -= OnModelChangedHandler;
 

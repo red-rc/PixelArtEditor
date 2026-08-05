@@ -100,40 +100,11 @@ public class Canvas : Control, ICanvasContext
 
     private ImageBrush? _checkerboardBrush;
 
-    public LayerManager LayerManager { get; set; }
+    public LayerManager LayerManager { get; private set; } = null!;
     public Dictionary<LayerModel, LayerRenderCache> RenderCache { get; } = [];
 
     public Canvas()
     {
-        LayerManager = new LayerManager();
-
-        LayerManager.Layers.CollectionChanged += (_, e) =>
-        {
-            if (e.Action == NotifyCollectionChangedAction.Move)
-            {
-                InvalidateVisual();
-                return;
-            }
-
-            if (e.NewItems is not null)
-                foreach (LayerModel layer in e.NewItems)
-                {
-                    RenderCache[layer] = new LayerRenderCache();
-                    layer.PropertyChanged += Layer_PropertyChanged;
-                }
-
-            if (e.OldItems is not null)
-                foreach (LayerModel layer in e.OldItems)
-                {
-                    RenderCache[layer].PreviewCts?.Cancel();
-                    RenderCache.Remove(layer);
-
-                    layer.PropertyChanged -= Layer_PropertyChanged;
-                }
-
-            InvalidateVisual();
-        };
-
         RenderOptions.SetBitmapInterpolationMode(this, BitmapInterpolationMode.None);
 
         ModelProperty.Changed.AddClassHandler<Canvas>((sender, e) =>
@@ -180,27 +151,55 @@ public class Canvas : Control, ICanvasContext
         InvalidateVisual();
     }
 
-    public void ResetLayerManager()
+    public void AttachLayerManager(LayerManager layerManager)
     {
-        LayerManager.Layers.Clear();
+        LayerManager?.Layers.CollectionChanged -= OnLayersChanged;
+
         RenderCache.Clear();
-        LayerManager.ActiveLayer = null;
-    }
+        LayerManager = layerManager;
+        LayerManager.Layers.CollectionChanged += OnLayersChanged;
 
-    public void InitializeWithModel(PixelModel model)
-    {
-        LayerManager.Layers.Add(new LayerModel(
-            model.Width,
-            model.Height,
-            BitmapService.SwapRB(model.Data),
-            "Layer 1"));
-
-        var layer = LayerManager.Layers[0];
-        LayerManager.ActiveLayer = layer;
-        RenderCache[layer].RenderBitmapDirty = false;
-        RenderCache[layer].PreviewDirty = true;
+        foreach (var layer in LayerManager.Layers)
+        {
+            RenderCache[layer] = new LayerRenderCache
+            {
+                RenderBitmapDirty = false,
+                PreviewDirty = true
+            };
+            layer.PropertyChanged += Layer_PropertyChanged;
+        }
 
         InvalidateVisual();
+    }
+
+    public void OnLayersChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        LayerManager.Layers.CollectionChanged += (_, e) =>
+        {
+            if (e.Action == NotifyCollectionChangedAction.Move)
+            {
+                InvalidateVisual();
+                return;
+            }
+
+            if (e.NewItems is not null)
+                foreach (LayerModel layer in e.NewItems)
+                {
+                    RenderCache[layer] = new LayerRenderCache();
+                    layer.PropertyChanged += Layer_PropertyChanged;
+                }
+
+            if (e.OldItems is not null)
+                foreach (LayerModel layer in e.OldItems)
+                {
+                    RenderCache[layer].PreviewCts?.Cancel();
+                    RenderCache.Remove(layer);
+
+                    layer.PropertyChanged -= Layer_PropertyChanged;
+                }
+
+            InvalidateVisual();
+        };
     }
 
     protected override void OnPointerMoved(PointerEventArgs e)
