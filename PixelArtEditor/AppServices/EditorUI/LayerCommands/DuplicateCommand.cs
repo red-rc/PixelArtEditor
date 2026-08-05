@@ -8,12 +8,13 @@ public class DuplicateCommand(LayerPanelVM vm, ListBox layerListBox) : LayerComm
 {
     public void Execute(LayerManager? layerManager)
     {
-        if (Vm.SelLayerItems is null || Vm.SelLayerItems.Count == 0 || layerManager is null) return;
+        if (layerManager is null) return;
 
-        var ordered = GetOrdered(Vm.SelLayerItems);
-        var sourceIndex = layerManager.Layers.IndexOf(ordered[0].Layer);
+        var copiedLayers = Vm.CopiedLayers;
 
-        var copies = new CopyCommand(Vm, LayerListBox).Execute(layerManager, ordered);
-        new InsertCommand(Vm, LayerListBox).Execute(layerManager, copies, sourceIndex);
+        new CopyCommand(Vm, LayerListBox).Execute(layerManager);
+        new InsertCommand(Vm, LayerListBox).Execute(layerManager);
+
+        Vm.CopiedLayers = copiedLayers;
     }
 }

@@ -42,8 +42,6 @@ public partial class LayerPanel : UserControl
 
     private void OnToTheTopClick(object? sender, RoutedEventArgs e) => LayerCommands.MoveCommand.Execute(LayerManager, true);
     private void OnToTheBottomClick(object? sender, RoutedEventArgs e) => LayerCommands.MoveCommand.Execute(LayerManager, false);
-    public void OnUpClick(object? sender, RoutedEventArgs e) => LayerCommands.MoveStepCommand.Execute(LayerManager, -1);
-    public void OnDownClick(object? sender, RoutedEventArgs e) => LayerCommands.MoveStepCommand.Execute(LayerManager, 1);
 
     public LayerPanel()
     {

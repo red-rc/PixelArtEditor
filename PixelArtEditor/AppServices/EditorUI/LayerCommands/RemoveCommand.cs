@@ -20,9 +20,9 @@ public class RemoveCommand(LayerPanelVM vm, ListBox layerListBox) : LayerCommand
             layerManager.Layers.Remove(layerItem.Layer);
 
         if ((layerManager.ActiveLayer is null || !layerManager.Layers.Contains(layerManager.ActiveLayer))
-            && Vm.LayerItems.Count > 0 && index >= 0)
+            && Vm.LayerItems.Count > 0)
         {
-            index = Math.Min(index, Vm.LayerItems.Count - 1);
+            index = Math.Clamp(index, 0, Vm.LayerItems.Count - 1);
             Vm.SelLayerItem = Vm.LayerItems[index];
         }
     }

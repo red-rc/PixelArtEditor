@@ -174,32 +174,29 @@ public class Canvas : Control, ICanvasContext
 
     public void OnLayersChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
-        LayerManager.Layers.CollectionChanged += (_, e) =>
+        if (e.Action == NotifyCollectionChangedAction.Move)
         {
-            if (e.Action == NotifyCollectionChangedAction.Move)
+            InvalidateVisual();
+            return;
+        }
+
+        if (e.NewItems is not null)
+            foreach (LayerModel layer in e.NewItems)
             {
-                InvalidateVisual();
-                return;
+                RenderCache[layer] = new LayerRenderCache();
+                layer.PropertyChanged += Layer_PropertyChanged;
             }
 
-            if (e.NewItems is not null)
-                foreach (LayerModel layer in e.NewItems)
-                {
-                    RenderCache[layer] = new LayerRenderCache();
-                    layer.PropertyChanged += Layer_PropertyChanged;
-                }
+        if (e.OldItems is not null)
+            foreach (LayerModel layer in e.OldItems)
+            {
+                RenderCache[layer].PreviewCts?.Cancel();
+                RenderCache.Remove(layer);
 
-            if (e.OldItems is not null)
-                foreach (LayerModel layer in e.OldItems)
-                {
-                    RenderCache[layer].PreviewCts?.Cancel();
-                    RenderCache.Remove(layer);
+                layer.PropertyChanged -= Layer_PropertyChanged;
+            }
 
-                    layer.PropertyChanged -= Layer_PropertyChanged;
-                }
-
-            InvalidateVisual();
-        };
+        InvalidateVisual();
     }
 
     protected override void OnPointerMoved(PointerEventArgs e)

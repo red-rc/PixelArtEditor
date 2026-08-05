@@ -2,6 +2,7 @@
 using PixelArtEditor.AppServices.Canvas;
 using PixelArtEditor.Models.Canvas;
 using PixelArtEditor.Models.LayerPanel;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
@@ -43,6 +44,8 @@ public class LayerPanelVM : ReactiveObject
             this.RaiseAndSetIfChanged(ref _selLayerItems, value);
         }
     }
+
+    public List<LayerModel> CopiedLayers = [];
 
     public byte Opacity
     {

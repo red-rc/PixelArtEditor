@@ -6,6 +6,7 @@ using Avalonia.Media;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using PixelArtEditor.AppServices;
+using PixelArtEditor.AppServices.Canvas;
 using PixelArtEditor.AppServices.EditorUI;
 using PixelArtEditor.Helpers;
 using PixelArtEditor.Models.Canvas;
@@ -62,40 +63,41 @@ public partial class EditorView : UserControl
 
     private async void OnLayerHotkeys(object? sender, KeyEventArgs e)
     {
-        var vm = LayerPanelControl.ViewModel;
+        var commands = LayerPanelControl.LayerCommands;
+        var layerManager = LayerPanelControl.LayerManager;
 
         switch (e.KeyModifiers, e.Key)
         {
             case (KeyModifiers.Control, Key.N):
-                LayerPanelControl.LayerCommands.AddCommand.Execute(LayerPanelControl.LayerManager);
+                commands.AddCommand.Execute(layerManager);
                 break;
 
             case (KeyModifiers.Control, Key.D):
-                LayerPanelControl.LayerCommands.DuplicateCommand.Execute(LayerPanelControl.LayerManager);
+                commands.DuplicateCommand.Execute(layerManager);
                 break;
 
             case (KeyModifiers.Control, Key.Up):
-                LayerPanelControl.OnUpClick(null, e);
+                commands.MoveStepCommand.Execute(layerManager, -1);
                 break;
 
             case (KeyModifiers.Control, Key.Down):
-                LayerPanelControl.OnDownClick(null, e);
+                commands.MoveStepCommand.Execute(layerManager, 1);
                 break;
 
             case (KeyModifiers.Control, Key.G):
-                LayerPanelControl.LayerCommands.GroupCommand.Execute(LayerPanelControl.LayerManager);
+                commands.GroupCommand.Execute(layerManager);
                 break;
 
-            //case (KeyModifiers.Control, Key.C):
-            //    LayerPanelControl.LayerCommands.CopyCommand.Execute(LayerPanelControl.LayerManager);
-            //    break;
-            //
-            //case (KeyModifiers.Control, Key.V):
-            //    LayerPanelControl.LayerCommands.InsertCommand.Execute(LayerPanelControl.LayerManager);
-            //    break;
+            case (KeyModifiers.Control, Key.C):
+                commands.CopyCommand.Execute(layerManager);
+                break;
+            
+            case (KeyModifiers.Control, Key.V):
+                commands.InsertCommand.Execute(layerManager);
+                break;
 
             case (KeyModifiers.None, Key.Delete):
-                LayerPanelControl.LayerCommands.RemoveCommand.Execute(LayerPanelControl.LayerManager);
+                commands.RemoveCommand.Execute(layerManager);
                 break;
             default:
                 return;
