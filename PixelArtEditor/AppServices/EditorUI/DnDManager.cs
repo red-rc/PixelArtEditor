@@ -93,7 +93,7 @@ public class DnDManager(ListBox layerListBox, Avalonia.Controls.Canvas floatingH
 
     public int GetTargetIndex(PointerEventArgs e)
     {
-        if (ItemHeight <= 0 || LayerManager is null) return 0;
+        if (ItemHeight <= 0) return 0;
 
         var scrollOffset = GetScrollViewer()?.Offset.Y ?? 0;
         var y = e.GetPosition(LayerListBox).Y + scrollOffset;
@@ -101,7 +101,7 @@ public class DnDManager(ListBox layerListBox, Avalonia.Controls.Canvas floatingH
         var baseGap = DraggedItems.Count > 3 ? (DraggedItems.Count - 1) * ItemHeight : 0;
 
         var sourceNonSelectedIndex = 0;
-        foreach (var layer in LayerManager.Layers)
+        foreach (var layer in LayerManager!.Layers)
         {
             if (DraggedLayerItems.Any(li => li.Layer == layer)) break;
             sourceNonSelectedIndex++;

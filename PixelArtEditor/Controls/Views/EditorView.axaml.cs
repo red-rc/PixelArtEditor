@@ -67,7 +67,7 @@ public partial class EditorView : UserControl
         switch (e.KeyModifiers, e.Key)
         {
             case (KeyModifiers.Control, Key.N):
-                vm.AddCommand.Execute().Subscribe();
+                LayerPanelControl.LayerCommands.AddCommand.Execute(LayerPanelControl.LayerManager);
                 break;
 
             case (KeyModifiers.Control, Key.D):
@@ -82,8 +82,20 @@ public partial class EditorView : UserControl
                 LayerPanelControl.OnDownClick(null, e);
                 break;
 
-            case (_, Key.Delete):
-                vm.RemoveCommand.Execute().Subscribe();
+            case (KeyModifiers.Control, Key.G):
+                LayerPanelControl.LayerCommands.GroupCommand.Execute(LayerPanelControl.LayerManager);
+                break;
+
+            //case (KeyModifiers.Control, Key.C):
+            //    LayerPanelControl.LayerCommands.CopyCommand.Execute(LayerPanelControl.LayerManager);
+            //    break;
+            //
+            //case (KeyModifiers.Control, Key.V):
+            //    LayerPanelControl.LayerCommands.InsertCommand.Execute(LayerPanelControl.LayerManager);
+            //    break;
+
+            case (KeyModifiers.None, Key.Delete):
+                LayerPanelControl.LayerCommands.RemoveCommand.Execute(LayerPanelControl.LayerManager);
                 break;
             default:
                 return;

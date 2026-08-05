@@ -10,7 +10,7 @@ public class MoveStepCommand(LayerPanelVM vm, ListBox layerListBox) : LayerComma
 {
     public void Execute(LayerManager? layerManager, int direction)
     {
-        if (layerManager?.Layers is null || layerManager.Layers.Count <= 1) return;
+        if (layerManager is null || layerManager.Layers.Count <= 1) return;
 
         var selected = LayerListBox.SelectedItems?.OfType<LayerItem>().ToList();
         if (selected is null || selected.Count == 0) return;

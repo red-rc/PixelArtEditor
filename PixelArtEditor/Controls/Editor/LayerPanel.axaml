@@ -103,19 +103,19 @@
                 Grid.Row="2" 
                 x:Name="ActionPanel"
                 Background="{DynamicResource BackgroundColor}" 
-                VerticalAlignment="Bottom" 
+                VerticalAlignment="Bottom"  
                 HorizontalAlignment="Stretch" 
                 Orientation="Horizontal">
-            <Button Classes="ActionButton" Tag="AddNewLayer" Command="{Binding AddCommand}" HorizontalAlignment="Left">
+            <Button Classes="ActionButton" Tag="AddNewLayer" Click="OnAddClick" HorizontalAlignment="Left">
                 <Image Source="{DynamicResource AddIcon}" />
             </Button>
-            <Button Classes="ActionButton" Tag="RemoveLayer" Command="{Binding RemoveCommand}" HorizontalAlignment="Left">
+            <Button Classes="ActionButton" Tag="RemoveLayer" Click="OnRemoveClick" HorizontalAlignment="Left">
                 <Image Source="{DynamicResource RemoveIcon}" />
             </Button>
-            <Button Classes="ActionButton" Tag="DuplicateLayer" Click="OnDuplicteClick" HorizontalAlignment="Left">
+            <Button Classes="ActionButton" Tag="DuplicateLayer" Click="OnDuplicateClick" HorizontalAlignment="Left">
                 <Image Source="{DynamicResource DuplicateIcon}" />
             </Button>
-            <Button Classes="ActionButton" Tag="CreateNewGroup" Command="{Binding CreateGroupCommand}" HorizontalAlignment="Left">
+            <Button Classes="ActionButton" Tag="CreateNewGroup" Click="OnGroupClick" HorizontalAlignment="Left">
                 <Image Source="{DynamicResource GroupIcon}" />
             </Button>
             <Button Classes="ActionButton" Tag="MoveToTheTop" Click="OnToTheTopClick" HorizontalAlignment="Left">

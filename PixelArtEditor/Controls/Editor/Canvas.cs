@@ -138,13 +138,11 @@ public class Canvas : Control, ICanvasContext
 
         ModelProperty.Changed.AddClassHandler<Canvas>((sender, e) =>
         {
-            if (_subscribedModel != null)
-                _subscribedModel.ModelChanged -= OnModelChanged;
+            _subscribedModel?.ModelChanged -= OnModelChanged;
 
             _subscribedModel = sender.Model;
 
-            if (_subscribedModel != null)
-                _subscribedModel.ModelChanged += OnModelChanged;
+            _subscribedModel?.ModelChanged += OnModelChanged;
 
             sender.OnModelChanged();
         });

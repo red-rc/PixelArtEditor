@@ -25,17 +25,11 @@ public static class ActionService
     }
 
     public static async Task ShowExportWindowAsync(PixelModel model)
-    {
-        await DialogService.ShowDialogAsync<ExportDialogWindow, PixelModel>(model);
-    }
+        => await DialogService.ShowDialogAsync<ExportDialogWindow, PixelModel>(model);
 
     public static async Task ShowSettingsWindowAsync()
-    {
-        await DialogService.ShowDialogAsync<SettingsDialogWindow>();
-    }
+        => await DialogService.ShowDialogAsync<SettingsDialogWindow>();
 
     public static async Task ShowImagePropertiesWindowAsync(PixelModel model)
-    {
-        await DialogService.ShowDialogAsync<ImagePropertiesWindow>(model);
-    }
+        => await DialogService.ShowDialogAsync<ImagePropertiesWindow>(model);
 }

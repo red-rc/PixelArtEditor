@@ -35,7 +35,10 @@ public partial class LayerPanel : UserControl
     public readonly LayerCommands LayerCommands;
     private readonly DnDManager _dndManager;
 
-    private void OnDuplicteClick(object? sender, RoutedEventArgs e) => LayerCommands.DuplicateCommand.Execute(LayerManager);
+    private void OnAddClick(object? sender, RoutedEventArgs e) => LayerCommands.AddCommand.Execute(LayerManager);
+    private void OnRemoveClick(object? sender, RoutedEventArgs e) => LayerCommands.RemoveCommand.Execute(LayerManager);
+    private void OnDuplicateClick(object? sender, RoutedEventArgs e) => LayerCommands.DuplicateCommand.Execute(LayerManager);
+    private void OnGroupClick(object? sender, RoutedEventArgs e) => LayerCommands.GroupCommand.Execute(LayerManager);
 
     private void OnToTheTopClick(object? sender, RoutedEventArgs e) => LayerCommands.MoveCommand.Execute(LayerManager, true);
     private void OnToTheBottomClick(object? sender, RoutedEventArgs e) => LayerCommands.MoveCommand.Execute(LayerManager, false);
@@ -102,8 +105,8 @@ public partial class LayerPanel : UserControl
 
     private void OnItemPointerMoved(object? sender, PointerEventArgs e)
     {
-        if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed
-            || LayerManager?.Layers.Count <= 1 || _dndManager.DraggedItems.Count <= 0) return;
+        if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed || LayerManager is null
+            || LayerManager.Layers.Count <= 1 || _dndManager.DraggedItems.Count == 0) return;
 
         var dx = e.GetPosition(this).X - _mousePressPos.X;
         var dy = e.GetPosition(this).Y - _mousePressPos.Y;
