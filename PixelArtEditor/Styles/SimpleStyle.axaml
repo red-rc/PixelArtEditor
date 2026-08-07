@@ -129,6 +129,21 @@
         </Style>
     </Style>
 
+    <Style Selector="Button.UiButton">
+        <Setter Property="Background" Value="{DynamicResource UiColor}" />
+        <Setter Property="ClipToBounds" Value="False" />
+        <Setter Property="CornerRadius" Value="2.5" />
+
+        <Style Selector="^:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource UiHoverColor}" />
+            <Setter Property="BoxShadow" Value="{DynamicResource CardShadow}" />
+        </Style>
+        <Style Selector="^:pressed /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource UiPressColor}" />
+            <Setter Property="BoxShadow" Value="{DynamicResource CardShadow}" />
+        </Style>
+    </Style>
+
     <!-- ================= NumericUpDown ================= -->
     <Style Selector="NumericUpDown">
         <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />

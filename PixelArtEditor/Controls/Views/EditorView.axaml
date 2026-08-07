@@ -12,7 +12,7 @@
     Background="{DynamicResource BackgroundColor}"
     mc:Ignorable="d">
 
-    <Grid Name="Root" Focusable="True" PointerMoved="Root_PointerMoved">
+    <Grid Name="Root" Focusable="True" PointerMoved="Root_PointerMoved" DragDrop.AllowDrop="True">
         <Grid
             Name="MainLayout"
             ColumnDefinitions="Auto,*,Auto"
@@ -27,7 +27,38 @@
                 PointerMoved="Panel_PointerMoved"
                 PointerPressed="Panel_PointerPressed"
                 PointerReleased="Panel_PointerReleased"
-                Tag="Horizontal" />
+                Tag="Horizontal">
+                <StackPanel Orientation="Horizontal" IsVisible="{Binding ConfirmPanelVisible}">
+                    <Button
+                        Name="BackButton"
+                        Width="30"
+                        Height="30"
+                        Margin="10,0,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Classes="UiButton"
+                        Click="OnBackClick">
+                        <Image 
+                            Source="{DynamicResource DownIcon}" 
+                            Width="18" Height="18" 
+                            RenderOptions.BitmapInterpolationMode="None" />
+                    </Button>
+                    <Button
+                        Name="ConfirmButton"
+                        Width="30"
+                        Height="30"
+                        Margin="5,0,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Classes="UiButton"
+                        Click="OnConfirmClick">
+                        <Image 
+                            Source="{DynamicResource UpIcon}"
+                            Width="18" Height="18" 
+                            RenderOptions.BitmapInterpolationMode="None" />
+                    </Button>
+                </StackPanel>
+            </Panel>
             <Grid
                 Name="SidePanel"
                 Grid.Row="1"
@@ -82,14 +113,23 @@
                     SelectedTool="{Binding SelectedTool}"
                     Offset="{Binding Offset}" />
                 <TextBlock
-                    Height="15"
+                    Height="20"
                     Padding="5,0,5,0"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Bottom"
                     Background="#BF4A4A4A"
-                    FontSize="12"
+                    FontSize="14"
                     Foreground="White"
-                    Text="{Binding IndicatorText}" />
+                    Text="{Binding CoordinatesText}" />
+                <TextBlock
+                    Height="20"
+                    Padding="5,0,5,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Bottom"
+                    Background="#BF4A4A4A"
+                    FontSize="14"
+                    Foreground="White"
+                    Text="{Binding ScaleText}" />
             </Panel>
         </Grid>
         <Canvas x:Name="FloatingHost" IsHitTestVisible="True" />
@@ -107,5 +147,20 @@
                     Foreground="{DynamicResource ForegroundColor}" />
             </Border>
         </Canvas>
+
+        <Grid IsHitTestVisible="False">
+            <Border
+                Background="{DynamicResource PrimaryColor}"
+                Opacity="{Binding CanvasOpacity}" />
+        
+            <Image
+                Source="{DynamicResource UpIcon}"
+                IsVisible="{Binding ImageVisible}"
+                Width="80"
+                Height="80"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                RenderOptions.BitmapInterpolationMode="None" />
+        </Grid>
     </Grid>
 </UserControl>

@@ -15,8 +15,10 @@
         <other:DivideByConverter x:Key="DivideByConverter" />
     </UserControl.Resources>
 
-    <DockPanel>
-        <DockPanel Width="{Binding Width, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource DivideByConverter}, ConverterParameter=5}" DockPanel.Dock="Left">
+    <Grid ColumnDefinitions="Auto,*" DragDrop.AllowDrop="True">
+        <DockPanel 
+            Width="{Binding Width, RelativeSource={RelativeSource AncestorType=Window}, 
+            Converter={StaticResource DivideByConverter}, ConverterParameter=5}" Grid.Column="0">
             <StackPanel
                 Margin="30,75,30,0"
                 Orientation="Vertical"
@@ -34,7 +36,7 @@
                     Content="{DynamicResource StartViewOpen}" />
             </StackPanel>
         </DockPanel>
-        <Grid Background="{DynamicResource SecondaryBackgroundColor}">
+        <Grid Background="{DynamicResource SecondaryBackgroundColor}" Grid.Column="1">
             <TextBlock
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
@@ -48,5 +50,20 @@
                 Foreground="Gray"
                 Text="{DynamicResource AppVersion}" />
         </Grid>
-    </DockPanel>
+
+        <Grid Grid.ColumnSpan="2" IsHitTestVisible="False">
+            <Border
+                Background="{DynamicResource PrimaryColor}"
+                Opacity="{Binding CanvasOpacity}" />
+        
+            <Image
+                Source="{DynamicResource UpIcon}"
+                IsVisible="{Binding ImageVisible}"
+                Width="80"
+                Height="80"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                RenderOptions.BitmapInterpolationMode="None" />
+        </Grid>
+    </Grid>
 </UserControl>

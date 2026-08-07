@@ -36,30 +36,5 @@ public class LayerManager
     }
 
     public byte[] GetCompositePixelData(int width, int height)
-    {
-        var result = new byte[width * height * 4];
-
-        foreach (var layer in Layers)
-        {
-            if (!layer.IsVisible) continue;
-
-            var src = layer.PixelData;
-
-            for (var i = 0; i < result.Length; i += 4)
-            {
-                var srcA = src[i + 3] / 255f * layer.Opacity;
-                var dstA = result[i + 3] / 255f;
-
-                var outA = srcA + dstA * (1f - srcA);
-                if (outA <= 0f) continue;
-
-                result[i + 0] = (byte)((src[i + 0] * srcA + result[i + 0] * dstA * (1f - srcA)) / outA);
-                result[i + 1] = (byte)((src[i + 1] * srcA + result[i + 1] * dstA * (1f - srcA)) / outA);
-                result[i + 2] = (byte)((src[i + 2] * srcA + result[i + 2] * dstA * (1f - srcA)) / outA);
-                result[i + 3] = (byte)(outA * 255f);
-            }
-        }
-
-        return result;
-    }
+        => BitmapService.GetCompositePixelData(Layers, width, height);
 }

@@ -6,6 +6,7 @@ using PixelArtEditor.Controls.Views;
 using PixelArtEditor.Models.Dock;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
 
 namespace PixelArtEditor.AppServices.EditorUI;
 

@@ -44,7 +44,7 @@ public static class PreviewService
             && layer.PreviewBitmap.PixelSize.Width == targetW
             && layer.PreviewBitmap.PixelSize.Height == targetH) return;
 
-        if (targetW >= context.Model.Width && targetH >= context.Model.Height)
+        if (targetW >= context.Model.Width || targetH >= context.Model.Height)
         {
             layer.PreviewBitmap = null;
             cache.PreviewDirty = false;
@@ -65,17 +65,23 @@ public static class PreviewService
         var thisCts = cache.PreviewCts;
         var size = width * height * 4;
 
+        var modelWidth = context.Model.Width;
+        var modelHeight = context.Model.Height;
+        var pixelData = layer.PixelData;
+        var opacity = layer.Opacity;
+
         Task.Run(() =>
         {
             var buffer = ArrayPool<byte>.Shared.Rent(size);
 
-            for (var i = 0; i < buffer.Length; i += 4)
-                buffer[i + 3] = (byte)(buffer[i + 3] * layer.Opacity);
-
             try
             {
-                DownscaleNearest(layer.PixelData!, context.Model.Width, context.Model.Height, buffer, width, height, token);
+                DownscaleNearest(pixelData!, modelWidth, modelHeight, buffer, width, height, token);
                 if (token.IsCancellationRequested) return;
+
+                if (opacity < 1f)
+                    for (var i = 0; i < size; i += 4)
+                        buffer[i + 3] = (byte)(buffer[i + 3] * opacity);
 
                 Dispatcher.UIThread.Post(() =>
                 {

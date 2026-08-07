@@ -29,7 +29,7 @@ public class FillTool : ITool
         if (layer is null || context.HoverPixel is null) return;
 
         BitmapService.FillSimilarPixels(layer.RenderBitmap, layer.PixelData,
-            context.Model.Width, context.Model.Height,
+            layer.Width, layer.Height,
             context.HoverPixel.Value, context.PickedColor);
     }
 }

@@ -7,7 +7,7 @@
     xmlns:controls="clr-namespace:PixelArtEditor.Controls.Image"
     xmlns:vm="clr-namespace:PixelArtEditor.ViewModels"
     xmlns:ui="clr-namespace:PixelArtEditor.UI"
-    Title="{DynamicResource SetWinSettings}"
+    Title="Image Properties"
     Width="700"
     Height="450"
     d:DesignHeight="450"

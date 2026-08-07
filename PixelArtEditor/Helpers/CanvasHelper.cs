@@ -22,7 +22,7 @@ public static class CanvasHelper
     public static PixelPoint? GetPixelCoord(ICanvasContext context, Visual relativeTo, PointerEventArgs e)
     {
         var pos = e.GetPosition(relativeTo);
-        var ((bmpW, bmpH), (offsetX, offsetY)) = CanvasHelper.GetBitmapRenderInfo(context);
+        var ((bmpW, bmpH), (offsetX, offsetY)) = GetBitmapRenderInfo(context);
 
         var relX = pos.X - offsetX;
         var relY = pos.Y - offsetY;

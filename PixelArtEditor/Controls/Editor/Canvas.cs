@@ -68,6 +68,8 @@ public class Canvas : Control, ICanvasContext
 
     private ITool _currentTool = new EmptyTool();
 
+    public bool CanEdit = true;
+
     private PixelPoint? _hoverPixel;
     public PixelPoint? HoverPixel
     {
@@ -208,7 +210,7 @@ public class Canvas : Control, ICanvasContext
         HoverPixel = CurrentPixelCoord;
 
         if (!_isLeftPressed) return;
-        if (LayerManager.ActiveLayer is { IsVisible: false } or { IsLocked: true }) return;
+        if (LayerManager.ActiveLayer is { IsVisible: false } or { IsLocked: true } || !CanEdit) return;
 
         _currentTool.OnPointerMoved(this);
     }
@@ -219,7 +221,7 @@ public class Canvas : Control, ICanvasContext
 
         if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed) return;
 
-        if (LayerManager.ActiveLayer is { IsVisible: false } or { IsLocked: true }) return;
+        if (LayerManager.ActiveLayer is { IsVisible: false } or { IsLocked: true } || !CanEdit) return;
 
         _isLeftPressed = true;
         _currentTool.OnPointerPressed(this);
@@ -252,25 +254,25 @@ public class Canvas : Control, ICanvasContext
         context.FillRectangle(_checkerboardBrush, new Rect(offsetX, offsetY, bmpW, bmpH));
     }
 
-    private static void DrawBitmap(DrawingContext context, LayerModel layer, double offsetX, double offsetY, double bmpW, double bmpH)
+    private static void DrawBitmap(DrawingContext context, LayerModel layer, Canvas ctx, double offsetX, double offsetY)
     {
         if (layer.RenderBitmap is null) return;
 
+        var srcW = Math.Min(layer.Width, ctx.Model.Width);
+        var srcH = Math.Min(layer.Height, ctx.Model.Height);
+
+        var srcRect = new Rect(0, 0, srcW, srcH);
+        var destRect = new Rect(offsetX, offsetY, srcW * ctx.Scale, srcH * ctx.Scale);
+
         if (layer.PreviewBitmap is not null)
         {
-            context.DrawImage(
-                layer.PreviewBitmap,
-                new Rect(0, 0, layer.Width, layer.Height),
-                new Rect(offsetX, offsetY, bmpW, bmpH)
-            );
+            var scaleX = (double)layer.PreviewBitmap.PixelSize.Width / layer.Width;
+            var scaleY = (double)layer.PreviewBitmap.PixelSize.Height / layer.Height;
+            context.DrawImage(layer.PreviewBitmap, new Rect(0, 0, srcW * scaleX, srcH * scaleY), destRect);
         }
         else
         {
-            context.DrawImage(
-                layer.RenderBitmap,
-                new Rect(0, 0, layer.Width, layer.Height),
-                new Rect(offsetX, offsetY, bmpW, bmpH)
-            );
+            context.DrawImage(layer.RenderBitmap, srcRect, destRect);
         }
     }
 
@@ -283,9 +285,8 @@ public class Canvas : Control, ICanvasContext
             offsetY + HoverPixel.Value.Y * Scale,
             Scale, Scale);
 
-        var color = CanvasHelper.GetHighlightColor(BitmapService.GetPixelColor(
-            LayerManager.GetCompositePixelData(Model.Width, Model.Height), 
-            Model.Width, 
+        var color = CanvasHelper.GetHighlightColor(BitmapService.GetCompositePixelColor(
+            LayerManager.Layers,
             HoverPixel.Value));
         context.DrawRectangle(new SolidColorBrush(color), null, rect);
     }
@@ -345,7 +346,7 @@ public class Canvas : Control, ICanvasContext
 
         foreach (var layer in LayerManager.Layers.Reverse())
             if (layer.IsVisible)
-                DrawBitmap(context, layer, offsetX, offsetY, bmpW, bmpH);
+                DrawBitmap(context, layer, this, offsetX, offsetY);
 
         DrawHoverPixel(context, offsetX, offsetY);
         DrawGrid(context, offsetX, offsetY, bmpW, bmpH);

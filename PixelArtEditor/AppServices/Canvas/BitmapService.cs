@@ -2,8 +2,13 @@ using Avalonia;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+using PixelArtEditor.Models.Canvas;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Linq;
+using AlphaFormat = Avalonia.Platform.AlphaFormat;
 
 namespace PixelArtEditor.AppServices.Canvas;
 
@@ -74,6 +79,38 @@ public static class BitmapService
         var a = pixelData[index + 3];
 
         return Color.FromArgb(a, r, g, b);
+    }
+
+    public static Color GetCompositePixelColor(IEnumerable<LayerModel> layers, PixelPoint pixel)
+    {
+        byte r = 0, g = 0, b = 0;
+        float outA = 0f;
+
+        foreach (var layer in layers)
+        {
+            if (!layer.IsVisible) continue;
+
+            var stride = layer.Width * 4;
+            var index = pixel.Y * stride + pixel.X * 4;
+
+            var src = layer.PixelData;
+            if ((uint)(index + 3) >= (uint)src.Length) continue;
+
+            var srcA = src[index + 3] / 255f * layer.Opacity;
+            if (srcA <= 0f) continue;
+
+            var newA = srcA + outA * (1f - srcA);
+            if (newA <= 0f) continue;
+
+            r = (byte)((src[index + 2] * srcA + r * outA * (1f - srcA)) / newA);
+            g = (byte)((src[index + 1] * srcA + g * outA * (1f - srcA)) / newA);
+            b = (byte)((src[index + 0] * srcA + b * outA * (1f - srcA)) / newA);
+            outA = newA;
+
+            if (outA >= 0.999f) break;
+        }
+
+        return Color.FromArgb((byte)(outA * 255f), r, g, b);
     }
 
     public static unsafe void FillSimilarPixels(WriteableBitmap? wb, byte[] pixelData, int width, int height, PixelPoint startPixel, Color newColor)
@@ -149,6 +186,100 @@ public static class BitmapService
         }
 
         return newData;
+    }
+
+    public static byte[] ResizePixelDataScaled(byte[] src, int srcW, int srcH, int dstW, int dstH)
+    {
+        var dst = new byte[dstW * dstH * 4];
+
+        for (var y = 0; y < dstH; y++)
+        {
+            var srcY = Math.Min(srcH - 1, (int)((long)y * srcH / dstH));
+            for (var x = 0; x < dstW; x++)
+            {
+                var srcX = Math.Min(srcW - 1, (int)((long)x * srcW / dstW));
+                var srcIdx = (srcY * srcW + srcX) * 4;
+                var dstIdx = (y * dstW + x) * 4;
+                dst[dstIdx + 0] = src[srcIdx + 0];
+                dst[dstIdx + 1] = src[srcIdx + 1];
+                dst[dstIdx + 2] = src[srcIdx + 2];
+                dst[dstIdx + 3] = src[srcIdx + 3];
+            }
+        }
+
+        return dst;
+    }
+
+    public static byte[] CenterOnCanvas(byte[] src, int srcW, int srcH, int canvasW, int canvasH)
+    {
+        var dst = new byte[canvasW * canvasH * 4];
+
+        var offsetX = (canvasW - srcW) / 2;
+        var offsetY = (canvasH - srcH) / 2;
+
+        for (var y = 0; y < srcH; y++)
+        {
+            var dy = y + offsetY;
+            if (dy < 0 || dy >= canvasH) continue;
+
+            for (var x = 0; x < srcW; x++)
+            {
+                var dx = x + offsetX;
+                if (dx < 0 || dx >= canvasW) continue;
+
+                var si = (y * srcW + x) * 4;
+                var di = (dy * canvasW + dx) * 4;
+
+                dst[di + 0] = src[si + 0];
+                dst[di + 1] = src[si + 1];
+                dst[di + 2] = src[si + 2];
+                dst[di + 3] = src[si + 3];
+            }
+        }
+
+        return dst;
+    }
+
+    public static byte[] GetCompositePixelData(ObservableCollection<LayerModel> layers, int width, int height)
+    {
+        var result = new byte[width * height * 4];
+
+        foreach (var layer in layers.Reverse())
+        {
+            if (!layer.IsVisible) continue;
+
+            var src = layer.PixelData;
+            var srcStride = layer.Width * 4;
+
+            for (var y = 0; y < height; y++)
+            {
+                if (y >= layer.Height) continue;
+
+                var dstRow = y * width * 4;
+                var srcRow = y * srcStride;
+
+                for (var x = 0; x < width; x++)
+                {
+                    if (x >= layer.Width) continue;
+
+                    var di = dstRow + x * 4;
+                    var si = srcRow + x * 4;
+
+                    var srcA = src[si + 3] / 255f * layer.Opacity;
+                    var dstA = result[di + 3] / 255f;
+
+                    var outA = srcA + dstA * (1f - srcA);
+                    if (outA <= 0f) continue;
+
+                    result[di + 0] = (byte)((src[si + 0] * srcA + result[di + 0] * dstA * (1f - srcA)) / outA);
+                    result[di + 1] = (byte)((src[si + 1] * srcA + result[di + 1] * dstA * (1f - srcA)) / outA);
+                    result[di + 2] = (byte)((src[si + 2] * srcA + result[di + 2] * dstA * (1f - srcA)) / outA);
+                    result[di + 3] = (byte)(outA * 255f);
+                }
+            }
+        }
+
+        return result;
     }
 
     public static byte[] SwapRB(byte[] rgba)

@@ -11,7 +11,33 @@ namespace PixelArtEditor.ViewModels;
 
 public class EditorVM : ReactiveObject
 {
+    private double _canvasOpacity = 0;
+    public double CanvasOpacity
+    {
+        get => _canvasOpacity;
+        set => this.RaiseAndSetIfChanged(ref _canvasOpacity, value);
+    }
+
+    private bool _imageVisible = false;
+    public bool ImageVisible
+    {
+        get => _imageVisible;
+        set => this.RaiseAndSetIfChanged(ref _imageVisible, value);
+    }
+
+    private bool _confirmPanelVisible = false;
+    public bool ConfirmPanelVisible
+    {
+        get => _confirmPanelVisible;
+        set => this.RaiseAndSetIfChanged(ref _confirmPanelVisible, value);
+    }
+
     private Canvas? _canvas;
+    public Canvas? Canvas
+    {
+        get => _canvas;
+        set => this.RaiseAndSetIfChanged(ref _canvas, value);
+    }
 
     private PixelModel _model;
     public PixelModel Model
@@ -56,7 +82,12 @@ public class EditorVM : ReactiveObject
     public double Scale
     {
         get => _scale;
-        set => this.RaiseAndSetIfChanged(ref _scale, value);
+        set
+        {
+            this.RaiseAndSetIfChanged(ref _scale, value);
+            UpdateScaleText();
+            this.RaisePropertyChanged(nameof(ScaleText));
+        }
     }
     
     private double _baseScale;
@@ -162,24 +193,24 @@ public class EditorVM : ReactiveObject
         set => this.RaiseAndSetIfChanged(ref _pickedColor, value);
     }
 
-    public string? IndicatorText { get; set; }
+    public string? CoordinatesText { get; set; }
+    public string? ScaleText { get; set; }
 
     public void SetCanvas(Canvas canvas)
     {
-        _canvas = canvas;
+        Canvas = canvas;
 
         LayerManager.InitializeFirstLayer(_model.Width, _model.Height, _model.Data, ""); // TODO: Make possible to get the name of the first layer in the future
         canvas.AttachLayerManager(LayerManager);
 
-        _canvas.WhenAnyValue(x => x.CurrentPixelCoord)
-            .Subscribe(coord =>
-            {
-                IndicatorText = coord is null
-                    ? "X: - Y: -"
-                    : $"X: {coord.Value.X} Y: {coord.Value.Y}";
+        Canvas.WhenAnyValue(x => x.CurrentPixelCoord).Subscribe(coord =>
+        {
+            CoordinatesText = coord is null
+                ? "X: - Y: -"
+                : $"X: {coord.Value.X} Y: {coord.Value.Y}";
 
-                this.RaisePropertyChanged(nameof(IndicatorText));
-            });
+            this.RaisePropertyChanged(nameof(CoordinatesText));
+        });
     }
 
     public EditorVM(PixelModel model)
@@ -244,11 +275,27 @@ public class EditorVM : ReactiveObject
             MaxScale = MinScale;
         }
 
-        Scale = MinScale;
         BaseScale = MinScale;
+        Scale = MinScale;
         Offset = Vector2.Zero;
 
         _lastPanelWidth = width;
         _lastPanelHeight = height;
+    }
+
+    private void UpdateScaleText()
+    {
+        if (MinScale <= 0 || MaxScale <= MinScale)
+        {
+            ScaleText = "0%";
+            return;
+        }
+
+        var logMin = Math.Log(MinScale);
+        var logMax = Math.Log(MaxScale);
+        var logCur = Math.Log(Math.Clamp(_scale, MinScale, MaxScale));
+
+        var progress = (logCur - logMin) / (logMax - logMin);
+        ScaleText = $"{progress * 100:0}%";
     }
 }

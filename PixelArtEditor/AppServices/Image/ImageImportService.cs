@@ -55,6 +55,12 @@ public static class ImageImportService
         var storageProvider = topLevel.StorageProvider;
         var files = await storageProvider.OpenFilePickerAsync(loadOptions);
         IStorageFile? file = files.Count > 0 ? files[0] : null;
+
+        return await GetPixelModelFromFile(file);
+    }
+
+    public static async Task<PixelModel?> GetPixelModelFromFile(IStorageFile? file)
+    {
         if (file is null) return null;
 
         await using var stream = await file.OpenReadAsync();
@@ -63,15 +69,29 @@ public static class ImageImportService
 
         return await Task.Run(() =>
         {
+            // Крок 1: дізнатись інформацію про формат БЕЗ завантаження пікселів
+
+            // Крок 2: завантажити як IImage — ImageSharp сам вибере правильний внутрішній тип
+
             ms.Position = 0;
 
-            // Крок 1: дізнатись інформацію про формат БЕЗ завантаження пікселів
-            var info = SharpImage.Identify(ms);
+            ImageInfo? info;
+            try
+            {
+                info = SharpImage.Identify(ms);
+            }
+            catch (UnknownImageFormatException)
+            {
+                return null;
+            }
+            catch (InvalidImageContentException)
+            {
+                return null;
+            }
+
             if (info is null) return null;
 
             ms.Position = 0;
-
-            // Крок 2: завантажити як IImage — ImageSharp сам вибере правильний внутрішній тип
             using var image = SharpImage.Load(ms);
 
             // Крок 3: патерн-матчинг по реальному типу

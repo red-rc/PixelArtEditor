@@ -25,7 +25,7 @@ public static class ToolManager
         var layer = context.LayerManager.ActiveLayer;
         if (layer is null || layer.PixelData is null) return;
 
-        var stride = context.Model.Width * 4;
+        var stride = layer.Width * 4;
         var index = y * stride + x * 4;
 
         if (color.A == 0)

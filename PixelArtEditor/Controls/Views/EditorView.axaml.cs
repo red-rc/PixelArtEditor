@@ -3,17 +3,20 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
+using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using PixelArtEditor.AppServices;
 using PixelArtEditor.AppServices.Canvas;
 using PixelArtEditor.AppServices.EditorUI;
+using PixelArtEditor.AppServices.Image;
 using PixelArtEditor.Helpers;
 using PixelArtEditor.Models.Canvas;
 using PixelArtEditor.Models.Dock;
 using PixelArtEditor.UI;
 using PixelArtEditor.ViewModels;
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 
@@ -34,6 +37,41 @@ public partial class EditorView : UserControl
     private readonly TooltipManager _tooltipManager;
 
     private EditorVM? ViewModel => DataContext as EditorVM;
+
+    private int _addedLayersCount = 0;
+
+    private void OnBackClick(object? sender, RoutedEventArgs e)
+    {
+        if (ViewModel is null) return;
+
+        ViewModel.LayerManager.Layers.RemoveAt(0);
+
+        var vm = LayerPanelControl.ViewModel;
+        var index = Math.Clamp(1, 0, vm.LayerItems.Count - 1);
+        vm.SelLayerItem = vm.LayerItems[index];
+
+        CompleteConfirmation();
+    }
+
+    private void OnConfirmClick(object? sender, RoutedEventArgs e)
+    {
+        if (ViewModel is null) return;
+
+        CompleteConfirmation();
+    }
+
+    private void CompleteConfirmation()
+    {
+        if (ViewModel is null) return;
+
+        _addedLayersCount--;
+
+        if (_addedLayersCount == 0)
+        {
+            ViewModel.Canvas?.CanEdit = true;
+            ViewModel.ConfirmPanelVisible = false;
+        }
+    }
 
     public EditorView()
     {
@@ -59,6 +97,79 @@ public partial class EditorView : UserControl
 
             MainLayout.LayoutUpdated += OnMainLayoutLayoutUpdated;
         };
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        DragDrop.AddDragOverHandler(this, OnDragOver);
+        DragDrop.AddDragLeaveHandler(this, OnDragLeave);
+        DragDrop.AddDropHandler(this, OnDrop);
+    }
+
+    private void OnDragOver(object? sender, DragEventArgs e)
+    {
+        e.DragEffects = e.DataTransfer.Formats.Contains(DataFormat.File)
+            ? DragDropEffects.Copy
+            : DragDropEffects.None;
+
+        if (DataContext is not EditorVM vm) return;
+        vm.CanvasOpacity = e.DragEffects == DragDropEffects.Copy ? 0.3 : 0;
+        vm.ImageVisible = e.DragEffects == DragDropEffects.Copy;
+    }
+
+    private void OnDragLeave(object? sender, RoutedEventArgs e)
+    {
+        if (DataContext is not EditorVM vm) return;
+        vm.CanvasOpacity = 0;
+        vm.ImageVisible = false;
+    }
+
+    private async void OnDrop(object? sender, DragEventArgs e)
+    {
+        var files = e.DataTransfer.TryGetFiles();
+        if (files is null) return;
+
+        var storageFiles = files.OfType<IStorageFile>();
+        if (storageFiles is null) return;
+
+        if (DataContext is not EditorVM vm) return;
+        vm.CanvasOpacity = 0;
+        vm.ImageVisible = false;
+
+        foreach (var file in storageFiles)
+        {
+            var pixelModel = await ImageImportService.GetPixelModelFromFile(file);
+            if (pixelModel is null) continue;
+
+            var (targetW, targetH) = FitToCanvas(pixelModel.Width, pixelModel.Height, vm.Model.Width, vm.Model.Height);
+
+            var data = BitmapService.SwapRB(pixelModel.Data);
+            if (targetW != pixelModel.Width || targetH != pixelModel.Height)
+                data = BitmapService.ResizePixelDataScaled(data, pixelModel.Width, pixelModel.Height, targetW, targetH);
+
+            data = BitmapService.CenterOnCanvas(data, targetW, targetH, vm.Model.Width, vm.Model.Height);
+
+            vm.LayerManager.Layers.Insert(0, new LayerModel(
+                vm.Model.Width,
+                vm.Model.Height,
+                data,
+                $"Layer {vm.LayerManager.Layers.Count + 1}"
+            ));
+
+            _addedLayersCount++;
+        }
+
+        vm.ConfirmPanelVisible = true;
+        vm.Canvas?.CanEdit = false;
+    }
+
+    private static (int w, int h) FitToCanvas(int srcW, int srcH, int canvasW, int canvasH)
+    {
+        if (srcW <= canvasW && srcH <= canvasH) return (srcW, srcH);
+
+        var scale = Math.Min((double)canvasW / srcW, (double)canvasH / srcH);
+        return (Math.Max(1, (int)(srcW * scale)), Math.Max(1, (int)(srcH * scale)));
     }
 
     private async void OnLayerHotkeys(object? sender, KeyEventArgs e)
