@@ -57,7 +57,7 @@
                 Opacity="{Binding CanvasOpacity}" />
         
             <Image
-                Source="{DynamicResource UpIcon}"
+                Source="{DynamicResource UploadIcon}"
                 IsVisible="{Binding ImageVisible}"
                 Width="80"
                 Height="80"

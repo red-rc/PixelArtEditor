@@ -34,6 +34,9 @@ public enum ColorSpace
 
 public class PixelModel
 {
+    public string? Name;
+    public string Extension = "png";
+
     public int Width;
     public int Height;
 

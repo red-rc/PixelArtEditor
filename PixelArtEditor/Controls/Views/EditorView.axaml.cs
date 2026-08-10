@@ -16,7 +16,7 @@ using PixelArtEditor.Models.Dock;
 using PixelArtEditor.UI;
 using PixelArtEditor.ViewModels;
 using System;
-using System.Diagnostics;
+using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 
@@ -36,11 +36,17 @@ public partial class EditorView : UserControl
     private readonly LayoutManager _layoutManager;
     private readonly TooltipManager _tooltipManager;
 
+    private IDisposable? _modelSubscription;
+    private PixelModel? _subscribedModel;
+
     private EditorVM? ViewModel => DataContext as EditorVM;
+
+    private bool IsEditorLocked =>
+        ViewModel?.ConfirmPanelVisible == true;
 
     private int _addedLayersCount = 0;
 
-    private void OnBackClick(object? sender, RoutedEventArgs e)
+    private void OnCancelClick(object? sender, RoutedEventArgs e)
     {
         if (ViewModel is null) return;
 
@@ -67,10 +73,7 @@ public partial class EditorView : UserControl
         _addedLayersCount--;
 
         if (_addedLayersCount == 0)
-        {
-            ViewModel.Canvas?.CanEdit = true;
             ViewModel.ConfirmPanelVisible = false;
-        }
     }
 
     public EditorView()
@@ -82,7 +85,7 @@ public partial class EditorView : UserControl
 
         AddHandler(KeyDownEvent, OnLayerHotkeys, RoutingStrategies.Tunnel);
 
-        this.DataContextChanged += OnDataContextChanged;
+        DataContextChanged += OnDataContextChanged;
 
         AttachedToVisualTree += (s, e) =>
         {
@@ -137,6 +140,7 @@ public partial class EditorView : UserControl
         vm.CanvasOpacity = 0;
         vm.ImageVisible = false;
 
+        List<LayerModel> addedLayers = [];
         foreach (var file in storageFiles)
         {
             var pixelModel = await ImageImportService.GetPixelModelFromFile(file);
@@ -144,24 +148,36 @@ public partial class EditorView : UserControl
 
             var (targetW, targetH) = FitToCanvas(pixelModel.Width, pixelModel.Height, vm.Model.Width, vm.Model.Height);
 
-            var data = BitmapService.SwapRB(pixelModel.Data);
-            if (targetW != pixelModel.Width || targetH != pixelModel.Height)
+            var rgba = PixelModelService.ToRgba32(pixelModel);
+            var data = BitmapService.SwapRB(rgba);
+
+            if (targetW != pixelModel.Width || targetH != pixelModel.Height) { }
                 data = BitmapService.ResizePixelDataScaled(data, pixelModel.Width, pixelModel.Height, targetW, targetH);
 
             data = BitmapService.CenterOnCanvas(data, targetW, targetH, vm.Model.Width, vm.Model.Height);
 
-            vm.LayerManager.Layers.Insert(0, new LayerModel(
+            var newLayer = new LayerModel(
                 vm.Model.Width,
                 vm.Model.Height,
                 data,
-                $"Layer {vm.LayerManager.Layers.Count + 1}"
-            ));
+                pixelModel.Name ?? $"Layer {vm.LayerManager.Layers.Count + 1}"
+            );
+
+            vm.LayerManager.Layers.Insert(0, newLayer);
+
+            addedLayers.Add(newLayer);
 
             _addedLayersCount++;
         }
 
+        LayerPanelControl.LayerListBox.SelectedItems?.Clear();
+        foreach (var layer in addedLayers)
+        {
+            var item = LayerPanelControl.ViewModel.LayerItems.FirstOrDefault(x => x.Layer == layer);
+            if (item is not null) LayerPanelControl.LayerListBox.SelectedItems?.Add(item);
+        }
+
         vm.ConfirmPanelVisible = true;
-        vm.Canvas?.CanEdit = false;
     }
 
     private static (int w, int h) FitToCanvas(int srcW, int srcH, int canvasW, int canvasH)
@@ -220,6 +236,10 @@ public partial class EditorView : UserControl
 
     private void OnDataContextChanged(object? sender, EventArgs e)
     {
+        _modelSubscription?.Dispose();
+        _subscribedModel?.ModelChanged -= OnModelChangedHandler;
+        _subscribedModel = null;
+
         if (ViewModel is not null)
         {
             LayerPanelControl.LayerManager = null;
@@ -229,15 +249,13 @@ public partial class EditorView : UserControl
 
             ViewModel.AdjustCanvas(CanvasPanel.Bounds.Width, CanvasPanel.Bounds.Height);
 
-            PixelModel? subscribedModel = null;
-
-            ViewModel.WhenAnyValue(x => x.Model).Subscribe(model =>
+            _modelSubscription = ViewModel.WhenAnyValue(x => x.Model).Subscribe(model =>
             {
-                subscribedModel?.ModelChanged -= OnModelChangedHandler;
+                _subscribedModel?.ModelChanged -= OnModelChangedHandler;
 
-                subscribedModel = model;
+                _subscribedModel = model;
 
-                subscribedModel?.ModelChanged += OnModelChangedHandler;
+                _subscribedModel?.ModelChanged += OnModelChangedHandler;
             });
 
             Dispatcher.UIThread.Post(() => Root.Focus());
@@ -293,7 +311,8 @@ public partial class EditorView : UserControl
         if (ViewModel == null
             || !e.GetCurrentPoint(CanvasPanel).Properties.IsRightButtonPressed
             || ViewModel.IsPositionSet
-            || !ViewModel.IsHandEnabled) return;
+            || !ViewModel.IsHandEnabled
+            || IsEditorLocked) return;
         ViewModel.StartDragging(e.GetPosition(CanvasPanel));
     }
 
@@ -302,7 +321,8 @@ public partial class EditorView : UserControl
         if (ViewModel == null
             || !e.GetCurrentPoint(CanvasPanel).Properties.IsRightButtonPressed
             || !ViewModel.IsPositionSet
-            || !ViewModel.IsHandEnabled) return;
+            || !ViewModel.IsHandEnabled
+            || IsEditorLocked) return;
         ViewModel.UpdateDragging(e.GetPosition(CanvasPanel));
     }
 
@@ -324,7 +344,10 @@ public partial class EditorView : UserControl
 
     private async void Panel_PointerPressed(object? sender, PointerPressedEventArgs e)
     {
-        if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed || _dragging) return;
+        if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed
+            || _dragging
+            || ViewModel == null
+            || IsEditorLocked) return;
 
         var source = e.Source as Control;
         _pressedOnPanel = source is not (Button or InstantToggleButton or TextBox or ComboBox or ListBox or ListBoxItem);
@@ -333,7 +356,11 @@ public partial class EditorView : UserControl
 
     private void Panel_PointerMoved(object? sender, PointerEventArgs e)
     {
-        if (sender is not Control draggedPanel || !e.GetCurrentPoint(this).Properties.IsLeftButtonPressed || !_pressedOnPanel) return;
+        if (sender is not Control draggedPanel
+            || !e.GetCurrentPoint(this).Properties.IsLeftButtonPressed
+            || !_pressedOnPanel
+            || ViewModel == null
+            || IsEditorLocked) return;
 
         if (!_dragging)
         {

@@ -43,8 +43,8 @@ public static class ImageExportService
         var saveOptions = new FilePickerSaveOptions
         {
             Title = "Export",
-            SuggestedFileName = "untitled",
-            DefaultExtension = "png",
+            SuggestedFileName = model.Name ?? "untitled",
+            DefaultExtension = model.Extension,
             FileTypeChoices = ExportFileTypes
         };
 

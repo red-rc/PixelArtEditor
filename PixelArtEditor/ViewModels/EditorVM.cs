@@ -198,12 +198,17 @@ public class EditorVM : ReactiveObject
 
     public void SetCanvas(Canvas canvas)
     {
-        Canvas = canvas;
+        _canvas = canvas;
 
-        LayerManager.InitializeFirstLayer(_model.Width, _model.Height, _model.Data, ""); // TODO: Make possible to get the name of the first layer in the future
+        LayerManager.InitializeFirstLayer(
+            _model.Width, 
+            _model.Height, 
+            _model.Data, 
+            _model.Name ?? $"Layer {LayerManager.Layers.Count + 1}");
+
         canvas.AttachLayerManager(LayerManager);
 
-        Canvas.WhenAnyValue(x => x.CurrentPixelCoord).Subscribe(coord =>
+        _canvas.WhenAnyValue(x => x.CurrentPixelCoord).Subscribe(coord =>
         {
             CoordinatesText = coord is null
                 ? "X: - Y: -"
@@ -216,6 +221,8 @@ public class EditorVM : ReactiveObject
     public EditorVM(PixelModel model)
     {
         _model = model;
+        ConfirmPanelVisible = false;
+
         AdjustCanvas(_lastPanelWidth, _lastPanelHeight);
     }
 
@@ -267,16 +274,11 @@ public class EditorVM : ReactiveObject
         var borderSize = modelWidth > modelHeight ? width : height;
         var canvasSize = modelWidth > modelHeight ? modelWidth : modelHeight;
 
-        MinScale = borderSize / canvasSize * 0.8;
+        MinScale = borderSize / canvasSize * 0.5;
         MaxScale = Math.Ceiling(borderSize / 8 * 10) / 10.0;
 
-        if (MaxScale < MinScale)
-        {
-            MaxScale = MinScale;
-        }
-
-        BaseScale = MinScale;
-        Scale = MinScale;
+        BaseScale = borderSize / canvasSize * 0.8;
+        Scale = BaseScale;
         Offset = Vector2.Zero;
 
         _lastPanelWidth = width;

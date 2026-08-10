@@ -228,6 +228,8 @@ public static class BitmapService
                 if (dx < 0 || dx >= canvasW) continue;
 
                 var si = (y * srcW + x) * 4;
+                if (si + 3 >= src.Length) continue;
+
                 var di = (dy * canvasW + dx) * 4;
 
                 dst[di + 0] = src[si + 0];

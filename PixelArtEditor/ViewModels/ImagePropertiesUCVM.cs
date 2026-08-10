@@ -10,6 +10,8 @@ public class ImagePropertiesUCVM : ReactiveObject
     private float _imageProportion = 0f;
     private bool _isUpdating = false;
 
+    public string? Name;
+
     private int _width = 32;
     public int Width
     {
@@ -183,7 +185,7 @@ public class ImagePropertiesUCVM : ReactiveObject
 
     public ImagePropertiesUCVM()
     {
-        this.Changed.Subscribe(_ => UpdateLivePreview());
+        Changed.Subscribe(_ => UpdateLivePreview());
         UpdateLivePreview();
     }
 
@@ -194,6 +196,7 @@ public class ImagePropertiesUCVM : ReactiveObject
 
         LivePreviewParams = new PixelModel
         {
+            Name = Name,
             Width = Width,
             Height = Height,
             Mode = ColorMode,

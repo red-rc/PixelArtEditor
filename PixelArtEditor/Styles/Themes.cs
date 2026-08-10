@@ -129,6 +129,7 @@ public abstract class BaseTheme
         Resources["RedoIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/UIElements/redo.png");
         Resources["UndoIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/UIElements/undo.png");
         Resources["UploadIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/UIElements/upload.png");
+        Resources["CheckMarkIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/UIElements/checkMark.png");
     }
 
     public void SetLightIcons()
@@ -161,6 +162,7 @@ public abstract class BaseTheme
         Resources["RedoIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Light/UIElements/redo.png");
         Resources["UndoIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Light/UIElements/undo.png");
         Resources["UploadIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Light/UIElements/upload.png");
+        Resources["CheckMarkIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Light/UIElements/checkMark.png");
     }
 }
 

@@ -95,7 +95,7 @@ public static class ImageImportService
             using var image = SharpImage.Load(ms);
 
             // Крок 3: патерн-матчинг по реальному типу
-            return image switch
+            var pixelModel = image switch
             {
                 Image<Rgba32> img => ReadRgba32(img),
                 Image<Rgb24> img => ReadRgb24(img),
@@ -106,11 +106,13 @@ public static class ImageImportService
                 Image<La16> img => ReadLa16(img),
                 Image<La32> img => ReadLa32(img),
                 Image<Bgr565> img => ReadBgr565(img),
-
-                // fallback: якщо тип невідомий — конвертуємо в Rgba32
-                // краще так ніж падати
                 _ => ReadFallback(image)
             };
+
+            pixelModel.Name = Path.GetFileNameWithoutExtension(file.Name);
+            pixelModel.Extension = Path.GetExtension(file.Name);
+
+            return pixelModel;
         });
     }
 

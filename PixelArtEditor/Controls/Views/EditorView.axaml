@@ -30,16 +30,16 @@
                 Tag="Horizontal">
                 <StackPanel Orientation="Horizontal" IsVisible="{Binding ConfirmPanelVisible}">
                     <Button
-                        Name="BackButton"
+                        Name="CancelButton"
                         Width="30"
                         Height="30"
                         Margin="10,0,0,0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Center"
                         Classes="UiButton"
-                        Click="OnBackClick">
+                        Click="OnCancelClick">
                         <Image 
-                            Source="{DynamicResource DownIcon}" 
+                            Source="{DynamicResource CancelIcon}" 
                             Width="18" Height="18" 
                             RenderOptions.BitmapInterpolationMode="None" />
                     </Button>
@@ -53,7 +53,7 @@
                         Classes="UiButton"
                         Click="OnConfirmClick">
                         <Image 
-                            Source="{DynamicResource UpIcon}"
+                            Source="{DynamicResource CheckMarkIcon}"
                             Width="18" Height="18" 
                             RenderOptions.BitmapInterpolationMode="None" />
                     </Button>
@@ -154,7 +154,7 @@
                 Opacity="{Binding CanvasOpacity}" />
         
             <Image
-                Source="{DynamicResource UpIcon}"
+                Source="{DynamicResource UploadIcon}"
                 IsVisible="{Binding ImageVisible}"
                 Width="80"
                 Height="80"
