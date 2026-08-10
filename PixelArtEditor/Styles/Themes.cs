@@ -125,6 +125,10 @@ public abstract class BaseTheme
         Resources["DownIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/LayerButtons/down.png");
 
         Resources["ChainIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/UIElements/chain.png");
+        Resources["CancelIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/UIElements/cancel.png");
+        Resources["RedoIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/UIElements/redo.png");
+        Resources["UndoIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/UIElements/undo.png");
+        Resources["UploadIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/UIElements/upload.png");
     }
 
     public void SetLightIcons()
@@ -153,6 +157,10 @@ public abstract class BaseTheme
         Resources["DownIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Light/LayerButtons/down.png");
 
         Resources["ChainIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Light/UIElements/chain.png");
+        Resources["CancelIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Light/UIElements/cancel.png");
+        Resources["RedoIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Light/UIElements/redo.png");
+        Resources["UndoIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Light/UIElements/undo.png");
+        Resources["UploadIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Light/UIElements/upload.png");
     }
 }
 
