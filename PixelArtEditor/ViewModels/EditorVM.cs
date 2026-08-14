@@ -222,7 +222,6 @@ public class EditorVM : ReactiveObject
     {
         _model = model;
         ConfirmPanelVisible = false;
-        _canvas?.CanEdit = true;
 
         AdjustCanvas(_lastPanelWidth, _lastPanelHeight);
     }

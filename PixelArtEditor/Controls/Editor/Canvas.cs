@@ -158,6 +158,8 @@ public class Canvas : Control, ICanvasContext
         LayerManager?.Layers.CollectionChanged -= OnLayersChanged;
 
         RenderCache.Clear();
+        CanEdit = true;
+
         LayerManager = layerManager;
         LayerManager.Layers.CollectionChanged += OnLayersChanged;
 
