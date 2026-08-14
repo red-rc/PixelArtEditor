@@ -4,6 +4,7 @@ using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using PixelArtEditor.AppServices;
 using PixelArtEditor.AppServices.Image;
+using PixelArtEditor.Models.Canvas;
 using PixelArtEditor.ViewModels;
 using System.Linq;
 using System.Threading.Tasks;
@@ -57,6 +58,10 @@ public partial class StartMenuView : UserControl
 
         var model = await ImageImportService.GetPixelModelFromFile(file);
         if (model == null) return;
+
+        model.Data = PixelModelService.ToRgba32(model);
+        model.Mode = ColorMode.RGBA;
+        model.BitDepth = BitDepth.Bit8;
 
         Services.Navigation.NavigateTo(new EditorVM(model));
     }

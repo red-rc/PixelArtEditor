@@ -21,6 +21,10 @@ public static class ActionService
         var model = await ImageImportService.ImportImageAsync();
         if (model == null) return;
 
+        model.Data = PixelModelService.ToRgba32(model);
+        model.Mode = ColorMode.RGBA;
+        model.BitDepth = BitDepth.Bit8;
+
         Services.Navigation.NavigateTo(new EditorVM(model));
     }
 

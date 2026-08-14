@@ -1,10 +1,14 @@
 ﻿using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform.Storage;
+using MsBox.Avalonia;
+using MsBox.Avalonia.Enums;
+using PixelArtEditor.Helpers;
 using PixelArtEditor.Models.Canvas;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Metadata;
 using SixLabors.ImageSharp.PixelFormats;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -63,57 +67,70 @@ public static class ImageImportService
     {
         if (file is null) return null;
 
-        await using var stream = await file.OpenReadAsync();
-        var ms = new MemoryStream();
-        await stream.CopyToAsync(ms);
-
-        return await Task.Run(() =>
+        Stream stream;
+        try
         {
-            // Крок 1: дізнатись інформацію про формат БЕЗ завантаження пікселів
+            stream = await file.OpenReadAsync();
+        }
+        catch (Exception ex)
+        {
+            await MsBoxHelper.ShowErrorAsync(ex.Message);
+            return null;
+        }
 
-            // Крок 2: завантажити як IImage — ImageSharp сам вибере правильний внутрішній тип
+        await using (stream)
+        {
+            var ms = new MemoryStream();
+            await stream.CopyToAsync(ms);
 
-            ms.Position = 0;
-
-            ImageInfo? info;
-            try
+            var (model, error) = await Task.Run(() =>
             {
-                info = SharpImage.Identify(ms);
-            }
-            catch (UnknownImageFormatException)
+                ms.Position = 0;
+
+                ImageInfo? info;
+                try
+                {
+                    info = SharpImage.Identify(ms);
+                }
+                catch (UnknownImageFormatException)
+                {
+                    return (null, "Unsupported image format.");
+                }
+                catch (InvalidImageContentException)
+                {
+                    return (null, "The file is corrupted or contains invalid content.");
+                }
+
+                if (info is null) return ((PixelModel?)null, "Could not read image information.");
+
+                ms.Position = 0;
+                using var image = SharpImage.Load(ms);
+
+                PixelModel result = image switch
+                {
+                    Image<Rgba32> img => ReadRgba32(img),
+                    Image<Rgb24> img => ReadRgb24(img),
+                    Image<Rgba64> img => ReadRgba64(img),
+                    Image<Rgb48> img => ReadRgb48(img),
+                    Image<L8> img => ReadL8(img),
+                    Image<L16> img => ReadL16(img),
+                    Image<La16> img => ReadLa16(img),
+                    Image<La32> img => ReadLa32(img),
+                    Image<Bgr565> img => ReadBgr565(img),
+                    _ => ReadFallback(image)
+                };
+
+                return (result, (string?)null);
+            });
+
+            if (error is not null)
             {
+                await MsBoxHelper.ShowErrorAsync(error);
                 return null;
             }
-            catch (InvalidImageContentException)
-            {
-                return null;
-            }
 
-            if (info is null) return null;
-
-            ms.Position = 0;
-            using var image = SharpImage.Load(ms);
-
-            // Крок 3: патерн-матчинг по реальному типу
-            var pixelModel = image switch
-            {
-                Image<Rgba32> img => ReadRgba32(img),
-                Image<Rgb24> img => ReadRgb24(img),
-                Image<Rgba64> img => ReadRgba64(img),
-                Image<Rgb48> img => ReadRgb48(img),
-                Image<L8> img => ReadL8(img),
-                Image<L16> img => ReadL16(img),
-                Image<La16> img => ReadLa16(img),
-                Image<La32> img => ReadLa32(img),
-                Image<Bgr565> img => ReadBgr565(img),
-                _ => ReadFallback(image)
-            };
-
-            pixelModel.Name = Path.GetFileNameWithoutExtension(file.Name);
-            pixelModel.Extension = Path.GetExtension(file.Name);
-
-            return pixelModel;
-        });
+            return model;
+        }
     }
 
     private static (float dpiX, float dpiY) GetDpi(ImageMetadata meta)
