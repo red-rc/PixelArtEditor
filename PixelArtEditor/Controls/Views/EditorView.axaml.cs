@@ -41,9 +41,6 @@ public partial class EditorView : UserControl
 
     private EditorVM? ViewModel => DataContext as EditorVM;
 
-    private bool IsEditorLocked =>
-        ViewModel?.ConfirmPanelVisible == true;
-
     private int _addedLayersCount = 0;
 
     private void OnCancelClick(object? sender, RoutedEventArgs e)
@@ -73,7 +70,10 @@ public partial class EditorView : UserControl
         _addedLayersCount--;
 
         if (_addedLayersCount == 0)
+        {
             ViewModel.ConfirmPanelVisible = false;
+            ViewModel.Canvas?.CanEdit = true;
+        }
     }
 
     public EditorView()
@@ -178,6 +178,7 @@ public partial class EditorView : UserControl
         }
 
         vm.ConfirmPanelVisible = true;
+        vm.Canvas?.CanEdit = false;
     }
 
     private static (int w, int h) FitToCanvas(int srcW, int srcH, int canvasW, int canvasH)
@@ -311,8 +312,7 @@ public partial class EditorView : UserControl
         if (ViewModel == null
             || !e.GetCurrentPoint(CanvasPanel).Properties.IsRightButtonPressed
             || ViewModel.IsPositionSet
-            || !ViewModel.IsHandEnabled
-            || IsEditorLocked) return;
+            || !ViewModel.IsHandEnabled) return;
         ViewModel.StartDragging(e.GetPosition(CanvasPanel));
     }
 
@@ -321,8 +321,7 @@ public partial class EditorView : UserControl
         if (ViewModel == null
             || !e.GetCurrentPoint(CanvasPanel).Properties.IsRightButtonPressed
             || !ViewModel.IsPositionSet
-            || !ViewModel.IsHandEnabled
-            || IsEditorLocked) return;
+            || !ViewModel.IsHandEnabled) return;
         ViewModel.UpdateDragging(e.GetPosition(CanvasPanel));
     }
 
@@ -344,10 +343,7 @@ public partial class EditorView : UserControl
 
     private async void Panel_PointerPressed(object? sender, PointerPressedEventArgs e)
     {
-        if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed
-            || _dragging
-            || ViewModel == null
-            || IsEditorLocked) return;
+        if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed || _dragging || ViewModel == null) return;
 
         var source = e.Source as Control;
         _pressedOnPanel = source is not (Button or InstantToggleButton or TextBox or ComboBox or ListBox or ListBoxItem);
@@ -359,8 +355,7 @@ public partial class EditorView : UserControl
         if (sender is not Control draggedPanel
             || !e.GetCurrentPoint(this).Properties.IsLeftButtonPressed
             || !_pressedOnPanel
-            || ViewModel == null
-            || IsEditorLocked) return;
+            || ViewModel == null) return;
 
         if (!_dragging)
         {

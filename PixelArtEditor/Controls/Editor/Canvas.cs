@@ -68,6 +68,7 @@ public class Canvas : Control, ICanvasContext
 
     private ITool _currentTool = new EmptyTool();
 
+    public bool CanEdit = true;
 
     private PixelPoint? _hoverPixel;
     public PixelPoint? HoverPixel
@@ -209,7 +210,7 @@ public class Canvas : Control, ICanvasContext
         HoverPixel = CurrentPixelCoord;
 
         if (!_isLeftPressed) return;
-        if (LayerManager.ActiveLayer is { IsVisible: false } or { IsLocked: true }) return;
+        if (LayerManager.ActiveLayer is { IsVisible: false } or { IsLocked: true } || !CanEdit) return;
 
         _currentTool.OnPointerMoved(this);
     }
@@ -220,7 +221,7 @@ public class Canvas : Control, ICanvasContext
 
         if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed) return;
 
-        if (LayerManager.ActiveLayer is { IsVisible: false } or { IsLocked: true }) return;
+        if (LayerManager.ActiveLayer is { IsVisible: false } or { IsLocked: true } || !CanEdit) return;
 
         _isLeftPressed = true;
         _currentTool.OnPointerPressed(this);
