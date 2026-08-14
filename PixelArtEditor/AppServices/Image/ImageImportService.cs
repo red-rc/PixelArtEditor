@@ -3,6 +3,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform.Storage;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
+using PixelArtEditor.AppServices.Shell;
 using PixelArtEditor.Helpers;
 using PixelArtEditor.Models.Canvas;
 using SixLabors.ImageSharp;
@@ -74,7 +75,7 @@ public static class ImageImportService
         }
         catch (Exception ex)
         {
-            await MsBoxHelper.ShowErrorAsync(ex.Message);
+            await ActionService.ShowErrorAsync(ex.Message);
             return null;
         }
 
@@ -125,7 +126,7 @@ public static class ImageImportService
 
             if (error is not null)
             {
-                await MsBoxHelper.ShowErrorAsync(error);
+                await ActionService.ShowErrorAsync(error);
                 return null;
             }
 
