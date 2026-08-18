@@ -5,17 +5,18 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="clr-namespace:PixelArtEditor.Controls.Image"
+    xmlns:controlsGlobal="clr-namespace:PixelArtEditor.Controls"
     xmlns:vm="clr-namespace:PixelArtEditor.ViewModels"
     xmlns:ui="clr-namespace:PixelArtEditor.UI"
-    Title="Image Properties"
     Width="700"
     Height="450"
     d:DesignHeight="450"
     d:DesignWidth="700"
     x:DataType="vm:ImagePropertiesVM"
     Background="{DynamicResource BackgroundColor}"
+    ExtendClientAreaToDecorationsHint="True"
+    WindowDecorations="BorderOnly"
     CanResize="False"
-    Icon="/Assets/info-icon.ico"
     WindowStartupLocation="CenterOwner"
     mc:Ignorable="d">
 
@@ -33,63 +34,71 @@
         </Style>
     </Window.Styles>
 
-    <DockPanel Background="{DynamicResource SecondaryBackgroundColor}">
-        <Grid
-            Margin="20,50,20,0"
-            ColumnDefinitions="250,Auto,10,Auto"
-            DockPanel.Dock="Top">
-            <ui:Preview
-                Grid.Column="0"
-                Margin="30,40,0,0"
-                Layer="{Binding Layer}"
-                IsAlreadyBgra="True" />
+    <Grid RowDefinitions="Auto,*" Background="{DynamicResource SecondaryBackgroundColor}">
+        <controlsGlobal:TitleBar 
+            Grid.Row="0" 
+            Title="Image Properties" 
+            IconVisible="False" 
+            CanMinimize="False" 
+            CanMaximize="False" />
+        <Grid Grid.Row="1">
+            <Grid
+                Margin="20,30,20,0"
+                ColumnDefinitions="250,Auto,10,Auto"
+                DockPanel.Dock="Top">
+                <ui:Preview
+                    Grid.Column="0"
+                    Margin="30,40,0,0"
+                    Layer="{Binding Layer}"
+                    IsAlreadyBgra="True" />
 
-            <StackPanel Grid.Column="1" Spacing="10">
-                <TextBlock Classes="Header" Text="{DynamicResource ImgPropSize}" />
-                <controls:SizePanel DataContext="{Binding ImageProperties}" />
-            </StackPanel>
-            <StackPanel Grid.Column="3" Spacing="10">
-                <TextBlock Classes="Header" Text="{DynamicResource CrWinAdvanced}" />
-                <controls:PropertiesPanel DataContext="{Binding ImageProperties}" />
-            </StackPanel>
+                <StackPanel Grid.Column="1" Spacing="10">
+                    <TextBlock Classes="Header" Text="{DynamicResource ImgPropSize}" />
+                    <controls:SizePanel DataContext="{Binding ImageProperties}" />
+                </StackPanel>
+                <StackPanel Grid.Column="3" Spacing="10">
+                    <TextBlock Classes="Header" Text="{DynamicResource CrWinAdvanced}" />
+                    <controls:PropertiesPanel DataContext="{Binding ImageProperties}" />
+                </StackPanel>
+            </Grid>
+            <Grid
+                Height="100"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Bottom"
+                Background="{DynamicResource BackgroundColor}"
+                ColumnDefinitions="*,Auto,Auto"
+                DockPanel.Dock="Bottom">
+                <Button
+                    Grid.Column="0"
+                    Margin="0,25,10,25"
+                    Padding="30,0,30,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Stretch"
+                    Classes="BorderButton"
+                    Command="{Binding CancelCommand}"
+                    Content="{DynamicResource SetWinCancel}"
+                    FontSize="20" />
+                <Button
+                    Grid.Column="1"
+                    Margin="0,25,10,25"
+                    Padding="30,0,30,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Stretch"
+                    Classes="GrayButton"
+                    Command="{Binding ResetCommand}"
+                    Content="{DynamicResource SetWinReset}"
+                    FontSize="20" />
+                <Button
+                    Grid.Column="2"
+                    Margin="0,25,25,25"
+                    Padding="30,0,30,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Stretch"
+                    Classes="CreateButton"
+                    Command="{Binding SaveCommand}"
+                    Content="{DynamicResource SetWinSave}"
+                    FontSize="20" />
+            </Grid>
         </Grid>
-        <Grid
-            Height="100"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Bottom"
-            Background="{DynamicResource BackgroundColor}"
-            ColumnDefinitions="*,Auto,Auto"
-            DockPanel.Dock="Bottom">
-            <Button
-                Grid.Column="0"
-                Margin="0,25,10,25"
-                Padding="30,0,30,0"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Stretch"
-                Classes="BorderButton"
-                Command="{Binding CancelCommand}"
-                Content="{DynamicResource SetWinCancel}"
-                FontSize="20" />
-            <Button
-                Grid.Column="1"
-                Margin="0,25,10,25"
-                Padding="30,0,30,0"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Stretch"
-                Classes="GrayButton"
-                Command="{Binding ResetCommand}"
-                Content="{DynamicResource SetWinReset}"
-                FontSize="20" />
-            <Button
-                Grid.Column="2"
-                Margin="0,25,10,25"
-                Padding="30,0,30,0"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Stretch"
-                Classes="CreateButton"
-                Command="{Binding SaveCommand}"
-                Content="{DynamicResource SetWinSave}"
-                FontSize="20" />
-        </Grid>
-    </DockPanel>
+    </Grid>
 </Window>

@@ -6,16 +6,17 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:other="clr-namespace:PixelArtEditor.Other"
     xmlns:settings="clr-namespace:PixelArtEditor.Views.SettingsViews"
+    xmlns:controls="clr-namespace:PixelArtEditor.Controls"
     xmlns:vm="clr-namespace:PixelArtEditor.ViewModels"
-    Title="Settings"
-    Width="600"
-    Height="450"
-    d:DesignHeight="450"
-    d:DesignWidth="600"
+    Width="650"
+    Height="500"
+    d:DesignHeight="500"
+    d:DesignWidth="650"
     x:DataType="vm:SettingsDialogVM"
     Background="{DynamicResource BackgroundColor}"
+    ExtendClientAreaToDecorationsHint="True"
+    WindowDecorations="BorderOnly"
     CanResize="False"
-    Icon="/Assets/info-icon.ico"
     WindowStartupLocation="CenterOwner"
     mc:Ignorable="d">
 
@@ -29,65 +30,72 @@
         </Style>
     </Window.Styles>
 
-    <DockPanel Background="{DynamicResource SecondaryBackgroundColor}">
-        <DockPanel
-            Width="150"
-            HorizontalAlignment="Left"
-            DockPanel.Dock="Left">
-            <ListBox Classes="SelectionListBox" SelectedIndex="{Binding SelectedTabIndex, Mode=TwoWay}">
-                <ListBoxItem
-                    HorizontalContentAlignment="Center"
-                    Classes="Heading"
-                    Content="{DynamicResource SetWinGeneral}" />
-                <ListBoxItem
-                    HorizontalContentAlignment="Center"
-                    Classes="Heading"
-                    Content="{DynamicResource SetWinAppearance}" />
-            </ListBox>
-        </DockPanel>
-        <StackPanel
-            Margin="40,20,40,0"
-            VerticalAlignment="Center"
-            DockPanel.Dock="Top">
-            <ContentControl Content="{Binding SelectedTabIndex, Converter={StaticResource TabToViewConverter}}" />
-        </StackPanel>
-        <Grid
-            Height="100"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Bottom"
-            Background="{DynamicResource BackgroundColor}"
-            ColumnDefinitions="*,Auto,Auto"
-            DockPanel.Dock="Bottom">
-            <Button
-                Grid.Column="0"
-                Margin="0,25,10,25"
-                Padding="30,0,30,0"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Stretch"
-                Classes="BorderButton"
-                Command="{Binding CancelCommand}"
-                Content="{DynamicResource SetWinCancel}"
-                FontSize="20" />
-            <Button
-                Grid.Column="1"
-                Margin="0,25,10,25"
-                Padding="30,0,30,0"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Stretch"
-                Classes="GrayButton"
-                Command="{Binding ResetCommand}"
-                Content="{DynamicResource SetWinReset}"
-                FontSize="20" />
-            <Button
-                Grid.Column="2"
-                Margin="0,25,10,25"
-                Padding="30,0,30,0"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Stretch"
-                Classes="CreateButton"
-                Command="{Binding SaveCommand}"
-                Content="{DynamicResource SetWinSave}"
-                FontSize="20" />
+    <Grid RowDefinitions="Auto,*" Background="{DynamicResource SecondaryBackgroundColor}">
+        <controls:TitleBar 
+            Grid.Row="0"
+            Title="Settings" 
+            IconVisible="False" 
+            CanMinimize="False" 
+            CanMaximize="False" />
+        <Grid ColumnDefinitions="Auto,*" Grid.Row="1">
+            <StackPanel
+                Width="150"
+                HorizontalAlignment="Left"
+                Grid.Column="0">
+                <ListBox Classes="SelectionListBox" SelectedIndex="{Binding SelectedTabIndex, Mode=TwoWay}">
+                    <ListBoxItem
+                        HorizontalContentAlignment="Center"
+                        Classes="Heading"
+                        Content="{DynamicResource SetWinGeneral}" />
+                    <ListBoxItem
+                        HorizontalContentAlignment="Center"
+                        Classes="Heading"
+                        Content="{DynamicResource SetWinAppearance}" />
+                </ListBox>
+            </StackPanel>
+            <StackPanel
+                Margin="20,20,40,0"
+                Grid.Column="1">
+                <ContentControl Content="{Binding SelectedTabIndex, Converter={StaticResource TabToViewConverter}}" />
+            </StackPanel>
+            <Grid
+                Height="100"
+                Grid.ColumnSpan="2"
+                VerticalAlignment="Bottom"
+                Background="{DynamicResource BackgroundColor}"
+                ColumnDefinitions="*,Auto,Auto"
+                DockPanel.Dock="Bottom">
+                <Button
+                    Grid.Column="0"
+                    Margin="0,25,10,25"
+                    Padding="30,0,30,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Stretch"
+                    Classes="BorderButton"
+                    Command="{Binding CancelCommand}"
+                    Content="{DynamicResource SetWinCancel}"
+                    FontSize="20" />
+                <Button
+                    Grid.Column="1"
+                    Margin="0,25,10,25"
+                    Padding="30,0,30,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Stretch"
+                    Classes="GrayButton"
+                    Command="{Binding ResetCommand}"
+                    Content="{DynamicResource SetWinReset}"
+                    FontSize="20" />
+                <Button
+                    Grid.Column="2"
+                    Margin="0,25,25,25"
+                    Padding="30,0,30,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Stretch"
+                    Classes="CreateButton"
+                    Command="{Binding SaveCommand}"
+                    Content="{DynamicResource SetWinSave}"
+                    FontSize="20" />
+            </Grid>
         </Grid>
-    </DockPanel>
+    </Grid>
 </Window>

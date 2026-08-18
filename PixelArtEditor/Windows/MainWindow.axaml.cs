@@ -11,7 +11,6 @@ namespace PixelArtEditor.Windows;
 public partial class MainWindow : Window
 {
     private const int EdgeSize = 4;
-    private PointerPressedEventArgs? _pressedArgs;
     private PixelPoint _pressedPoint;
 
     public MainWindow()
@@ -22,7 +21,6 @@ public partial class MainWindow : Window
 
         AddHandler(PointerPressedEvent, Resize, RoutingStrategies.Tunnel);
         AddHandler(PointerMovedEvent, UpdateCursor, RoutingStrategies.Tunnel);
-        AddHandler(KeyDownEvent, OnKeyDown, RoutingStrategies.Tunnel);
     }
 
     private void Resize(object? sender, PointerPressedEventArgs e)
@@ -81,30 +79,9 @@ public partial class MainWindow : Window
             Cursor = new Cursor(StandardCursorType.Arrow);
     }
 
-    private void OnMinimizeClick(object? sender, RoutedEventArgs routedEventArgs)
-    {
-        Services.WindowState.Current = WindowState.Minimized;
-    }
-    private void OnMaximizeClick(object? sender, RoutedEventArgs routedEventArgs)
-    {
-        Services.WindowState.Current = Services.WindowState.Current switch
-        {
-            WindowState.Maximized => WindowState.Normal,
-            WindowState.FullScreen => WindowState.Normal,
-            WindowState.Normal => WindowState.Maximized,
-            _ => WindowState
-        };
-    }
-    private void OnCloseClick(object? sender, RoutedEventArgs routedEventArgs)
-    {
-        Close();
-    }
-
     private void OnPointerPressed(object? sender, PointerPressedEventArgs e)
     {
         if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed) return;
-
-        _pressedArgs = e;
 
         var point = e.GetPosition(this);
         _pressedPoint = new PixelPoint((int)point.X, (int)point.Y);
@@ -112,7 +89,7 @@ public partial class MainWindow : Window
 
     private void OnPointerMoved(object? sender, PointerEventArgs e)
     {
-        if (_pressedArgs is null || !e.GetCurrentPoint(this).Properties.IsLeftButtonPressed) return;
+        if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed) return;
 
         var point = e.GetPosition(this);
         if (Math.Abs(point.X - _pressedPoint.X) < 7 && Math.Abs(point.Y - _pressedPoint.Y) < 7) return;
@@ -128,24 +105,5 @@ public partial class MainWindow : Window
                 (int)(point.X - Bounds.Width * relativeX),
                 (int)(point.Y - Bounds.Height * relativeY));
         }
-
-        BeginMoveDrag(_pressedArgs);
-        _pressedArgs = null;
-    }
-
-    private void OnPointerReleased(object? sender, PointerReleasedEventArgs e)
-    {
-        _pressedArgs = null;
-    }
-
-    private void OnKeyDown(object? sender, KeyEventArgs e)
-    {
-        if (e.Key != Key.F11) return;
-
-        e.Handled = true;
-        if (Services.WindowState.Current == WindowState.FullScreen)
-            Services.WindowState.Current = WindowState.Normal;
-        else
-            Services.WindowState.Current = WindowState.FullScreen;
     }
 }

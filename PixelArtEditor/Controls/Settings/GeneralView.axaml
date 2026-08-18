@@ -32,7 +32,7 @@
             <Setter Property="Padding" Value="10,0,10,0" />
         </Style>
     </UserControl.Styles>
-    <StackPanel Orientation="Vertical" Spacing="5">
+    <StackPanel Orientation="Vertical" Spacing="15">
         <StackPanel Orientation="Horizontal" Spacing="10">
             <TextBlock Text="{DynamicResource GenViewLanguage}" />
             <ComboBox
@@ -46,53 +46,57 @@
                 </ComboBox.ItemTemplate>
             </ComboBox>
         </StackPanel>
-        <TextBlock
-            Margin="0,10,0,0"
-            Classes="Heading"
-            Text="{DynamicResource GenViewGrid}" />
-        <Separator
-            Height="1"
-            Margin="0.5"
-            Background="Gray"
-            Foreground="{DynamicResource ForegroundColor}" />
-        <StackPanel Orientation="Horizontal" Spacing="10">
-            <TextBlock Text="{DynamicResource GenViewGridMaxSize}" />
-            <NumericUpDown
-                Width="50"
-                Maximum="8192"
-                Minimum="0"
-                Value="{Binding GridMaxSize, FallbackValue=0}" />
+        <StackPanel Spacing="5">
+            <TextBlock
+                Margin="0,10,0,0"
+                Classes="Heading"
+                Text="{DynamicResource GenViewGrid}" />
+            <Separator
+                Height="1"
+                Margin="0.5"
+                Background="Gray"
+                Foreground="{DynamicResource ForegroundColor}" />
+            <StackPanel Orientation="Horizontal" Spacing="10">
+                <TextBlock Text="{DynamicResource GenViewGridMaxSize}" />
+                <NumericUpDown
+                    Width="50"
+                    Maximum="8192"
+                    Minimum="0"
+                    Value="{Binding GridMaxSize, FallbackValue=0}" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="10">
+                <TextBlock Text="{DynamicResource GenViewGridColor}" />
+                <ColorPicker Width="100" Color="{Binding GridColor, Mode=TwoWay}" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="10">
+                <TextBlock Text="{DynamicResource GenViewEnableGrid}" />
+                <CheckBox IsChecked="{Binding EnableGrid}" />
+            </StackPanel>
         </StackPanel>
-        <StackPanel Orientation="Horizontal" Spacing="10">
-            <TextBlock Text="{DynamicResource GenViewGridColor}" />
-            <ColorPicker Width="100" Color="{Binding GridColor, Mode=TwoWay}" />
-        </StackPanel>
-        <StackPanel Orientation="Horizontal" Spacing="10">
-            <TextBlock Text="{DynamicResource GenViewEnableGrid}" />
-            <CheckBox IsChecked="{Binding EnableGrid}" />
-        </StackPanel>
-        <TextBlock
-            Margin="0,10,0,0"
-            Classes="Heading"
-            Text="{DynamicResource GenViewAutosave}" />
-        <Separator
-            Height="1"
-            Margin="0.5"
-            Background="Gray"
-            Foreground="{DynamicResource ForegroundColor}" />
-        <StackPanel Orientation="Horizontal" Spacing="10">
-            <TextBlock Text="{DynamicResource GenViewEnableAutosave}" />
-            <CheckBox IsChecked="{Binding EnableAutosave}" />
-        </StackPanel>
-        <StackPanel Orientation="Horizontal" Spacing="10">
-            <TextBlock Text="{DynamicResource GenViewAutosaveEvery}" />
-            <NumericUpDown
-                Width="50"
-                IsEnabled="{Binding EnableAutosave}"
-                Maximum="900"
-                Minimum="10"
-                Value="{Binding AutosaveFrequency, FallbackValue=10}" />
-            <TextBlock Text="{DynamicResource GenViewSeconds}" />
+        <StackPanel Spacing="5">
+            <TextBlock
+                Margin="0,10,0,0"
+                Classes="Heading"
+                Text="{DynamicResource GenViewAutosave}" />
+            <Separator
+                Height="1"
+                Margin="0.5"
+                Background="Gray"
+                Foreground="{DynamicResource ForegroundColor}" />
+            <StackPanel Orientation="Horizontal" Spacing="10">
+                <TextBlock Text="{DynamicResource GenViewEnableAutosave}" />
+                <CheckBox IsChecked="{Binding EnableAutosave}" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="10">
+                <TextBlock Text="{DynamicResource GenViewAutosaveEvery}" />
+                <NumericUpDown
+                    Width="50"
+                    IsEnabled="{Binding EnableAutosave}"
+                    Maximum="900"
+                    Minimum="10"
+                    Value="{Binding AutosaveFrequency, FallbackValue=10}" />
+                <TextBlock Text="{DynamicResource GenViewSeconds}" />
+            </StackPanel>
         </StackPanel>
     </StackPanel>
 </UserControl>

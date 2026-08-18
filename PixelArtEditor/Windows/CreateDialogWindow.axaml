@@ -6,16 +6,18 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="clr-namespace:PixelArtEditor.UI"
     xmlns:controls="clr-namespace:PixelArtEditor.Controls.Image"
+    xmlns:controlsGlobal="clr-namespace:PixelArtEditor.Controls"
     xmlns:vm="clr-namespace:PixelArtEditor.ViewModels"
-    Title="{DynamicResource CrWinTitle}"
+    Title=""
     Width="725"
     Height="450"
     d:DesignHeight="450"
     d:DesignWidth="725"
     x:DataType="vm:CreateDialogVM"
     Background="{DynamicResource BackgroundColor}"
+    ExtendClientAreaToDecorationsHint="True"
+    WindowDecorations="BorderOnly"
     CanResize="False"
-    Icon="/Assets/info-icon.ico"
     WindowStartupLocation="CenterOwner"
     mc:Ignorable="d">
 
@@ -44,65 +46,68 @@
         </Style>
     </Window.Styles>
 
-    <DockPanel
-        HorizontalAlignment="Stretch"
-        VerticalAlignment="Stretch"
-        Background="{DynamicResource SecondaryBackgroundColor}">
-        <Grid
-            Margin="20,50,20,0"
-            ColumnDefinitions="250,Auto,10,Auto"
-            DockPanel.Dock="Top">
-            <ui:Preview
-                Grid.Column="0"
-                Margin="30,40,0,0"
-                Layer="{Binding Layer}"
-                IsAlreadyBgra="False" />
+    <Grid RowDefinitions="Auto,*" Background="{DynamicResource SecondaryBackgroundColor}">
+        <controlsGlobal:TitleBar 
+            Grid.Row="0" 
+            Title="{DynamicResource CrWinTitle}" 
+            IconVisible="False" 
+            CanMinimize="False" 
+            CanMaximize="False" />
+        <Grid Grid.Row="1">
+            <Grid
+                Margin="20,20,20,0"
+                ColumnDefinitions="250,Auto,10,Auto">
+                <ui:Preview
+                    Grid.Column="0"
+                    Margin="30,40,0,0"
+                    Layer="{Binding Layer}"
+                    IsAlreadyBgra="False" />
 
-            <StackPanel Grid.Column="1" Spacing="10">
-                <TextBlock Classes="Header" Text="{DynamicResource CrWinBasic}" />
-                <controls:SizePanel DataContext="{Binding ImageProperties}" />
+                <StackPanel Grid.Column="1" Spacing="10">
+                    <TextBlock Classes="Header" Text="{DynamicResource CrWinBasic}" />
+                    <controls:SizePanel DataContext="{Binding ImageProperties}" />
 
-                <StackPanel>
-                    <TextBlock TextAlignment="Center" HorizontalAlignment="Center" Text="{DynamicResource CrWinBackgroundColor}" />
-                    <ColorPicker
-                        x:Name="BackgroundColorPicker"
-                        Width="100"
-                        HorizontalAlignment="Center"
-                        Color="{Binding BackgroundColor, Mode=TwoWay}" />
+                    <StackPanel>
+                        <TextBlock TextAlignment="Center" HorizontalAlignment="Center" Text="{DynamicResource CrWinBackgroundColor}" />
+                        <ColorPicker
+                            x:Name="BackgroundColorPicker"
+                            Width="100"
+                            HorizontalAlignment="Center"
+                            Color="{Binding BackgroundColor, Mode=TwoWay}" />
+                    </StackPanel>
                 </StackPanel>
-            </StackPanel>
-            <StackPanel Grid.Column="3" Spacing="10">
-                <TextBlock Classes="Header" Text="{DynamicResource CrWinAdvanced}" />
-                <controls:PropertiesPanel DataContext="{Binding ImageProperties}" />
-            </StackPanel>
+                <StackPanel Grid.Column="3" Spacing="10">
+                    <TextBlock Classes="Header" Text="{DynamicResource CrWinAdvanced}" />
+                    <controls:PropertiesPanel DataContext="{Binding ImageProperties}" />
+                </StackPanel>
+            </Grid>
+            <Grid
+                Height="100"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Bottom"
+                Background="{DynamicResource BackgroundColor}"
+                ColumnDefinitions="*,Auto,Auto">
+                <Button
+                    Grid.Column="0"
+                    Margin="0,25,10,25"
+                    Padding="30,0,30,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Stretch"
+                    Classes="BorderButton"
+                    Command="{Binding CancelCommand}"
+                    Content="{DynamicResource CrWinCancel}"
+                    FontSize="20" />
+                <Button
+                    Grid.Column="1"
+                    Margin="0,25,25,25"
+                    Padding="30,0,30,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Stretch"
+                    Classes="CreateButton"
+                    Command="{Binding CreateCommand}"
+                    Content="{DynamicResource CrWinCreate}"
+                    FontSize="20" />
+            </Grid>
         </Grid>
-        <Grid
-            Height="100"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Bottom"
-            Background="{DynamicResource BackgroundColor}"
-            ColumnDefinitions="*,Auto,Auto"
-            DockPanel.Dock="Bottom">
-            <Button
-                Grid.Column="0"
-                Margin="0,25,10,25"
-                Padding="30,0,30,0"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Stretch"
-                Classes="BorderButton"
-                Command="{Binding CancelCommand}"
-                Content="{DynamicResource CrWinCancel}"
-                FontSize="20" />
-            <Button
-                Grid.Column="1"
-                Margin="0,25,10,25"
-                Padding="30,0,30,0"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Stretch"
-                Classes="CreateButton"
-                Command="{Binding CreateCommand}"
-                Content="{DynamicResource CrWinCreate}"
-                FontSize="20" />
-        </Grid>
-    </DockPanel>
+    </Grid>
 </Window>

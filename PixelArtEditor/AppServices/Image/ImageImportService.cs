@@ -1,10 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform.Storage;
-using MsBox.Avalonia;
-using MsBox.Avalonia.Enums;
 using PixelArtEditor.AppServices.Shell;
-using PixelArtEditor.Helpers;
 using PixelArtEditor.Models.Canvas;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Metadata;

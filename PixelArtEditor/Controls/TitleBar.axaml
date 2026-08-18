@@ -1,0 +1,91 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="1280" d:DesignHeight="30"
+             x:Class="PixelArtEditor.Controls.TitleBar"
+             x:Name="Root">
+
+    <UserControl.Styles>
+        <Style Selector="TextBlock">
+            <Setter Property="FontFamily" Value="{DynamicResource AppFont}" />
+            <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />
+            <Setter Property="FontSize" Value="13" />
+        </Style>
+    </UserControl.Styles>
+
+    <Grid ColumnDefinitions="Auto,Auto,*,Auto" Background="{DynamicResource TertiaryBackgroundColor}">
+        <StackPanel  
+            Orientation="Horizontal" 
+            HorizontalAlignment="Center" 
+            VerticalAlignment="Center"
+            Margin="10,0,0,0"
+            Grid.Column="0">
+            <Image 
+                Width="20"
+                Height="20" 
+                Margin="0,0,5,0"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Source="{Binding IconSource, ElementName=Root}"
+                IsVisible="{Binding IconVisible, ElementName=Root}" />
+            <TextBlock Text="{Binding Title, ElementName=Root}" IsVisible="{Binding TitleVisible, ElementName=Root}" />
+        </StackPanel>
+
+        <ContentPresenter
+            Grid.Column="1"
+            Content="{Binding ExtraContent, ElementName=Root}" x:CompileBindings="False"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Stretch" />
+
+        <Border
+            Grid.Column="2"
+            Background="Transparent"
+            PointerMoved="OnPointerMoved"
+            PointerPressed="OnPointerPressed"
+            PointerReleased="OnPointerReleased" />
+
+        <StackPanel
+            Grid.Column="3"
+            HorizontalAlignment="Right"
+            Orientation="Horizontal">
+            <Button
+                Width="40"
+                Height="30"
+                Classes="WindowBaseButton"
+                Click="OnMinimizeClick"
+                IsVisible="{Binding CanMinimize, ElementName=Root}">
+                <Image
+                    Width="10"
+                    Height="10"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Source="{DynamicResource MinimizeIcon}" />
+            </Button>
+            <Button
+                Width="40"
+                Height="30"
+                Classes="WindowBaseButton"
+                Click="OnMaximizeClick"
+                IsVisible="{Binding CanMaximize, ElementName=Root}">
+                <Image
+                    Width="10"
+                    Height="10"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Source="{DynamicResource MaximizeIcon}" />
+            </Button>
+            <Button
+                Width="40"
+                Height="30"
+                Classes="WindowCloseButton"
+                Click="OnCloseClick">
+                <Image
+                    Width="10"
+                    Height="10"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center" />
+            </Button>
+        </StackPanel>
+    </Grid>
+</UserControl>

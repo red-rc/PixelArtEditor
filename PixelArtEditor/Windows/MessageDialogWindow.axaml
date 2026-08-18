@@ -1,0 +1,78 @@
+<Window
+    x:Class="PixelArtEditor.Windows.MessageDialogWindow"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="clr-namespace:PixelArtEditor.ViewModels"
+    xmlns:controls="clr-namespace:PixelArtEditor.Controls"
+    x:DataType="vm:MessageDialogVM"
+    Title="{Binding Name}"
+    Width="375"
+    Height="150"
+    d:DesignHeight="150"
+    d:DesignWidth="375"
+    Background="{DynamicResource BackgroundColor}"
+    ExtendClientAreaToDecorationsHint="True"
+    WindowDecorations="BorderOnly"
+    CanResize="False"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
+
+    <Window.Styles>
+        <Style Selector="Button.OKButton">
+            <Setter Property="Background" Value="{DynamicResource PrimaryColor}" />
+             <Setter Property="FontFamily" Value="{DynamicResource AppFont}" />
+            <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Width" Value="80" />
+            <Setter Property="Height" Value="25" />
+            <Setter Property="CornerRadius" Value="2.5" />
+            
+            <Style Selector="^:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+                <Setter Property="Background" Value="{DynamicResource PrimaryHoverColor}" />
+                <Setter Property="BoxShadow" Value="{DynamicResource CardShadow}" />
+            </Style>
+            <Style Selector="^:pressed /template/ ContentPresenter#PART_ContentPresenter">
+                <Setter Property="Background" Value="{DynamicResource PrimaryPressColor}" />
+                <Setter Property="BoxShadow" Value="{DynamicResource CardShadow}" />
+            </Style>
+        </Style>
+
+        <Style Selector="TextBlock">
+            <Setter Property="FontFamily" Value="{DynamicResource AppFont}" />
+            <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />
+            <Setter Property="FontSize" Value="12" />
+        </Style>
+    </Window.Styles>
+
+    <Grid RowDefinitions="30,*,40">
+        <controls:TitleBar Grid.Row="0" Title="Error" IconVisible="False" CanMinimize="False" CanMaximize="False" />
+
+        <Grid Grid.Row="1">
+            <StackPanel
+                HorizontalAlignment="Center" 
+                VerticalAlignment="Center"
+                Orientation="Horizontal"
+                Spacing="10">
+                <Image 
+                    Source="/Assets/error.ico"
+                    Width="32" 
+                    Height="32"
+                    VerticalAlignment="Center"
+                    RenderOptions.BitmapInterpolationMode="None" />
+                <TextBlock VerticalAlignment="Center" Text="{Binding Message}" />
+            </StackPanel>
+        </Grid>
+
+        <Grid Grid.Row="2" Background="{DynamicResource SecondaryBackgroundColor}">
+            <Button 
+                HorizontalAlignment="Right" 
+                VerticalAlignment="Center"
+                Classes="OKButton"
+                Margin="0,0,20,0"
+                Content="OK" 
+                Command="{Binding OKCommand}" />
+        </Grid>
+    </Grid>
+</Window>

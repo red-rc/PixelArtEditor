@@ -19,77 +19,13 @@
     mc:Ignorable="d">
     <!-- Padding top=-1 fixes Avalonia Win32 1px native hit-test zone at top of window; Add if needed -->
 
-    <DockPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-        <DockPanel
-            Height="30"
-            Background="{DynamicResource TertiaryBackgroundColor}"
-            DockPanel.Dock="Top"
-            KeyDown="OnKeyDown">
-            <Grid ColumnDefinitions="Auto,Auto,*,Auto">
-                <Border
-                    Grid.Column="0"
-                    Width="30"
-                    Height="30">
-                    <Image
-                        Width="20"
-                        Height="20"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        Source="/Assets/logo.ico" />
-                </Border>
+    <Grid RowDefinitions="Auto,*" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <controls:TitleBar Grid.Row="0" TitleVisible="False" IconSource="/Assets/logo.ico">
+            <controls:TitleBar.ExtraContent>
+                <controls:MenuBar HorizontalAlignment="Left" VerticalAlignment="Stretch" />
+            </controls:TitleBar.ExtraContent>
+        </controls:TitleBar>
 
-                <controls:MenuBar
-                    Grid.Column="1"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Stretch" />
-                <Border
-                    Grid.Column="2"
-                    Background="Transparent"
-                    PointerMoved="OnPointerMoved"
-                    PointerPressed="OnPointerPressed"
-                    PointerReleased="OnPointerReleased" />
-                <StackPanel
-                    Grid.Column="3"
-                    HorizontalAlignment="Right"
-                    Orientation="Horizontal">
-                    <Button
-                        Width="40"
-                        Height="30"
-                        Classes="WindowBaseButton"
-                        Click="OnMinimizeClick">
-                        <Image
-                            Width="10"
-                            Height="10"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Source="{DynamicResource MinimizeIcon}" />
-                    </Button>
-                    <Button
-                        Width="40"
-                        Height="30"
-                        Classes="WindowBaseButton"
-                        Click="OnMaximizeClick">
-                        <Image
-                            Width="10"
-                            Height="10"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Source="{DynamicResource MaximizeIcon}" />
-                    </Button>
-                    <Button
-                        Width="40"
-                        Height="30"
-                        Classes="WindowCloseButton"
-                        Click="OnCloseClick">
-                        <Image
-                            Width="10"
-                            Height="10"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center" />
-                    </Button>
-                </StackPanel>
-            </Grid>
-        </DockPanel>
-        <ContentControl Content="{Binding CurrentView}" />
-    </DockPanel>
+        <ContentControl Grid.Row="1" Content="{Binding CurrentView}" />
+    </Grid>
 </Window>

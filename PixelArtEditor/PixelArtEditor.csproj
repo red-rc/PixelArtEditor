@@ -24,7 +24,6 @@
     <PackageReference Include="Avalonia.Themes.Simple" />
     <PackageReference Include="AvaloniaUI.DiagnosticsSupport" />
     <PackageReference Include="HeyRed.ImageSharp.Heif" />
-    <PackageReference Include="MessageBox.Avalonia" />
     <PackageReference Include="Newtonsoft.Json" />
     <PackageReference Include="ReactiveUI.Avalonia" />
     <PackageReference Include="SixLabors.ImageSharp" />
