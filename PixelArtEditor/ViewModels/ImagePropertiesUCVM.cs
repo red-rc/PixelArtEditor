@@ -10,7 +10,19 @@ public class ImagePropertiesUCVM : ReactiveObject
     private float _imageProportion = 0f;
     private bool _isUpdating = false;
 
-    public string? Name;
+    private string? _name;
+    public string? Name
+    {
+        get => _name;
+        set => this.RaiseAndSetIfChanged(ref _name, value);
+    }
+
+    private string _extension = "png";
+    public string Extension
+    {
+        get => _extension;
+        set => this.RaiseAndSetIfChanged(ref _extension, value);
+    }
 
     private int _width = 32;
     public int Width
@@ -197,6 +209,7 @@ public class ImagePropertiesUCVM : ReactiveObject
         LivePreviewParams = new PixelModel
         {
             Name = Name,
+            Extension = Extension,
             Width = Width,
             Height = Height,
             Mode = ColorMode,

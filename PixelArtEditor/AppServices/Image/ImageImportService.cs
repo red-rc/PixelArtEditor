@@ -127,6 +127,12 @@ public static class ImageImportService
                 return null;
             }
 
+            if (model is not null)
+            {
+                model.Name = Path.GetFileNameWithoutExtension(file.Name);
+                model.Extension = Path.GetExtension(file.Name).TrimStart('.').ToLowerInvariant();
+            }
+
             return model;
         }
     }

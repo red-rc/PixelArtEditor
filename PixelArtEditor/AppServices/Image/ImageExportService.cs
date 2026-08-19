@@ -17,6 +17,7 @@ using SixLabors.ImageSharp.PixelFormats;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using AlphaFormat = PixelArtEditor.Models.Canvas.AlphaFormat;
 
@@ -40,12 +41,17 @@ public static class ImageExportService
     ];
     public static async Task ExportImageAsync(Window dialog, PixelModel model)
     {
+        var defaultType = ExportFileTypes.FirstOrDefault(t =>
+            t.Patterns is not null && t.Patterns.Any(p => p.TrimStart('*', '.').Equals(model.Extension, StringComparison.OrdinalIgnoreCase)));
+
         var saveOptions = new FilePickerSaveOptions
         {
             Title = "Export",
             SuggestedFileName = model.Name ?? "untitled",
             DefaultExtension = model.Extension,
-            FileTypeChoices = ExportFileTypes
+            FileTypeChoices = defaultType is not null
+                ? [defaultType, .. ExportFileTypes.Where(t => t != defaultType)]
+                : ExportFileTypes
         };
 
         var file = await dialog.StorageProvider.SaveFilePickerAsync(saveOptions);

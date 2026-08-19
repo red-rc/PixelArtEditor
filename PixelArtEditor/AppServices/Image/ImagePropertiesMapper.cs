@@ -10,6 +10,7 @@ public static class ImagePropertiesMapper
     {
         vm.PixelData = model.Data;
         vm.Name = model.Name;
+        vm.Extension = model.Extension;
         vm.Width = model.Width;
         vm.Height = model.Height;
         vm.ColorMode = model.Mode;
