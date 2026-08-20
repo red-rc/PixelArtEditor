@@ -4,13 +4,13 @@ using PixelArtEditor.ViewModels;
 using System;
 using System.Linq;
 
-namespace PixelArtEditor.AppServices.EditorUI.LayerCommands;
+namespace PixelArtEditor.AppServices.EditorUI.LayerPanel.LayerCommands;
 
-public class RemoveCommand(LayerPanelVM vm, ListBox layerListBox) : LayerCommandBase(vm, layerListBox)
+public class RemoveCmd(LayerPanelVM vm, ListBox layerListBox) : LayerCmdBase(vm, layerListBox)
 {
     public void Execute(LayerManager? layerManager)
     {
-        if (layerManager is null || layerManager.Layers.Count == 0) return;
+        if (layerManager is null || layerManager.Layers.Count == 0 || !CanExecute) return;
         if (Vm.SelLayerItems is null || Vm.SelLayerItems.Count == 0) return;
 
         var activeLayerItem = Vm.LayerItems.FirstOrDefault(x => x.Layer == layerManager.ActiveLayer);

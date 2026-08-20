@@ -11,18 +11,18 @@ namespace PixelArtEditor.ViewModels;
 
 public class EditorVM : ReactiveObject
 {
-    private double _canvasOpacity = 0;
-    public double CanvasOpacity
+    private double _dragBgOpacity = 0;
+    public double DragBgOpacity
     {
-        get => _canvasOpacity;
-        set => this.RaiseAndSetIfChanged(ref _canvasOpacity, value);
+        get => _dragBgOpacity;
+        set => this.RaiseAndSetIfChanged(ref _dragBgOpacity, value);
     }
 
-    private bool _imageVisible = false;
-    public bool ImageVisible
+    private bool _dragImageVisible = false;
+    public bool DragImageVisible
     {
-        get => _imageVisible;
-        set => this.RaiseAndSetIfChanged(ref _imageVisible, value);
+        get => _dragImageVisible;
+        set => this.RaiseAndSetIfChanged(ref _dragImageVisible, value);
     }
 
     private bool _confirmPanelVisible = false;
@@ -196,6 +196,9 @@ public class EditorVM : ReactiveObject
     public string? CoordinatesText { get; set; }
     public string? ScaleText { get; set; }
 
+    private readonly ObservableAsPropertyHelper<bool> _isTransforming;
+    public bool IsTransforming => _isTransforming.Value;
+
     public void SetCanvas(Canvas canvas)
     {
         _canvas = canvas;
@@ -222,6 +225,9 @@ public class EditorVM : ReactiveObject
     {
         _model = model;
         ConfirmPanelVisible = false;
+
+        this.WhenAnyValue(vm => vm.ConfirmPanelVisible)
+            .ToProperty(this, vm => vm.IsTransforming, out _isTransforming);
 
         AdjustCanvas(_lastPanelWidth, _lastPanelHeight);
     }

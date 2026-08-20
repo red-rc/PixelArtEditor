@@ -5,13 +5,13 @@ using PixelArtEditor.Models.Canvas;
 using PixelArtEditor.ViewModels;
 using System.Linq;
 
-namespace PixelArtEditor.AppServices.EditorUI.LayerCommands;
+namespace PixelArtEditor.AppServices.EditorUI.LayerPanel.LayerCommands;
 
-public class CopyCommand(LayerPanelVM vm, ListBox layerListBox) : LayerCommandBase(vm, layerListBox)
+public class CopyCmd(LayerPanelVM vm, ListBox layerListBox) : LayerCmdBase(vm, layerListBox)
 {
     public void Execute(LayerManager? layerManager)
     {
-        if (Vm.SelLayerItems is null || Vm.SelLayerItems.Count == 0 || layerManager is null) return;
+        if (Vm.SelLayerItems is null || Vm.SelLayerItems.Count == 0 || layerManager is null || !CanExecute) return;
 
         var ordered = GetOrdered(Vm.SelLayerItems);
         if (ordered.Count == 0) return;

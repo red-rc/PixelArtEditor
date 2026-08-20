@@ -10,7 +10,6 @@ namespace PixelArtEditor.Windows;
 
 public partial class MainWindow : Window
 {
-    private const int EdgeSize = 4;
     private PixelPoint _pressedPoint;
 
     public MainWindow()
@@ -18,65 +17,6 @@ public partial class MainWindow : Window
         InitializeComponent();
         DataContext = new MainWindowVM();
         Services.WindowState.AttachWindow(this);
-
-        AddHandler(PointerPressedEvent, Resize, RoutingStrategies.Tunnel);
-        AddHandler(PointerMovedEvent, UpdateCursor, RoutingStrategies.Tunnel);
-    }
-
-    private void Resize(object? sender, PointerPressedEventArgs e)
-    {
-        if (Services.WindowState.Current == WindowState.FullScreen ||
-            Services.WindowState.Current == WindowState.Maximized) return;
-
-        var point = e.GetPosition(this);
-
-        var left = point.X <= EdgeSize;
-        var right = point.X >= Bounds.Width - EdgeSize;
-        var top = point.Y <= EdgeSize;
-        var bottom = point.Y >= Bounds.Height - EdgeSize;
-
-        WindowEdge? edge = null;
-        if (left && top) edge = WindowEdge.NorthWest;
-        else if (right && top) edge = WindowEdge.NorthEast;
-        else if (left && bottom) edge = WindowEdge.SouthWest;
-        else if (right && bottom) edge = WindowEdge.SouthEast;
-        else if (left) edge = WindowEdge.West;
-        else if (right) edge = WindowEdge.East;
-        else if (top) edge = WindowEdge.North;
-        else if (bottom) edge = WindowEdge.South;
-
-        if (!edge.HasValue) return;
-        BeginResizeDrag(edge.Value, e);
-        e.Handled = true;
-    }
-
-    private void UpdateCursor(object? sender, PointerEventArgs e)
-    {
-        if (!CanResize || Services.WindowState.Current == WindowState.FullScreen ||
-            Services.WindowState.Current == WindowState.Maximized)
-        {
-            Cursor = new Cursor(StandardCursorType.Arrow);
-            return;
-        }
-
-        var point = e.GetPosition(this);
-
-        var left = point.X <= EdgeSize;
-        var right = point.X >= Bounds.Width - EdgeSize;
-        var top = point.Y <= EdgeSize;
-        var bottom = point.Y >= Bounds.Height - EdgeSize;
-
-        if ((left && top) || (right && bottom))
-            Cursor = new Cursor(StandardCursorType.TopLeftCorner);
-        else if ((right && top) || (left && bottom))
-            Cursor = new Cursor(StandardCursorType.TopRightCorner);
-
-        else if (left || right)
-            Cursor = new Cursor(StandardCursorType.SizeWestEast);
-        else if (top || bottom)
-            Cursor = new Cursor(StandardCursorType.SizeNorthSouth);
-        else
-            Cursor = new Cursor(StandardCursorType.Arrow);
     }
 
     private void OnPointerPressed(object? sender, PointerPressedEventArgs e)

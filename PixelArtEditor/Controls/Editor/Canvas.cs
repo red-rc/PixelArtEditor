@@ -10,6 +10,7 @@ using PixelArtEditor.AppServices.Tools.Implementations;
 using PixelArtEditor.Helpers;
 using PixelArtEditor.Models.Canvas;
 using PixelArtEditor.Models.Tools;
+using PixelArtEditor.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -68,7 +69,7 @@ public class Canvas : Control, ICanvasContext
 
     private ITool _currentTool = new EmptyTool();
 
-    public bool CanEdit = true;
+    public static bool CanEdit => Services.Navigation.GetViewModel() is EditorVM editorVM && !editorVM.IsTransforming;
 
     private PixelPoint? _hoverPixel;
     public PixelPoint? HoverPixel
@@ -158,7 +159,6 @@ public class Canvas : Control, ICanvasContext
         LayerManager?.Layers.CollectionChanged -= OnLayersChanged;
 
         RenderCache.Clear();
-        CanEdit = true;
 
         LayerManager = layerManager;
         LayerManager.Layers.CollectionChanged += OnLayersChanged;

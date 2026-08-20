@@ -6,7 +6,7 @@ using Avalonia.Threading;
 using Avalonia.VisualTree;
 using PixelArtEditor.AppServices.Canvas;
 using PixelArtEditor.AppServices.EditorUI;
-using PixelArtEditor.AppServices.EditorUI.LayerCommands;
+using PixelArtEditor.AppServices.EditorUI.LayerPanel;
 using PixelArtEditor.Models.LayerPanel;
 using PixelArtEditor.ViewModels;
 using System;
@@ -32,16 +32,16 @@ public partial class LayerPanel : UserControl
     private Point _mousePressPos;
     private bool _dragging;
 
-    public readonly LayerCommands LayerCommands;
+    public readonly LayerCmdList LayerCommands;
     private readonly DnDManager _dndManager;
 
-    private void OnAddClick(object? sender, RoutedEventArgs e) => LayerCommands.AddCommand.Execute(LayerManager);
-    private void OnRemoveClick(object? sender, RoutedEventArgs e) => LayerCommands.RemoveCommand.Execute(LayerManager);
-    private void OnDuplicateClick(object? sender, RoutedEventArgs e) => LayerCommands.DuplicateCommand.Execute(LayerManager);
-    private void OnGroupClick(object? sender, RoutedEventArgs e) => LayerCommands.GroupCommand.Execute(LayerManager);
+    private void OnAddClick(object? sender, RoutedEventArgs e) => LayerCommands.AddCmd.Execute(LayerManager);
+    private void OnRemoveClick(object? sender, RoutedEventArgs e) => LayerCommands.RemoveCmd.Execute(LayerManager);
+    private void OnDuplicateClick(object? sender, RoutedEventArgs e) => LayerCommands.DuplicateCmd.Execute(LayerManager);
+    private void OnGroupClick(object? sender, RoutedEventArgs e) => LayerCommands.GroupCmd.Execute(LayerManager);
 
-    private void OnToTheTopClick(object? sender, RoutedEventArgs e) => LayerCommands.MoveCommand.Execute(LayerManager, true);
-    private void OnToTheBottomClick(object? sender, RoutedEventArgs e) => LayerCommands.MoveCommand.Execute(LayerManager, false);
+    private void OnToTheTopClick(object? sender, RoutedEventArgs e) => LayerCommands.MoveCmd.Execute(LayerManager, true);
+    private void OnToTheBottomClick(object? sender, RoutedEventArgs e) => LayerCommands.MoveCmd.Execute(LayerManager, false);
 
     public LayerPanel()
     {
@@ -49,7 +49,7 @@ public partial class LayerPanel : UserControl
         DataContext = _vm;
         InitializeComponent();
 
-        LayerCommands = new LayerCommands(_vm, LayerListBox);
+        LayerCommands = new LayerCmdList(_vm, LayerListBox);
         _dndManager = new DnDManager(LayerListBox, FloatingHost, CountBadge, CountBadgeText);
 
         LayerListBox.AddHandler(PointerPressedEvent, OnItemPointerPressed, RoutingStrategies.Tunnel);

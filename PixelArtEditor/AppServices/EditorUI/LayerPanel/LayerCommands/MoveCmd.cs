@@ -4,13 +4,13 @@ using PixelArtEditor.Models.LayerPanel;
 using PixelArtEditor.ViewModels;
 using System.Linq;
 
-namespace PixelArtEditor.AppServices.EditorUI.LayerCommands;
+namespace PixelArtEditor.AppServices.EditorUI.LayerPanel.LayerCommands;
 
-public class MoveCommand(LayerPanelVM vm, ListBox layerListBox) : LayerCommandBase(vm, layerListBox)
+public class MoveCmd(LayerPanelVM vm, ListBox layerListBox) : LayerCmdBase(vm, layerListBox)
 {
     public void Execute(LayerManager? layerManager, bool toTop)
     {
-        if (layerManager is null || layerManager.Layers.Count <= 1) return;
+        if (layerManager is null || layerManager.Layers.Count <= 1 || !CanExecute) return;
 
         var selected = LayerListBox.SelectedItems?.OfType<LayerItem>().ToList();
         if (selected is null || selected.Count == 0) return;

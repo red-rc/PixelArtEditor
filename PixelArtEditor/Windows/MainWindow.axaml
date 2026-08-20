@@ -17,7 +17,6 @@
     TransparencyLevelHint="AcrylicBlur"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
-    <!-- Padding top=-1 fixes Avalonia Win32 1px native hit-test zone at top of window; Add if needed -->
 
     <Grid RowDefinitions="Auto,*" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <controls:TitleBar Grid.Row="0" TitleVisible="False" IconSource="/Assets/logo.ico">

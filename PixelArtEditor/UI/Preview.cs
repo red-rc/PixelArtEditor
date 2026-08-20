@@ -42,7 +42,7 @@ public class Preview : Control
 
     private byte[]? _pixelData;
 
-    private BoxShadows _shadow = Application.Current?.Resources["CardShadow"] as BoxShadows? ?? default;
+    private readonly BoxShadows _shadow = Application.Current?.Resources["CardShadow"] as BoxShadows? ?? default;
 
     public Preview()
     {

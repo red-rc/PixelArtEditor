@@ -5,13 +5,13 @@ using PixelArtEditor.ViewModels;
 using System;
 using System.Linq;
 
-namespace PixelArtEditor.AppServices.EditorUI.LayerCommands;
+namespace PixelArtEditor.AppServices.EditorUI.LayerPanel.LayerCommands;
 
-public class AddCommand(LayerPanelVM vm, ListBox layerListBox) : LayerCommandBase(vm, layerListBox)
+public class AddCmd(LayerPanelVM vm, ListBox layerListBox) : LayerCmdBase(vm, layerListBox)
 {
     public void Execute(LayerManager? layerManager)
     {
-        if (layerManager is null) return;
+        if (layerManager is null || !CanExecute) return;
 
         var newLayer = new LayerModel(
             Vm.OriginalWidth,

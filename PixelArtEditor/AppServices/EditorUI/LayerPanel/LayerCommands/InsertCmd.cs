@@ -7,14 +7,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace PixelArtEditor.AppServices.EditorUI.LayerCommands;
+namespace PixelArtEditor.AppServices.EditorUI.LayerPanel.LayerCommands;
 
-public class InsertCommand(LayerPanelVM vm, ListBox layerListBox) : LayerCommandBase(vm, layerListBox)
+public class InsertCmd(LayerPanelVM vm, ListBox layerListBox) : LayerCmdBase(vm, layerListBox)
 {
     public void Execute(LayerManager? layerManager)
     {
         var layers = Vm.CopiedLayers;
-        if (layers.Count == 0 || layerManager is null) return;
+        if (layers.Count == 0 || layerManager is null || !CanExecute) return;
 
         Debug.WriteLine($"Inserting {layers.Count} layers");
 

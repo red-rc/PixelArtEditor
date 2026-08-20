@@ -43,20 +43,27 @@ public partial class EditorView : UserControl
 
     private int _addedLayersCount = 0;
 
-    private void OnCancelClick(object? sender, RoutedEventArgs e)
+    private void OnCancelClick(object? sender, RoutedEventArgs e) => OnCancel();
+
+    private void OnConfirmClick(object? sender, RoutedEventArgs e) => OnConfirm();
+
+    private void OnCancel()
     {
         if (ViewModel is null) return;
 
         ViewModel.LayerManager.Layers.RemoveAt(0);
 
         var vm = LayerPanelControl.ViewModel;
-        var index = Math.Clamp(1, 0, vm.LayerItems.Count - 1);
-        vm.SelLayerItem = vm.LayerItems[index];
+        if (LayerPanelControl.LayerManager?.Layers.Count > 0)
+        {
+            var index = Math.Clamp(1, 0, vm.LayerItems.Count - 1);
+            vm.SelLayerItem = vm.LayerItems[index];
+        } 
 
         CompleteConfirmation();
     }
 
-    private void OnConfirmClick(object? sender, RoutedEventArgs e)
+    private void OnConfirm()
     {
         if (ViewModel is null) return;
 
@@ -70,10 +77,7 @@ public partial class EditorView : UserControl
         _addedLayersCount--;
 
         if (_addedLayersCount == 0)
-        {
             ViewModel.ConfirmPanelVisible = false;
-            ViewModel.Canvas?.CanEdit = true;
-        }
     }
 
     public EditorView()
@@ -112,33 +116,35 @@ public partial class EditorView : UserControl
 
     private void OnDragOver(object? sender, DragEventArgs e)
     {
+        if (DataContext is not EditorVM vm || vm.IsTransforming) return;
+
         e.DragEffects = e.DataTransfer.Formats.Contains(DataFormat.File)
             ? DragDropEffects.Copy
             : DragDropEffects.None;
 
-        if (DataContext is not EditorVM vm) return;
-        vm.CanvasOpacity = e.DragEffects == DragDropEffects.Copy ? 0.3 : 0;
-        vm.ImageVisible = e.DragEffects == DragDropEffects.Copy;
+        vm.DragBgOpacity = e.DragEffects == DragDropEffects.Copy ? 0.3 : 0;
+        vm.DragImageVisible = e.DragEffects == DragDropEffects.Copy;
     }
 
     private void OnDragLeave(object? sender, RoutedEventArgs e)
     {
-        if (DataContext is not EditorVM vm) return;
-        vm.CanvasOpacity = 0;
-        vm.ImageVisible = false;
+        if (DataContext is not EditorVM vm || vm.IsTransforming) return;
+
+        vm.DragBgOpacity = 0;
+        vm.DragImageVisible = false;
     }
 
     private async void OnDrop(object? sender, DragEventArgs e)
     {
+        if (DataContext is not EditorVM vm || vm.IsTransforming) return;
+
         var files = e.DataTransfer.TryGetFiles();
         if (files is null) return;
 
         var storageFiles = files.OfType<IStorageFile>();
-        if (storageFiles is null) return;
 
-        if (DataContext is not EditorVM vm) return;
-        vm.CanvasOpacity = 0;
-        vm.ImageVisible = false;
+        vm.DragBgOpacity = 0;
+        vm.DragImageVisible = false;
 
         List<LayerModel> addedLayers = [];
         foreach (var file in storageFiles)
@@ -170,6 +176,8 @@ public partial class EditorView : UserControl
             _addedLayersCount++;
         }
 
+        if (_addedLayersCount <= 0) return;
+
         LayerPanelControl.LayerListBox.SelectedItems?.Clear();
         foreach (var layer in addedLayers)
         {
@@ -178,7 +186,6 @@ public partial class EditorView : UserControl
         }
 
         vm.ConfirmPanelVisible = true;
-        vm.Canvas?.CanEdit = false;
     }
 
     private static (int w, int h) FitToCanvas(int srcW, int srcH, int canvasW, int canvasH)
@@ -197,36 +204,45 @@ public partial class EditorView : UserControl
         switch (e.KeyModifiers, e.Key)
         {
             case (KeyModifiers.Control, Key.N):
-                commands.AddCommand.Execute(layerManager);
+                commands.AddCmd.Execute(layerManager);
                 break;
 
             case (KeyModifiers.Control, Key.D):
-                commands.DuplicateCommand.Execute(layerManager);
+                commands.DuplicateCmd.Execute(layerManager);
                 break;
 
             case (KeyModifiers.Control, Key.Up):
-                commands.MoveStepCommand.Execute(layerManager, -1);
+                commands.MoveStepCmd.Execute(layerManager, -1);
                 break;
 
             case (KeyModifiers.Control, Key.Down):
-                commands.MoveStepCommand.Execute(layerManager, 1);
+                commands.MoveStepCmd.Execute(layerManager, 1);
                 break;
 
             case (KeyModifiers.Control, Key.G):
-                commands.GroupCommand.Execute(layerManager);
+                commands.GroupCmd.Execute(layerManager);
                 break;
 
             case (KeyModifiers.Control, Key.C):
-                commands.CopyCommand.Execute(layerManager);
+                commands.CopyCmd.Execute(layerManager);
                 break;
             
             case (KeyModifiers.Control, Key.V):
-                commands.InsertCommand.Execute(layerManager);
+                commands.InsertCmd.Execute(layerManager);
                 break;
 
             case (KeyModifiers.None, Key.Delete):
-                commands.RemoveCommand.Execute(layerManager);
+                commands.RemoveCmd.Execute(layerManager);
                 break;
+
+            case (KeyModifiers.None, Key.Escape):
+                OnCancel();
+                break;
+
+            case (KeyModifiers.None, Key.Enter):
+                OnConfirm();
+                break;
+
             default:
                 return;
         }

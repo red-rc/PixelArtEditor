@@ -15,7 +15,7 @@
         <other:DivideByConverter x:Key="DivideByConverter" />
     </UserControl.Resources>
 
-    <Grid ColumnDefinitions="Auto,*" DragDrop.AllowDrop="True">
+    <Grid Background="Transparent" ColumnDefinitions="Auto,*" DragDrop.AllowDrop="True">
         <DockPanel 
             Width="{Binding Width, RelativeSource={RelativeSource AncestorType=Window}, 
             Converter={StaticResource DivideByConverter}, ConverterParameter=5}" Grid.Column="0">
@@ -54,11 +54,11 @@
         <Grid Grid.ColumnSpan="2" IsHitTestVisible="False">
             <Border
                 Background="{DynamicResource PrimaryColor}"
-                Opacity="{Binding CanvasOpacity}" />
+                Opacity="{Binding DragBgOpacity}" />
         
             <Image
                 Source="{DynamicResource UploadIcon}"
-                IsVisible="{Binding ImageVisible}"
+                IsVisible="{Binding DragImageVisible}"
                 Width="80"
                 Height="80"
                 HorizontalAlignment="Center"

@@ -151,11 +151,11 @@
         <Grid IsHitTestVisible="False">
             <Border
                 Background="{DynamicResource PrimaryColor}"
-                Opacity="{Binding CanvasOpacity}" />
+                Opacity="{Binding DragBgOpacity}" />
         
             <Image
                 Source="{DynamicResource UploadIcon}"
-                IsVisible="{Binding ImageVisible}"
+                IsVisible="{Binding DragImageVisible}"
                 Width="80"
                 Height="80"
                 HorizontalAlignment="Center"
