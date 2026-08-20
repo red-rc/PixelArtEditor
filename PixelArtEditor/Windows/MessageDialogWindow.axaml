@@ -54,14 +54,14 @@
                 HorizontalAlignment="Center" 
                 VerticalAlignment="Center"
                 Orientation="Horizontal"
-                Spacing="10">
+                Spacing="7.5">
                 <Image 
                     Source="/Assets/error.ico"
                     Width="32" 
                     Height="32"
                     VerticalAlignment="Center"
                     RenderOptions.BitmapInterpolationMode="None" />
-                <TextBlock VerticalAlignment="Center" Text="{Binding Message}" />
+                <TextBlock VerticalAlignment="Center" TextWrapping="Wrap" Width="300" Text="{Binding Message}" />
             </StackPanel>
         </Grid>
 

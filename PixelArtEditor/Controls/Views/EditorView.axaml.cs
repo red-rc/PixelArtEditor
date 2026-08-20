@@ -51,22 +51,23 @@ public partial class EditorView : UserControl
     {
         if (ViewModel is null) return;
 
-        ViewModel.LayerManager.Layers.RemoveAt(0);
+        //var selItems = LayerPanelControl.LayerListBox.SelectedItems;
+        //var selLayers = ViewModel.LayerManager.Layers.Select(l => l )
+        for (var i = 0; i < _addedLayersCount; i++)
+            ViewModel.LayerManager.Layers.RemoveAt(i);
 
         var vm = LayerPanelControl.ViewModel;
         if (LayerPanelControl.LayerManager?.Layers.Count > 0)
         {
             var index = Math.Clamp(1, 0, vm.LayerItems.Count - 1);
             vm.SelLayerItem = vm.LayerItems[index];
-        } 
+        }
 
         CompleteConfirmation();
     }
 
     private void OnConfirm()
     {
-        if (ViewModel is null) return;
-
         CompleteConfirmation();
     }
 
@@ -74,10 +75,8 @@ public partial class EditorView : UserControl
     {
         if (ViewModel is null) return;
 
-        _addedLayersCount--;
-
-        if (_addedLayersCount == 0)
-            ViewModel.ConfirmPanelVisible = false;
+        _addedLayersCount = 0;
+        ViewModel.ConfirmPanelVisible = false;
     }
 
     public EditorView()

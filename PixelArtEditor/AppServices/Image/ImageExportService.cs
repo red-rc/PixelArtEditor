@@ -3,6 +3,7 @@ using Avalonia.Platform.Storage;
 using HeyRed.ImageSharp.Heif.Formats.Avif;
 using HeyRed.ImageSharp.Heif.Formats.Heif;
 using PixelArtEditor.Models.Canvas;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.Formats.Bmp;
 using SixLabors.ImageSharp.Formats.Gif;
@@ -32,12 +33,15 @@ public static class ImageExportService
         new("Bitmap Image")           { Patterns = ["*.bmp"] },
         new("GIF Image")              { Patterns = ["*.gif"] },
         new("TIFF Image")             { Patterns = ["*.tif", "*.tiff"] },
+        new("SVG Image")              { Patterns = ["*.svg"] },
         new("WebP Image")             { Patterns = ["*.webp"] },
+        new("DDS Image")              { Patterns = ["*.dds"] },
         new("AVIF Image")             { Patterns = ["*.avif"] },
         new("HEIF Image")             { Patterns = ["*.heif"] },
         new("TGA Image")              { Patterns = ["*.tga"] },
         new("Portable Bitmap")        { Patterns = ["*.pbm"] },
         new("QOI Image")              { Patterns = ["*.qoi"] },
+        new("Icon")                   { Patterns = ["*.ico"] }
     ];
     public static async Task ExportImageAsync(Window dialog, PixelModel model)
     {
@@ -78,23 +82,29 @@ public static class ImageExportService
 
                 await using var stream = await file.OpenWriteAsync();
 
-                IImageEncoder encoder = Path.GetExtension(file.Name).ToLowerInvariant() switch
+                if (Path.GetExtension(file.Name).Equals(".svg", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    ".png" => BuildPngEncoder(model),
-                    ".jpg" or ".jpeg" => new JpegEncoder { Quality = 100 },
-                    ".bmp" => new BmpEncoder(),
-                    ".gif" => new GifEncoder(),
-                    ".tif" or ".tiff" => new TiffEncoder(),
-                    ".webp" => new WebpEncoder { Quality = 100 },
-                    ".tga" => new TgaEncoder(),
-                    ".pbm" => new PbmEncoder(),
-                    ".qoi" => new QoiEncoder(),
-                    ".avif" => new AvifEncoder(),
-                    ".heif" => new HeifEncoder(),
-                    _ => new PngEncoder()
-                };
-
-                image.Save(stream, encoder);
+                    await ExportAsSvgWrapper(image, stream, model.Width, model.Height);
+                }
+                else
+                {
+                    IImageEncoder encoder = Path.GetExtension(file.Name).ToLowerInvariant() switch
+                    {
+                        ".png" => BuildPngEncoder(model),
+                        ".jpg" or ".jpeg" => new JpegEncoder { Quality = 100 },
+                        ".bmp" => new BmpEncoder(),
+                        ".gif" => new GifEncoder(),
+                        ".tif" or ".tiff" => new TiffEncoder(),
+                        ".webp" => new WebpEncoder { Quality = 100 },
+                        ".tga" => new TgaEncoder(),
+                        ".pbm" => new PbmEncoder(),
+                        ".qoi" => new QoiEncoder(),
+                        ".avif" => new AvifEncoder(),
+                        ".heif" => new HeifEncoder(),
+                        _ => new PngEncoder()
+                    };
+                    image.Save(stream, encoder);
+                }
             }
             catch (Exception ex)
             {
@@ -130,8 +140,23 @@ public static class ImageExportService
         return result;
     }
 
-    private static SixLabors.ImageSharp.Image ConvertToTargetFormat(
-     SixLabors.ImageSharp.Image<Rgba32> baseImage, PixelModel parameters)
+    private static async Task ExportAsSvgWrapper(SixLabors.ImageSharp.Image image, Stream stream, int width, int height)
+    {
+        using var pngStream = new MemoryStream();
+        await image.SaveAsPngAsync(pngStream);
+        var base64 = System.Convert.ToBase64String(pngStream.ToArray());
+
+        var svg = $"""
+        <svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}">
+          <image width="{width}" height="{height}" href="data:image/png;base64,{base64}" />
+        </svg>
+        """;
+
+        await using var writer = new StreamWriter(stream, leaveOpen: true);
+        await writer.WriteAsync(svg);
+    }
+
+    private static SixLabors.ImageSharp.Image ConvertToTargetFormat(Image<Rgba32> baseImage, PixelModel parameters)
     {
         return (parameters.Mode, parameters.BitDepth) switch
         {
@@ -147,8 +172,7 @@ public static class ImageExportService
     }
 
     // ToRgba64Image тепер приймає Image<Rgba32> замість byte[]
-    private static SixLabors.ImageSharp.Image<Rgba64> ToRgba64Image(
-        SixLabors.ImageSharp.Image<Rgba32> src)
+    private static Image<Rgba64> ToRgba64Image(Image<Rgba32> src)
     {
         var width = src.Width;
         var height = src.Height;

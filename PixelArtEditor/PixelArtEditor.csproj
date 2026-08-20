@@ -25,9 +25,11 @@
     <PackageReference Include="AvaloniaUI.DiagnosticsSupport" />
     <PackageReference Include="HeyRed.ImageSharp.Heif" />
     <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="Pfim" />
     <PackageReference Include="ReactiveUI.Avalonia" />
     <PackageReference Include="SixLabors.ImageSharp" />
     <PackageReference Include="SkiaSharp" />
+    <PackageReference Include="Svg.Skia" />
     <PackageReference Include="YamlDotNet" />
     <PackageReference Include="Avalonia.Desktop" />
     <PackageReference Include="System.Reactive" />

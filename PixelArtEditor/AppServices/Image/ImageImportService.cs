@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform.Storage;
+using PixelArtEditor.AppServices.Image.Formats;
 using PixelArtEditor.AppServices.Shell;
 using PixelArtEditor.Models.Canvas;
 using SixLabors.ImageSharp;
@@ -23,15 +24,17 @@ public static class ImageImportService
         new("All Supported Images")
         {
             Patterns = ["*.png", "*.jpg", "*.jpeg", "*.bmp", "*.gif",
-                        "*.tif", "*.tiff", "*.webp", "*.avif", "*.heif",
-                        "*.tga", "*.pbm", "*.qoi", "*.ico"]
+                        "*.tif", "*.tiff", "*.svg", "*.dds", "*.webp", 
+                        "*.avif", "*.heif", "*.tga", "*.pbm", "*.qoi", "*.ico"]
         },
         new("PNG Image")              { Patterns = ["*.png"] },
         new("JPEG Image")             { Patterns = ["*.jpg", "*.jpeg"] },
         new("Bitmap Image")           { Patterns = ["*.bmp"] },
         new("GIF Image")              { Patterns = ["*.gif"] },
         new("TIFF Image")             { Patterns = ["*.tif", "*.tiff"] },
+        new("SVG Image")              { Patterns = ["*.svg"] },
         new("WebP Image")             { Patterns = ["*.webp"] },
+        new("DDS Image")              { Patterns = ["*.dds"] },
         new("AVIF Image")             { Patterns = ["*.avif"] },
         new("HEIF Image")             { Patterns = ["*.heif"] },
         new("TGA Image")              { Patterns = ["*.tga"] },
@@ -81,8 +84,91 @@ public static class ImageImportService
             var ms = new MemoryStream();
             await stream.CopyToAsync(ms);
 
+            var ext = Path.GetExtension(file.Name).ToLowerInvariant();
+
+            if (ext == ".svg")
+            {
+                var (svgModel, svgError) = await Task.Run(() =>
+                {
+                    ms.Position = 0;
+                    var result = SvgService.RenderToRgba32(ms);
+                    if (result is null) return ((PixelModel?)null, "Invalid or empty SVG file.");
+
+                    var (data, width, height) = result.Value;
+
+                    return (new PixelModel
+                    {
+                        Width = width,
+                        Height = height,
+                        Mode = ColorMode.RGBA,
+                        BitDepth = BitDepth.Bit8,
+                        Alpha = AlphaFormat.Straight,
+                        ColorSpace = ColorSpace.sRGB,
+                        DpiX = 96f,
+                        DpiY = 96f,
+                        Data = data
+                    }, (string?)null);
+                });
+
+                if (svgError is not null)
+                {
+                    await ActionService.ShowErrorAsync(svgError);
+                    return null;
+                }
+
+                if (svgModel is not null)
+                {
+                    svgModel.Name = Path.GetFileNameWithoutExtension(file.Name);
+                    svgModel.Extension = ext.TrimStart('.');
+                }
+
+                return svgModel;
+            }
+            else if (ext == ".dds")
+            {
+                ms.Position = 0;
+
+                var ddsResult = DdsService.LoadAsRgba32(ms, out var ddsError);
+
+                if (ddsResult is null)
+                {
+                    await ActionService.ShowErrorAsync(ddsError ?? "Unsupported or invalid DDS format.");
+                    return null;
+                }
+
+                var (data, width, height) = ddsResult.Value;
+
+                var ddsModel = new PixelModel
+                {
+                    Width = width,
+                    Height = height,
+                    Mode = ColorMode.RGBA,
+                    BitDepth = BitDepth.Bit8,
+                    Alpha = AlphaFormat.Straight,
+                    ColorSpace = ColorSpace.sRGB,
+                    DpiX = 96f,
+                    DpiY = 96f,
+                    Data = data,
+                    Name = Path.GetFileNameWithoutExtension(file.Name),
+                    Extension = ext.TrimStart('.')
+                };
+
+                return ddsModel;
+            }
+
             var (model, error) = await Task.Run(() =>
             {
+                ms.Position = 0;
+
+                if (ext == ".ico")
+                {
+                    var extracted = IcoService.ExtractLargestImage(ms);
+                    if (extracted is null) return ((PixelModel?)null, "Invalid .ico file.");
+
+                    ms.SetLength(0);
+                    ms.Write(extracted, 0, extracted.Length);
+                }
+
                 ms.Position = 0;
 
                 ImageInfo? info;
