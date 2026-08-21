@@ -186,7 +186,7 @@ public class EditorVM : ReactiveObject
         }
     }
 
-    private Color _pickedColor;
+    private Color _pickedColor = Colors.White;
     public Color PickedColor
     {
         get => _pickedColor;

@@ -1,17 +1,22 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
+using PixelArtEditor.AppServices;
 using PixelArtEditor.AppServices.Canvas;
 using PixelArtEditor.AppServices.EditorUI;
 using PixelArtEditor.AppServices.EditorUI.LayerPanel;
 using PixelArtEditor.Models.LayerPanel;
+using PixelArtEditor.UI;
 using PixelArtEditor.ViewModels;
 using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
+using System.Reactive.Linq;
 
 namespace PixelArtEditor.Controls.Editor;
 
@@ -52,9 +57,21 @@ public partial class LayerPanel : UserControl
         LayerCommands = new LayerCmdList(_vm, LayerListBox);
         _dndManager = new DnDManager(LayerListBox, FloatingHost, CountBadge, CountBadgeText);
 
+        if (Services.Navigation.GetViewModel() is not EditorVM editorVM) return;
+        editorVM.WhenAnyValue(e => e.IsTransforming).Subscribe(isTransforming =>
+        {
+            for (var i = 0; i < LayerListBox.ItemCount; i++)
+            {
+                if (LayerListBox.ContainerFromIndex(i) is ListBoxItem item)
+                    item.Classes.Set("disabled", isTransforming);
+            }
+        });
+
         LayerListBox.AddHandler(PointerPressedEvent, OnItemPointerPressed, RoutingStrategies.Tunnel);
         LayerListBox.AddHandler(PointerMovedEvent, OnItemPointerMoved, RoutingStrategies.Tunnel);
         LayerListBox.AddHandler(PointerReleasedEvent, OnItemPointerReleased, RoutingStrategies.Tunnel);
+        LayerListBox.AddHandler(PointerPressedEvent, OnLockButtonPointerPressed, RoutingStrategies.Tunnel);
+
         LayerListBox.SelectionChanged += OnSelectionChanged;
     }
 
@@ -81,7 +98,16 @@ public partial class LayerPanel : UserControl
 
     private void OnItemPointerPressed(object? sender, PointerPressedEventArgs e)
     {
-        if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed || _dragging || LayerManager?.Layers.Count <= 1) return;
+        if (Services.Navigation.GetViewModel() is EditorVM editorVM && editorVM.IsTransforming)
+        {
+            e.Handled = true;
+            return;
+        }
+
+        if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed
+            || _dragging
+            || LayerManager?.Layers.Count <= 1
+            || (e.Source as Control)?.FindAncestorOfType<ScrollBar>() is not null) return;
 
         var pressedListBoxItem = (e.Source as Control)?.FindAncestorOfType<ListBoxItem>();
 
@@ -103,8 +129,13 @@ public partial class LayerPanel : UserControl
 
     private void OnItemPointerMoved(object? sender, PointerEventArgs e)
     {
-        if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed || LayerManager is null
-            || LayerManager.Layers.Count <= 1 || _dndManager.DraggedItems.Count == 0) return;
+        if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed
+            || LayerManager is null
+            || LayerManager.Layers.Count <= 1
+            || _dndManager.DraggedItems.Count == 0
+            || Services.Navigation.GetViewModel() is not EditorVM editorVM
+            || editorVM.IsTransforming
+            || (e.Source as Control)?.FindAncestorOfType<ScrollBar>() is not null) return;
 
         var dx = e.GetPosition(this).X - _mousePressPos.X;
         var dy = e.GetPosition(this).Y - _mousePressPos.Y;
@@ -156,6 +187,28 @@ public partial class LayerPanel : UserControl
             _dndManager.MoveGroupTo(_dndManager.TargetIndex.Value);
 
         _dndManager.CleanupDrag();
+    }
+
+    private void OnLockButtonPointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        if (e.Source is not Control source) return;
+
+        var toggleButton = source.FindAncestorOfType<InstantToggleButton>(includeSelf: true);
+        if (toggleButton is not { Tag: "Lock/Unlock" } || toggleButton.DataContext is not LayerItem clickedItem) return;
+
+        var newValue = !clickedItem.IsLocked;
+
+        if (_vm?.SelLayerItems is { Count: > 0 } sel && sel.Any(i => i == clickedItem))
+        {
+            foreach (var item in sel)
+                item.IsLocked = newValue;
+        }
+        else
+        {
+            clickedItem.IsLocked = newValue;
+        }
+
+        e.Handled = true;
     }
 
     private void TextBlock_DoubleTapped(object? sender, TappedEventArgs e)

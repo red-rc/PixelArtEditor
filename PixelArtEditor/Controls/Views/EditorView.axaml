@@ -12,7 +12,7 @@
     Background="{DynamicResource BackgroundColor}"
     mc:Ignorable="d">
 
-    <Grid Name="Root" Focusable="True" PointerMoved="Root_PointerMoved" DragDrop.AllowDrop="True">
+    <Grid Name="Root" Focusable="True" Background="Transparent" PointerMoved="Root_PointerMoved" DragDrop.AllowDrop="True">
         <Grid
             Name="MainLayout"
             ColumnDefinitions="Auto,*,Auto"
@@ -132,7 +132,7 @@
                     Text="{Binding ScaleText}" />
             </Panel>
         </Grid>
-        <Canvas x:Name="FloatingHost" IsHitTestVisible="True" />
+        <Canvas x:Name="FloatingHost" ZIndex="1000" IsHitTestVisible="True" />
         <Canvas x:Name="RectHost" />
         <Canvas Name="TooltipHost">
             <Border

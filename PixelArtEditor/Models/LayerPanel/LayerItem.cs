@@ -51,8 +51,8 @@ public class LayerItem(LayerModel layer) : ReactiveObject
     }
 
     public IImage? VisibleIconSource => IsVisible
-    ? Application.Current?.Resources["ShowIcon"] as IImage
-    : Application.Current?.Resources["HideIcon"] as IImage;
+        ? Application.Current?.Resources["ShowIcon"] as IImage
+        : Application.Current?.Resources["HideIcon"] as IImage;
 
     public IImage? LockedIconSource => IsLocked
         ? Application.Current?.Resources["LockIcon"] as IImage

@@ -1,7 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
-using Avalonia.Interactivity;
 using PixelArtEditor.AppServices;
 using PixelArtEditor.ViewModels;
 using System;

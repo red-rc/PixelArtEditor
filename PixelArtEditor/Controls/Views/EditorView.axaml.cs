@@ -19,6 +19,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace PixelArtEditor.Controls.Views;
 
@@ -36,12 +38,14 @@ public partial class EditorView : UserControl
     private readonly LayoutManager _layoutManager;
     private readonly TooltipManager _tooltipManager;
 
+    private CancellationTokenSource? _leaveCts;
+
     private IDisposable? _modelSubscription;
     private PixelModel? _subscribedModel;
 
     private EditorVM? ViewModel => DataContext as EditorVM;
 
-    private int _addedLayersCount = 0;
+    private readonly List<LayerModel> _addedLayers = [];
 
     private void OnCancelClick(object? sender, RoutedEventArgs e) => OnCancel();
 
@@ -51,10 +55,8 @@ public partial class EditorView : UserControl
     {
         if (ViewModel is null) return;
 
-        //var selItems = LayerPanelControl.LayerListBox.SelectedItems;
-        //var selLayers = ViewModel.LayerManager.Layers.Select(l => l )
-        for (var i = 0; i < _addedLayersCount; i++)
-            ViewModel.LayerManager.Layers.RemoveAt(i);
+        foreach (var layer in _addedLayers)
+            ViewModel.LayerManager.Layers.Remove(layer);
 
         var vm = LayerPanelControl.ViewModel;
         if (LayerPanelControl.LayerManager?.Layers.Count > 0)
@@ -75,7 +77,7 @@ public partial class EditorView : UserControl
     {
         if (ViewModel is null) return;
 
-        _addedLayersCount = 0;
+        _addedLayers.Clear();
         ViewModel.ConfirmPanelVisible = false;
     }
 
@@ -86,7 +88,7 @@ public partial class EditorView : UserControl
         _layoutManager = new LayoutManager(MainLayout, RectHost, CanvasPanel);
         _tooltipManager = new TooltipManager(Tooltip, TooltipText, RectHost);
 
-        AddHandler(KeyDownEvent, OnLayerHotkeys, RoutingStrategies.Tunnel);
+        AddHandler(KeyDownEvent, OnHotkeys, RoutingStrategies.Tunnel);
 
         DataContextChanged += OnDataContextChanged;
 
@@ -117,6 +119,8 @@ public partial class EditorView : UserControl
     {
         if (DataContext is not EditorVM vm || vm.IsTransforming) return;
 
+        _leaveCts?.Cancel();
+
         e.DragEffects = e.DataTransfer.Formats.Contains(DataFormat.File)
             ? DragDropEffects.Copy
             : DragDropEffects.None;
@@ -125,9 +129,22 @@ public partial class EditorView : UserControl
         vm.DragImageVisible = e.DragEffects == DragDropEffects.Copy;
     }
 
-    private void OnDragLeave(object? sender, RoutedEventArgs e)
+    private async void OnDragLeave(object? sender, RoutedEventArgs e)
     {
-        if (DataContext is not EditorVM vm || vm.IsTransforming) return;
+        if (DataContext is not StartMenuVM vm) return;
+
+        _leaveCts?.Cancel();
+        var cts = new CancellationTokenSource();
+        _leaveCts = cts;
+
+        try
+        {
+            await Task.Delay(30, cts.Token);
+        }
+        catch (TaskCanceledException)
+        {
+            return;
+        }
 
         vm.DragBgOpacity = 0;
         vm.DragImageVisible = false;
@@ -145,7 +162,6 @@ public partial class EditorView : UserControl
         vm.DragBgOpacity = 0;
         vm.DragImageVisible = false;
 
-        List<LayerModel> addedLayers = [];
         foreach (var file in storageFiles)
         {
             var pixelModel = await ImageImportService.GetPixelModelFromFile(file);
@@ -170,15 +186,13 @@ public partial class EditorView : UserControl
 
             vm.LayerManager.Layers.Insert(0, newLayer);
 
-            addedLayers.Add(newLayer);
-
-            _addedLayersCount++;
+            _addedLayers.Add(newLayer);
         }
 
-        if (_addedLayersCount <= 0) return;
+        if (_addedLayers.Count <= 0) return;
 
         LayerPanelControl.LayerListBox.SelectedItems?.Clear();
-        foreach (var layer in addedLayers)
+        foreach (var layer in _addedLayers)
         {
             var item = LayerPanelControl.ViewModel.LayerItems.FirstOrDefault(x => x.Layer == layer);
             if (item is not null) LayerPanelControl.LayerListBox.SelectedItems?.Add(item);
@@ -195,8 +209,11 @@ public partial class EditorView : UserControl
         return (Math.Max(1, (int)(srcW * scale)), Math.Max(1, (int)(srcH * scale)));
     }
 
-    private async void OnLayerHotkeys(object? sender, KeyEventArgs e)
+    private async void OnHotkeys(object? sender, KeyEventArgs e)
     {
+        var focused = TopLevel.GetTopLevel(this)?.FocusManager?.GetFocusedElement();
+        if (focused is TextBox or NumericUpDown) return;
+
         var commands = LayerPanelControl.LayerCommands;
         var layerManager = LayerPanelControl.LayerManager;
 
@@ -240,6 +257,26 @@ public partial class EditorView : UserControl
 
             case (KeyModifiers.None, Key.Enter):
                 OnConfirm();
+                break;
+
+            case (KeyModifiers.None, Key.B):
+                ViewModel?.SelectedTool = Models.Tools.ToolType.Pen;
+                break;
+
+            case (KeyModifiers.None, Key.I):
+                ViewModel?.SelectedTool = Models.Tools.ToolType.ColorPicker;
+                break;
+
+            case (KeyModifiers.None, Key.F):
+                ViewModel?.SelectedTool = Models.Tools.ToolType.Fill;
+                break;
+
+            case (KeyModifiers.None, Key.E):
+                ViewModel?.SelectedTool = Models.Tools.ToolType.Eraser;
+                break;
+
+            case (KeyModifiers.None, Key.H):
+                ViewModel?.SelectedTool = Models.Tools.ToolType.Hand;
                 break;
 
             default:
@@ -324,6 +361,9 @@ public partial class EditorView : UserControl
 
     private void CanvasPanel_OnPointerPressed(object? sender, PointerPressedEventArgs e)
     {
+        if (e.GetCurrentPoint(this).Properties.PointerUpdateKind == PointerUpdateKind.RightButtonPressed)
+            Dispatcher.UIThread.Post(() => Root.Focus());
+
         if (ViewModel == null
             || !e.GetCurrentPoint(CanvasPanel).Properties.IsRightButtonPressed
             || ViewModel.IsPositionSet
@@ -358,10 +398,17 @@ public partial class EditorView : UserControl
 
     private async void Panel_PointerPressed(object? sender, PointerPressedEventArgs e)
     {
-        if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed || _dragging || ViewModel == null) return;
+        if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed
+            || _dragging
+            || ViewModel == null
+            || ViewModel.IsTransforming) return;
 
         var source = e.Source as Control;
-        _pressedOnPanel = source is not (Button or InstantToggleButton or TextBox or ComboBox or ListBox or ListBoxItem);
+        var isExcludedControl = source is Button or InstantToggleButton or TextBox or ComboBox or ListBox or ListBoxItem;
+        var isScrollViewerBorder = source is Border && source.GetVisualAncestors().Any(x => x is ScrollViewer);
+
+        _pressedOnPanel = !isExcludedControl && !isScrollViewerBorder;
+
         _mousePressPos = e.GetPosition(this);
     }
 
@@ -370,7 +417,8 @@ public partial class EditorView : UserControl
         if (sender is not Control draggedPanel
             || !e.GetCurrentPoint(this).Properties.IsLeftButtonPressed
             || !_pressedOnPanel
-            || ViewModel == null) return;
+            || ViewModel == null
+            || ViewModel.IsTransforming) return;
 
         if (!_dragging)
         {
@@ -386,7 +434,8 @@ public partial class EditorView : UserControl
             _dockState ??= DockHelper.GetDockState(draggedPanel);
             DockManager.Undock(draggedPanel, FloatingHost);
 
-            var rectsToHighlight = _dockState.Orientation == DockOrientation.Vertical ? _layoutManager.VerticalRects : _layoutManager.HorizontalRects;
+            var rectsToHighlight = _dockState.Orientation == DockOrientation.Vertical
+                ? _layoutManager.VerticalRects : _layoutManager.HorizontalRects;
 
             rectsToHighlight.ForEach(rect => rect.Fill = rect.GetValue(LayoutManager.DockInfoProperty)?.Orientation == _dockState.Orientation ?
                 new SolidColorBrush(Application.Current?.Resources["PrimaryPressColor"] as Color? ?? Colors.Blue) : rect.Fill);
