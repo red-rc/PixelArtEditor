@@ -2,17 +2,13 @@
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
-using Avalonia.Media;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using PixelArtEditor.AppServices;
 using PixelArtEditor.AppServices.Canvas;
 using PixelArtEditor.AppServices.EditorUI;
 using PixelArtEditor.AppServices.Image;
-using PixelArtEditor.Helpers;
 using PixelArtEditor.Models.Canvas;
-using PixelArtEditor.Models.Dock;
-using PixelArtEditor.UI;
 using PixelArtEditor.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -242,7 +238,6 @@ public partial class EditorView : UserControl
         if (ViewModel == null || e.GetCurrentPoint(CanvasPanel).Properties.IsRightButtonPressed) return;
 
         var rawScale = ViewModel.Scale + e.Delta.Y * ViewModel.Scale / 10.0;
-
         var newScale = Math.Clamp(rawScale, ViewModel.MinScale, ViewModel.MaxScale);
 
         if (Math.Abs(newScale - ViewModel.Scale) < 1e-9) return;
