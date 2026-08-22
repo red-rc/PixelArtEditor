@@ -7,7 +7,6 @@ using Avalonia.Threading;
 using Avalonia.VisualTree;
 using PixelArtEditor.AppServices;
 using PixelArtEditor.AppServices.Canvas;
-using PixelArtEditor.AppServices.EditorUI;
 using PixelArtEditor.AppServices.EditorUI.LayerPanel;
 using PixelArtEditor.Models.LayerPanel;
 using PixelArtEditor.UI;
@@ -38,7 +37,7 @@ public partial class LayerPanel : UserControl
     private bool _dragging;
 
     public readonly LayerCmdList LayerCommands;
-    private readonly DnDManager _dndManager;
+    private readonly LayerDnDManager _dndManager;
 
     private void OnAddClick(object? sender, RoutedEventArgs e) => LayerCommands.AddCmd.Execute(LayerManager);
     private void OnRemoveClick(object? sender, RoutedEventArgs e) => LayerCommands.RemoveCmd.Execute(LayerManager);
@@ -55,7 +54,7 @@ public partial class LayerPanel : UserControl
         InitializeComponent();
 
         LayerCommands = new LayerCmdList(_vm, LayerListBox);
-        _dndManager = new DnDManager(LayerListBox, FloatingHost, CountBadge, CountBadgeText);
+        _dndManager = new LayerDnDManager(LayerListBox, FloatingHost, CountBadge, CountBadgeText);
 
         if (Services.Navigation.GetViewModel() is not EditorVM editorVM) return;
         editorVM.WhenAnyValue(e => e.IsTransforming).Subscribe(isTransforming =>

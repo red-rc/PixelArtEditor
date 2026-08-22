@@ -3,7 +3,6 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
-using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using PixelArtEditor.AppServices;
@@ -19,26 +18,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace PixelArtEditor.Controls.Views;
 
 public partial class EditorView : UserControl
 {
-    private DockState? _dockState;
-
-    private Point _mousePressPos;
-    private bool _pressedOnPanel;
-    private bool _dragging;
-
-    private double _dragOffsetX;
-    private double _dragOffsetY;
-
     private readonly LayoutManager _layoutManager;
     private readonly TooltipManager _tooltipManager;
-
-    private CancellationTokenSource? _leaveCts;
+    private readonly ImageDropHandler _dropHandler;
+    private readonly PanelDragController _dragController;
+    private HotkeysService _hotkeysService;
 
     private IDisposable? _modelSubscription;
     private PixelModel? _subscribedModel;
@@ -88,6 +77,15 @@ public partial class EditorView : UserControl
         _layoutManager = new LayoutManager(MainLayout, RectHost, CanvasPanel);
         _tooltipManager = new TooltipManager(Tooltip, TooltipText, RectHost);
 
+        _dropHandler = new ImageDropHandler(
+            o => { ViewModel?.DragBgOpacity = o; },
+            v => { ViewModel?.DragImageVisible = v; });
+
+        _dragController = new PanelDragController(MainLayout, FloatingHost, RectHost, _layoutManager);
+
+        _hotkeysService = new HotkeysService(LayerPanelControl.LayerCommands, 
+            LayerPanelControl.LayerManager, ViewModel, OnCancel, OnConfirm);
+
         AddHandler(KeyDownEvent, OnHotkeys, RoutingStrategies.Tunnel);
 
         DataContextChanged += OnDataContextChanged;
@@ -110,6 +108,7 @@ public partial class EditorView : UserControl
     protected override void OnInitialized()
     {
         base.OnInitialized();
+
         DragDrop.AddDragOverHandler(this, OnDragOver);
         DragDrop.AddDragLeaveHandler(this, OnDragLeave);
         DragDrop.AddDropHandler(this, OnDrop);
@@ -118,51 +117,22 @@ public partial class EditorView : UserControl
     private void OnDragOver(object? sender, DragEventArgs e)
     {
         if (DataContext is not EditorVM vm || vm.IsTransforming) return;
-
-        _leaveCts?.Cancel();
-
-        e.DragEffects = e.DataTransfer.Formats.Contains(DataFormat.File)
-            ? DragDropEffects.Copy
-            : DragDropEffects.None;
-
-        vm.DragBgOpacity = e.DragEffects == DragDropEffects.Copy ? 0.3 : 0;
-        vm.DragImageVisible = e.DragEffects == DragDropEffects.Copy;
+        _dropHandler.HandleDragOver(e);
     }
 
     private async void OnDragLeave(object? sender, RoutedEventArgs e)
-    {
-        if (DataContext is not StartMenuVM vm) return;
-
-        _leaveCts?.Cancel();
-        var cts = new CancellationTokenSource();
-        _leaveCts = cts;
-
-        try
-        {
-            await Task.Delay(30, cts.Token);
-        }
-        catch (TaskCanceledException)
-        {
-            return;
-        }
-
-        vm.DragBgOpacity = 0;
-        vm.DragImageVisible = false;
-    }
+        => await _dropHandler.HandleDragLeave();
 
     private async void OnDrop(object? sender, DragEventArgs e)
     {
         if (DataContext is not EditorVM vm || vm.IsTransforming) return;
 
-        var files = e.DataTransfer.TryGetFiles();
-        if (files is null) return;
-
-        var storageFiles = files.OfType<IStorageFile>();
+        var files = ImageDropHandler.GetFiles(e);
 
         vm.DragBgOpacity = 0;
         vm.DragImageVisible = false;
 
-        foreach (var file in storageFiles)
+        foreach (var file in files)
         {
             var pixelModel = await ImageImportService.GetPixelModelFromFile(file);
             if (pixelModel is null) continue;
@@ -214,74 +184,7 @@ public partial class EditorView : UserControl
         var focused = TopLevel.GetTopLevel(this)?.FocusManager?.GetFocusedElement();
         if (focused is TextBox or NumericUpDown) return;
 
-        var commands = LayerPanelControl.LayerCommands;
-        var layerManager = LayerPanelControl.LayerManager;
-
-        switch (e.KeyModifiers, e.Key)
-        {
-            case (KeyModifiers.Control, Key.N):
-                commands.AddCmd.Execute(layerManager);
-                break;
-
-            case (KeyModifiers.Control, Key.D):
-                commands.DuplicateCmd.Execute(layerManager);
-                break;
-
-            case (KeyModifiers.Control, Key.Up):
-                commands.MoveStepCmd.Execute(layerManager, -1);
-                break;
-
-            case (KeyModifiers.Control, Key.Down):
-                commands.MoveStepCmd.Execute(layerManager, 1);
-                break;
-
-            case (KeyModifiers.Control, Key.G):
-                commands.GroupCmd.Execute(layerManager);
-                break;
-
-            case (KeyModifiers.Control, Key.C):
-                commands.CopyCmd.Execute(layerManager);
-                break;
-            
-            case (KeyModifiers.Control, Key.V):
-                commands.InsertCmd.Execute(layerManager);
-                break;
-
-            case (KeyModifiers.None, Key.Delete):
-                commands.RemoveCmd.Execute(layerManager);
-                break;
-
-            case (KeyModifiers.None, Key.Escape):
-                OnCancel();
-                break;
-
-            case (KeyModifiers.None, Key.Enter):
-                OnConfirm();
-                break;
-
-            case (KeyModifiers.None, Key.B):
-                ViewModel?.SelectedTool = Models.Tools.ToolType.Pen;
-                break;
-
-            case (KeyModifiers.None, Key.I):
-                ViewModel?.SelectedTool = Models.Tools.ToolType.ColorPicker;
-                break;
-
-            case (KeyModifiers.None, Key.F):
-                ViewModel?.SelectedTool = Models.Tools.ToolType.Fill;
-                break;
-
-            case (KeyModifiers.None, Key.E):
-                ViewModel?.SelectedTool = Models.Tools.ToolType.Eraser;
-                break;
-
-            case (KeyModifiers.None, Key.H):
-                ViewModel?.SelectedTool = Models.Tools.ToolType.Hand;
-                break;
-
-            default:
-                return;
-        }
+        if (!_hotkeysService.Handle(e.KeyModifiers, e.Key)) return;
 
         e.Handled = true;
         Dispatcher.UIThread.Post(() => Root.Focus());
@@ -299,6 +202,8 @@ public partial class EditorView : UserControl
 
             ViewModel.SetCanvas(CanvasControl);
             LayerPanelControl.LayerManager = ViewModel.LayerManager;
+            _hotkeysService = new HotkeysService(LayerPanelControl.LayerCommands, 
+                LayerPanelControl.LayerManager, ViewModel, OnCancel, OnConfirm);
 
             ViewModel.AdjustCanvas(CanvasPanel.Bounds.Width, CanvasPanel.Bounds.Height);
 
@@ -398,105 +303,23 @@ public partial class EditorView : UserControl
 
     private async void Panel_PointerPressed(object? sender, PointerPressedEventArgs e)
     {
-        if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed
-            || _dragging
-            || ViewModel == null
-            || ViewModel.IsTransforming) return;
-
-        var source = e.Source as Control;
-        var isExcludedControl = source is Button or InstantToggleButton or TextBox or ComboBox or ListBox or ListBoxItem;
-        var isScrollViewerBorder = source is Border && source.GetVisualAncestors().Any(x => x is ScrollViewer);
-
-        _pressedOnPanel = !isExcludedControl && !isScrollViewerBorder;
-
-        _mousePressPos = e.GetPosition(this);
+        if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed || ViewModel == null || ViewModel.IsTransforming) return;
+        _dragController.OnPointerPressed(this, e);
     }
 
     private void Panel_PointerMoved(object? sender, PointerEventArgs e)
     {
         if (sender is not Control draggedPanel
             || !e.GetCurrentPoint(this).Properties.IsLeftButtonPressed
-            || !_pressedOnPanel
             || ViewModel == null
             || ViewModel.IsTransforming) return;
 
-        if (!_dragging)
-        {
-            var mousePos = e.GetPosition(this);
-            var dx = mousePos.X - _mousePressPos.X;
-            var dy = mousePos.Y - _mousePressPos.Y;
-
-            if (dx * dx + dy * dy < 100) return;
-
-            _dragOffsetX = e.GetPosition(draggedPanel).X;
-            _dragOffsetY = e.GetPosition(draggedPanel).Y;
-
-            _dockState ??= DockHelper.GetDockState(draggedPanel);
-            DockManager.Undock(draggedPanel, FloatingHost);
-
-            var rectsToHighlight = _dockState.Orientation == DockOrientation.Vertical
-                ? _layoutManager.VerticalRects : _layoutManager.HorizontalRects;
-
-            rectsToHighlight.ForEach(rect => rect.Fill = rect.GetValue(LayoutManager.DockInfoProperty)?.Orientation == _dockState.Orientation ?
-                new SolidColorBrush(Application.Current?.Resources["PrimaryPressColor"] as Color? ?? Colors.Blue) : rect.Fill);
-
-            e.Pointer.Capture(draggedPanel);
-        }
-
-        _dragging = true;
-
-        var pos = e.GetPosition(FloatingHost);
-        Canvas.SetLeft(draggedPanel, pos.X - _dragOffsetX);
-        Canvas.SetTop(draggedPanel, pos.Y - _dragOffsetY);
+        _dragController.OnPointerMoved(draggedPanel, this, e);
     }
 
     private void Panel_PointerReleased(object? sender, PointerReleasedEventArgs e)
     {
-        _pressedOnPanel = false;
-        _dragging = false;
-
-        if (sender is not Control draggedPanel || _dockState is null) return;
-        e.Pointer.Capture(null);
-
-        var docked = false;
-        var rectsToCheck = _dockState.Orientation == DockOrientation.Vertical ? _layoutManager.VerticalRects : _layoutManager.HorizontalRects;
-
-        foreach (var rect in rectsToCheck)
-        {
-            var dockInfo = rect.GetValue(LayoutManager.DockInfoProperty);
-
-            if (dockInfo is null || _dockState is null) continue;
-
-            if (rect.Bounds.Inflate(30).Contains(e.GetPosition(RectHost)))
-            {
-                DockManager.Redock(draggedPanel, _dockState);
-                DockManager.ReorderElements(_dockState.OriginalParent, draggedPanel, dockInfo.Index, dockInfo.Orientation, _dockState, _layoutManager.ApplyGridDefinitions);
-
-                Services.Settings.Layout = [.. MainLayout.Children
-                    .OfType<Control>()
-                    .Select(c => new PanelLayout { Name = c.Name, Row = Grid.GetRow(c), Col = Grid.GetColumn(c) })];
-
-                docked = true;
-            }
-
-            var boundaryCount = dockInfo.Orientation == DockOrientation.Vertical
-                ? MainLayout.ColumnDefinitions.Count
-                : MainLayout.RowDefinitions.Count;
-
-            rect.Fill = (dockInfo.Index == 0 || dockInfo.Index == boundaryCount) ? new SolidColorBrush(Colors.Transparent) : 
-                new SolidColorBrush(Application.Current?.Resources["BackgroundPressColor"] as Color? ?? Colors.DarkGray);
-        }
-
-        if (!docked)
-        {
-            DockManager.Redock(draggedPanel, _dockState!);
-            Grid.SetRow(draggedPanel, _dockState!.Row);
-            Grid.SetColumn(draggedPanel, _dockState!.Column);
-        }
-
-        _layoutManager.UpdateRectPositions();
-        _dockState = null;
-
+        _dragController.OnPointerReleased(sender as Control, e);
         _tooltipManager.Hide();
     }
 }

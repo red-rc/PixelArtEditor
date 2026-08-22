@@ -66,7 +66,11 @@ public static class ImageImportService
 
     public static async Task<PixelModel?> GetPixelModelFromFile(IStorageFile? file)
     {
-        if (file is null) return null;
+        if (file is null)
+        {
+            await ActionService.ShowErrorAsync("The file was null");
+            return null;
+        }
 
         Stream stream;
         try
@@ -172,18 +176,9 @@ public static class ImageImportService
                 ms.Position = 0;
 
                 ImageInfo? info;
-                try
-                {
-                    info = SharpImage.Identify(ms);
-                }
-                catch (UnknownImageFormatException)
-                {
-                    return (null, "Unsupported image format.");
-                }
-                catch (InvalidImageContentException)
-                {
-                    return (null, "The file is corrupted or contains invalid content.");
-                }
+                try { info = SharpImage.Identify(ms); }
+                catch (UnknownImageFormatException) { return (null, "Unsupported image format."); }
+                catch (InvalidImageContentException) { return (null, "The file is corrupted or contains invalid content."); }
 
                 if (info is null) return ((PixelModel?)null, "Could not read image information.");
 
