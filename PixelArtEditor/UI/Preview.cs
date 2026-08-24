@@ -89,11 +89,11 @@ public class Preview : Control
         var rect = size / ratio > size ? new Rect((double)(size - size * ratio) / 2, 0, size * ratio, size) : 
             new Rect(0, (double)(size - size / ratio) / 2, size, size / ratio);
         
-        _checkerboardBrush ??= new ImageBrush(BitmapService.CreateBitmap(8, 8, BitmapService.CreateCheckerBoardPixelData(8, 8)))
+        _checkerboardBrush ??= new ImageBrush(BitmapService.CreateBitmap(2, 2, BitmapService.CreateCheckerBoardPixelData(2, 2)))
         {
             TileMode = TileMode.Tile,
             Stretch = Stretch.Fill,
-            DestinationRect = new RelativeRect(0, 0, 64, 64, RelativeUnit.Absolute)
+            DestinationRect = new RelativeRect(0, 0, 20, 20, RelativeUnit.Absolute)
         };
 
         context.DrawRectangle(null, null, rect, 0, 0, _shadow);

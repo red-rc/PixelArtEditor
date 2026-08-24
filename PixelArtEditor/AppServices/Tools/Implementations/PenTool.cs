@@ -5,23 +5,23 @@ namespace PixelArtEditor.AppServices.Tools.Implementations;
 
 public class PenTool : ITool
 {
-    public void OnPointerExited(ICanvasContext context)
+    public void OnPointerExited(ICanvasContext ctx)
     {
 
     }
 
-    public void OnPointerMoved(ICanvasContext context) => Paint(context);
+    public void OnPointerMoved(ICanvasContext ctx) => Paint(ctx);
 
-    public void OnPointerPressed(ICanvasContext context) => Paint(context);
+    public void OnPointerPressed(ICanvasContext ctx) => Paint(ctx);
 
-    public void OnPointerReleased(ICanvasContext context)
+    public void OnPointerReleased(ICanvasContext ctx)
     {
 
     }
 
-    private static void Paint(ICanvasContext context)
+    private static void Paint(ICanvasContext ctx)
     {
-        if (context.HoverPixel is null) return;
-        ToolManager.UpdatePixelData(context, context.HoverPixel.Value.X, context.HoverPixel.Value.Y, context.PickedColor);
+        if (ctx.HoverPixel is null) return;
+        ToolManager.UpdatePixelData(ctx, ctx.HoverPixel.Value.X, ctx.HoverPixel.Value.Y, ctx.PickedColor);
     }
 }

@@ -110,8 +110,9 @@
                     Model="{Binding Model}"
                     PickedColor="{Binding PickedColor, Mode=TwoWay}"
                     Scale="{Binding Scale}"
-                    SelectedTool="{Binding SelectedTool}"
-                    Offset="{Binding Offset}" />
+                    MaxScale="{Binding MaxScale}"
+                    Offset="{Binding Offset}"
+                    SelectedTool="{Binding SelectedTool}" />
                 <TextBlock
                     Height="20"
                     Padding="5,0,5,0"

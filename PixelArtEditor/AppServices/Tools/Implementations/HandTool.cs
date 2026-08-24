@@ -5,22 +5,22 @@ namespace PixelArtEditor.AppServices.Tools.Implementations;
 
 public class HandTool : ITool
 {
-    public void OnPointerExited(ICanvasContext context)
+    public void OnPointerExited(ICanvasContext ctx)
     {
 
     }
 
-    public void OnPointerMoved(ICanvasContext context)
+    public void OnPointerMoved(ICanvasContext ctx)
     {
 
     }
 
-    public void OnPointerPressed(ICanvasContext context)
+    public void OnPointerPressed(ICanvasContext ctx)
     {
 
     }
 
-    public void OnPointerReleased(ICanvasContext context)
+    public void OnPointerReleased(ICanvasContext ctx)
     {
 
     }

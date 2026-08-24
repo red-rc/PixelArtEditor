@@ -237,7 +237,8 @@ public partial class EditorView : UserControl
     {
         if (ViewModel == null || e.GetCurrentPoint(CanvasPanel).Properties.IsRightButtonPressed) return;
 
-        var rawScale = ViewModel.Scale + e.Delta.Y * ViewModel.Scale / 10.0;
+        const double zoomBase = 1.1;
+        var rawScale = ViewModel.Scale * Math.Pow(zoomBase, e.Delta.Y);
         var newScale = Math.Clamp(rawScale, ViewModel.MinScale, ViewModel.MaxScale);
 
         if (Math.Abs(newScale - ViewModel.Scale) < 1e-9) return;

@@ -6,28 +6,28 @@ namespace PixelArtEditor.AppServices.Tools.Implementations;
 
 public class ColorPickerTool : ITool
 {
-    public void OnPointerExited(ICanvasContext context)
+    public void OnPointerExited(ICanvasContext ctx)
     {
 
     }
 
-    public void OnPointerMoved(ICanvasContext context)
+    public void OnPointerMoved(ICanvasContext ctx)
     {
 
     }
 
-    public void OnPointerPressed(ICanvasContext context) => PickColor(context);
+    public void OnPointerPressed(ICanvasContext ctx) => PickColor(ctx);
 
-    public void OnPointerReleased(ICanvasContext context)
+    public void OnPointerReleased(ICanvasContext ctx)
     {
 
     }
 
-    private static void PickColor(ICanvasContext context)
+    private static void PickColor(ICanvasContext ctx)
     {
-        var layer = context.LayerManager.ActiveLayer;
-        if (layer is null || context.HoverPixel is null) return;
+        var layer = ctx.LayerManager.ActiveLayer;
+        if (layer is null || ctx.HoverPixel is null) return;
 
-        context.PickedColor = BitmapService.GetPixelColor(layer.PixelData, layer.Width, context.HoverPixel.Value);
+        ctx.PickedColor = BitmapService.GetPixelColor(layer.PixelData, layer.Width, ctx.HoverPixel.Value);
     }
 }

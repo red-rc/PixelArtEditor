@@ -54,7 +54,16 @@ public class Canvas : Control, ICanvasContext
         get => GetValue(ScaleProperty);
         set => SetValue(ScaleProperty, value);
     }
-    
+
+    public static readonly StyledProperty<double> MaxScaleProperty =
+    AvaloniaProperty.Register<Canvas, double>(nameof(MaxScale));
+
+    public double MaxScale
+    {
+        get => GetValue(MaxScaleProperty);
+        set => SetValue(MaxScaleProperty, value);
+    }
+
     public static readonly StyledProperty<ToolType> SelectedToolProperty =
         AvaloniaProperty.Register<Canvas, ToolType>(nameof(SelectedTool));
     
@@ -79,7 +88,19 @@ public class Canvas : Control, ICanvasContext
         {
             if (_hoverPixel == value) return;
             _hoverPixel = value;
+            HoverPixelColor = null;
             InvalidateVisual();
+        }
+    }
+
+    private Color? _hoverPixelColor;
+    public Color? HoverPixelColor
+    {
+        get => _hoverPixelColor;
+        set
+        {
+            if (_hoverPixelColor == value) return;
+            _hoverPixelColor = value;
         }
     }
 
@@ -135,6 +156,9 @@ public class Canvas : Control, ICanvasContext
             RenderCache[layer].RenderBitmapDirty = true;
             RenderCache[layer].PreviewDirty = true;
         }
+
+        if (e.PropertyName is nameof(LayerModel.PixelData) or nameof(LayerModel.Opacity))
+            HoverPixelColor = null;
 
         InvalidateVisual();
     }
@@ -243,34 +267,33 @@ public class Canvas : Control, ICanvasContext
         if (e.InitialPressMouseButton == MouseButton.Left) _isLeftPressed = false;
     }
 
-    private void DrawCheckerBoard(DrawingContext context, double offsetX, double offsetY, double bmpW, double bmpH)
+    private void DrawCheckerBoard(DrawingContext context, int offsetX, int offsetY, int bmpW, int bmpH)
     {
-        _checkerboardBrush ??= new ImageBrush(BitmapService.CreateBitmap(8, 8, BitmapService.CreateCheckerBoardPixelData(8, 8)))
+        var tileSize = MaxScale / 4;
+
+        _checkerboardBrush ??= new ImageBrush(BitmapService.CreateBitmap(2, 2, BitmapService.CreateCheckerBoardPixelData(2, 2)))
         {
             TileMode = TileMode.Tile,
-            Stretch = Stretch.Fill,
-            DestinationRect = new RelativeRect(0, 0, 81, 81, RelativeUnit.Absolute)
+            Stretch = Stretch.Fill
         };
 
-        _checkerboardBrush.Transform = new TranslateTransform(offsetX % 81, offsetY % 81);
+        _checkerboardBrush.DestinationRect = new RelativeRect(0, 0, tileSize, tileSize, RelativeUnit.Absolute);
+        _checkerboardBrush.Transform = new TranslateTransform(offsetX, offsetY);
         context.FillRectangle(_checkerboardBrush, new Rect(offsetX, offsetY, bmpW, bmpH));
     }
 
-    private static void DrawBitmap(DrawingContext context, LayerModel layer, Canvas ctx, double offsetX, double offsetY)
+    private void DrawBitmap(DrawingContext context, LayerModel layer, double offsetX, double offsetY)
     {
         if (layer.RenderBitmap is null) return;
 
-        var srcW = Math.Min(layer.Width, ctx.Model.Width);
-        var srcH = Math.Min(layer.Height, ctx.Model.Height);
-
-        var srcRect = new Rect(0, 0, srcW, srcH);
-        var destRect = new Rect(offsetX, offsetY, srcW * ctx.Scale, srcH * ctx.Scale);
+        var srcRect = new Rect(0, 0, Model.Width, Model.Height);
+        var destRect = new Rect(offsetX, offsetY, Model.Width * Scale, Model.Height * Scale);
 
         if (layer.PreviewBitmap is not null)
         {
             var scaleX = (double)layer.PreviewBitmap.PixelSize.Width / layer.Width;
             var scaleY = (double)layer.PreviewBitmap.PixelSize.Height / layer.Height;
-            context.DrawImage(layer.PreviewBitmap, new Rect(0, 0, srcW * scaleX, srcH * scaleY), destRect);
+            context.DrawImage(layer.PreviewBitmap, new Rect(0, 0, Model.Width * scaleX, Model.Height * scaleY), destRect);
         }
         else
         {
@@ -287,10 +310,10 @@ public class Canvas : Control, ICanvasContext
             offsetY + HoverPixel.Value.Y * Scale,
             Scale, Scale);
 
-        var color = CanvasHelper.GetHighlightColor(BitmapService.GetCompositePixelColor(
-            LayerManager.Layers,
-            HoverPixel.Value));
-        context.DrawRectangle(new SolidColorBrush(color), null, rect);
+        HoverPixelColor ??= CanvasHelper.GetHighlightColor(BitmapService.GetCompositePixelColor(LayerManager.Layers, HoverPixel.Value));
+
+        if (HoverPixelColor is Color color)
+            context.DrawRectangle(new SolidColorBrush(color), null, rect);
     }
 
     private void DrawGrid(DrawingContext context, double offsetX, double offsetY, double bmpW, double bmpH)
@@ -322,7 +345,7 @@ public class Canvas : Control, ICanvasContext
     {
         base.Render(context);
 
-        var ((bmpW, bmpH), (offsetX, offsetY)) = CanvasHelper.GetBitmapRenderInfo(this);
+        var (bmpW, bmpH, offsetX, offsetY) = CanvasHelper.GetBitmapRenderInfo(this);
         if (bmpW <= 0 || bmpH <= 0) return;
 
         foreach (var layer in LayerManager.Layers.Reverse())
@@ -348,7 +371,7 @@ public class Canvas : Control, ICanvasContext
 
         foreach (var layer in LayerManager.Layers.Reverse())
             if (layer.IsVisible)
-                DrawBitmap(context, layer, this, offsetX, offsetY);
+                DrawBitmap(context, layer, offsetX, offsetY);
 
         DrawHoverPixel(context, offsetX, offsetY);
         DrawGrid(context, offsetX, offsetY, bmpW, bmpH);

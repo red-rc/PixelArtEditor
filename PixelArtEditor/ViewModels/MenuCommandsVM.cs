@@ -129,7 +129,7 @@ public class MenuCommandsVM : ReactiveObject
     private static void OnZoomOut()
     {
         if (Services.Navigation.GetViewModel() is not EditorVM editorVM) return;
-        editorVM.ZoomBy(0.8f);
+        editorVM.ZoomBy(1/1.2f);
     }
 
     private static void OnResetZoom()

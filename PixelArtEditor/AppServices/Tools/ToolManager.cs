@@ -20,13 +20,12 @@ public static class ToolManager
 
     public static ITool Get(ToolType type) => _tools[type];
 
-    public static void UpdatePixelData(ICanvasContext context, int x, int y, Color color)
+    public static void UpdatePixelData(ICanvasContext ctx, int x, int y, Color color)
     {
-        var layer = context.LayerManager.ActiveLayer;
+        var layer = ctx.LayerManager.ActiveLayer;
         if (layer is null || layer.PixelData is null) return;
 
-        var stride = layer.Width * 4;
-        var index = y * stride + x * 4;
+        var index = (y * layer.Width + x) * 4;
 
         if (color.A == 0)
         {
@@ -43,8 +42,8 @@ public static class ToolManager
             layer.PixelData[index + 3] = color.A;
         }
 
-        context.RenderCache[layer].RenderBitmapDirty = true;
-        context.RenderCache[layer].PreviewDirty = true;
+        ctx.RenderCache[layer].RenderBitmapDirty = true;
+        ctx.RenderCache[layer].PreviewDirty = true;
         layer.NotifyPixelDataChanged();
     }
 }

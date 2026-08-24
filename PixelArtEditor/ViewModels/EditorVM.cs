@@ -33,11 +33,6 @@ public class EditorVM : ReactiveObject
     }
 
     private Canvas? _canvas;
-    public Canvas? Canvas
-    {
-        get => _canvas;
-        set => this.RaiseAndSetIfChanged(ref _canvas, value);
-    }
 
     private PixelModel _model;
     public PixelModel Model

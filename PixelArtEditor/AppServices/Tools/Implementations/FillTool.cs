@@ -6,30 +6,30 @@ namespace PixelArtEditor.AppServices.Tools.Implementations;
 
 public class FillTool : ITool
 {
-    public void OnPointerExited(ICanvasContext context)
+    public void OnPointerExited(ICanvasContext ctx)
     {
 
     }
 
-    public void OnPointerMoved(ICanvasContext context)
+    public void OnPointerMoved(ICanvasContext ctx)
     {
 
     }
 
-    public void OnPointerPressed(ICanvasContext context) => Fill(context);
+    public void OnPointerPressed(ICanvasContext ctx) => Fill(ctx);
 
-    public void OnPointerReleased(ICanvasContext context)
+    public void OnPointerReleased(ICanvasContext ctx)
     {
 
     }
 
-    private static void Fill(ICanvasContext context)
+    private static void Fill(ICanvasContext ctx)
     {
-        var layer = context.LayerManager.ActiveLayer;
-        if (layer is null || context.HoverPixel is null) return;
+        var layer = ctx.LayerManager.ActiveLayer;
+        if (layer is null || ctx.HoverPixel is null) return;
 
-        BitmapService.FillSimilarPixels(layer.RenderBitmap, layer.PixelData,
-            layer.Width, layer.Height,
-            context.HoverPixel.Value, context.PickedColor);
+        BitmapService.FillSimilarPixels(layer.RenderBitmap, 
+            layer.PixelData, layer.Width, layer.Height,
+            ctx.HoverPixel.Value, ctx.PickedColor);
     }
 }

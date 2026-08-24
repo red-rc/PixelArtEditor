@@ -7,6 +7,7 @@ using PixelArtEditor.Models.Canvas;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Metadata;
 using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -184,6 +185,7 @@ public static class ImageImportService
 
                 ms.Position = 0;
                 using var image = SharpImage.Load(ms);
+                image.Mutate(x => x.AutoOrient());
 
                 PixelModel result = image switch
                 {
