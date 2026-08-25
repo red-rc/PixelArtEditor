@@ -30,5 +30,6 @@
         <StyleInclude Source="avares://PixelArtEditor/Styles/Overrides/ColorPickerOverride.axaml" />
         <StyleInclude Source="avares://PixelArtEditor/Styles/Overrides/MenuItemOverride.axaml" />
         <StyleInclude Source="avares://PixelArtEditor/Styles/Overrides/MenuOverride.axaml" />
+        <StyleInclude Source="avares://PixelArtEditor/Styles/Overrides/ComboBoxOverride.axaml" />
     </Application.Styles>
 </Application>

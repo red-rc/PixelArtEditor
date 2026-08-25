@@ -11,6 +11,7 @@
     x:DataType="vm:SettingsDialogVM"
     Background="{DynamicResource SecondaryBackgroundColor}"
     mc:Ignorable="d">
+
     <UserControl.Styles>
         <Style Selector="TextBlock">
             <Setter Property="FontSize" Value="16" />

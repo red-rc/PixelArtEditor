@@ -36,7 +36,7 @@
                         Margin="10,0,0,0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Center"
-                        Classes="UiButton"
+                        Classes="UiBtn"
                         Click="OnCancelClick">
                         <Image 
                             Source="{DynamicResource CancelIcon}" 
@@ -50,7 +50,7 @@
                         Margin="5,0,0,0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Center"
-                        Classes="UiButton"
+                        Classes="UiBtn"
                         Click="OnConfirmClick">
                         <Image 
                             Source="{DynamicResource CheckMarkIcon}"
@@ -111,8 +111,9 @@
                     PickedColor="{Binding PickedColor, Mode=TwoWay}"
                     Scale="{Binding Scale}"
                     MaxScale="{Binding MaxScale}"
+                    IsDownscaled="{Binding IsDownscaled}"
                     Offset="{Binding Offset}"
-                    SelectedTool="{Binding SelectedTool}" />
+                    SelectedTool="{Binding Tools.SelectedTool}" />
                 <TextBlock
                     Height="20"
                     Padding="5,0,5,0"

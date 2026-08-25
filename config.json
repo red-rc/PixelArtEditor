@@ -8,6 +8,8 @@
     "B": 127
   },
   "EnableGrid": true,
+  "ScaleCheckerboardWithCanvas": false,
+  "CheckerboardScale": 4,
   "EnableAutosave": true,
   "AutosaveFrequency": 10,
   "AccentColor": {

@@ -191,7 +191,7 @@ public class DarkTheme : BaseTheme
 
         Resources["UiColor"] = Color.Parse("#2e2e2e");
         Resources["UiHoverColor"] = Color.Parse("#444444");
-        Resources["UiPressColor"] = Color.Parse("#181818");
+        Resources["UiPressColor"] = Color.Parse("#282828");
 
         Resources["MenuFlyoutItemBackgroundPointerOver"] = Resources["UiColor"];
         Resources["MenuFlyoutItemBackgroundPressed"] = Resources["UiColor"];

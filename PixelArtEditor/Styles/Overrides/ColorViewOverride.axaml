@@ -323,7 +323,7 @@
                         <primitives:ColorSpectrum 
                             x:Name="ColorSpectrum"
                             Grid.Column="0"
-                            Components="{TemplateBinding ColorSpectrumComponents}"
+                            Components="SaturationValue"
                             HsvColor="{Binding HsvColor, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
                             MinHue="{TemplateBinding MinHue}"
                             MaxHue="{TemplateBinding MaxHue}"
@@ -336,7 +336,7 @@
                             VerticalAlignment="Stretch" />
                         <primitives:ColorSlider 
                             x:Name="ColorSpectrumThirdComponentSlider"
-                            AutomationProperties.Name="Third Component"
+                            AutomationProperties.Name="Hue"
                             Grid.Column="1"
                             IsAlphaVisible="False"
                             IsPerceptive="True"

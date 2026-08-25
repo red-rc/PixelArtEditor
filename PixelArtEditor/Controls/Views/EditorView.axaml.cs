@@ -13,7 +13,6 @@ using PixelArtEditor.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
 
 namespace PixelArtEditor.Controls.Views;
 
@@ -31,6 +30,9 @@ public partial class EditorView : UserControl
     private EditorVM? ViewModel => DataContext as EditorVM;
 
     private readonly List<LayerModel> _addedLayers = [];
+
+    private double _mousePressX;
+    private Point? _zoomOrigin;
 
     private void OnCancelClick(object? sender, RoutedEventArgs e) => OnCancel();
 
@@ -236,28 +238,7 @@ public partial class EditorView : UserControl
     private void CanvasPanel_OnPointerWheelChanged(object? sender, PointerWheelEventArgs e)
     {
         if (ViewModel == null || e.GetCurrentPoint(CanvasPanel).Properties.IsRightButtonPressed) return;
-
-        const double zoomBase = 1.1;
-        var rawScale = ViewModel.Scale * Math.Pow(zoomBase, e.Delta.Y);
-        var newScale = Math.Clamp(rawScale, ViewModel.MinScale, ViewModel.MaxScale);
-
-        if (Math.Abs(newScale - ViewModel.Scale) < 1e-9) return;
-
-        var mousePos = e.GetPosition(CanvasPanel);
-        var center = new Point(CanvasPanel.Bounds.Width / 2, CanvasPanel.Bounds.Height / 2);
-
-        var screenVec = new Vector2(
-            (float)mousePos.X - (float)center.X - ViewModel.Offset.X,
-            (float)mousePos.Y - (float)center.Y - ViewModel.Offset.Y);
-
-        var newScreenVec = screenVec / (float)ViewModel.Scale * (float)newScale;
-
-        var correctedOffset = new Vector2(
-            ViewModel.Offset.X + (screenVec.X - newScreenVec.X),
-            ViewModel.Offset.Y + (screenVec.Y - newScreenVec.Y));
-
-        ViewModel.Scale = newScale;
-        ViewModel.Offset = correctedOffset;
+        ViewModel.ZoomBy(1.1f, true, e.GetPosition(CanvasPanel), e.Delta.Y);
     }
 
     private void CanvasPanel_OnPointerPressed(object? sender, PointerPressedEventArgs e)
@@ -265,26 +246,47 @@ public partial class EditorView : UserControl
         if (e.GetCurrentPoint(this).Properties.PointerUpdateKind == PointerUpdateKind.RightButtonPressed)
             Dispatcher.UIThread.Post(() => Root.Focus());
 
-        if (ViewModel == null
-            || !e.GetCurrentPoint(CanvasPanel).Properties.IsRightButtonPressed
-            || ViewModel.IsPositionSet
-            || !ViewModel.IsHandEnabled) return;
-        ViewModel.StartDragging(e.GetPosition(CanvasPanel));
+        if (ViewModel == null || !ViewModel.Tools.IsHandEnabled) return;
+
+        if (e.GetCurrentPoint(CanvasPanel).Properties.IsRightButtonPressed && !ViewModel.IsPositionSet)
+            ViewModel.StartDragging(e.GetPosition(CanvasPanel));
+
+        if (e.GetCurrentPoint(CanvasPanel).Properties.IsLeftButtonPressed)
+        {
+            _zoomOrigin = e.GetPosition(CanvasPanel);
+            _mousePressX = e.GetPosition(this).X;
+        }
     }
 
     private void CanvasPanel_OnPointerMoved(object? sender, PointerEventArgs e)
     {
-        if (ViewModel == null
-            || !e.GetCurrentPoint(CanvasPanel).Properties.IsRightButtonPressed
-            || !ViewModel.IsPositionSet
-            || !ViewModel.IsHandEnabled) return;
-        ViewModel.UpdateDragging(e.GetPosition(CanvasPanel));
+        if (ViewModel == null || !ViewModel.Tools.IsHandEnabled) return;
+
+        if (e.GetCurrentPoint(CanvasPanel).Properties.IsRightButtonPressed && ViewModel.IsPositionSet)
+            ViewModel.UpdateDragging(e.GetPosition(CanvasPanel));   
+
+        if (e.GetCurrentPoint(CanvasPanel).Properties.IsLeftButtonPressed && _mousePressX > 0)
+        {
+            var dx = e.GetPosition(this).X - _mousePressX;
+
+            if (Math.Abs(dx) >= 5)
+            {
+                if (dx > 0)
+                    ViewModel.ZoomBy(1.05f, true, _zoomOrigin);
+                else if (dx < 0)
+                    ViewModel.ZoomBy(1 / 1.05f, true, _zoomOrigin);
+
+                _mousePressX = e.GetPosition(this).X;
+            }
+        }
     }
 
     private void CanvasPanel_OnPointerReleased(object? sender, PointerReleasedEventArgs e)
     {
         if (ViewModel == null) return;
         ViewModel.IsPositionSet = false;
+        _zoomOrigin = null;
+        _mousePressX = -1;
     }
 
     private void OnMainLayoutLayoutUpdated(object? sender, EventArgs e) => _layoutManager.UpdateRectPositions();

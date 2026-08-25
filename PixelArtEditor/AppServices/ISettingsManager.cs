@@ -1,4 +1,5 @@
 using Avalonia.Media;
+using PixelArtEditor.Models.Canvas;
 using PixelArtEditor.Models.Dock;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,6 +12,8 @@ public interface ISettingsManager
     int GridMaxSize { get; set; }
     Color GridColor { get; set; }
     bool EnableGrid { get; set; }
+    bool ScaleCheckerboardWithCanvas { get; set; }
+    CheckerboardScale CheckerboardScale { get; set; }
     bool EnableAutosave { get; set; }
     int AutosaveFrequency { get; set; }
 

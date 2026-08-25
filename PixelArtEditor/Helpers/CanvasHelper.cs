@@ -8,29 +8,29 @@ namespace PixelArtEditor.Helpers;
 
 public static class CanvasHelper
 {
-    public static (int bmpW, int bmpH, int offsetX, int offsetY) GetBitmapRenderInfo(ICanvasContext context)
+    public static (int bmpW, int bmpH, int offsetX, int offsetY) GetBitmapRenderInfo(ICanvasContext ctx)
     {
-        var bmpW = (int)(context.Model.Width * context.Scale);
-        var bmpH = (int)(context.Model.Height * context.Scale);
+        var bmpW = (int)(ctx.Model.Width * ctx.Scale);
+        var bmpH = (int)(ctx.Model.Height * ctx.Scale);
 
-        var offsetX = (int)((context.Bounds.Width - bmpW) / 2 + context.Offset.X);
-        var offsetY = (int)((context.Bounds.Height - bmpH) / 2 + context.Offset.Y);
+        var offsetX = (int)((ctx.Bounds.Width - bmpW) / 2 + ctx.Offset.X);
+        var offsetY = (int)((ctx.Bounds.Height - bmpH) / 2 + ctx.Offset.Y);
 
         return (bmpW, bmpH, offsetX, offsetY);
     }
 
-    public static PixelPoint? GetPixelCoord(ICanvasContext context, Visual relativeTo, PointerEventArgs e)
+    public static PixelPoint? GetPixelCoord(ICanvasContext ctx, Visual relativeTo, PointerEventArgs e)
     {
         var pos = e.GetPosition(relativeTo);
-        var (bmpW, bmpH, offsetX, offsetY) = GetBitmapRenderInfo(context);
+        var (bmpW, bmpH, offsetX, offsetY) = GetBitmapRenderInfo(ctx);
 
         var relX = pos.X - offsetX;
         var relY = pos.Y - offsetY;
 
         if (relX < 0 || relY < 0 || relX >= bmpW || relY >= bmpH) return null;
 
-        var px = (int)Math.Floor(relX / context.Scale);
-        var py = (int)Math.Floor(relY / context.Scale);
+        var px = (int)Math.Floor(relX / ctx.Scale);
+        var py = (int)Math.Floor(relY / ctx.Scale);
 
         return new PixelPoint(px, py);
     }

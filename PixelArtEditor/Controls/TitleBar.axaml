@@ -52,7 +52,7 @@
             <Button
                 Width="40"
                 Height="30"
-                Classes="WindowBaseButton"
+                Classes="WindowBaseBtn"
                 Click="OnMinimizeClick"
                 IsVisible="{Binding CanMinimize, ElementName=Root}">
                 <Image
@@ -65,7 +65,7 @@
             <Button
                 Width="40"
                 Height="30"
-                Classes="WindowBaseButton"
+                Classes="WindowBaseBtn"
                 Click="OnMaximizeClick"
                 IsVisible="{Binding CanMaximize, ElementName=Root}">
                 <Image
@@ -78,7 +78,7 @@
             <Button
                 Width="40"
                 Height="30"
-                Classes="WindowCloseButton"
+                Classes="WindowCloseBtn"
                 Click="OnCloseClick">
                 <Image
                     Width="10"

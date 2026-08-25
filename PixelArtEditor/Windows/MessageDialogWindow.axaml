@@ -61,7 +61,7 @@
                     Height="32"
                     VerticalAlignment="Center"
                     RenderOptions.BitmapInterpolationMode="None" />
-                <TextBlock VerticalAlignment="Center" TextWrapping="Wrap" Width="300" Text="{Binding Message}" />
+                <TextBlock VerticalAlignment="Center" TextWrapping="Wrap" MaxWidth="300" Text="{Binding Message}" />
             </StackPanel>
         </Grid>
 

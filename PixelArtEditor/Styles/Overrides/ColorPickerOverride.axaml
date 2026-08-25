@@ -123,50 +123,52 @@
                                   <ColumnDefinition Width="Auto"
                                                     MinWidth="30" />
                                 </Grid.ColumnDefinitions>
-                                <primitives:ColorSlider x:Name="ColorSpectrumThirdComponentSlider"
-                                                        AutomationProperties.Name="Third Component"
-                                                        Grid.Column="0"
-                                                        IsAlphaVisible="False"
-                                                        IsPerceptive="True"
-                                                        Orientation="Vertical"
-                                                        ColorModel="Hsva"
-                                                        ColorComponent="{Binding ThirdComponent, ElementName=ColorSpectrum}"
-                                                        HsvColor="{Binding HsvColor, ElementName=ColorSpectrum}"
-                                                        HorizontalAlignment="Center"
-                                                        VerticalAlignment="Stretch"
-                                                        Margin="0,0,12,0"
-                                                        IsVisible="{TemplateBinding IsColorSpectrumSliderVisible}" />
-                                <primitives:ColorSpectrum x:Name="ColorSpectrum"
-                                                          Grid.Column="1"
-                                                          Components="{TemplateBinding ColorSpectrumComponents}"
-                                                          HsvColor="{Binding HsvColor, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
-                                                          MinHue="{TemplateBinding MinHue}"
-                                                          MaxHue="{TemplateBinding MaxHue}"
-                                                          MinSaturation="{TemplateBinding MinSaturation}"
-                                                          MaxSaturation="{TemplateBinding MaxSaturation}"
-                                                          MinValue="{TemplateBinding MinValue}"
-                                                          MaxValue="{TemplateBinding MaxValue}"
-                                                          Shape="{TemplateBinding ColorSpectrumShape}"
-                                                          HorizontalAlignment="Stretch"
-                                                          VerticalAlignment="Stretch" />
-                                <primitives:ColorSlider x:Name="ColorSpectrumAlphaSlider"
-                                                        AutomationProperties.Name="Alpha Component"
-                                                        Grid.Column="2"
-                                                        Orientation="Vertical"
-                                                        ColorModel="Hsva"
-                                                        ColorComponent="Alpha"
-                                                        HsvColor="{Binding HsvColor, ElementName=ColorSpectrum}"
-                                                        HorizontalAlignment="Center"
-                                                        VerticalAlignment="Stretch"
-                                                        Margin="12,0,0,0"
-                                                        IsEnabled="{TemplateBinding IsAlphaEnabled}">
+                                <primitives:ColorSlider 
+                                    x:Name="ColorSpectrumAlphaSlider"
+                                    AutomationProperties.Name="Alpha Component"
+                                    Grid.Column="0"
+                                    Orientation="Vertical"
+                                    ColorModel="Hsva"
+                                    ColorComponent="Alpha"
+                                    HsvColor="{Binding HsvColor, ElementName=ColorSpectrum}"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Stretch"
+                                    Margin="0,0,12,0"
+                                    IsEnabled="{TemplateBinding IsAlphaEnabled}">
                                   <primitives:ColorSlider.IsVisible>
                                     <MultiBinding Converter="{x:Static BoolConverters.And}">
-                                      <Binding RelativeSource="{RelativeSource TemplatedParent}"
-                                               Path="IsAlphaVisible" />
+                                      <Binding RelativeSource="{RelativeSource TemplatedParent}" Path="IsAlphaVisible" />
                                     </MultiBinding>
                                   </primitives:ColorSlider.IsVisible>
                                 </primitives:ColorSlider>
+                                <primitives:ColorSpectrum 
+                                    x:Name="ColorSpectrum"
+                                    Grid.Column="1"
+                                    Components="SaturationValue"
+                                    HsvColor="{Binding HsvColor, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                                    MinHue="{TemplateBinding MinHue}"
+                                    MaxHue="{TemplateBinding MaxHue}"
+                                    MinSaturation="{TemplateBinding MinSaturation}"
+                                    MaxSaturation="{TemplateBinding MaxSaturation}"
+                                    MinValue="{TemplateBinding MinValue}"
+                                    MaxValue="{TemplateBinding MaxValue}"
+                                    Shape="{TemplateBinding ColorSpectrumShape}"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Stretch" />
+                                <primitives:ColorSlider 
+                                    x:Name="ColorSpectrumThirdComponentSlider"
+                                    AutomationProperties.Name="Hue"
+                                    Grid.Column="2"
+                                    IsAlphaVisible="False"
+                                    IsPerceptive="True"
+                                    Orientation="Vertical"
+                                    ColorModel="Hsva"
+                                    ColorComponent="{Binding ThirdComponent, ElementName=ColorSpectrum}"
+                                    HsvColor="{Binding HsvColor, ElementName=ColorSpectrum}"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Stretch"
+                                    Margin="12,0,0,0"
+                                    IsVisible="{TemplateBinding IsColorSpectrumSliderVisible}" />
                               </Grid>
                             </TabItem>
                             <!-- Palette Tab -->

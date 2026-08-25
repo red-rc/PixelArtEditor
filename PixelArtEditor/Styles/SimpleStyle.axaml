@@ -1,8 +1,9 @@
 <Styles xmlns="https://github.com/avaloniaui" xmlns:ui="clr-namespace:PixelArtEditor.UI"
         xmlns:primitives="using:Avalonia.Controls.Primitives">
+    <!-- ================= Namespace declaration is NECESSARY. Compiler is crazy ================= -->
 
     <!-- ================= Transitions ================= -->
-    <Style Selector="Border:not(primitives|ColorPreviewer Border)">
+    <Style Selector="Border:not(primitives|ColorPreviewer Border):not(ColorPicker#BackgroundColorPicker /template/ Border)">
         <Setter Property="Transitions">
             <Transitions>
                 <BrushTransition Property="Background" Duration="0:0:0.05" />
@@ -24,7 +25,7 @@
     </Style>
 
     <!-- ================= Button variants ================= -->
-    <Style Selector="Button.CreateButton">
+    <Style Selector="Button.ConfirmBtn">
         <Setter Property="Background" Value="{DynamicResource PrimaryColor}" />
         <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />
         <Setter Property="ClipToBounds" Value="False" />
@@ -42,7 +43,7 @@
         </Style>
     </Style>
 
-    <Style Selector="Button.BorderButton">
+    <Style Selector="Button.CancelBtn">
         <Setter Property="Background" Value="{DynamicResource BackgroundColor}" />
         <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />
         <Setter Property="BorderBrush" Value="{DynamicResource ForegroundColor}" />
@@ -64,7 +65,7 @@
         </Style>
     </Style>
 
-    <Style Selector="Button.GrayButton">
+    <Style Selector="Button.ResetBtn">
         <Setter Property="Background" Value="{DynamicResource GrayColor}" />
         <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />
         <Setter Property="ClipToBounds" Value="False" />
@@ -83,7 +84,7 @@
         </Style>
     </Style>
 
-    <Style Selector="Button.WindowBaseButton">
+    <Style Selector="Button.WindowBaseBtn">
         <Setter Property="Background" Value="{DynamicResource TertiaryBackgroundColor}" />
         <Setter Property="CornerRadius" Value="0" />
 
@@ -95,7 +96,7 @@
         </Style>
     </Style>
 
-    <Style Selector="Button.WindowCloseButton">
+    <Style Selector="Button.WindowCloseBtn">
         <Setter Property="Background" Value="{DynamicResource TertiaryBackgroundColor}" />
         <Setter Property="CornerRadius" Value="0" />
 
@@ -110,7 +111,7 @@
         </Style>
     </Style>
 
-    <Style Selector="Button.ActionButton">
+    <Style Selector="Button.ActionBtn">
         <Setter Property="FontWeight" Value="SemiBold" />
         <Setter Property="Width" Value="40" />
         <Setter Property="Height" Value="40" />
@@ -130,7 +131,7 @@
         </Style>
     </Style>
 
-    <Style Selector="Button.UiButton">
+    <Style Selector="Button.UiBtn">
         <Setter Property="Background" Value="{DynamicResource UiColor}" />
         <Setter Property="ClipToBounds" Value="False" />
         <Setter Property="CornerRadius" Value="2.5" />
@@ -278,7 +279,7 @@
 
     <Style Selector="ComboBoxItem">
         <Setter Property="Background" Value="{DynamicResource UiColor}" />
-        <Setter Property="Padding" Value="10,6" />
+        <Setter Property="Padding" Value="10,4" />
         <Setter Property="CornerRadius" Value="4" />
 
         <Style Selector="^:pointerover /template/ ContentPresenter">
@@ -336,7 +337,7 @@
     </Style>
 
     <!-- ================= InstantToggleButton ================= -->
-    <Style Selector="ui|InstantToggleButton.ToolButton">
+    <Style Selector="ui|InstantToggleButton.ToolBtn">
         <Setter Property="Background" Value="{DynamicResource UiColor}" />
 
         <Style Selector="^:pointerover /template/ ContentPresenter#PART_ContentPresenter">
@@ -350,7 +351,7 @@
         </Style>
     </Style>
 
-    <Style Selector="ui|InstantToggleButton.ProportionButton">
+    <Style Selector="ui|InstantToggleButton.ProportionBtn">
         <Setter Property="Background" Value="{DynamicResource TertiaryBackgroundColor}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="CornerRadius" Value="2.5" />
@@ -367,7 +368,7 @@
         </Style>
     </Style>
 
-    <Style Selector="ui|InstantToggleButton.LayerItemButton">
+    <Style Selector="ui|InstantToggleButton.LayerItemBtn">
         <Setter Property="Width" Value="24" />
         <Setter Property="Height" Value="24" />
         <Setter Property="Padding" Value="5" />
@@ -387,7 +388,7 @@
         <Setter Property="Background" Value="Transparent" />
     </Style>
 
-    <Style Selector="ListBox.SelectionListBox">
+    <Style Selector="ListBox.SelListBox">
         <Setter Property="Background" Value="{DynamicResource TertiaryBackgroundColor}" />
 
         <Style Selector="^ ListBoxItem">

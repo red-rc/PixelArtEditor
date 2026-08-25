@@ -4,6 +4,7 @@ using Avalonia.Media;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using PixelArtEditor.AppServices;
+using PixelArtEditor.Models.Canvas;
 using PixelArtEditor.Windows;
 using System.Collections.Generic;
 using System.Linq;
@@ -60,7 +61,40 @@ public class SettingsDialogVM : ReactiveObject
             this.RaisePropertyChanged();
         }
     }
-    
+
+    public bool ScaleCheckerboardWithCanvas
+    {
+        get => _settings.ScaleCheckerboardWithCanvas;
+        set
+        {
+            if (_settings.ScaleCheckerboardWithCanvas == value) return;
+            _settings.ScaleCheckerboardWithCanvas = value;
+            this.RaisePropertyChanged();
+        }
+    }
+
+    public static IEnumerable<KeyValuePair<CheckerboardScale, string>> ScaleOptions => new Dictionary<CheckerboardScale, string>()
+    {
+        { CheckerboardScale.Scale1, "1" },
+        { CheckerboardScale.Scale2, "2" },
+        { CheckerboardScale.Scale4, "4" },
+        { CheckerboardScale.Scale8, "8" },
+        { CheckerboardScale.Scale16, "16" },
+        { CheckerboardScale.Scale32, "32" },
+        { CheckerboardScale.Scale64, "64" }
+    };
+
+    public KeyValuePair<CheckerboardScale, string> Scale
+    {
+        get => ScaleOptions.FirstOrDefault(i => i.Key == _settings.CheckerboardScale);
+        set
+        {
+            if (Scale.Equals(value)) return;
+            _settings.CheckerboardScale = value.Key;
+            this.RaisePropertyChanged();
+        }
+    }
+
     public bool EnableAutosave
     {
         get => _settings.EnableAutosave;

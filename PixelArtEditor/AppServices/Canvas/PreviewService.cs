@@ -15,7 +15,7 @@ public static class PreviewService
         {
             if ((y & 7) == 0 && token.IsCancellationRequested) return;
 
-            var srcY = (int)((long)y * srcH / dstH);
+            var srcY = (int)((uint)y * srcH / dstH);
             if (srcY >= srcH) srcY = srcH - 1;
 
             var dstRow = y * dstW * 4;
@@ -23,17 +23,16 @@ public static class PreviewService
 
             for (int x = 0; x < dstW; x++)
             {
-                var srcX = (int)((long)x * srcW / dstW);
+                var srcX = (int)((uint)x * srcW / dstW);
                 if (srcX >= srcW) srcX = srcW - 1;
                 Buffer.BlockCopy(src, srcRow + srcX * 4, dst, dstRow + x * 4, 4);
             }
         }
     }
 
-    // PreviewService
-    public static void EnsurePreviewBitmap(ICanvasContext context, LayerModel layer, Action invalidate, double bmpW, double bmpH)
+    public static void EnsurePreviewBitmap(ICanvasContext ctx, LayerModel layer, Action invalidate, double bmpW, double bmpH)
     {
-        if (!context.RenderCache.TryGetValue(layer, out var cache)) return;
+        if (!ctx.RenderCache.TryGetValue(layer, out var cache)) return;
         if (layer.RenderBitmap is null || layer.PixelData is null) return;
 
         const int minPreviewSize = 128;
@@ -44,20 +43,20 @@ public static class PreviewService
             && layer.PreviewBitmap.PixelSize.Width == targetW
             && layer.PreviewBitmap.PixelSize.Height == targetH) return;
 
-        if (targetW >= context.Model.Width || targetH >= context.Model.Height)
+        if (targetW >= ctx.Model.Width || targetH >= ctx.Model.Height)
         {
             layer.PreviewBitmap = null;
             cache.PreviewDirty = false;
             return;
         }
 
-        RequestPreview(context, layer, invalidate, Math.Max(minPreviewSize, targetW), Math.Max(minPreviewSize, targetH));
+        RequestPreview(ctx, layer, invalidate, Math.Max(minPreviewSize, targetW), Math.Max(minPreviewSize, targetH));
         cache.PreviewDirty = false;
     }
 
-    private static void RequestPreview(ICanvasContext context, LayerModel layer, Action invalidate, int width, int height)
+    private static void RequestPreview(ICanvasContext ctx, LayerModel layer, Action invalidate, int width, int height)
     {
-        if (!context.RenderCache.TryGetValue(layer, out var cache)) return;
+        if (!ctx.RenderCache.TryGetValue(layer, out var cache)) return;
 
         cache.PreviewCts?.Cancel();
         cache.PreviewCts = new CancellationTokenSource();
@@ -65,8 +64,8 @@ public static class PreviewService
         var thisCts = cache.PreviewCts;
         var size = width * height * 4;
 
-        var modelWidth = context.Model.Width;
-        var modelHeight = context.Model.Height;
+        var modelWidth = ctx.Model.Width;
+        var modelHeight = ctx.Model.Height;
         var pixelData = layer.PixelData;
         var opacity = layer.Opacity;
 

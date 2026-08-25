@@ -24,8 +24,8 @@
         <StackPanel x:Name="StackPanel">
             <ui:InstantToggleButton
                 HorizontalAlignment="Center"
-                Classes="ToolButton"
-                IsChecked="{Binding IsPenEnabled}"
+                Classes="ToolBtn"
+                IsChecked="{Binding Tools.IsPenEnabled}"
                 Tag="Pen">
                 <Image
                     Width="18"
@@ -36,8 +36,8 @@
             </ui:InstantToggleButton>
             <ui:InstantToggleButton
                 HorizontalAlignment="Center"
-                Classes="ToolButton"
-                IsChecked="{Binding IsColorPickerEnabled}"
+                Classes="ToolBtn"
+                IsChecked="{Binding Tools.IsColorPickerEnabled}"
                 Tag="ColorPicker">
                 <Image
                     Width="18"
@@ -48,8 +48,8 @@
             </ui:InstantToggleButton>
             <ui:InstantToggleButton
                 HorizontalAlignment="Center"
-                Classes="ToolButton"
-                IsChecked="{Binding IsFillEnabled}"
+                Classes="ToolBtn"
+                IsChecked="{Binding Tools.IsFillEnabled}"
                 Tag="Fill">
                 <Image
                     Width="18"
@@ -60,8 +60,8 @@
             </ui:InstantToggleButton>
             <ui:InstantToggleButton
                 HorizontalAlignment="Center"
-                Classes="ToolButton"
-                IsChecked="{Binding IsEraserEnabled}"
+                Classes="ToolBtn"
+                IsChecked="{Binding Tools.IsEraserEnabled}"
                 Tag="Eraser">
                 <Image
                     Width="18"
@@ -72,8 +72,8 @@
             </ui:InstantToggleButton>
             <ui:InstantToggleButton
                 HorizontalAlignment="Center"
-                Classes="ToolButton"
-                IsChecked="{Binding IsHandEnabled}"
+                Classes="ToolBtn"
+                IsChecked="{Binding Tools.IsHandEnabled}"
                 Tag="Hand">
                 <Image
                     Width="18"

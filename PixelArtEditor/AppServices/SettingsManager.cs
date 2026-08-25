@@ -1,5 +1,6 @@
 using Avalonia.Media;
 using PixelArtEditor.AppServices.Serialization;
+using PixelArtEditor.Models.Canvas;
 using PixelArtEditor.Models.Dock;
 using System;
 using System.Collections.Generic;
@@ -9,13 +10,9 @@ namespace PixelArtEditor.AppServices;
 
 public sealed class SettingsManager : ISettingsManager
 {
-    public static SettingsManager GetInstance { get; } = new(false);
+    public static SettingsManager GetInstance { get; } = new();
 
-    private SettingsManager(bool load = false)
-    {
-        if (!load) return;
-        Load();
-    }
+    private SettingsManager() => SetDefaults();
 
     private string _language = null!;
     public string Language
@@ -33,6 +30,8 @@ public sealed class SettingsManager : ISettingsManager
     public int GridMaxSize { get; set; }
     public Color GridColor { get; set; }
     public bool EnableGrid { get; set; }
+    public bool ScaleCheckerboardWithCanvas { get; set; }
+    public CheckerboardScale CheckerboardScale { get; set; }
     public bool EnableAutosave { get; set; }
     public int AutosaveFrequency { get; set; }
 
@@ -73,7 +72,6 @@ public sealed class SettingsManager : ISettingsManager
         {
             if (_layout == value) return;
             _layout = value;
-            Save();
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Layout)));
         }
     }
@@ -82,15 +80,8 @@ public sealed class SettingsManager : ISettingsManager
 
     public void Load()
     {
-        try
-        {
-            JsonService.Populate(this, ResourceManager.ConfigPath);
-        }
-        catch (Exception)
-        {
-            SetDefaults();
-            JsonService.Save(this, ResourceManager.ConfigPath);
-        }
+        try { JsonService.Populate(this, ResourceManager.ConfigPath); }
+        catch (Exception) { JsonService.Save(this, ResourceManager.ConfigPath); }
     }
 
     private void SetDefaults()
@@ -99,6 +90,8 @@ public sealed class SettingsManager : ISettingsManager
         GridMaxSize = 32;
         GridColor = Color.Parse("#7f7f7f");
         EnableGrid = true;
+        ScaleCheckerboardWithCanvas = false;
+        CheckerboardScale = CheckerboardScale.Scale4;
         EnableAutosave = true;
         AutosaveFrequency = 10;
         AccentColor = Color.Parse("DodgerBlue");
@@ -106,8 +99,5 @@ public sealed class SettingsManager : ISettingsManager
         Layout = ResourceManager.DefaultLayout;
     }
 
-    public void Save()
-    {
-        JsonService.Save(this, ResourceManager.ConfigPath);
-    }
+    public void Save() => JsonService.Save(this, ResourceManager.ConfigPath);
 }

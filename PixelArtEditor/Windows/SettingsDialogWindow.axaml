@@ -4,8 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:other="clr-namespace:PixelArtEditor.Other"
-    xmlns:settings="clr-namespace:PixelArtEditor.Views.SettingsViews"
+    xmlns:conv="clr-namespace:PixelArtEditor.Converters"
     xmlns:controls="clr-namespace:PixelArtEditor.Controls"
     xmlns:vm="clr-namespace:PixelArtEditor.ViewModels"
     Width="650"
@@ -21,7 +20,7 @@
     mc:Ignorable="d">
 
     <Window.Resources>
-        <other:TabToViewConverter x:Key="TabToViewConverter" />
+        <conv:TabToViewConverter x:Key="TabToViewConverter" />
     </Window.Resources>
 
     <Window.Styles>
@@ -42,7 +41,7 @@
                 Width="150"
                 HorizontalAlignment="Left"
                 Grid.Column="0">
-                <ListBox Classes="SelectionListBox" SelectedIndex="{Binding SelectedTabIndex, Mode=TwoWay}">
+                <ListBox Classes="SelListBox" SelectedIndex="{Binding SelectedTabIndex, Mode=TwoWay}">
                     <ListBoxItem
                         HorizontalContentAlignment="Center"
                         Classes="Heading"
@@ -51,6 +50,10 @@
                         HorizontalContentAlignment="Center"
                         Classes="Heading"
                         Content="{DynamicResource SetWinAppearance}" />
+                    <ListBoxItem
+                        HorizontalContentAlignment="Center"
+                        Classes="Heading"
+                        Content="Canvas" />
                 </ListBox>
             </StackPanel>
             <StackPanel
@@ -71,7 +74,7 @@
                     Padding="30,0,30,0"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Stretch"
-                    Classes="BorderButton"
+                    Classes="CancelBtn"
                     Command="{Binding CancelCommand}"
                     Content="{DynamicResource SetWinCancel}"
                     FontSize="20" />
@@ -81,7 +84,7 @@
                     Padding="30,0,30,0"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Stretch"
-                    Classes="GrayButton"
+                    Classes="ResetBtn"
                     Command="{Binding ResetCommand}"
                     Content="{DynamicResource SetWinReset}"
                     FontSize="20" />
@@ -91,7 +94,7 @@
                     Padding="30,0,30,0"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Stretch"
-                    Classes="CreateButton"
+                    Classes="ConfirmBtn"
                     Command="{Binding SaveCommand}"
                     Content="{DynamicResource SetWinSave}"
                     FontSize="20" />

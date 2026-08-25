@@ -76,7 +76,7 @@
                     Padding="30,0,30,0"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Stretch"
-                    Classes="BorderButton"
+                    Classes="CancelBtn"
                     Command="{Binding CancelCommand}"
                     Content="{DynamicResource CrWinCancel}"
                     FontSize="20" />
@@ -86,7 +86,7 @@
                     Padding="30,0,30,0"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Stretch"
-                    Classes="CreateButton"
+                    Classes="ConfirmBtn"
                     Command="{Binding ConfirmCommand}"
                     Content="{DynamicResource ExportConfirm}"
                     FontSize="20" />

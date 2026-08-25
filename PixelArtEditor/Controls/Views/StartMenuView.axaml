@@ -26,13 +26,13 @@
                 <Button
                     Padding="30,10,30,10"
                     HorizontalAlignment="Stretch"
-                    Classes="CreateButton"
+                    Classes="ConfirmBtn"
                     Command="{Binding CreateCommand}"
                     Content="{DynamicResource StartViewCreate}" />
                 <Button
                     Padding="30,10,30,10"
                     HorizontalAlignment="Stretch"
-                    Classes="BorderButton"
+                    Classes="CancelBtn"
                     Content="{DynamicResource StartViewOpen}" />
             </StackPanel>
         </DockPanel>

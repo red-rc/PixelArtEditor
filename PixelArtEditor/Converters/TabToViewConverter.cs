@@ -3,7 +3,7 @@ using PixelArtEditor.Controls.Settings;
 using System;
 using System.Globalization;
 
-namespace PixelArtEditor.Other;
+namespace PixelArtEditor.Converters;
 
 public class TabToViewConverter : IValueConverter
 {
@@ -15,6 +15,7 @@ public class TabToViewConverter : IValueConverter
             {
                 0 => new GeneralView(),
                 1 => new AppearanceView(),
+                2 => new CanvasView(),
                 _ => null,
             };
         }

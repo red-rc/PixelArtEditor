@@ -53,23 +53,23 @@ public class HotkeysService(LayerCmdList commands, LayerManager? layerManager, E
                 return true;
 
             case (KeyModifiers.None, Key.B):
-                viewModel?.SelectedTool = Models.Tools.ToolType.Pen;
+                viewModel?.Tools.SelectedTool = Models.Tools.ToolType.Pen;
                 return true;
 
             case (KeyModifiers.None, Key.I):
-                viewModel?.SelectedTool = Models.Tools.ToolType.ColorPicker;
+                viewModel?.Tools.SelectedTool = Models.Tools.ToolType.ColorPicker;
                 return true;
 
             case (KeyModifiers.None, Key.F):
-                viewModel?.SelectedTool = Models.Tools.ToolType.Fill;
+                viewModel?.Tools.SelectedTool = Models.Tools.ToolType.Fill;
                 return true;
 
             case (KeyModifiers.None, Key.E):
-                viewModel?.SelectedTool = Models.Tools.ToolType.Eraser;
+                viewModel?.Tools.SelectedTool = Models.Tools.ToolType.Eraser;
                 return true;
 
             case (KeyModifiers.None, Key.H):
-                viewModel?.SelectedTool = Models.Tools.ToolType.Hand;
+                viewModel?.Tools.SelectedTool = Models.Tools.ToolType.Hand;
                 return true;
 
             default:

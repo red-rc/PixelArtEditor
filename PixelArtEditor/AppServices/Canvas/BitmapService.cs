@@ -1,4 +1,5 @@
 using Avalonia;
+using Avalonia.Controls.Shapes;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
@@ -45,8 +46,9 @@ public static class BitmapService
         {
             for (var y = 0; y < wb.PixelSize.Height; y++)
             {
-                byte* dst = (byte*)fb.Address + y * rowBytes;
                 byte* src = srcPtr + y * wb.PixelSize.Width * 4;
+                byte* dst = (byte*)fb.Address + y * rowBytes;
+
                 Buffer.MemoryCopy(src, dst, rowBytes, wb.PixelSize.Width * 4);
             }
         }

@@ -119,9 +119,9 @@
       },
       "UiPressColor": {
         "A": 255,
-        "R": 24,
-        "G": 24,
-        "B": 24
+        "R": 40,
+        "G": 40,
+        "B": 40
       },
       "MenuFlyoutItemBackgroundPointerOver": {
         "A": 255,

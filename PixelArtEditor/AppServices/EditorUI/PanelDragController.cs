@@ -8,7 +8,6 @@ using PixelArtEditor.Helpers;
 using PixelArtEditor.Models.Dock;
 using PixelArtEditor.UI;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace PixelArtEditor.AppServices.EditorUI;
@@ -121,6 +120,7 @@ public class PanelDragController(Grid mainLayout, Avalonia.Controls.Canvas float
             Services.Settings.Layout = [.. mainLayout.Children
                 .OfType<Control>()
                 .Select(c => new PanelLayout { Name = c.Name, Row = Grid.GetRow(c), Col = Grid.GetColumn(c) })];
+            Services.Settings.Save();
         }
         else
         {

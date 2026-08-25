@@ -1,9 +1,9 @@
 using Avalonia;
 using Avalonia.Media;
 using PixelArtEditor.AppServices.Canvas;
+using PixelArtEditor.AppServices.Tools;
 using PixelArtEditor.Controls.Editor;
 using PixelArtEditor.Models.Canvas;
-using PixelArtEditor.Models.Tools;
 using System;
 using System.Numerics;
 
@@ -72,114 +72,37 @@ public class EditorVM : ReactiveObject
         get => _offset;
         set => this.RaiseAndSetIfChanged(ref _offset, value);
     }
-    
+
+    private const int ScaleStep = 2;
+
     private double _scale;
     public double Scale
     {
         get => _scale;
         set
         {
-            this.RaiseAndSetIfChanged(ref _scale, value);
+            this.RaiseAndSetIfChanged(ref _scale, Math.Clamp(value, MinScale, MaxScale));
+            this.RaisePropertyChanged(nameof(Scale));
+            this.RaisePropertyChanged(nameof(IsDownscaled));
             UpdateScaleText();
             this.RaisePropertyChanged(nameof(ScaleText));
         }
     }
-    
-    private double _baseScale;
-    public double BaseScale
-    {
-        get => _baseScale;
-        private set => this.RaiseAndSetIfChanged(ref _baseScale, value);
-    }
-    
-    private double _minScale;
-    public double MinScale
-    {
-        get => _minScale;
-        private set => this.RaiseAndSetIfChanged(ref _minScale, value);
-    }
-    
-    private double _maxScale;
-    public double MaxScale
+
+    public bool IsDownscaled => Scale < 1;
+
+    public double MinScale { get; private set; }
+
+    private int _maxScale;
+    public int MaxScale
     {
         get => _maxScale;
         private set => this.RaiseAndSetIfChanged(ref _maxScale, value);
     }
-    
-    private ToolType _selectedTool;
-    public ToolType SelectedTool
-    {
-        get => _selectedTool;
-        set
-        {
-            this.RaiseAndSetIfChanged(ref _selectedTool, value);
-            this.RaisePropertyChanged(nameof(IsPenEnabled));
-            this.RaisePropertyChanged(nameof(IsColorPickerEnabled));
-            this.RaisePropertyChanged(nameof(IsFillEnabled));
-            this.RaisePropertyChanged(nameof(IsEraserEnabled));
-            this.RaisePropertyChanged(nameof(IsHandEnabled));
-        }
-    }
 
-    public bool IsPenEnabled
-    {
-        get => SelectedTool == ToolType.Pen;
-        set
-        {
-            if (value)
-                SelectedTool = ToolType.Pen;
-            else if (SelectedTool == ToolType.Pen)
-                SelectedTool = ToolType.None;
-        }
-    }
+    public double BaseScale { get; private set; }
 
-    public bool IsColorPickerEnabled
-    {
-        get => SelectedTool == ToolType.ColorPicker;
-        set
-        {
-            if (value)
-                SelectedTool = ToolType.ColorPicker;
-            else if (SelectedTool == ToolType.ColorPicker)
-                SelectedTool = ToolType.None;
-        }
-    }
-
-    public bool IsFillEnabled
-    {
-        get => SelectedTool == ToolType.Fill;
-        set
-        {
-            if (value)
-                SelectedTool = ToolType.Fill;
-            else if (SelectedTool == ToolType.Fill)
-                SelectedTool = ToolType.None;
-        }
-    }
-
-    public bool IsEraserEnabled
-    {
-        get => SelectedTool == ToolType.Eraser;
-        set
-        {
-            if (value)
-                SelectedTool = ToolType.Eraser;
-            else if (SelectedTool == ToolType.Eraser)
-                SelectedTool = ToolType.None;
-        }
-    }
-
-    public bool IsHandEnabled
-    {
-        get => SelectedTool == ToolType.Hand;
-        set
-        {
-            if (value)
-                SelectedTool = ToolType.Hand;
-            else if (SelectedTool == ToolType.Hand)
-                SelectedTool = ToolType.None;
-        }
-    }
+    public ToolSelection Tools { get; private set; } = new();
 
     private Color _pickedColor = Colors.White;
     public Color PickedColor
@@ -241,44 +164,47 @@ public class EditorVM : ReactiveObject
         Offset = new Vector2(_startOffset.X + dx, _startOffset.Y + dy);
     }
 
-    public void ZoomBy(float factor)
+    public void ZoomBy(float factor, bool applyCursorOffset = false, Point? mousePos = null, double scrollDelta = 0)
     {
-        if (_lastPanelWidth <= 0 || _lastPanelHeight <= 0)
+        var oldEffective = Scale;
+
+        if (scrollDelta != 0)
+            Scale *= Math.Pow(factor, scrollDelta);
+        else
+            Scale *= factor;
+
+        var newEffective = Scale;
+
+        if (_lastPanelWidth <= 0 || _lastPanelHeight <= 0) return;
+
+        var scaleRatio = (float)(newEffective / oldEffective);
+
+        if (applyCursorOffset && mousePos is Point mouse)
         {
-            Scale = Math.Clamp(Scale * factor, MinScale, MaxScale);
-            return;
+            var center = new Point(_lastPanelWidth / 2, _lastPanelHeight / 2);
+            var screenVec = new Vector2(
+                (float)mouse.X - (float)center.X - Offset.X,
+                (float)mouse.Y - (float)center.Y - Offset.Y);
+
+            Offset += screenVec * (1 - scaleRatio);
         }
-
-        var oldScale = Scale;
-        var newScale = Math.Clamp(oldScale * factor, MinScale, MaxScale);
-
-        if (Math.Abs(newScale - oldScale) < 1e-9) return;
-
-        var screenVec = new Vector2(Offset.X, Offset.Y);
-        var newScreenVec = screenVec / (float)oldScale * (float)newScale;
-
-        var correctedOffset = new Vector2(
-            Offset.X + newScreenVec.X - screenVec.X,
-            Offset.Y + newScreenVec.Y - screenVec.Y);
-
-        Scale = newScale;
-        Offset = correctedOffset;
+        else
+            Offset *= scaleRatio;
     }
 
     public void AdjustCanvas(double width, double height)
     {
         var modelWidth = Model?.Width ?? 0;
         var modelHeight = Model?.Height ?? 0;
-
         if (width <= 0 || height <= 0 || modelWidth <= 0 || modelHeight <= 0) return;
 
         var borderSize = modelWidth > modelHeight ? width : height;
-        var canvasSize = modelWidth > modelHeight ? modelWidth : modelHeight;
+        var minRatio = Math.Min(width / modelWidth, height / modelHeight);
 
-        MinScale = borderSize / canvasSize * 0.5;
-        MaxScale = Math.Ceiling(borderSize / 8 * 10) / 10.0;
+        MinScale = minRatio * 0.5;
+        MaxScale = (int)(Math.Ceiling(borderSize / 8 / ScaleStep) * ScaleStep);
+        BaseScale = Math.Max(MinScale, minRatio * 0.8);
 
-        BaseScale = borderSize / canvasSize * 0.8;
         Scale = BaseScale;
         Offset = Vector2.Zero;
 
@@ -296,7 +222,7 @@ public class EditorVM : ReactiveObject
 
         var logMin = Math.Log(MinScale);
         var logMax = Math.Log(MaxScale);
-        var logCur = Math.Log(Math.Clamp(_scale, MinScale, MaxScale));
+        var logCur = Math.Log(Math.Clamp(Scale, MinScale, MaxScale));
 
         var progress = (logCur - logMin) / (logMax - logMin);
         ScaleText = $"{progress * 100:0}%";

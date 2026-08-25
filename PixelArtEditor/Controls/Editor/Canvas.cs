@@ -55,13 +55,22 @@ public class Canvas : Control, ICanvasContext
         set => SetValue(ScaleProperty, value);
     }
 
-    public static readonly StyledProperty<double> MaxScaleProperty =
-    AvaloniaProperty.Register<Canvas, double>(nameof(MaxScale));
+    public static readonly StyledProperty<int> MaxScaleProperty =
+        AvaloniaProperty.Register<Canvas, int>(nameof(MaxScale));
 
-    public double MaxScale
+    public int MaxScale
     {
         get => GetValue(MaxScaleProperty);
         set => SetValue(MaxScaleProperty, value);
+    }
+
+    public static readonly StyledProperty<bool> IsDownscaledProperty =
+        AvaloniaProperty.Register<Canvas, bool>(nameof(IsDownscaled));
+
+    public bool IsDownscaled
+    {
+        get => GetValue(IsDownscaledProperty);
+        set => SetValue(IsDownscaledProperty, value);
     }
 
     public static readonly StyledProperty<ToolType> SelectedToolProperty =
@@ -269,7 +278,9 @@ public class Canvas : Control, ICanvasContext
 
     private void DrawCheckerBoard(DrawingContext context, int offsetX, int offsetY, int bmpW, int bmpH)
     {
-        var tileSize = MaxScale / 4;
+        var tileSize = _settings.ScaleCheckerboardWithCanvas
+            ? Scale * (int)_settings.CheckerboardScale * 2
+            : MaxScale / 4;
 
         _checkerboardBrush ??= new ImageBrush(BitmapService.CreateBitmap(2, 2, BitmapService.CreateCheckerBoardPixelData(2, 2)))
         {
@@ -289,15 +300,22 @@ public class Canvas : Control, ICanvasContext
         var srcRect = new Rect(0, 0, Model.Width, Model.Height);
         var destRect = new Rect(offsetX, offsetY, Model.Width * Scale, Model.Height * Scale);
 
-        if (layer.PreviewBitmap is not null)
+        if (IsDownscaled && layer.PreviewBitmap is not null)
         {
             var scaleX = (double)layer.PreviewBitmap.PixelSize.Width / layer.Width;
             var scaleY = (double)layer.PreviewBitmap.PixelSize.Height / layer.Height;
-            context.DrawImage(layer.PreviewBitmap, new Rect(0, 0, Model.Width * scaleX, Model.Height * scaleY), destRect);
+
+            using (context.PushOpacity(layer.Opacity))
+            {
+                context.DrawImage(layer.PreviewBitmap, new Rect(0, 0, Model.Width * scaleX, Model.Height * scaleY), destRect);
+            }
         }
         else
         {
-            context.DrawImage(layer.RenderBitmap, srcRect, destRect);
+            using (context.PushOpacity(layer.Opacity))
+            {
+                context.DrawImage(layer.RenderBitmap, srcRect, destRect);
+            }
         }
     }
 
@@ -354,12 +372,7 @@ public class Canvas : Control, ICanvasContext
 
             if (cache.RenderBitmapDirty)
             {
-                var pixelData = layer.PixelData.ToArray();
-
-                for (var i = 0; i < pixelData.Length; i += 4)
-                    pixelData[i + 3] = (byte)(pixelData[i + 3] * layer.Opacity);
-
-                BitmapService.SetPixelData(layer.RenderBitmap, pixelData);
+                BitmapService.SetPixelData(layer.RenderBitmap, layer.PixelData);
                 cache.RenderBitmapDirty = false;
                 cache.PreviewDirty = true;
             }
@@ -373,7 +386,10 @@ public class Canvas : Control, ICanvasContext
             if (layer.IsVisible)
                 DrawBitmap(context, layer, offsetX, offsetY);
 
-        DrawHoverPixel(context, offsetX, offsetY);
-        DrawGrid(context, offsetX, offsetY, bmpW, bmpH);
+        if (!IsDownscaled)
+        {
+            DrawHoverPixel(context, offsetX, offsetY);
+            DrawGrid(context, offsetX, offsetY, bmpW, bmpH);
+        }
     }
 }

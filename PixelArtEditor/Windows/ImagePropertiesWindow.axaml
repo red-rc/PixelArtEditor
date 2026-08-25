@@ -74,7 +74,7 @@
                     Padding="30,0,30,0"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Stretch"
-                    Classes="BorderButton"
+                    Classes="CancelBtn"
                     Command="{Binding CancelCommand}"
                     Content="{DynamicResource SetWinCancel}"
                     FontSize="20" />
@@ -84,7 +84,7 @@
                     Padding="30,0,30,0"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Stretch"
-                    Classes="GrayButton"
+                    Classes="ResetBtn"
                     Command="{Binding ResetCommand}"
                     Content="{DynamicResource SetWinReset}"
                     FontSize="20" />
@@ -94,7 +94,7 @@
                     Padding="30,0,30,0"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Stretch"
-                    Classes="CreateButton"
+                    Classes="ConfirmBtn"
                     Command="{Binding SaveCommand}"
                     Content="{DynamicResource SetWinSave}"
                     FontSize="20" />

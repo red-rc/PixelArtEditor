@@ -141,7 +141,8 @@ public class MenuCommandsVM : ReactiveObject
 
     private static void OnResetLayout()
     {
-        Services.Settings.Layout = ResourceManager.DefaultLayout;
+        _settings.Layout = ResourceManager.DefaultLayout;
+        _settings.Save();
     }
 
     private static void OnStandart() => Services.WindowState.Current = Services.WindowState.PreviousWindowState;
