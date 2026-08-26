@@ -77,7 +77,7 @@
             <StackPanel Orientation="Horizontal" Spacing="10">
                 <TextBlock Text="Checkerboard Scale" />
                 <ComboBox
-                    Width="50"
+                    Width="75"
                     IsEnabled="{Binding ScaleCheckerboardWithCanvas}"
                     ItemsSource="{Binding ScaleOptions}"
                     SelectedItem="{Binding Scale, Mode=TwoWay}">

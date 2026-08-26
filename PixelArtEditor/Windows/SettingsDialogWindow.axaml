@@ -4,7 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:conv="clr-namespace:PixelArtEditor.Converters"
     xmlns:controls="clr-namespace:PixelArtEditor.Controls"
     xmlns:vm="clr-namespace:PixelArtEditor.ViewModels"
     Width="650"
@@ -18,10 +17,6 @@
     CanResize="False"
     WindowStartupLocation="CenterOwner"
     mc:Ignorable="d">
-
-    <Window.Resources>
-        <conv:TabToViewConverter x:Key="TabToViewConverter" />
-    </Window.Resources>
 
     <Window.Styles>
         <Style Selector="ListBoxItem">

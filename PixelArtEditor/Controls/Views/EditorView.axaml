@@ -111,7 +111,6 @@
                     PickedColor="{Binding PickedColor, Mode=TwoWay}"
                     Scale="{Binding Scale}"
                     MaxScale="{Binding MaxScale}"
-                    IsDownscaled="{Binding IsDownscaled}"
                     Offset="{Binding Offset}"
                     SelectedTool="{Binding Tools.SelectedTool}" />
                 <TextBlock

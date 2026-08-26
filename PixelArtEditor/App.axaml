@@ -4,7 +4,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:PixelArtEditor"
     xmlns:viewModels="clr-namespace:PixelArtEditor.ViewModels"
-    xmlns:controls="clr-namespace:PixelArtEditor.Controls.Views">
+    xmlns:controls="clr-namespace:PixelArtEditor.Controls.Views"
+    xmlns:conv="using:PixelArtEditor.Converters">
     <!--  "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options.  -->
 
     <Application.DataTemplates>
@@ -21,6 +22,9 @@
         <SolidColorBrush x:Key="ThemeBorderHighBrush" Color="{DynamicResource BorderColor}" />
         <SolidColorBrush x:Key="ThemeBackgroundBrush" Color="{DynamicResource UiColor}" />
         <SolidColorBrush x:Key="ThemeBorderMidBrush" Color="{DynamicResource ShadowColor}" />
+        <conv:AddConverter x:Key="AddConverter"/>
+        <conv:DivideByConverter x:Key="DivideByConverter" />
+        <conv:TabToViewConverter x:Key="TabToViewConverter" />
     </Application.Resources>
 
     <Application.Styles>

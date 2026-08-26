@@ -36,20 +36,27 @@ public static class BitmapService
         return pixelData;
     }
 
-    public static unsafe void SetPixelData(WriteableBitmap wb, byte[] pixelData)
+    public static unsafe void SetPixelData(WriteableBitmap wb, byte[] pixelData, Rect dirtyRect)
     {
+        if (wb.Format != PixelFormat.Bgra8888)
+            throw new InvalidOperationException("Invalid bitmap format.");
+
         using var fb = wb.Lock();
-        if (wb.Format != PixelFormat.Bgra8888) throw new InvalidOperationException("Invalid bitmap format.");
 
         var rowBytes = fb.RowBytes;
+        var x = (int)dirtyRect.X;
+        var startY = (int)dirtyRect.Y;
+        var endY = startY + (int)dirtyRect.Height;
+        var copyBytes = (int)dirtyRect.Width * 4;
+
         fixed (byte* srcPtr = pixelData)
         {
-            for (var y = 0; y < wb.PixelSize.Height; y++)
+            for (var y = startY; y < endY; y++)
             {
-                byte* src = srcPtr + y * wb.PixelSize.Width * 4;
-                byte* dst = (byte*)fb.Address + y * rowBytes;
+                byte* src = srcPtr + (y * wb.PixelSize.Width + x) * 4;
+                byte* dst = (byte*)fb.Address + y * rowBytes + x * 4;
 
-                Buffer.MemoryCopy(src, dst, rowBytes, wb.PixelSize.Width * 4);
+                Buffer.MemoryCopy(src, dst, copyBytes, copyBytes);
             }
         }
     }
@@ -57,9 +64,33 @@ public static class BitmapService
     public static WriteableBitmap CreateBitmap(int width, int height, byte[] pixelData)
     {
         var wb = new WriteableBitmap(new PixelSize(width, height), new Vector(96, 96), PixelFormat.Bgra8888, AlphaFormat.Unpremul);
-        SetPixelData(wb, pixelData);
+        SetPixelData(wb, pixelData, new Rect(0, 0, width, height));
 
         return wb;
+    }
+
+    public static unsafe void BrushSquare(byte[] pixelData, int width, Rect rect, Color dstColor)
+    {
+        fixed (byte* ptr = pixelData)
+        {
+            uint color =
+                (uint)dstColor.B |
+                ((uint)dstColor.G << 8) |
+                ((uint)dstColor.R << 16) |
+                ((uint)dstColor.A << 24);
+
+            byte* row = ptr + ((int)rect.Y * width * 4) + ((int)rect.X * 4);
+
+            for (var y = 0; y < rect.Height; y++)
+            {
+                uint* pixel = (uint*)row;
+
+                for (var x = 0; x < rect.Width; x++)
+                    pixel[x] = color;
+
+                row += width * 4;
+            }
+        }
     }
 
     public static Color GetPixelColor(byte[] pixelData, int width, PixelPoint pixel)
@@ -104,14 +135,15 @@ public static class BitmapService
             if (outA >= 0.999f) break;
         }
 
-        return Color.FromArgb((byte)(outA * 255f), r, g, b);
+        return Color.FromArgb(255, r, g, b);
     }
 
-    public static unsafe void FillSimilarPixels(WriteableBitmap wb, byte[] pixelData, int width, int height, PixelPoint startPixel, Color dstColor)
+    public static unsafe Rect? FillSimilarPixels(byte[] pixelData, int width, PixelPoint startPixel, Color dstColor)
     {
         var srcColor = GetPixelColor(pixelData, width, startPixel);
-        if (srcColor == dstColor) return;
+        if (srcColor == dstColor) return null;
 
+        var height = pixelData.Length / width / 4;
         var visited = new byte[width * height];
         var stack = new Stack<int>(512);
 
@@ -131,6 +163,11 @@ public static class BitmapService
             ((uint)dstColor.R << 16) |
             ((uint)dstColor.A << 24);
 
+        int minX = startPixel.X;
+        int maxX = startPixel.X;
+        int minY = startPixel.Y;
+        int maxY = startPixel.Y;
+
         fixed (byte* pBase = pixelData)
         {
             uint* pPixels = (uint*)pBase;
@@ -143,6 +180,11 @@ public static class BitmapService
                 var x = flat % width;
                 var y = flat / width;
 
+                if (x < minX) minX = x;
+                if (x > maxX) maxX = x;
+                if (y < minY) minY = y;
+                if (y > maxY) maxY = y;
+
                 if (x + 1 < width) TryPush(stack, visited, pPixels, flat + 1, srcPacked);
                 if (x - 1 >= 0) TryPush(stack, visited, pPixels, flat - 1, srcPacked);
                 if (y + 1 < height) TryPush(stack, visited, pPixels, flat + width, srcPacked);
@@ -150,13 +192,13 @@ public static class BitmapService
             }
         }
 
-        SetPixelData(wb, pixelData);
+        return new Rect(minX, minY, maxX - minX + 1, maxY - minY + 1);
     }
 
     private static unsafe void TryPush(Stack<int> stack, byte[] visited, uint* pPixels, int idx, uint srcPacked)
     {
-        if (visited[idx] != 0) return;
-        if (pPixels[idx] != srcPacked) return;
+        if (visited[idx] != 0 || pPixels[idx] != srcPacked) return;
+
         visited[idx] = 1;
         stack.Push(idx);
     }

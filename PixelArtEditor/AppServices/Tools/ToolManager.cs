@@ -1,4 +1,5 @@
-﻿using Avalonia.Media;
+﻿using Avalonia;
+using Avalonia.Media;
 using PixelArtEditor.AppServices.Tools.Implementations;
 using PixelArtEditor.Models.Canvas;
 using PixelArtEditor.Models.Tools;
@@ -20,30 +21,12 @@ public static class ToolManager
 
     public static ITool Get(ToolType type) => _tools[type];
 
-    public static void UpdatePixelData(ICanvasContext ctx, int x, int y, Color color)
+    public static void InvalidatePixelData(ICanvasContext ctx, LayerModel layer, Rect dirtyRect)
     {
-        var layer = ctx.LayerManager.ActiveLayer;
-        if (layer is null || layer.PixelData is null) return;
-
-        var index = (y * layer.Width + x) * 4;
-
-        if (color.A == 0)
-        {
-            layer.PixelData[index + 0] = 0;
-            layer.PixelData[index + 1] = 0;
-            layer.PixelData[index + 2] = 0;
-            layer.PixelData[index + 3] = 0;
-        }
-        else
-        {
-            layer.PixelData[index + 0] = color.B;
-            layer.PixelData[index + 1] = color.G;
-            layer.PixelData[index + 2] = color.R;
-            layer.PixelData[index + 3] = color.A;
-        }
-
         ctx.RenderCache[layer].RenderBitmapDirty = true;
         ctx.RenderCache[layer].PreviewDirty = true;
+        ctx.RenderCache[layer].DirtyRect = dirtyRect;
+
         layer.NotifyPixelDataChanged();
     }
 }

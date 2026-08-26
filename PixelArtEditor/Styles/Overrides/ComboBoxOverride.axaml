@@ -78,16 +78,17 @@
                               Stretch="Uniform" />
                       </ToggleButton>
                       <Popup Name="PART_Popup"
-                             MinWidth="{Binding Bounds.Width, RelativeSource={RelativeSource TemplatedParent}}"
+                             MinWidth="{Binding Bounds.Width, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource AddConverter}, ConverterParameter=12}"
                              MaxHeight="{TemplateBinding MaxDropDownHeight}"
                              IsLightDismissEnabled="True"
                              IsOpen="{TemplateBinding IsDropDownOpen,
                                                       Mode=TwoWay}"
                              PlacementTarget="{TemplateBinding}"
-                             InheritsTransform="True">
+                             InheritsTransform="True"
+                             VerticalOffset="-6">
                         <Border Background="{DynamicResource ThemeBackgroundBrush}"
                                 BorderBrush="{DynamicResource ThemeBorderMidBrush}"
-                                BorderThickness="1">
+                                BorderThickness="1" Margin="6">
                           <ScrollViewer HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
                                         VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
                                         IsDeferredScrollingEnabled="{TemplateBinding (ScrollViewer.IsDeferredScrollingEnabled)}"

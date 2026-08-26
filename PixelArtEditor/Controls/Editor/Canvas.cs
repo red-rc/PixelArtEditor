@@ -64,15 +64,6 @@ public class Canvas : Control, ICanvasContext
         set => SetValue(MaxScaleProperty, value);
     }
 
-    public static readonly StyledProperty<bool> IsDownscaledProperty =
-        AvaloniaProperty.Register<Canvas, bool>(nameof(IsDownscaled));
-
-    public bool IsDownscaled
-    {
-        get => GetValue(IsDownscaledProperty);
-        set => SetValue(IsDownscaledProperty, value);
-    }
-
     public static readonly StyledProperty<ToolType> SelectedToolProperty =
         AvaloniaProperty.Register<Canvas, ToolType>(nameof(SelectedTool));
     
@@ -300,7 +291,7 @@ public class Canvas : Control, ICanvasContext
         var srcRect = new Rect(0, 0, Model.Width, Model.Height);
         var destRect = new Rect(offsetX, offsetY, Model.Width * Scale, Model.Height * Scale);
 
-        if (IsDownscaled && layer.PreviewBitmap is not null)
+        if (Scale < 1 && layer.PreviewBitmap is not null)
         {
             var scaleX = (double)layer.PreviewBitmap.PixelSize.Width / layer.Width;
             var scaleY = (double)layer.PreviewBitmap.PixelSize.Height / layer.Height;
@@ -370,14 +361,17 @@ public class Canvas : Control, ICanvasContext
         {
             if (!RenderCache.TryGetValue(layer, out var cache)) continue;
 
-            if (cache.RenderBitmapDirty)
+            if (cache.RenderBitmapDirty && cache.DirtyRect is Rect rect)
             {
-                BitmapService.SetPixelData(layer.RenderBitmap, layer.PixelData);
+                BitmapService.SetPixelData(layer.RenderBitmap, layer.PixelData, rect);
+
                 cache.RenderBitmapDirty = false;
                 cache.PreviewDirty = true;
+                cache.DirtyRect = null;
             }
 
-            PreviewService.EnsurePreviewBitmap(this, layer, InvalidateVisual, bmpW, bmpH);
+            if (Scale < 1)
+                PreviewService.EnsurePreviewBitmap(this, layer, InvalidateVisual, bmpW, bmpH);
         }
 
         DrawCheckerBoard(context, offsetX, offsetY, bmpW, bmpH);
@@ -386,7 +380,7 @@ public class Canvas : Control, ICanvasContext
             if (layer.IsVisible)
                 DrawBitmap(context, layer, offsetX, offsetY);
 
-        if (!IsDownscaled)
+        if (Scale >= 1)
         {
             DrawHoverPixel(context, offsetX, offsetY);
             DrawGrid(context, offsetX, offsetY, bmpW, bmpH);

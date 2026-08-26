@@ -1,4 +1,5 @@
-﻿using PixelArtEditor.AppServices.Canvas;
+﻿using Avalonia;
+using PixelArtEditor.AppServices.Canvas;
 using PixelArtEditor.Models.Canvas;
 using PixelArtEditor.Models.Tools;
 
@@ -28,8 +29,13 @@ public class FillTool : ITool
         var layer = ctx.LayerManager.ActiveLayer;
         if (layer is null || ctx.HoverPixel is null) return;
 
-        BitmapService.FillSimilarPixels(layer.RenderBitmap, 
-            layer.PixelData, layer.Width, layer.Height,
-            ctx.HoverPixel.Value, ctx.PickedColor);
+        var dirtyRect = BitmapService.FillSimilarPixels(
+            layer.PixelData, 
+            layer.Width, 
+            ctx.HoverPixel.Value, 
+            ctx.PickedColor);
+
+        if (dirtyRect is Rect rect)
+            ToolManager.InvalidatePixelData(ctx, layer, rect);
     }
 }

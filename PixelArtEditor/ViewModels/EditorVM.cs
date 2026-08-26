@@ -83,13 +83,10 @@ public class EditorVM : ReactiveObject
         {
             this.RaiseAndSetIfChanged(ref _scale, Math.Clamp(value, MinScale, MaxScale));
             this.RaisePropertyChanged(nameof(Scale));
-            this.RaisePropertyChanged(nameof(IsDownscaled));
             UpdateScaleText();
             this.RaisePropertyChanged(nameof(ScaleText));
         }
     }
-
-    public bool IsDownscaled => Scale < 1;
 
     public double MinScale { get; private set; }
 
