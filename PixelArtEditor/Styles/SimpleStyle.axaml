@@ -527,14 +527,6 @@
                 <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}" />
             </Style>
     
-            <Style Selector="^:pressed /template/ Border#RootBorder">
-                <Setter Property="Background" Value="{DynamicResource BackgroundHoverColor}" />
-            </Style>
         </Style>
     </Style>
-
-    <Style Selector="TabControl#PART_TabControl[TabStripPlacement=Top]">
-        <Setter Property="Padding" Value="0" />
-    </Style>
-
 </Styles>

@@ -7,29 +7,33 @@ namespace PixelArtEditor.AppServices.Shell;
 
 public sealed class WindowStateManager : ReactiveObject
 {
-    private WindowState _current;
     private Window? _window;
     public WindowState PreviousWindowState;
 
+    private WindowState _current;
     public WindowState Current
     {
         get => _current;
         set
         {
-            if (_current == value) return;
+            if (Dispatcher.UIThread.CheckAccess())
+                SetCurrent(value);
+            else
+                Dispatcher.UIThread.Post(() => SetCurrent(value));
+        }
+    }
 
-            if (_window != null)
-            {
-                if (Dispatcher.UIThread.CheckAccess()) 
-                    _window.WindowState = value;
-                else 
-                    Dispatcher.UIThread.Post(() => _window.WindowState = value);
+    private void SetCurrent(WindowState state)
+    {
+        if (_current == state) return;
 
-                _window.CanResize = value != WindowState.Maximized && value != WindowState.FullScreen;
-            }
+        PreviousWindowState = _current;
+        this.RaiseAndSetIfChanged(ref _current, state, nameof(Current));
 
-            PreviousWindowState = _current;
-            this.RaiseAndSetIfChanged(ref _current, value);
+        if (_window != null)
+        {
+            _window.WindowState = state;
+            _window.CanResize = state != WindowState.Maximized && state != WindowState.FullScreen;
         }
     }
 
@@ -40,13 +44,14 @@ public sealed class WindowStateManager : ReactiveObject
 
         window.GetObservable(Window.WindowStateProperty).Subscribe(state =>
         {
-            if (state == _current) return;
-            this.RaisePropertyChanged(nameof(Current));
+            if (Current != state)
+                Current = state;
 
             if (state == WindowState.Normal)
                 ForceRelayout();
         });
     }
+
     private void ForceRelayout()
     {
         Dispatcher.UIThread.Post(() =>

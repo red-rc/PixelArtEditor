@@ -9,10 +9,6 @@
   
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />
-    <AvaloniaResource Include="Styles\Overrides\ColorViewOverride.axaml" />
-    <AvaloniaResource Include="Styles\Overrides\ColorPickerOverride.axaml" />
-    <AvaloniaResource Include="Styles\Overrides\MenuItemOverride.axaml" />
-    <AvaloniaResource Include="Styles\Overrides\MenuOverride.axaml" />
   </ItemGroup>
 
   <ItemGroup>

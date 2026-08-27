@@ -217,7 +217,7 @@
             <Setter Property="Background" Value="{DynamicResource UiColor}" />
             <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />
             <Setter Property="Padding" Value="6,0,6,0" />
-            <Setter Property="Margin" Value="0" />
+            <Setter Property="Margin" Value="0,-2,0,0" />
             <Setter Property="MinHeight" Value="{DynamicResource ColorViewTabStripHeight}" />
             <Setter Property="VerticalContentAlignment" Value="Center" />
             <Setter Property="Template">

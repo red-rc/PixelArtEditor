@@ -49,9 +49,8 @@ public class MenuCommandsVM : ReactiveObject
 
         var isFullScreen = Services.WindowState
             .WhenAnyValue(x => x.Current)
-            .Select(s => s == WindowState.FullScreen)
+            .Select(state => state == WindowState.FullScreen)
             .DistinctUntilChanged();
-
 
         CreateCommand = ReactiveCommand.CreateFromTask(ActionService.ShowCreateWindowAsync);
         OpenCommand = ReactiveCommand.Create(OnOpen);

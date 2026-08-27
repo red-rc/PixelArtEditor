@@ -37,7 +37,7 @@
                            IsOpen="{TemplateBinding IsSubMenuOpen, Mode=TwoWay}"
                            Placement="BottomEdgeAlignedLeft"
                            OverlayInputPassThroughElement="{Binding $parent[Menu]}"
-                           HorizontalOffset="-4" VerticalOffset="-2">
+                           HorizontalOffset="-6" VerticalOffset="-4">
                             <Border Background="{DynamicResource UiColor}"
                                 BorderThickness="0"
                                 Margin="6" 

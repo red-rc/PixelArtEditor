@@ -95,6 +95,7 @@
                                       Height="300"
                                       Width="300"
                                       Padding="0"
+                                      Margin="0,-2,0,0"
                                       SelectedIndex="{Binding SelectedIndex, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}">
                             <TabControl.ItemsPanel>
                               <ItemsPanelTemplate>

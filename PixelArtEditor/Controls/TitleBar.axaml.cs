@@ -80,8 +80,6 @@ public partial class TitleBar : UserControl
     public TitleBar()
     {
         InitializeComponent();
-        AddHandler(KeyDownEvent, OnKeyDown, RoutingStrategies.Tunnel);
-
         RenderOptions.SetBitmapInterpolationMode(this, BitmapInterpolationMode.None);
     }
 
@@ -100,7 +98,8 @@ public partial class TitleBar : UserControl
     private void OnPointerMoved(object? sender, PointerEventArgs e)
     {
         if (_pressedArgs is null || _dialog is null) return;
-        if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed) return;
+        if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed
+            || Services.WindowState.Current == WindowState.FullScreen) return;
 
         _dialog.BeginMoveDrag(_pressedArgs);
         _pressedArgs = null;
@@ -114,38 +113,21 @@ public partial class TitleBar : UserControl
     private void OnMinimizeClick(object? sender, RoutedEventArgs e)
     {
         if (_dialog is null) return;
-
-        var isMain = _dialog == (Application.Current?.ApplicationLifetime
-            as Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime)?.MainWindow;
-
-        if (isMain)
-            Services.WindowState.Current = WindowState.Minimized;
-        else
-            _dialog.WindowState = WindowState.Minimized;
+        Services.WindowState.Current = WindowState.Minimized;
     }
 
     private void OnMaximizeClick(object? sender, RoutedEventArgs e)
     {
         if (_dialog is null) return;
 
-        _dialog.WindowState = _dialog.WindowState switch
+        Services.WindowState.Current = Services.WindowState.Current switch
         {
             WindowState.Maximized => WindowState.Normal,
+            WindowState.FullScreen => WindowState.Normal,
             WindowState.Normal => WindowState.Maximized,
-            _ => _dialog.WindowState
+            _ => Services.WindowState.Current
         };
     }
 
     private void OnCloseClick(object? sender, RoutedEventArgs e) => _dialog?.Close();
-
-    private void OnKeyDown(object? sender, KeyEventArgs e)
-    {
-        if (e.Key != Key.F11) return;
-
-        e.Handled = true;
-        if (Services.WindowState.Current == WindowState.FullScreen)
-            Services.WindowState.Current = WindowState.Normal;
-        else
-            Services.WindowState.Current = WindowState.FullScreen;
-    }
 }

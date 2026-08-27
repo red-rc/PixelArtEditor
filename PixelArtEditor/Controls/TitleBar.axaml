@@ -14,7 +14,7 @@
         </Style>
     </UserControl.Styles>
 
-    <Grid ColumnDefinitions="Auto,Auto,*,Auto" Background="{DynamicResource TertiaryBackgroundColor}">
+    <Grid ColumnDefinitions="Auto,Auto,*,Auto" Background="{DynamicResource TertiaryBackgroundColor}" MinHeight="30">
         <StackPanel  
             Orientation="Horizontal" 
             HorizontalAlignment="Center" 
