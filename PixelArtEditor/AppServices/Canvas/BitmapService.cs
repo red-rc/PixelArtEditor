@@ -40,6 +40,9 @@ public static class BitmapService
         if (wb.Format != PixelFormat.Bgra8888)
             throw new InvalidOperationException("Invalid bitmap format.");
 
+        if (pixelData.Length < wb.PixelSize.Width * wb.PixelSize.Height * 4)
+            throw new ArgumentException("pixelData size mismatch with bitmap size.");
+
         using var fb = wb.Lock();
 
         var rowBytes = fb.RowBytes;
@@ -63,6 +66,16 @@ public static class BitmapService
     public static WriteableBitmap CreateBitmap(int width, int height, byte[] pixelData)
     {
         var wb = new WriteableBitmap(new PixelSize(width, height), new Vector(96, 96), PixelFormat.Bgra8888, AlphaFormat.Unpremul);
+        SetPixelData(wb, pixelData, new Rect(0, 0, width, height));
+
+        return wb;
+    }
+
+    public static WriteableBitmap CreateBitmap(int width, int height, Color color)
+    {
+        var wb = new WriteableBitmap(new PixelSize(width, height), new Vector(96, 96), PixelFormat.Bgra8888, AlphaFormat.Unpremul);
+        var pixelData = Enumerable.Repeat(color, width * height).SelectMany(c => new[] { c.B, c.G, c.R, c.A }).ToArray();
+
         SetPixelData(wb, pixelData, new Rect(0, 0, width, height));
 
         return wb;

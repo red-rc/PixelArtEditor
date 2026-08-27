@@ -1,29 +1,14 @@
 ﻿using Avalonia.Controls;
 using PixelArtEditor.AppServices.Image;
 using PixelArtEditor.Models.Canvas;
-using System;
 
 namespace PixelArtEditor.ViewModels;
 
 public class ExportDialogVM : ReactiveObject
 {
     public ImagePropertiesUCVM ImageProperties { get; }
-    public PixelModel LivePreviewParams => ImageProperties.LivePreviewParams;
 
-    private LayerModel _layer = null!;
-    public LayerModel Layer
-    {
-        get => _layer;
-        set
-        {
-            if (_layer == value) return;
-            
-            _layer = value;
-            this.RaisePropertyChanged(nameof(Layer));
-        }
-    }
-
-    private readonly PixelModel _model = null!;
+    private readonly PixelModel _model;
 
     public ReactiveCommand<RxVoid, RxVoid> CancelCommand { get; }
     public ReactiveCommand<RxVoid, RxVoid> ConfirmCommand { get; }
@@ -32,31 +17,15 @@ public class ExportDialogVM : ReactiveObject
     public ExportDialogVM(Window dialog, PixelModel model)
     {
         _model = model;
+
         ImageProperties = new ImagePropertiesUCVM();
 
-        ImageProperties.WhenAnyValue(
-                x => x.Width,
-                x => x.Height,
-                x => x.PixelData
-            )
-            .Subscribe(_ =>
-            {
-                var preview = ImageProperties.LivePreviewParams;
-
-                if (preview?.Data == null || preview.Data.Length == 0) return;
-
-                Layer = new LayerModel(
-                    preview.Width,
-                    preview.Height,
-                    preview.Data,
-                    "Preview Layer");
-            });
-
         ImageProperties.LoadFrom(_model);
+        ImageProperties.PushRenderData();
 
         ConfirmCommand = ReactiveCommand.CreateFromTask(async () =>
         {
-            await ImageExportService.ExportImageAsync(dialog, LivePreviewParams);
+            await ImageExportService.ExportImageAsync(dialog, ImageProperties.GetFinalPixelMode());
             dialog.Close();
         });
 

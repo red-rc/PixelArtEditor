@@ -112,7 +112,10 @@ public class LayerPanelVM : ReactiveObject
             {
                 var layerItem = LayerItems.FirstOrDefault(x => x.Layer == layer);
                 if (layerItem is not null)
+                {
+                    layerItem.Unsubscribe();
                     LayerItems.Remove(layerItem);
+                }
             }
         }
     }

@@ -1,4 +1,5 @@
-﻿using PixelArtEditor.Models.Canvas;
+﻿using PixelArtEditor.Models;
+using PixelArtEditor.Models.Canvas;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,12 +36,15 @@ public class ImagePropertiesUCVM : ReactiveObject
                 this.RaiseAndSetIfChanged(ref _width, value);
                 return;
             }
+
             _isUpdating = true;
+
             if (EnableProportion && _imageProportion != 0f)
             {
                 var newHeight = (int)(value / _imageProportion);
                 if (newHeight > 0) Height = newHeight;
             }
+
             this.RaiseAndSetIfChanged(ref _width, value);
             _isUpdating = false;
         }
@@ -57,12 +61,15 @@ public class ImagePropertiesUCVM : ReactiveObject
                 this.RaiseAndSetIfChanged(ref _height, value);
                 return;
             }
+
             _isUpdating = true;
+
             if (EnableProportion && _imageProportion != 0f)
             {
                 var newWidth = (int)(value * _imageProportion);
                 if (newWidth > 0) Width = newWidth;
             }
+
             this.RaiseAndSetIfChanged(ref _height, value);
             _isUpdating = false;
         }
@@ -186,27 +193,18 @@ public class ImagePropertiesUCVM : ReactiveObject
         set => this.RaiseAndSetIfChanged(ref _pixelData, value);
     }
 
-    private PixelModel _livePreviewParams = new();
-    public PixelModel LivePreviewParams
+    private PreviewData _renderData = new(0, 0, null, null);
+    public PreviewData RenderData
     {
-        get => _livePreviewParams;
-        private set => this.RaiseAndSetIfChanged(ref _livePreviewParams, value);
+        get => _renderData;
+        private set => this.RaiseAndSetIfChanged(ref _renderData, value);
     }
 
-    private bool _isUpdatingPreview = false;
+    public void PushRenderData() => RenderData = new(Width, Height, PixelData, null);
 
-    public ImagePropertiesUCVM()
+    public PixelModel GetFinalPixelMode()
     {
-        Changed.Subscribe(_ => UpdateLivePreview());
-        UpdateLivePreview();
-    }
-
-    private void UpdateLivePreview()
-    {
-        if (_isUpdatingPreview) return;
-        _isUpdatingPreview = true;
-
-        LivePreviewParams = new PixelModel
+        return new PixelModel
         {
             Name = Name,
             Extension = Extension,
@@ -221,7 +219,5 @@ public class ImagePropertiesUCVM : ReactiveObject
             BigEndian = BigEndian,
             Data = PixelData
         };
-
-        _isUpdatingPreview = false;
     }
 }

@@ -41,16 +41,19 @@
             IconVisible="False" 
             CanMinimize="False" 
             CanMaximize="False" />
-        <Grid Grid.Row="1">
+        <Grid RowDefinitions="*,Auto" Grid.Row="1">
             <Grid
+                Grid.Row="0"
                 Margin="20,30,20,0"
                 ColumnDefinitions="250,Auto,10,Auto"
                 DockPanel.Dock="Top">
                 <ui:Preview
                     Grid.Column="0"
-                    Margin="30,40,0,0"
-                    Layer="{Binding Layer}"
-                    IsAlreadyBgra="True" />
+                    Margin="0,0,0,10"
+                    Width="200"
+                    Height="200"
+                    VerticalAlignment="Center"
+                    RenderData="{Binding ImageProperties.RenderData}" />
 
                 <StackPanel Grid.Column="1" Spacing="10">
                     <TextBlock Classes="Header" Text="{DynamicResource ImgPropSize}" />
@@ -62,6 +65,7 @@
                 </StackPanel>
             </Grid>
             <Grid
+                Grid.Row="1"
                 Height="100"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Bottom"

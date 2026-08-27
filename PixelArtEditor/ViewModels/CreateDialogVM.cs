@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Media;
 using PixelArtEditor.AppServices.Image;
+using PixelArtEditor.Models;
 using PixelArtEditor.Models.Canvas;
 using System;
 
@@ -12,19 +13,24 @@ public class CreateDialogVM : ReactiveObject
     public Color BackgroundColor
     {
         get => _backgroundColor;
-        set => this.RaiseAndSetIfChanged(ref _backgroundColor, value);
+        set 
+        {
+            this.RaiseAndSetIfChanged(ref _backgroundColor, value);
+            PushRenderData();
+        }
     }
+
+    private PreviewData _renderData = new(0, 0, null, null);
+    public PreviewData RenderData
+    {
+        get => _renderData;
+        private set => this.RaiseAndSetIfChanged(ref _renderData, value);
+    }
+
+    private void PushRenderData()
+        => RenderData = new(ImageProperties.Width, ImageProperties.Height, null, BackgroundColor);
 
     public ImagePropertiesUCVM ImageProperties { get; }
-
-    public PixelModel LivePreviewParams => ImageProperties.LivePreviewParams;
-
-    private LayerModel _layer = null!;
-    public LayerModel Layer
-    {
-        get => _layer;
-        private set => this.RaiseAndSetIfChanged(ref _layer, value);
-    }
 
     public ReactiveCommand<RxVoid, RxVoid> CreateCommand { get; }
     public ReactiveCommand<RxVoid, RxVoid> CancelCommand { get; }
@@ -35,6 +41,11 @@ public class CreateDialogVM : ReactiveObject
 
         CreateCommand = ReactiveCommand.Create(() =>
         {
+            ImageProperties.PixelData = PixelModelService.CreateRgba32(
+                ImageProperties.Width,
+                ImageProperties.Height,
+                BackgroundColor);
+
             dialog.Close(new PixelModel
             {
                 Width = ImageProperties.Width,
@@ -52,35 +63,9 @@ public class CreateDialogVM : ReactiveObject
 
         CancelCommand = ReactiveCommand.Create(dialog.Close);
 
-        ImageProperties.WhenAnyValue(
-            x => x.Width,
-            x => x.Height
-        )
-        .Subscribe(_ =>
+        ImageProperties.WhenAnyValue(x => x.Width, x => x.Height).Subscribe(_ =>
         {
-            ImageProperties.PixelData = PixelModelService.CreateRgba32(
-                ImageProperties.LivePreviewParams.Width,
-                ImageProperties.LivePreviewParams.Height,
-                BackgroundColor);
-            UpdateLayer();
+            PushRenderData();
         });
-
-        this.WhenAnyValue(x => x.BackgroundColor).Subscribe(color =>
-        {
-            ImageProperties.PixelData = PixelModelService.CreateRgba32(
-                ImageProperties.LivePreviewParams.Width,
-                ImageProperties.LivePreviewParams.Height,
-                color);
-            UpdateLayer();
-        });
-    }
-
-    private void UpdateLayer()
-    {
-        Layer = new LayerModel(
-            ImageProperties.LivePreviewParams.Width,
-            ImageProperties.LivePreviewParams.Height,
-            ImageProperties.LivePreviewParams.Data,
-            "Preview Layer");
     }
 }

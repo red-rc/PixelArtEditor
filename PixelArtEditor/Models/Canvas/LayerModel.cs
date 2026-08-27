@@ -9,8 +9,8 @@ public class LayerModel(int width, int height, byte[] pixelData, string name) : 
 {
     public int Width { get; set; } = width;
     public int Height { get; set; } = height;
-    private byte[] _pixelData = pixelData;
 
+    private byte[] _pixelData = pixelData;
     public byte[] PixelData
     {
         get => _pixelData;

@@ -73,7 +73,7 @@ public class EditorVM : ReactiveObject
         set => this.RaiseAndSetIfChanged(ref _offset, value);
     }
 
-    private const int ScaleStep = 2;
+    private const int ScaleStep = 8;
 
     private double _scale;
     public double Scale

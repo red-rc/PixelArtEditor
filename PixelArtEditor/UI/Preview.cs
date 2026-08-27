@@ -3,91 +3,77 @@ using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using PixelArtEditor.AppServices.Canvas;
-using PixelArtEditor.Models.Canvas;
-using System.ComponentModel;
+using PixelArtEditor.Models;
 
 namespace PixelArtEditor.UI;
 
 public class Preview : Control
 {
-    public static readonly StyledProperty<LayerModel> LayerProperty =
-        AvaloniaProperty.Register<Preview, LayerModel>(nameof(Layer));
+    public static readonly StyledProperty<PreviewData> RenderDataProperty =
+        AvaloniaProperty.Register<Preview, PreviewData>(nameof(RenderData), defaultValue: new PreviewData(0, 0, null, null));
 
-    public LayerModel Layer
+    public PreviewData RenderData
     {
-        get => GetValue(LayerProperty);
-        set => SetValue(LayerProperty, value);
-    }
-
-    public static readonly StyledProperty<bool> IsAlreadyBgraProperty =
-        AvaloniaProperty.Register<Preview, bool>(nameof(IsAlreadyBgra), defaultValue: false);
-
-    public bool IsAlreadyBgra
-    {
-        get => GetValue(IsAlreadyBgraProperty);
-        set => SetValue(IsAlreadyBgraProperty, value);
-    }
-
-    public static readonly StyledProperty<int?> SizeProperty =
-        AvaloniaProperty.Register<Preview, int?>(nameof(Size));
-
-    public int? Size
-    {
-        get => GetValue(SizeProperty);
-        set => SetValue(SizeProperty, value);
+        get => GetValue(RenderDataProperty);
+        set => SetValue(RenderDataProperty, value);
     }
 
     private ImageBrush? _checkerboardBrush;
     private WriteableBitmap? _renderBitmap;
-
-    private byte[]? _pixelData;
 
     private readonly BoxShadows _shadow = Application.Current?.Resources["CardShadow"] as BoxShadows? ?? default;
 
     public Preview()
     {
         RenderOptions.SetBitmapInterpolationMode(this, BitmapInterpolationMode.None);
-        LayerProperty.Changed.AddClassHandler<Preview>((sender, _) => OnLayerChanged());
+        RenderDataProperty.Changed.AddClassHandler<Preview>((sender, _) => OnRenderDataChanged());
     }
 
-    private void OnLayerChanged()
+    private void OnRenderDataChanged()
     {
-        if (Layer is not { Width: > 0, Height: > 0 }) return;
+        var data = RenderData;
+        if (data is null || data.Width < 1 || data.Height < 1) return;
 
-        _pixelData = Layer.PixelData;
+        if (RenderData.PixelData is not null)
+            OnPixelDataChanged();
+        else if (RenderData.Color is not null)
+            OnColorChanged();
+        else
+            return;
+    }
 
-        if (!IsAlreadyBgra && _pixelData.Length > 0)
-            _pixelData = BitmapService.SwapRB(_pixelData);
-
-        if (_pixelData is not { Length: > 0 }) return;
+    private void OnPixelDataChanged()
+    {
+        if (RenderData.PixelData is not { Length: > 0 } pixelData) return;
 
         _renderBitmap?.Dispose();
-        _renderBitmap = BitmapService.CreateBitmap(Layer.Width, Layer.Height, _pixelData);
-
-        Layer.PropertyChanged -= Layer_PropertyChanged;
-        Layer.PropertyChanged += Layer_PropertyChanged;
+        _renderBitmap = BitmapService.CreateBitmap(RenderData.Width, RenderData.Height, pixelData);
 
         InvalidateVisual();
     }
 
-    private void Layer_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    private void OnColorChanged()
     {
-        if (e.PropertyName is nameof(LayerModel.PixelData))
-            OnLayerChanged();
+        if (RenderData.Color is not Color color) return;
+
+        _renderBitmap?.Dispose();
+        _renderBitmap = BitmapService.CreateBitmap(1, 1, color);
+
+        InvalidateVisual();
     }
 
     public override void Render(DrawingContext context)
     {
         base.Render(context);
 
-        if (_renderBitmap is null) return;
+        if (_renderBitmap is null || Width < 0 || Height < 0) return;
 
-        var ratio = (double)Layer.Width / Layer.Height;
+        var ratio = (double)RenderData.Width / RenderData.Height;
         if (double.IsInfinity(ratio) || double.IsNaN(ratio)) ratio = 1;
 
-        var size = Size ?? 200;
-        var rect = size / ratio > size ? new Rect((double)(size - size * ratio) / 2, 0, size * ratio, size) : 
-            new Rect(0, (double)(size - size / ratio) / 2, size, size / ratio);
+        var rect = Width / ratio > Width
+            ? new Rect((int)((double)(Width - Width * ratio) / 2), 0, (int)(Width * ratio), Width)
+            : new Rect(0, (int)((double)(Width - Width / ratio) / 2), Width, (int)(Width / ratio));
         
         _checkerboardBrush ??= new ImageBrush(BitmapService.CreateBitmap(2, 2, BitmapService.CreateCheckerBoardPixelData(2, 2)))
         {

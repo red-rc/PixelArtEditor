@@ -9,22 +9,8 @@ namespace PixelArtEditor.ViewModels;
 public class ImagePropertiesVM : ReactiveObject
 {
     public ImagePropertiesUCVM ImageProperties { get; }
-    public PixelModel LivePreviewParams => ImageProperties.LivePreviewParams;
 
-    private LayerModel _layer = null!;
-    public LayerModel Layer
-    {
-        get => _layer;
-        set
-        {
-            if (_layer == value) return;
-
-            _layer = value;
-            this.RaisePropertyChanged(nameof(Layer));
-        }
-    }
-
-    private readonly PixelModel _model = null!;  
+    private readonly PixelModel _model;  
     
     public ReactiveCommand<RxVoid, RxVoid> ResetCommand { get; }
     public ReactiveCommand<RxVoid, RxVoid> CancelCommand { get; }
@@ -37,25 +23,15 @@ public class ImagePropertiesVM : ReactiveObject
 
         ImageProperties.LoadFrom(_model);
 
-        ImageProperties.WhenAnyValue(
-                x => x.Width,
-                x => x.Height
-            )
-            .Subscribe(_ =>
-            {
-                if (ImageProperties.LivePreviewParams?.Data == null || ImageProperties.LivePreviewParams.Data.Length == 0) return;
+        ImageProperties.WhenAnyValue(x => x.Width, x => x.Height).Subscribe(_ =>
+        {
+            if (ImageProperties.PixelData is null || ImageProperties.PixelData.Length == 0) return;
 
-                ImageProperties.LivePreviewParams.Data = BitmapService.ResizePixelData(
-                    ImageProperties.LivePreviewParams.Data,
-                    _model.Width, _model.Height,
-                    ImageProperties.LivePreviewParams.Width, ImageProperties.LivePreviewParams.Height);
+            ImageProperties.PixelData = BitmapService.ResizePixelData(
+                _model.Data, _model.Width, _model.Height, ImageProperties.Width, ImageProperties.Height);
 
-                Layer = new LayerModel(
-                    ImageProperties.LivePreviewParams.Width,
-                    ImageProperties.LivePreviewParams.Height,
-                    ImageProperties.LivePreviewParams.Data,
-                    "Preview Layer");
-            });
+            ImageProperties.PushRenderData();
+        });
 
         ResetCommand = ReactiveCommand.Create(() => ImageProperties.LoadFrom(_model));
 

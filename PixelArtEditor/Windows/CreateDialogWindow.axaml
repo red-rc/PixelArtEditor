@@ -53,15 +53,18 @@
             IconVisible="False" 
             CanMinimize="False" 
             CanMaximize="False" />
-        <Grid Grid.Row="1">
+        <Grid RowDefinitions="*,Auto" Grid.Row="1">
             <Grid
                 Margin="20,20,20,0"
                 ColumnDefinitions="250,Auto,10,Auto">
                 <ui:Preview
+                    Grid.Row="0"
                     Grid.Column="0"
-                    Margin="30,40,0,0"
-                    Layer="{Binding Layer}"
-                    IsAlreadyBgra="False" />
+                    Margin="0,0,0,10"
+                    Width="200"
+                    Height="200"
+                    VerticalAlignment="Center"
+                    RenderData="{Binding RenderData}" />
 
                 <StackPanel Grid.Column="1" Spacing="10">
                     <TextBlock Classes="Header" Text="{DynamicResource CrWinBasic}" />
@@ -82,6 +85,7 @@
                 </StackPanel>
             </Grid>
             <Grid
+                Grid.Row="1"
                 Height="100"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Bottom"

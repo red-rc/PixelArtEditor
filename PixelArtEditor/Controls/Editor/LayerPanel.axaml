@@ -83,7 +83,11 @@
             <ListBox.ItemTemplate>
                 <DataTemplate x:DataType="model:LayerItem">
                     <StackPanel Orientation="Horizontal">
-                       <ui:Preview Margin="5" Layer="{Binding Layer}" IsAlreadyBgra="True" Size="36" Width="36" Height="36"/>
+                       <ui:Preview 
+                           Margin="5"
+                           Width="36"
+                           Height="36"
+                           RenderData="{Binding RenderData}" />
                        <Grid>
                             <TextBlock 
                                 Classes="LayerItemText" 

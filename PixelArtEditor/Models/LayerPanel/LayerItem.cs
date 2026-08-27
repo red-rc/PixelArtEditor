@@ -1,14 +1,22 @@
 ﻿using Avalonia;
 using Avalonia.Media;
 using PixelArtEditor.Models.Canvas;
+using System.ComponentModel;
 
 namespace PixelArtEditor.Models.LayerPanel;
 
-public class LayerItem(LayerModel layer) : ReactiveObject
+public class LayerItem: ReactiveObject
 {
-    public LayerModel Layer { get; } = layer;
+    public LayerModel Layer { get; }
 
-    private string _layerName = layer.Name;
+    private PreviewData _renderData = new(0, 0, null, null);
+    public PreviewData RenderData
+    {
+        get => _renderData;
+        private set => this.RaiseAndSetIfChanged(ref _renderData, value);
+    }
+
+    private string _layerName;
     public string LayerName
     {
         get => _layerName;
@@ -19,7 +27,7 @@ public class LayerItem(LayerModel layer) : ReactiveObject
         }
     }
 
-    private bool _isVisible = layer.IsVisible;
+    private bool _isVisible;
     public bool IsVisible
     {
         get => _isVisible;
@@ -31,7 +39,7 @@ public class LayerItem(LayerModel layer) : ReactiveObject
         }
     }
 
-    private bool _isLocked = layer.IsLocked;
+    private bool _isLocked;
     public bool IsLocked
     {
         get => _isLocked;
@@ -63,4 +71,23 @@ public class LayerItem(LayerModel layer) : ReactiveObject
         this.RaisePropertyChanged(nameof(VisibleIconSource));
         this.RaisePropertyChanged(nameof(LockedIconSource));
     }
+
+    public LayerItem(LayerModel layer)
+    {
+        Layer = layer;
+        _renderData = new PreviewData(layer.Width, layer.Height, layer.PixelData, null);
+        _layerName = layer.Name;
+        _isVisible = layer.IsVisible;
+        _isLocked = layer.IsLocked;
+
+        Layer.PropertyChanged += Layer_PropertyChanged;
+    }
+
+    private void Layer_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName != nameof(LayerModel.PixelData)) return;
+        RenderData = new PreviewData(Layer.Width, Layer.Height, Layer.PixelData, null);
+    }
+
+    public void Unsubscribe() => Layer.PropertyChanged -= Layer_PropertyChanged;
 }
