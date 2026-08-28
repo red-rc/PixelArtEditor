@@ -8,7 +8,6 @@ public static class ImagePropertiesMapper
     // Заповнює ImagePropertiesUCVM з PixelModel
     public static void LoadFrom(this ImagePropertiesUCVM vm, PixelModel model)
     {
-        vm.PixelData = model.Data;
         vm.Name = model.Name;
         vm.Extension = model.Extension;
         vm.Width = model.Width;

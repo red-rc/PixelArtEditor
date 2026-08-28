@@ -20,7 +20,15 @@ public class LayerModel(int width, int height, byte[] pixelData, string name) : 
             OnPropertyChanged();
         }
     }
-    public WriteableBitmap RenderBitmap { get; set; } = BitmapService.CreateBitmap(width, height, pixelData);
+
+    private WriteableBitmap? _renderBitmap;
+
+    public WriteableBitmap RenderBitmap
+    {
+        get => _renderBitmap ??= BitmapService.CreateBitmap(Width, Height, PixelData);
+        set => _renderBitmap = value;
+    }
+
     public WriteableBitmap? PreviewBitmap { get; set; }
 
     public string Name { get; set; } = name;

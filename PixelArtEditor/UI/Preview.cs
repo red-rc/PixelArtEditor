@@ -4,6 +4,7 @@ using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using PixelArtEditor.AppServices.Canvas;
 using PixelArtEditor.Models;
+using System.ComponentModel;
 
 namespace PixelArtEditor.UI;
 
@@ -19,56 +20,37 @@ public class Preview : Control
     }
 
     private ImageBrush? _checkerboardBrush;
-    private WriteableBitmap? _renderBitmap;
 
     private readonly BoxShadows _shadow = Application.Current?.Resources["CardShadow"] as BoxShadows? ?? default;
 
     public Preview()
     {
         RenderOptions.SetBitmapInterpolationMode(this, BitmapInterpolationMode.None);
-        RenderDataProperty.Changed.AddClassHandler<Preview>((sender, _) => OnRenderDataChanged());
+        RenderDataProperty.Changed.AddClassHandler<Preview>((sender, e) => OnRenderDataChanged(e));
     }
 
-    private void OnRenderDataChanged()
+    private void OnRenderDataChanged(AvaloniaPropertyChangedEventArgs e)
     {
-        var data = RenderData;
-        if (data is null || data.Width < 1 || data.Height < 1) return;
-
-        if (RenderData.PixelData is not null)
-            OnPixelDataChanged();
-        else if (RenderData.Color is not null)
-            OnColorChanged();
-        else
-            return;
-    }
-
-    private void OnPixelDataChanged()
-    {
-        if (RenderData.PixelData is not { Length: > 0 } pixelData) return;
-
-        _renderBitmap?.Dispose();
-        _renderBitmap = BitmapService.CreateBitmap(RenderData.Width, RenderData.Height, pixelData);
-
+        if (e.OldValue is PreviewData old) old.PropertyChanged -= OnRenderDataPropertyChanged;
+        if (e.NewValue is PreviewData @new) @new.PropertyChanged += OnRenderDataPropertyChanged;
         InvalidateVisual();
     }
 
-    private void OnColorChanged()
-    {
-        if (RenderData.Color is not Color color) return;
-
-        _renderBitmap?.Dispose();
-        _renderBitmap = BitmapService.CreateBitmap(1, 1, color);
-
-        InvalidateVisual();
-    }
+    private void OnRenderDataPropertyChanged(object? sender, PropertyChangedEventArgs e) => InvalidateVisual();
 
     public override void Render(DrawingContext context)
     {
         base.Render(context);
 
-        if (_renderBitmap is null || Width < 0 || Height < 0) return;
+        var data = RenderData;
+        if (data is null || Width < 0 || Height < 0) return;
 
-        var ratio = (double)RenderData.Width / RenderData.Height;
+        var bitmap = data.Bitmap;
+        Color? color = data.Color;
+
+        if (bitmap is null && color is null) return;
+
+        var ratio = (double)data.Width / data.Height;
         if (double.IsInfinity(ratio) || double.IsNaN(ratio)) ratio = 1;
 
         var rect = Width / ratio > Width
@@ -84,6 +66,10 @@ public class Preview : Control
 
         context.DrawRectangle(null, null, rect, 0, 0, _shadow);
         context.FillRectangle(_checkerboardBrush, rect);
-        context.DrawImage(_renderBitmap, rect);
+
+        if (bitmap is not null)
+            context.DrawImage(bitmap, rect);
+        else if (color is Color c)
+            context.DrawRectangle(new SolidColorBrush(c), null, rect);
     }
 }

@@ -13,7 +13,6 @@ using PixelArtEditor.UI;
 using PixelArtEditor.ViewModels;
 using System;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Linq;
 
@@ -203,9 +202,7 @@ public partial class LayerPanel : UserControl
                 item.IsLocked = newValue;
         }
         else
-        {
             clickedItem.IsLocked = newValue;
-        }
 
         e.Handled = true;
     }

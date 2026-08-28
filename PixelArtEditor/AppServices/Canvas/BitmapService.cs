@@ -215,6 +215,12 @@ public static class BitmapService
         stack.Push(idx);
     }
 
+    public static WriteableBitmap GetResizedBitmap(byte[] src, int srcW, int srcH, int dstW, int dstH)
+    {
+        var resized = ResizePixelData(src, srcW, srcH, dstW, dstH);
+        return CreateBitmap(dstW, dstH, resized);
+    }
+
     public static byte[] ResizePixelData(byte[] src, int srcW, int srcH, int dstW, int dstH)
     {
         var copyWidth = Math.Min(srcW, dstW);

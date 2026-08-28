@@ -1,4 +1,5 @@
-﻿using PixelArtEditor.Models;
+﻿using Avalonia.Media.Imaging;
+using PixelArtEditor.Models;
 using PixelArtEditor.Models.Canvas;
 using System;
 using System.Collections.Generic;
@@ -186,11 +187,11 @@ public class ImagePropertiesUCVM : ReactiveObject
         throw new ArgumentException($"Unknown value '{value}' for enum {typeof(T).Name}");
     }
 
-    private byte[] _pixelData = [];
-    public byte[] PixelData
+    private WriteableBitmap? _renderBitmap;
+    public WriteableBitmap? RenderBitmap
     {
-        get => _pixelData;
-        set => this.RaiseAndSetIfChanged(ref _pixelData, value);
+        get => _renderBitmap;
+        set => this.RaiseAndSetIfChanged(ref _renderBitmap, value);
     }
 
     private PreviewData _renderData = new(0, 0, null, null);
@@ -200,9 +201,15 @@ public class ImagePropertiesUCVM : ReactiveObject
         private set => this.RaiseAndSetIfChanged(ref _renderData, value);
     }
 
-    public void PushRenderData() => RenderData = new(Width, Height, PixelData, null);
+    public void PushRenderData()
+    {
+        RenderData.Width = Width;
+        RenderData.Height = Height;
+        RenderData.Bitmap = RenderBitmap;
+        RenderData.NotifyPropertyChanged();
+    }
 
-    public PixelModel GetFinalPixelMode()
+    public PixelModel GetFinalPixelMode(byte[] data)
     {
         return new PixelModel
         {
@@ -217,7 +224,7 @@ public class ImagePropertiesUCVM : ReactiveObject
             DpiX = DpiX,
             DpiY = DpiY,
             BigEndian = BigEndian,
-            Data = PixelData
+            Data = data
         };
     }
 }

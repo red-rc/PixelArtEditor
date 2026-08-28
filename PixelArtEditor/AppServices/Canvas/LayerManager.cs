@@ -32,6 +32,7 @@ public class LayerManager
             layer.RenderBitmap?.Dispose();
             layer.RenderBitmap = BitmapService.CreateBitmap(newWidth, newHeight, resized);
             layer.PixelData = resized;
+            layer.NotifyPixelDataChanged();
         }
     }
 

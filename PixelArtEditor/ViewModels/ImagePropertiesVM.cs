@@ -25,9 +25,7 @@ public class ImagePropertiesVM : ReactiveObject
 
         ImageProperties.WhenAnyValue(x => x.Width, x => x.Height).Subscribe(_ =>
         {
-            if (ImageProperties.PixelData is null || ImageProperties.PixelData.Length == 0) return;
-
-            ImageProperties.PixelData = BitmapService.ResizePixelData(
+            ImageProperties.RenderBitmap = BitmapService.GetResizedBitmap(
                 _model.Data, _model.Width, _model.Height, ImageProperties.Width, ImageProperties.Height);
 
             ImageProperties.PushRenderData();
@@ -38,6 +36,8 @@ public class ImagePropertiesVM : ReactiveObject
         CancelCommand = ReactiveCommand.Create(() =>
         {
             ImageProperties.LoadFrom(_model);
+            ImageProperties.RenderBitmap = BitmapService.CreateBitmap(_model.Width, _model.Height, _model.Data);
+
             dialog.Close();
         });
 
@@ -48,10 +48,6 @@ public class ImagePropertiesVM : ReactiveObject
 
             if ((newWidth != _model.Width || newHeight != _model.Height) && _model.Data is not null)
             {
-                _model.Data = BitmapService.SwapRB(BitmapService.ResizePixelData(
-                    _model.Data,
-                    _model.Width, _model.Height,
-                    newWidth, newHeight));
                 _model.Width = newWidth;
                 _model.Height = newHeight;
                 _model.NotifyModelChanged();

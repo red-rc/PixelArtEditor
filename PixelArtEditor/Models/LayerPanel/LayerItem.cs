@@ -75,19 +75,24 @@ public class LayerItem: ReactiveObject
     public LayerItem(LayerModel layer)
     {
         Layer = layer;
-        _renderData = new PreviewData(layer.Width, layer.Height, layer.PixelData, null);
+        _renderData = new PreviewData(layer.Width, layer.Height, layer.RenderBitmap, null);
         _layerName = layer.Name;
         _isVisible = layer.IsVisible;
         _isLocked = layer.IsLocked;
 
-        Layer.PropertyChanged += Layer_PropertyChanged;
+        Layer.PropertyChanged += OnLayerPropertyChanged;
     }
 
-    private void Layer_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    private void OnLayerPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName != nameof(LayerModel.PixelData)) return;
-        RenderData = new PreviewData(Layer.Width, Layer.Height, Layer.PixelData, null);
+        if (e.PropertyName == nameof(LayerModel.PixelData))
+        {
+            RenderData.Width = Layer.Width;
+            RenderData.Height = Layer.Height;
+            RenderData.Bitmap = Layer.RenderBitmap;
+            RenderData.NotifyPropertyChanged();
+        }
     }
 
-    public void Unsubscribe() => Layer.PropertyChanged -= Layer_PropertyChanged;
+    public void Unsubscribe() => Layer.PropertyChanged -= OnLayerPropertyChanged;
 }

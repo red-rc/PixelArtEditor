@@ -147,22 +147,6 @@ public class Canvas : Control, ICanvasContext
         this.GetObservable(ScaleProperty).Subscribe(_ => InvalidateVisual());
     }
 
-    private void Layer_PropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        var layer = (LayerModel)sender!;
-
-        if (e.PropertyName == nameof(LayerModel.Opacity))
-        {
-            RenderCache[layer].RenderBitmapDirty = true;
-            RenderCache[layer].PreviewDirty = true;
-        }
-
-        if (e.PropertyName is nameof(LayerModel.PixelData) or nameof(LayerModel.Opacity))
-            HoverPixelColor = null;
-
-        InvalidateVisual();
-    }
-
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
         base.OnPropertyChanged(change);
@@ -194,7 +178,8 @@ public class Canvas : Control, ICanvasContext
                 RenderBitmapDirty = false,
                 PreviewDirty = true
             };
-            layer.PropertyChanged += Layer_PropertyChanged;
+
+            layer.PropertyChanged += OnLayerPropertyChanged;
         }
 
         InvalidateVisual();
@@ -212,7 +197,7 @@ public class Canvas : Control, ICanvasContext
             foreach (LayerModel layer in e.NewItems)
             {
                 RenderCache[layer] = new LayerRenderCache();
-                layer.PropertyChanged += Layer_PropertyChanged;
+                layer.PropertyChanged += OnLayerPropertyChanged;
             }
 
         if (e.OldItems is not null)
@@ -221,8 +206,24 @@ public class Canvas : Control, ICanvasContext
                 RenderCache[layer].PreviewCts?.Cancel();
                 RenderCache.Remove(layer);
 
-                layer.PropertyChanged -= Layer_PropertyChanged;
+                layer.PropertyChanged -= OnLayerPropertyChanged;
             }
+
+        InvalidateVisual();
+    }
+
+    private void OnLayerPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        var layer = (LayerModel)sender!;
+
+        if (e.PropertyName == nameof(LayerModel.Opacity))
+        {
+            RenderCache[layer].RenderBitmapDirty = true;
+            RenderCache[layer].PreviewDirty = true;
+        }
+
+        if (e.PropertyName is nameof(LayerModel.PixelData) or nameof(LayerModel.Opacity))
+            HoverPixelColor = null;
 
         InvalidateVisual();
     }

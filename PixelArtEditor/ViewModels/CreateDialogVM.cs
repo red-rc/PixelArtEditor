@@ -28,7 +28,12 @@ public class CreateDialogVM : ReactiveObject
     }
 
     private void PushRenderData()
-        => RenderData = new(ImageProperties.Width, ImageProperties.Height, null, BackgroundColor);
+    {
+        RenderData.Width = ImageProperties.Width;
+        RenderData.Height = ImageProperties.Height;
+        RenderData.Color = BackgroundColor;
+        RenderData.NotifyPropertyChanged();
+    }
 
     public ImagePropertiesUCVM ImageProperties { get; }
 
@@ -41,7 +46,7 @@ public class CreateDialogVM : ReactiveObject
 
         CreateCommand = ReactiveCommand.Create(() =>
         {
-            ImageProperties.PixelData = PixelModelService.CreateRgba32(
+            var pixelData = PixelModelService.CreateRgba32(
                 ImageProperties.Width,
                 ImageProperties.Height,
                 BackgroundColor);
@@ -57,7 +62,7 @@ public class CreateDialogVM : ReactiveObject
                 BigEndian = ImageProperties.BigEndian,
                 DpiX = ImageProperties.DpiX,
                 DpiY = ImageProperties.DpiY,
-                Data = ImageProperties.PixelData
+                Data = pixelData
             });
         });
 

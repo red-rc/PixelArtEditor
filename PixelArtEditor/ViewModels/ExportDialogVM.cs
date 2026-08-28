@@ -1,4 +1,5 @@
 ﻿using Avalonia.Controls;
+using PixelArtEditor.AppServices.Canvas;
 using PixelArtEditor.AppServices.Image;
 using PixelArtEditor.Models.Canvas;
 
@@ -21,11 +22,12 @@ public class ExportDialogVM : ReactiveObject
         ImageProperties = new ImagePropertiesUCVM();
 
         ImageProperties.LoadFrom(_model);
+        ImageProperties.RenderBitmap = BitmapService.CreateBitmap(_model.Width, _model.Height, _model.Data);
         ImageProperties.PushRenderData();
 
         ConfirmCommand = ReactiveCommand.CreateFromTask(async () =>
         {
-            await ImageExportService.ExportImageAsync(dialog, ImageProperties.GetFinalPixelMode());
+            await ImageExportService.ExportImageAsync(dialog, ImageProperties.GetFinalPixelMode(_model.Data));
             dialog.Close();
         });
 

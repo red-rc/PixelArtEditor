@@ -17,7 +17,12 @@ public class RemoveCmd(LayerPanelVM vm, ListBox layerListBox) : LayerCmdBase(vm,
         var index = activeLayerItem is not null ? Vm.LayerItems.IndexOf(activeLayerItem) : -1;
 
         foreach (var layerItem in Vm.SelLayerItems.ToList())
+        {
+            if (layerItem.Layer == layerManager.ActiveLayer)
+                layerManager.ActiveLayer = null;
+
             layerManager.Layers.Remove(layerItem.Layer);
+        }
 
         if ((layerManager.ActiveLayer is null || !layerManager.Layers.Contains(layerManager.ActiveLayer))
             && Vm.LayerItems.Count > 0)
