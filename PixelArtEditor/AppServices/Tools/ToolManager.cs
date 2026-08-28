@@ -24,7 +24,8 @@ public static class ToolManager
     {
         ctx.RenderCache[layer].RenderBitmapDirty = true;
         ctx.RenderCache[layer].PreviewDirty = true;
-        ctx.RenderCache[layer].DirtyRect = dirtyRect;
+        ctx.RenderCache[layer].DirtyRect = ctx.RenderCache[layer].DirtyRect is Rect existing
+            ? existing.Union(dirtyRect) : dirtyRect;
 
         layer.NotifyPixelDataChanged();
     }

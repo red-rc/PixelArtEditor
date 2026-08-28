@@ -16,7 +16,6 @@
     x:DataType="vm:CreateDialogVM"
     Background="{DynamicResource BackgroundColor}"
     ExtendClientAreaToDecorationsHint="True"
-    WindowDecorations="BorderOnly"
     CanResize="False"
     WindowStartupLocation="CenterOwner"
     mc:Ignorable="d">

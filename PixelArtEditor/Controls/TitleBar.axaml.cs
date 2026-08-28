@@ -6,6 +6,7 @@ using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.VisualTree;
 using PixelArtEditor.AppServices;
+using PixelArtEditor.Windows;
 
 namespace PixelArtEditor.Controls;
 
@@ -130,4 +131,16 @@ public partial class TitleBar : UserControl
     }
 
     private void OnCloseClick(object? sender, RoutedEventArgs e) => _dialog?.Close();
+
+    private void OnDoubleTapped(object? sender, TappedEventArgs e)
+    {
+        if (_dialog is null || this.FindAncestorOfType<MainWindow>() is null) return;
+
+        Services.WindowState.Current = Services.WindowState.Current switch
+        {
+            WindowState.Maximized => WindowState.Normal,
+            WindowState.Normal => WindowState.Maximized,
+            _ => Services.WindowState.Current
+        };
+    }
 }

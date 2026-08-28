@@ -12,7 +12,6 @@
     x:DataType="vm:MainWindowVM"
     Background="{DynamicResource BackgroundColor}"
     ExtendClientAreaToDecorationsHint="True"
-    WindowDecorations="BorderOnly"
     Icon="/Assets/logo.ico"
     TransparencyLevelHint="AcrylicBlur"
     WindowStartupLocation="CenterScreen"

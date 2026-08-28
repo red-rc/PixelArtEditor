@@ -24,7 +24,6 @@
         <SolidColorBrush x:Key="ThemeBorderMidBrush" Color="{DynamicResource ShadowColor}" />
 
         <conv:AddConverter x:Key="AddConverter"/>
-        <conv:DivideByConverter x:Key="DivideByConverter" />
         <conv:TabToViewConverter x:Key="TabToViewConverter" />
     </Application.Resources>
 
