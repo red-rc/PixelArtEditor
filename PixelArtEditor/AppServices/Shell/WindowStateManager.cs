@@ -8,7 +8,7 @@ namespace PixelArtEditor.AppServices.Shell;
 public sealed class WindowStateManager : ReactiveObject
 {
     private Window? _window;
-    public WindowState PreviousWindowState;
+    public WindowState PrevWindowState;
 
     private WindowState _current;
     public WindowState Current
@@ -27,7 +27,7 @@ public sealed class WindowStateManager : ReactiveObject
     {
         if (_current == state) return;
 
-        PreviousWindowState = _current;
+        PrevWindowState = _current;
         this.RaiseAndSetIfChanged(ref _current, state, nameof(Current));
 
         if (_window != null)

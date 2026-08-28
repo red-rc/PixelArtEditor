@@ -1,74 +1,70 @@
-using Avalonia.Controls;
-using Avalonia.Controls.Primitives;
 using Avalonia.Media;
 using Avalonia.Threading;
-using Avalonia.VisualTree;
 using PixelArtEditor.AppServices;
 using PixelArtEditor.Models.Canvas;
 using PixelArtEditor.Windows;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 
 namespace PixelArtEditor.ViewModels;
 
 public class SettingsDialogVM : ReactiveObject
 {
-    private static readonly ISettingsManager _settings = Services.Settings;
+    private static ISettingsManager Settings => Services.Settings;
 
     public static IEnumerable<KeyValuePair<string, string>> LanguagePairs => ResourceManager.LanguageOptions;
 
     public KeyValuePair<string, string> Language
     {
-        get => LanguagePairs.FirstOrDefault(i => i.Key == _settings.Language);
+        get => LanguagePairs.FirstOrDefault(i => i.Key == Settings.Language);
         set
         {
             if (Language.Equals(value)) return;
-            _settings.Language = value.Key;
+            Settings.Language = value.Key;
             this.RaisePropertyChanged();
         }
     }
 
     public int GridMaxSize
     {
-        get => _settings.GridMaxSize;
+        get => Settings.GridMaxSize;
         set
         {
-            if (_settings.GridMaxSize == value) return;
-            _settings.GridMaxSize = value;
+            if (Settings.GridMaxSize == value) return;
+            Settings.GridMaxSize = value;
             this.RaisePropertyChanged();
         }
     }
     
     public Color GridColor
     {
-        get => _settings.GridColor;
+        get => Settings.GridColor;
         set
         {
-            if (_settings.GridColor == value) return;
-            _settings.GridColor = value;
+            if (Settings.GridColor == value) return;
+            Settings.GridColor = value;
             this.RaisePropertyChanged();
         }
     }
     
     public bool EnableGrid
     {
-        get => _settings.EnableGrid;
+        get => Settings.EnableGrid;
         set
         {
-            if (_settings.EnableGrid == value) return;
-            _settings.EnableGrid = value;
+            if (Settings.EnableGrid == value) return;
+            Settings.EnableGrid = value;
             this.RaisePropertyChanged();
         }
     }
 
     public bool ScaleCheckerboardWithCanvas
     {
-        get => _settings.ScaleCheckerboardWithCanvas;
+        get => Settings.ScaleCheckerboardWithCanvas;
         set
         {
-            if (_settings.ScaleCheckerboardWithCanvas == value) return;
-            _settings.ScaleCheckerboardWithCanvas = value;
+            if (Settings.ScaleCheckerboardWithCanvas == value) return;
+            Settings.ScaleCheckerboardWithCanvas = value;
             this.RaisePropertyChanged();
         }
     }
@@ -86,44 +82,44 @@ public class SettingsDialogVM : ReactiveObject
 
     public KeyValuePair<CheckerboardScale, string> Scale
     {
-        get => ScaleOptions.FirstOrDefault(i => i.Key == _settings.CheckerboardScale);
+        get => ScaleOptions.FirstOrDefault(i => i.Key == Settings.CheckerboardScale);
         set
         {
             if (Scale.Equals(value)) return;
-            _settings.CheckerboardScale = value.Key;
+            Settings.CheckerboardScale = value.Key;
             this.RaisePropertyChanged();
         }
     }
 
     public bool EnableAutosave
     {
-        get => _settings.EnableAutosave;
+        get => Settings.EnableAutosave;
         set
         {
-            if (_settings.EnableAutosave == value) return;
-            _settings.EnableAutosave = value;
+            if (Settings.EnableAutosave == value) return;
+            Settings.EnableAutosave = value;
             this.RaisePropertyChanged();
         }
     }
     
     public int AutosaveFrequency
     {
-        get => _settings.AutosaveFrequency;
+        get => Settings.AutosaveFrequency;
         set
         {
-            if (_settings.AutosaveFrequency == value) return;
-            _settings.AutosaveFrequency = value;
+            if (Settings.AutosaveFrequency == value) return;
+            Settings.AutosaveFrequency = value;
             this.RaisePropertyChanged();
         }
     }
 
     public Color AccentColor
     {
-        get => _settings.AccentColor;
+        get => Settings.AccentColor;
         set
         {
-            if (_settings.AccentColor == value) return;
-            _settings.AccentColor = value;
+            if (Settings.AccentColor == value) return;
+            Settings.AccentColor = value;
             this.RaisePropertyChanged();
         }
     }
@@ -132,13 +128,12 @@ public class SettingsDialogVM : ReactiveObject
 
     public string Theme
     {
-        get => _settings.Theme;
+        get => Settings.Theme;
         set
         {
-            if (_settings.Theme == value) return;
+            if (Settings.Theme == value) return;
 
-            CloseThemeComboBoxPopup();
-            _settings.Theme = value;
+            Settings.Theme = value;
 
             Dispatcher.UIThread.Post(_dialog.RestartWindow, DispatcherPriority.Background);
             this.RaisePropertyChanged();
@@ -160,15 +155,19 @@ public class SettingsDialogVM : ReactiveObject
 
     public SettingsDialogVM(SettingsDialogWindow dialog)
     {
-        ResetCommand = ReactiveCommand.Create(OnClosing);
+        ResetCommand = ReactiveCommand.Create(() => {
+            Settings.Reset();
+            OnClosing();
+        }
+        );
         CancelCommand = ReactiveCommand.Create(() =>
         {
-            OnClosing();
+            Settings.Load();
             dialog.Close();
         });
         SaveCommand = ReactiveCommand.Create(() =>
         {
-            _settings.Save();
+            Settings.Save();
             dialog.Close();
         });
 
@@ -177,20 +176,8 @@ public class SettingsDialogVM : ReactiveObject
         _dialog = dialog;
     }
 
-    private void CloseThemeComboBoxPopup()
-    {
-        var popupField = typeof(ComboBox).GetFields(BindingFlags.NonPublic | BindingFlags.Instance)
-            .FirstOrDefault(field => field.FieldType == typeof(Popup));
-
-        foreach (var comboBox in _dialog.GetVisualDescendants().OfType<ComboBox>())
-            if (popupField?.GetValue(comboBox) is Popup { IsOpen: true } popup)
-                popup.IsOpen = false;
-    }
-
     public void OnClosing()
     {
-        _settings.Load();
-            
         foreach (var prop in typeof(ISettingsManager).GetProperties())
             this.RaisePropertyChanged(prop.Name);
     }

@@ -100,4 +100,9 @@ public sealed class SettingsManager : ISettingsManager
     }
 
     public void Save() => JsonService.Save(this, ResourceManager.ConfigPath);
+    public void Reset()
+    {
+        SetDefaults();
+        Save();
+    }
 }

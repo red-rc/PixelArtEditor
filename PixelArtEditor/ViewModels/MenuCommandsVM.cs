@@ -10,7 +10,7 @@ namespace PixelArtEditor.ViewModels;
 
 public class MenuCommandsVM : ReactiveObject
 {
-    private static readonly ISettingsManager _settings = Services.Settings;
+    private static ISettingsManager Settings => Services.Settings;
     public ReactiveCommand<RxVoid, RxVoid> CreateCommand { get; }
     public ReactiveCommand<RxVoid, RxVoid> OpenCommand { get; }
     public ReactiveCommand<RxVoid, RxVoid> ImportCommand { get; }
@@ -140,24 +140,24 @@ public class MenuCommandsVM : ReactiveObject
 
     private static void OnResetLayout()
     {
-        _settings.Layout = ResourceManager.DefaultLayout;
-        _settings.Save();
+        Settings.Layout = ResourceManager.DefaultLayout;
+        Settings.Save();
     }
 
-    private static void OnStandart() => Services.WindowState.Current = Services.WindowState.PreviousWindowState;
+    private static void OnStandart() => Services.WindowState.Current = Services.WindowState.PrevWindowState;
 
     private static void OnFullScreen() => Services.WindowState.Current = WindowState.FullScreen;
 
     private static void OnLightTheme()
     {
-        if (_settings.Theme is not "Light") _settings.Theme = "Light";
-        _settings.Save();
+        if (Settings.Theme is not "Light") Settings.Theme = "Light";
+        Settings.Save();
     }
 
     private static void OnDarkTheme()
     {
-        if (_settings.Theme is not "Dark") _settings.Theme = "Dark";
-        _settings.Save();
+        if (Settings.Theme is not "Dark") Settings.Theme = "Dark";
+        Settings.Save();
     }
 
     private void OnCheckForUpdates()

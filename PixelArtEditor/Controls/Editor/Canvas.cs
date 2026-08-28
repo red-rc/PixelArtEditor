@@ -22,8 +22,8 @@ namespace PixelArtEditor.Controls.Editor;
 
 public class Canvas : Control, ICanvasContext
 {
-    private static readonly ISettingsManager _settings = Services.Settings;
-    private readonly Pen _gridPen = new(new SolidColorBrush(_settings.GridColor));
+    private static ISettingsManager Settings => Services.Settings;
+    private readonly Pen _gridPen = new(new SolidColorBrush(Settings.GridColor));
     private bool _isLeftPressed;
 
     public static readonly StyledProperty<PixelModel> ModelProperty =
@@ -52,8 +52,14 @@ public class Canvas : Control, ICanvasContext
     public double Scale
     {
         get => GetValue(ScaleProperty);
-        set => SetValue(ScaleProperty, value);
+        set
+        {
+            _prevScale = Scale;
+            SetValue(ScaleProperty, value);
+        }
     }
+
+    private double _prevScale;
 
     public static readonly StyledProperty<int> MaxScaleProperty =
         AvaloniaProperty.Register<Canvas, int>(nameof(MaxScale));
@@ -122,7 +128,8 @@ public class Canvas : Control, ICanvasContext
         set => SetValue(CurrentPixelCoordProperty, value);
     }
 
-    private ImageBrush? _checkerboardBrush;
+    private bool _scaleWithCanvas = Settings.ScaleCheckerboardWithCanvas;
+    private DrawingBrush? _checkerboardBrush;
 
     public LayerManager LayerManager { get; private set; } = null!;
     public Dictionary<LayerModel, LayerRenderCache> RenderCache { get; } = [];
@@ -270,17 +277,36 @@ public class Canvas : Control, ICanvasContext
 
     private void DrawCheckerBoard(DrawingContext context, int offsetX, int offsetY, int bmpW, int bmpH)
     {
-        var tileSize = _settings.ScaleCheckerboardWithCanvas
-            ? Scale * (int)_settings.CheckerboardScale * 2
-            : MaxScale / 4;
-
-        _checkerboardBrush ??= new ImageBrush(BitmapService.CreateBitmap(2, 2, BitmapService.CreateCheckerBoardPixelData(2, 2)))
+        if (_checkerboardBrush is null)
         {
-            TileMode = TileMode.Tile,
-            Stretch = Stretch.Fill
-        };
+            var imageDrawing = new ImageDrawing
+            {
+                ImageSource = BitmapService.CreateBitmap(2, 2, BitmapService.CreateCheckerBoardPixelData(2, 2)),
+                Rect = new Rect(0, 0, 2, 2)
+            };
 
-        _checkerboardBrush.DestinationRect = new RelativeRect(0, 0, tileSize, tileSize, RelativeUnit.Absolute);
+            _checkerboardBrush = new DrawingBrush(imageDrawing)
+            {
+                TileMode = TileMode.Tile,
+                Stretch = Stretch.Fill
+            };
+        }
+
+        if (_prevScale != Scale || Settings.ScaleCheckerboardWithCanvas != _scaleWithCanvas)
+        {
+            var tileSize = Settings.ScaleCheckerboardWithCanvas
+                ? Scale * (int)Settings.CheckerboardScale * 2
+                : MaxScale / 4;
+
+            while (Settings.ScaleCheckerboardWithCanvas && tileSize < 32)
+                tileSize *= 2;
+
+            _checkerboardBrush.DestinationRect = new RelativeRect(0, 0, tileSize, tileSize, RelativeUnit.Absolute);
+
+            _prevScale = Scale;
+            _scaleWithCanvas = Settings.ScaleCheckerboardWithCanvas;
+        }
+
         _checkerboardBrush.Transform = new TranslateTransform(offsetX, offsetY);
         context.FillRectangle(_checkerboardBrush, new Rect(offsetX, offsetY, bmpW, bmpH));
     }
@@ -328,14 +354,14 @@ public class Canvas : Control, ICanvasContext
 
     private void DrawGrid(DrawingContext context, double offsetX, double offsetY, double bmpW, double bmpH)
     {
-        if (!_settings.EnableGrid) return;
+        if (!Settings.EnableGrid) return;
 
         var startX = Math.Max(0, (int)Math.Floor((0 - offsetX) / Scale));
         var endX = Math.Min(Model.Width, (int)Math.Ceiling((Bounds.Width - offsetX) / Scale));
         var startY = Math.Max(0, (int)Math.Floor((0 - offsetY) / Scale));
         var endY = Math.Min(Model.Height, (int)Math.Ceiling((Bounds.Height - offsetY) / Scale));
 
-        if (!(Bounds.Width / Scale > _settings.GridMaxSize || Bounds.Height / Scale > _settings.GridMaxSize))
+        if (!(Bounds.Width / Scale > Settings.GridMaxSize || Bounds.Height / Scale > Settings.GridMaxSize))
         {
             for (var x = startX; x <= endX; x++)
             {

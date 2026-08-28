@@ -25,4 +25,5 @@ public interface ISettingsManager
 
     void Load();
     void Save();
+    void Reset();
 }

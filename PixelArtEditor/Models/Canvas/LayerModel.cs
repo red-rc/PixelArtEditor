@@ -22,7 +22,6 @@ public class LayerModel(int width, int height, byte[] pixelData, string name) : 
     }
 
     private WriteableBitmap? _renderBitmap;
-
     public WriteableBitmap RenderBitmap
     {
         get => _renderBitmap ??= BitmapService.CreateBitmap(Width, Height, PixelData);
