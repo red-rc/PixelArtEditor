@@ -390,7 +390,7 @@ public class Canvas : Control, ICanvasContext
 
             if (cache.RenderBitmapDirty && cache.DirtyRect is Rect rect)
             {
-                BitmapService.SetPixelData(layer.RenderBitmap, layer.PixelData, rect);
+                BitmapService.UpdateBitmap(layer.RenderBitmap, layer.PixelData, rect);
 
                 cache.RenderBitmapDirty = false;
                 cache.PreviewDirty = true;

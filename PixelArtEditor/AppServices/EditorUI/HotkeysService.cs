@@ -41,7 +41,7 @@ public class HotkeysService(LayerCmdList commands, LayerManager? layerManager, E
                 return true;
 
             case (KeyModifiers.None, Key.Delete):
-                commands.RemoveCmd.Execute(layerManager);
+                commands.DeleteCmd.Execute(layerManager);
                 return true;
 
             case (KeyModifiers.None, Key.Escape):

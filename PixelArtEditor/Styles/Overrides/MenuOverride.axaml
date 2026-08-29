@@ -9,6 +9,9 @@
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="Padding" Value="10 0" />
             <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />
+            <Setter Property="FontFamily" Value="{DynamicResource AppFont}" />
+            <Setter Property="FontSize" Value="13" />
             <Setter Property="Template">
               <ControlTemplate>
                 <Border Name="root"
@@ -23,12 +26,7 @@
                                       ContentTemplate="{TemplateBinding HeaderTemplate}">
                       <ContentPresenter.DataTemplates>
                         <DataTemplate DataType="sys:String">
-                            <AccessText 
-                                Text="{Binding}" 
-                                VerticalAlignment="Center"
-                                Foreground="{DynamicResource ForegroundColor}" 
-                                FontFamily="{DynamicResource AppFont}" 
-                                FontSize="14" />
+                            <AccessText Text="{Binding}" VerticalAlignment="Center" />
                         </DataTemplate>
                       </ContentPresenter.DataTemplates>
                     </ContentPresenter>
@@ -38,19 +36,19 @@
                            Placement="BottomEdgeAlignedLeft"
                            OverlayInputPassThroughElement="{Binding $parent[Menu]}"
                            HorizontalOffset="-6" VerticalOffset="-4">
-                            <Border Background="{DynamicResource UiColor}"
+                        <Border Background="{DynamicResource UiColor}"
                                 BorderThickness="0"
                                 Margin="6" 
                                 ClipToBounds="False"
-                                CornerRadius="5"
+                                CornerRadius="4"
                                 Padding="4"
                                 BoxShadow="{DynamicResource CardShadow}">
-                          <ScrollViewer Theme="{StaticResource SimpleMenuScrollViewer}">
+                            <ScrollViewer Theme="{StaticResource SimpleMenuScrollViewer}">
                             <ItemsPresenter Name="PART_ItemsPresenter"
                                             Margin="2"
                                             Grid.IsSharedSizeScope="True"
                                             ItemsPanel="{TemplateBinding ItemsPanel}" />
-                          </ScrollViewer>
+                            </ScrollViewer>
                         </Border>
                     </Popup>
                   </Panel>

@@ -35,7 +35,7 @@ public static class BitmapService
         return pixelData;
     }
 
-    public static unsafe void SetPixelData(WriteableBitmap wb, byte[] pixelData, Rect dirtyRect)
+    public static unsafe void UpdateBitmap(WriteableBitmap wb, byte[] pixelData, Rect dirtyRect)
     {
         if (wb.Format != PixelFormat.Bgra8888)
             throw new InvalidOperationException("Invalid bitmap format.");
@@ -66,7 +66,7 @@ public static class BitmapService
     public static WriteableBitmap CreateBitmap(int width, int height, byte[] pixelData)
     {
         var wb = new WriteableBitmap(new PixelSize(width, height), new Vector(96, 96), PixelFormat.Bgra8888, AlphaFormat.Unpremul);
-        SetPixelData(wb, pixelData, new Rect(0, 0, width, height));
+        UpdateBitmap(wb, pixelData, new Rect(0, 0, width, height));
 
         return wb;
     }
@@ -76,7 +76,7 @@ public static class BitmapService
         var wb = new WriteableBitmap(new PixelSize(width, height), new Vector(96, 96), PixelFormat.Bgra8888, AlphaFormat.Unpremul);
         var pixelData = Enumerable.Repeat(color, width * height).SelectMany(c => new[] { c.B, c.G, c.R, c.A }).ToArray();
 
-        SetPixelData(wb, pixelData, new Rect(0, 0, width, height));
+        UpdateBitmap(wb, pixelData, new Rect(0, 0, width, height));
 
         return wb;
     }

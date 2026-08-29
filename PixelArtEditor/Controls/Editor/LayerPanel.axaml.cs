@@ -8,6 +8,7 @@ using Avalonia.VisualTree;
 using PixelArtEditor.AppServices;
 using PixelArtEditor.AppServices.Canvas;
 using PixelArtEditor.AppServices.EditorUI.LayerPanel;
+using PixelArtEditor.Models.Canvas;
 using PixelArtEditor.Models.LayerPanel;
 using PixelArtEditor.UI;
 using PixelArtEditor.ViewModels;
@@ -18,7 +19,7 @@ using System.Reactive.Linq;
 
 namespace PixelArtEditor.Controls.Editor;
 
-public partial class LayerPanel : UserControl
+public partial class LayerPanel : UserControl, ILayerPanelContext
 {
     private readonly LayerPanelVM? _vm;
     public LayerPanelVM ViewModel => _vm!;
@@ -38,13 +39,27 @@ public partial class LayerPanel : UserControl
     public readonly LayerCmdList LayerCommands;
     private readonly LayerDnDManager _dndManager;
 
-    private void OnAddClick(object? sender, RoutedEventArgs e) => LayerCommands.AddCmd.Execute(LayerManager);
-    private void OnRemoveClick(object? sender, RoutedEventArgs e) => LayerCommands.RemoveCmd.Execute(LayerManager);
-    private void OnDuplicateClick(object? sender, RoutedEventArgs e) => LayerCommands.DuplicateCmd.Execute(LayerManager);
-    private void OnGroupClick(object? sender, RoutedEventArgs e) => LayerCommands.GroupCmd.Execute(LayerManager);
+    private void AddClick(object? sender, RoutedEventArgs e) => LayerCommands.AddCmd.Execute(LayerManager);
+    public void DeleteClick(object? sender, RoutedEventArgs e) => LayerCommands.DeleteCmd.Execute(LayerManager);
+    public void DuplicateClick(object? sender, RoutedEventArgs e) => LayerCommands.DuplicateCmd.Execute(LayerManager);
+    public void GroupClick(object? sender, RoutedEventArgs e) => LayerCommands.GroupCmd.Execute(LayerManager);
 
-    private void OnToTheTopClick(object? sender, RoutedEventArgs e) => LayerCommands.MoveCmd.Execute(LayerManager, true);
-    private void OnToTheBottomClick(object? sender, RoutedEventArgs e) => LayerCommands.MoveCmd.Execute(LayerManager, false);
+    private void ToTheTopClick(object? sender, RoutedEventArgs e) => LayerCommands.MoveCmd.Execute(LayerManager, true);
+    private void ToTheBottomClick(object? sender, RoutedEventArgs e) => LayerCommands.MoveCmd.Execute(LayerManager, false);
+
+    public void RenameClick(object? sender, RoutedEventArgs e) => ShowAndFocusTextBox();
+
+    public LayerModel? GetActiveLayer() => LayerManager?.ActiveLayer;
+    public ObservableCollection<LayerModel>? GetLayers() => LayerManager?.Layers;
+    public ObservableCollection<LayerModel> GetSelLayers() 
+    {
+        return new ObservableCollection<LayerModel>(
+            _vm?.SelLayerItems?
+                .Select(x => x.Layer)
+                .OrderBy(LayerListBox.Items.IndexOf)
+                .Where(x => x != null)!
+        );
+    }
 
     public LayerPanel()
     {
@@ -102,12 +117,21 @@ public partial class LayerPanel : UserControl
             return;
         }
 
-        if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed
+        if (!(e.GetCurrentPoint(this).Properties.IsLeftButtonPressed ||
+            e.GetCurrentPoint(this).Properties.IsRightButtonPressed)
             || _dragging
             || LayerManager?.Layers.Count <= 1
             || (e.Source as Control)?.FindAncestorOfType<ScrollBar>() is not null) return;
 
         var pressedListBoxItem = (e.Source as Control)?.FindAncestorOfType<ListBoxItem>();
+
+        if (pressedListBoxItem is not null
+            && e.GetCurrentPoint(this).Properties.IsRightButtonPressed
+            && LayerListBox.SelectedItems?.Count < 2)
+        {
+            LayerListBox.SelectedItems?.Clear();
+            pressedListBoxItem.IsSelected = true;
+        }
 
         var selected = LayerListBox.SelectedItems?
                 .Cast<LayerItem>()
@@ -207,9 +231,24 @@ public partial class LayerPanel : UserControl
         e.Handled = true;
     }
 
-    private void TextBlock_DoubleTapped(object? sender, TappedEventArgs e)
+    private void TextBlock_DoubleTapped(object? sender, TappedEventArgs e) => ShowAndFocusTextBox(sender);
+
+    private void ShowAndFocusTextBox(object? sender = null)
     {
-        var textBlock = (TextBlock)sender!;
+        TextBlock? textBlock;
+
+        if (sender is not null)
+            textBlock = (TextBlock)sender;
+        else if (_vm?.SelLayerItem is not null)
+        {
+            var container = LayerListBox.ContainerFromItem(_vm.SelLayerItem);
+            textBlock = container?.GetVisualDescendants().OfType<TextBlock>().FirstOrDefault();
+        }
+        else
+            return;
+
+        if (textBlock is null) return;
+
         var grid = textBlock.FindAncestorOfType<Grid>();
         var textBox = grid?.GetVisualDescendants().OfType<TextBox>().FirstOrDefault(t => t.Name == "RenameTextBox");
 
@@ -239,5 +278,41 @@ public partial class LayerPanel : UserControl
     {
         var textBox = (TextBox)sender!;
         (textBox.DataContext as LayerItem)?.IsEditing = false;
+    }
+
+    private void LayerItem_PointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        if (!e.GetCurrentPoint((Visual)sender!).Properties.IsRightButtonPressed
+            || sender is not Control root) return;
+
+        if (root.FindAncestorOfType<InstantToggleButton>(includeSelf: true) is not null ||
+            root.FindAncestorOfType<Preview>(includeSelf: true) is not null) return;
+
+        var flyout = new Flyout
+        {
+            Placement = PlacementMode.Pointer,
+            ShowMode = FlyoutShowMode.Standard,
+            VerticalOffset = -6
+        };
+
+        flyout.Content = new LayerContextMenu(this, flyout.Hide);
+
+        flyout.Popup.Opened += (_, _) =>
+        {
+            if (flyout.Popup.Child is not FlyoutPresenter presenter) return;
+
+            var content = presenter.GetVisualDescendants().OfType<LayerContextMenu>().FirstOrDefault();
+            if (content is null) return;
+
+            var popupScreenPos = content.PointToScreen(new Point(0, 0));
+            var clickScreenPos = this.PointToScreen(e.GetPosition(this));
+
+            var dx = popupScreenPos.X < clickScreenPos.X ? 6 : -6;
+
+            flyout.Popup.HorizontalOffset = dx;
+        };
+
+        flyout.ShowAt(root, showAtPointer: true);
+        e.Handled = true;
     }
 }

@@ -113,7 +113,7 @@ public abstract class BaseTheme
         Resources["HandIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/EditButtons/hand.png");
 
         Resources["AddIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/LayerButtons/add.png");
-        Resources["RemoveIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/LayerButtons/remove.png");
+        Resources["DeleteIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/LayerButtons/delete.png");
         Resources["DuplicateIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/LayerButtons/duplicate.png");
         Resources["GroupIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Dark/LayerButtons/group.png");
 
@@ -146,7 +146,7 @@ public abstract class BaseTheme
         Resources["HandIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Light/EditButtons/hand.png");
 
         Resources["AddIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Light/LayerButtons/add.png");
-        Resources["RemoveIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Light/LayerButtons/remove.png");
+        Resources["DeleteIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Light/LayerButtons/delete.png");
         Resources["DuplicateIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Light/LayerButtons/duplicate.png");
         Resources["GroupIcon"] = LoadBitmapFromAssets("avares://PixelArtEditor/Assets/Light/LayerButtons/group.png");
 

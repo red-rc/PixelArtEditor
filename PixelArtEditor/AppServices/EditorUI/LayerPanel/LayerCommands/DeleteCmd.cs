@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace PixelArtEditor.AppServices.EditorUI.LayerPanel.LayerCommands;
 
-public class RemoveCmd(LayerPanelVM vm, ListBox layerListBox) : LayerCmdBase(vm, layerListBox)
+public class DeleteCmd(LayerPanelVM vm, ListBox layerListBox) : LayerCmdBase(vm, layerListBox)
 {
     public void Execute(LayerManager? layerManager)
     {

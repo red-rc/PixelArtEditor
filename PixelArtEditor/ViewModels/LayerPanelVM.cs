@@ -70,16 +70,16 @@ public class LayerPanelVM : ReactiveObject
 
     public void SetLayerManager(LayerManager? layerManager)
     {
-        if (layerManager is null)
-        {
-            ClearCurrentManager();
-            return;
-        }
+        if (_layerManager == layerManager || layerManager is null) return;
 
-        if (_layerManager == layerManager) return;
+        _layerManager?.Layers.CollectionChanged -= OnLayersChanged;
+
         _layerManager = layerManager;
 
         _layerManager.Layers.CollectionChanged += OnLayersChanged;
+
+        SelLayerItem = null;
+        LayerItems.Clear();
 
         foreach (var layer in _layerManager.Layers)
         {
@@ -118,15 +118,5 @@ public class LayerPanelVM : ReactiveObject
                 }
             }
         }
-    }
-
-    private void ClearCurrentManager()
-    {
-        if (_layerManager is not null && _layerManager.Layers is not null)
-            _layerManager.Layers.CollectionChanged -= OnLayersChanged;
-
-        _layerManager = null;
-        SelLayerItem = null;
-        LayerItems.Clear();
     }
 }

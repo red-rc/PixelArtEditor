@@ -373,7 +373,7 @@
         },
         "AlphaFormat": 0
       },
-      "RemoveIcon": {
+      "DeleteIcon": {
         "Dpi": {
           "X": 96.0,
           "Y": 96.0,
@@ -1079,7 +1079,7 @@
         },
         "AlphaFormat": 0
       },
-      "RemoveIcon": {
+      "DeleteIcon": {
         "Dpi": {
           "X": 96.0,
           "Y": 96.0,
@@ -1785,7 +1785,7 @@
         },
         "AlphaFormat": 0
       },
-      "RemoveIcon": {
+      "DeleteIcon": {
         "Dpi": {
           "X": 96.0,
           "Y": 96.0,
@@ -2491,7 +2491,7 @@
         },
         "AlphaFormat": 0
       },
-      "RemoveIcon": {
+      "DeleteIcon": {
         "Dpi": {
           "X": 96.0,
           "Y": 96.0,

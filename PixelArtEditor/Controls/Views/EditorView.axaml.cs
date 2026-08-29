@@ -46,6 +46,8 @@ public partial class EditorView : UserControl
             ViewModel.LayerManager.Layers.Remove(layer);
 
         var vm = LayerPanelControl.ViewModel;
+        if (vm is null) return;
+
         if (LayerPanelControl.LayerManager?.Layers.Count > 0)
         {
             var index = Math.Clamp(1, 0, vm.LayerItems.Count - 1);
@@ -162,7 +164,7 @@ public partial class EditorView : UserControl
         LayerPanelControl.LayerListBox.SelectedItems?.Clear();
         foreach (var layer in _addedLayers)
         {
-            var item = LayerPanelControl.ViewModel.LayerItems.FirstOrDefault(x => x.Layer == layer);
+            var item = LayerPanelControl.ViewModel?.LayerItems.FirstOrDefault(x => x.Layer == layer);
             if (item is not null) LayerPanelControl.LayerListBox.SelectedItems?.Add(item);
         }
 
@@ -200,6 +202,7 @@ public partial class EditorView : UserControl
 
             ViewModel.SetCanvas(CanvasControl);
             LayerPanelControl.LayerManager = ViewModel.LayerManager;
+
             _hotkeysService = new HotkeysService(LayerPanelControl.LayerCommands, 
                 LayerPanelControl.LayerManager, ViewModel, OnCancel, OnConfirm);
 
