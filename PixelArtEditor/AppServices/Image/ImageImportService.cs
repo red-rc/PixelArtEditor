@@ -67,11 +67,7 @@ public static class ImageImportService
 
     public static async Task<PixelModel?> GetPixelModelFromFile(IStorageFile? file)
     {
-        if (file is null)
-        {
-            await ActionService.ShowErrorAsync("The file was null");
-            return null;
-        }
+        if (file is null) return null;
 
         Stream stream;
         try
