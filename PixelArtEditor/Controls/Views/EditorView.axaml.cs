@@ -83,8 +83,7 @@ public partial class EditorView : UserControl
 
         _dragController = new PanelDragController(MainLayout, FloatingHost, RectHost, _layoutManager);
 
-        _hotkeysService = new HotkeysService(LayerPanelControl.LayerCommands, 
-            LayerPanelControl.LayerManager, ViewModel, OnCancel, OnConfirm);
+        _hotkeysService = new HotkeysService(LayerPanelControl.LayerCommands, ViewModel, OnCancel, OnConfirm);
 
         AddHandler(KeyDownEvent, OnHotkeys, RoutingStrategies.Tunnel);
 
@@ -198,13 +197,9 @@ public partial class EditorView : UserControl
 
         if (ViewModel is not null)
         {
-            LayerPanelControl.LayerManager = null;
-
             ViewModel.SetCanvas(CanvasControl);
-            LayerPanelControl.LayerManager = ViewModel.LayerManager;
 
-            _hotkeysService = new HotkeysService(LayerPanelControl.LayerCommands, 
-                LayerPanelControl.LayerManager, ViewModel, OnCancel, OnConfirm);
+            _hotkeysService = new HotkeysService(LayerPanelControl.LayerCommands, ViewModel, OnCancel, OnConfirm);
 
             ViewModel.AdjustCanvas(CanvasPanel.Bounds.Width, CanvasPanel.Bounds.Height);
 

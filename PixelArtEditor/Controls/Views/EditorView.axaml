@@ -81,6 +81,7 @@
                 <controls:LayerPanel 
                     x:Name="LayerPanelControl"
                     Grid.Row="1" 
+                    LayerManager="{Binding LayerManager}"
                     HorizontalAlignment="Stretch" 
                     VerticalAlignment="Stretch" />
             </Grid>

@@ -20,13 +20,14 @@ public static class ToolManager
 
     public static ITool Get(ToolType type) => _tools[type];
 
-    public static void InvalidatePixelData(ICanvasContext ctx, LayerModel layer, Rect dirtyRect)
+    public static void InvalidatePixelData(ICanvasContext ctx, LayerModel layer, Rect dirtyRect, bool notify = true)
     {
         ctx.RenderCache[layer].RenderBitmapDirty = true;
         ctx.RenderCache[layer].PreviewDirty = true;
         ctx.RenderCache[layer].DirtyRect = ctx.RenderCache[layer].DirtyRect is Rect existing
             ? existing.Union(dirtyRect) : dirtyRect;
 
-        layer.NotifyPixelDataChanged();
+        if (notify)
+            layer.NotifyPixelDataChanged();
     }
 }

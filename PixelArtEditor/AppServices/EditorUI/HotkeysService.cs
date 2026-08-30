@@ -1,15 +1,16 @@
 ﻿using Avalonia.Input;
-using PixelArtEditor.AppServices.Canvas;
 using PixelArtEditor.AppServices.EditorUI.LayerPanel;
 using PixelArtEditor.ViewModels;
 using System;
 
 namespace PixelArtEditor.AppServices.EditorUI;
 
-public class HotkeysService(LayerCmdList commands, LayerManager? layerManager, EditorVM? viewModel, Action onCancel, Action onConfirm)
+public class HotkeysService(LayerCmdList commands, EditorVM? viewModel, Action onCancel, Action onConfirm)
 {
     public bool Handle(KeyModifiers modifiers, Key key)
     {
+        var layerManager = viewModel?.LayerManager;
+
         switch (modifiers, key)
         {
             case (KeyModifiers.Control, Key.N):

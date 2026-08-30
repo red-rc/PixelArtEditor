@@ -1,12 +1,14 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml.Styling;
+using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Styling;
 using System;
+using System.Diagnostics;
 using System.IO;
+using AvaloniaStyles = Avalonia.Styling.Styles;
 using ColorHelper = PixelArtEditor.Helpers.ColorHelper;
 
 namespace PixelArtEditor.Styles;
@@ -38,18 +40,22 @@ public abstract class BaseTheme
 
         EnsureStyleExists();
 
-        var styleInclude = new StyleInclude(new Uri("avares://PixelArtEditor/"))
-        {
-            Source = new Uri(StylePath)
-        };
-        Application.Current.Styles.Add(styleInclude);
+        var absolutePath = Path.Combine(AppContext.BaseDirectory, StylePath.Replace("avares://PixelArtEditor/", ""));
+        var xaml = File.ReadAllText(absolutePath);
+
+        var parsed = AvaloniaRuntimeXamlLoader.Parse(xaml);
+
+        if (parsed is AvaloniaStyles loadedStyles)
+            Application.Current.Styles.Add(loadedStyles);
+        else if (parsed is IStyle style)
+            Application.Current.Styles.Add(style);
 
         Application.Current.RequestedThemeVariant = Variant;
     }
 
     private static string LoadDefaultStyle()
     {
-        using var stream = typeof(BaseTheme).Assembly.GetManifestResourceStream("PixelArtEditor.PixelArtEditor.Styles.SimpleStyle.axaml");
+        using var stream = typeof(BaseTheme).Assembly.GetManifestResourceStream("PixelArtEditor.Styles.SimpleStyle.axaml");
         using var reader = new StreamReader(stream!);
         return reader.ReadToEnd();
     }
@@ -62,8 +68,30 @@ public abstract class BaseTheme
         if (!Directory.Exists(directory))
             Directory.CreateDirectory(directory);
 
-        if (!File.Exists(absolutePath))
-            File.WriteAllText(absolutePath, LoadDefaultStyle());
+        var isDefaultStylePath = absolutePath.EndsWith("SimpleStyle.axaml", StringComparison.OrdinalIgnoreCase);
+
+        try
+        {
+            if (!File.Exists(absolutePath))
+            {
+                File.WriteAllText(absolutePath, LoadDefaultStyle());
+                return;
+            }
+
+            if (isDefaultStylePath)
+            {
+                var current = File.ReadAllText(absolutePath);
+                var expected = LoadDefaultStyle();
+
+                if (current != expected)
+                    File.WriteAllText(absolutePath, expected);
+            }
+        }
+        catch (Exception)
+        {
+            try { File.WriteAllText(absolutePath, LoadDefaultStyle()); }
+            catch (Exception) { /* ignore, Apply() will fail on File.ReadAllText and surface the real error */ }
+        }
     }
 
     public void ChangeAccentColor(Color newColor)

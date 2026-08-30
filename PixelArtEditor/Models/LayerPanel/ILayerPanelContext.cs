@@ -6,6 +6,7 @@ namespace PixelArtEditor.Models.LayerPanel;
 
 public interface ILayerPanelContext
 {
+    ICanvasContext? GetCanvasContext();
     void DeleteClick(object? sender, RoutedEventArgs e);
     void DuplicateClick(object? sender, RoutedEventArgs e);
     void GroupClick(object? sender, RoutedEventArgs e);

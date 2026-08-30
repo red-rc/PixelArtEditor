@@ -1,15 +1,12 @@
-﻿using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Media;
+﻿using Avalonia.Threading;
 using PixelArtEditor.AppServices.Serialization;
+using PixelArtEditor.AppServices.Shell;
 using PixelArtEditor.Models.Dock;
 using PixelArtEditor.Styles;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace PixelArtEditor.AppServices;
 
@@ -47,14 +44,8 @@ public static class ResourceManager
     {
         BaseTheme[]? loadedThemes;
 
-        try
-        {
-            loadedThemes = JsonService.Load<BaseTheme[]>(ThemesPath);
-        }
-        catch
-        {
-            loadedThemes = null;
-        }
+        try { loadedThemes = JsonService.Load<BaseTheme[]>(ThemesPath); }
+        catch { loadedThemes = null; }
 
         if (loadedThemes is null || loadedThemes.Length == 0)
             loadedThemes = CreateDefaultThemes();
@@ -97,45 +88,8 @@ public static class ResourceManager
         }
         catch (Exception ex)
         {
-            Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(async () => await ShowError($"Error: {ex.Message}"));
+            Dispatcher.UIThread.InvokeAsync(async () => await ActionService.ShowErrorAsync(ex.Message));
             return [];
         }
-    }
-
-    private static async Task ShowError(string message)
-    {
-        Window? window = null;
-        window = new Window
-        {
-            Title = "Error",
-            Width = 400,
-            Height = 150,
-            WindowStartupLocation = WindowStartupLocation.CenterScreen,
-            Content = new StackPanel
-            {
-                Margin = new Thickness(10),
-                Children =
-                {
-                    new TextBlock
-                    {
-                        Text = message,
-                        TextWrapping = TextWrapping.Wrap,
-                        Margin = new Thickness(0,0,0,10)
-                    },
-                    new Button
-                    {
-                        Content = "OK",
-                        HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
-                        Command = ReactiveUI.ReactiveCommand.Create(() => window!.Close())
-                    }
-                }
-            }
-        };
-
-        var owner = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
-        if (owner is not null)
-            await window.ShowDialog(owner);
-        else
-            window.Show();
     }
 }

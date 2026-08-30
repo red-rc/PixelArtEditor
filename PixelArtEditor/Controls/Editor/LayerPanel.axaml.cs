@@ -23,6 +23,8 @@ public partial class LayerPanel : UserControl, ILayerPanelContext
 {
     private readonly LayerPanelVM? _vm;
     public LayerPanelVM ViewModel => _vm!;
+    public ICanvasContext? GetCanvasContext() =>
+        Services.Navigation.GetViewModel() is EditorVM vm ? vm.Canvas : null;
 
     public static readonly StyledProperty<LayerManager?> LayerManagerProperty =
         AvaloniaProperty.Register<LayerPanel, LayerManager?>(nameof(LayerManager));
@@ -55,8 +57,8 @@ public partial class LayerPanel : UserControl, ILayerPanelContext
     {
         return new ObservableCollection<LayerModel>(
             _vm?.SelLayerItems?
-                .Select(x => x.Layer)
                 .OrderBy(LayerListBox.Items.IndexOf)
+                .Select(x => x.Layer)
                 .Where(x => x != null)!
         );
     }

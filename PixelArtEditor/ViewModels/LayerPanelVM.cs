@@ -70,7 +70,7 @@ public class LayerPanelVM : ReactiveObject
 
     public void SetLayerManager(LayerManager? layerManager)
     {
-        if (_layerManager == layerManager || layerManager is null) return;
+        if (layerManager is null) return;
 
         _layerManager?.Layers.CollectionChanged -= OnLayersChanged;
 

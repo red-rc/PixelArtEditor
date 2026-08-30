@@ -46,15 +46,16 @@ namespace PixelArtEditor.Controls.Editor
 
         private void MergeClick(object? sender, RoutedEventArgs e)
         {
+            var canvasCtx = _ctx.GetCanvasContext();
             var activeLayer = _ctx.GetActiveLayer();
             var selLayers = _ctx.GetSelLayers();
 
-            if (activeLayer is not null)
+            if (canvasCtx is not null && activeLayer is not null)
             {
+                ToolManager.InvalidatePixelData(canvasCtx, activeLayer, new Rect(0, 0, activeLayer.Width, activeLayer.Height), false);
+
                 activeLayer.PixelData =
                     BitmapService.GetCompositePixelData(selLayers, activeLayer.Width, activeLayer.Height);
-
-                //ToolManager.InvalidatePixelData(activeLayer, new Rect(0, 0, activeLayer.Width, activeLayer.Height), false);
 
                 foreach (var item in selLayers)
                     if (item != activeLayer)
