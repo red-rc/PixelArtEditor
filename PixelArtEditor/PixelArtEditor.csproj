@@ -5,6 +5,7 @@
     <LangVersion>latest</LangVersion>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AssemblyName></AssemblyName>
   </PropertyGroup>
   
   <ItemGroup>
@@ -34,7 +35,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Localization\" />
+    <Content Include="Localization\**\*" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="Styles\SimpleStyle.axaml" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>

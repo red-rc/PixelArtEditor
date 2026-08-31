@@ -24,7 +24,7 @@ CrWinTitle: Create File
 CrWinWidth: Width
 CrWinHeight: Height
 CrWinFormat: Format
-CrWinBackgroundColor: ''
+CrWinBackgroundColor: Background color
 CrWinCancel: Cancel
 CrWinCreate: Create
 SetWinTitle: Settings
@@ -114,12 +114,14 @@ FileNotFound: File not found
 EmptyConfig: Config file is empty.
 Copy: Copy
 UnknownValue: Unknown value
-ForEnum: 'for enumTextBlockLayers2: Layers'
+ForEnum: 'for enum'
+TextBlockLayers2: 'Layers:'
 TextBlockOpacity2: 'Opacity:'
 TextBlock4: '%'
 TextBlockCheckerboard2: Checkerboard
 TextBlockScaleCheckerboardWithCanvas2: Scale checkerboard with canvas
 TextBlockCheckerboardScale2: Checkerboard Scale
+TextBlockPixellerTheBest2: Pixeller - the best graphics editor
 RadioButtonRgb3: RGB
 RadioButtonHsv3: HSV
 TextBlock5: '#'
@@ -151,3 +153,13 @@ LayerDuplicate: Duplicate
 LayerGroup: Group
 LayerTheTop: Move to the top
 LayerTheBottom: Move to the bottom
+HeaderFile: File
+HeaderEdit: Edit
+HeaderView: View
+HeaderHelp: Help
+MenuWindowStateF: Fullscreen
+MenuWindowStateW: Windowed
+Hide: Hide
+Show: Show
+Lock: Lock
+Unlock: Unlock

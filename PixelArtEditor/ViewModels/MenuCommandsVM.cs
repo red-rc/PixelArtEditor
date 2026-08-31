@@ -2,6 +2,7 @@ using Avalonia.Controls;
 using PixelArtEditor.AppServices;
 using PixelArtEditor.AppServices.Shell;
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Numerics;
 using System.Reactive.Linq;
@@ -58,6 +59,8 @@ public class MenuCommandsVM : ReactiveObject
             .Select(state => state == WindowState.FullScreen)
             .DistinctUntilChanged();
 
+        Services.Settings.PropertyChanged += OnSettingsPropertyChanged;
+
         CreateCommand = ReactiveCommand.CreateFromTask(ActionService.ShowCreateWindowAsync);
         OpenCommand = ReactiveCommand.Create(OnOpen);
         ImportCommand = ReactiveCommand.Create(OnImport);
@@ -89,7 +92,18 @@ public class MenuCommandsVM : ReactiveObject
         ContactUsCommand = ReactiveCommand.Create(() => OpenUrl("https://mail.google.com/mail/u/0/?to=redthar7@gmail.com&fs=1&tf=cm"));
         AboutCommand = ReactiveCommand.Create(() => OpenUrl("https://github.com/red-rc/PixelArtEditor"));
     }
-    
+
+    private void OnSettingsPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(SettingsManager.Language))
+        {
+            WindowStateHeader = LocalizationService.Get(
+                Services.WindowState.Current == WindowState.FullScreen
+                    ? "MenuWindowStateW"
+                    : "MenuWindowStateF");
+        }
+    }
+
     private void OnOpen()
     {
     }

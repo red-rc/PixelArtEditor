@@ -10,7 +10,22 @@
 
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <AssemblyName>Pixeller</AssemblyName>
+    <PackageIcon>logo.ico</PackageIcon>
+    <ApplicationIcon>logo.ico</ApplicationIcon>
+    <Authors>Red</Authors>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="logo.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\PixelArtEditor\Assets\logo.ico">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Avalonia.Desktop" />

@@ -69,8 +69,13 @@
                     <TextBlock Classes="Header" Text="{DynamicResource CrWinBasic}" />
                     <controls:SizePanel DataContext="{Binding ImageProperties}" />
 
-                    <StackPanel>
-                        <TextBlock TextAlignment="Center" HorizontalAlignment="Center" Text="{DynamicResource CrWinBackgroundColor}" />
+                    <StackPanel Margin="0,-15,0,0">
+                        <TextBlock 
+                            TextAlignment="Center" 
+                            HorizontalAlignment="Center" 
+                            Width="100"
+                            TextWrapping="Wrap"
+                            Text="{DynamicResource CrWinBackgroundColor}" />
                         <ColorPicker
                             x:Name="BackgroundColorPicker"
                             Width="100"

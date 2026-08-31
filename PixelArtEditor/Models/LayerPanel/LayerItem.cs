@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Media;
+using PixelArtEditor.AppServices;
 using PixelArtEditor.Models.Canvas;
 using System.ComponentModel;
 
@@ -36,6 +37,7 @@ public class LayerItem: ReactiveObject
             Layer.IsVisible = value;
             this.RaiseAndSetIfChanged(ref _isVisible, value);
             this.RaisePropertyChanged(nameof(VisibleIconSource));
+            HideShowTag = GetHideShowTag();
         }
     }
 
@@ -48,6 +50,7 @@ public class LayerItem: ReactiveObject
             Layer.IsLocked = value;
             this.RaiseAndSetIfChanged(ref _isLocked, value);
             this.RaisePropertyChanged(nameof(LockedIconSource));
+            LockUnlockTag = GetLockUnlockTag();
         }
     }
 
@@ -72,6 +75,32 @@ public class LayerItem: ReactiveObject
         this.RaisePropertyChanged(nameof(LockedIconSource));
     }
 
+    private string _hideShowTag;
+    public string HideShowTag
+    {
+        get => _hideShowTag;
+        set => this.RaiseAndSetIfChanged(ref _hideShowTag, value);
+    }
+
+    private string _lockUnlockTag;
+    public string LockUnlockTag
+    {
+        get => _lockUnlockTag;
+        set => this.RaiseAndSetIfChanged(ref _lockUnlockTag, value);
+    }
+
+    private string GetHideShowTag()
+        => IsVisible ? LocalizationService.Get("Hide") : LocalizationService.Get("Show");
+    private string GetLockUnlockTag()
+       => IsLocked ? LocalizationService.Get("Unlock") : LocalizationService.Get("Lock");
+
+
+    public void RefreshTags()
+    {
+        HideShowTag = GetHideShowTag();
+        LockUnlockTag = GetLockUnlockTag();
+    }
+
     public LayerItem(LayerModel layer)
     {
         Layer = layer;
@@ -79,6 +108,9 @@ public class LayerItem: ReactiveObject
         _layerName = layer.Name;
         _isVisible = layer.IsVisible;
         _isLocked = layer.IsLocked;
+
+        _hideShowTag = GetHideShowTag();
+        _lockUnlockTag = GetLockUnlockTag();
 
         Layer.PropertyChanged += OnLayerPropertyChanged;
     }

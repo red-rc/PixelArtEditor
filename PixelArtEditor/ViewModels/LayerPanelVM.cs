@@ -62,9 +62,18 @@ public class LayerPanelVM : ReactiveObject
     {
         Services.Settings.PropertyChanged += (_, e) =>
         {
-            if (e.PropertyName != nameof(ISettingsManager.Theme)) return;
-            foreach (var item in LayerItems)
-                item.RefreshIcons();
+            if (e.PropertyName == nameof(ISettingsManager.Theme))
+            {
+                foreach (var item in LayerItems)
+                    item.RefreshIcons();
+
+            }
+
+            if (e.PropertyName == nameof(ISettingsManager.Language))
+            {
+                foreach (var item in LayerItems)
+                    item.RefreshTags();
+            }
         };
     }
 

@@ -8,17 +8,19 @@ namespace PixelArtEditor.AppServices;
 
 public static class LocalizationService
 {
+    private static string LocalizationDirectory => Path.Combine(AppContext.BaseDirectory, "Localization");
+
     public static void SetLanguage(string langCode)
     {
         try
         {
-            Load(YamlService.Load("Localization/" + langCode + ".yaml"));
+            Load(YamlService.Load(Path.Combine(LocalizationDirectory, langCode + ".yaml")));
         }
         catch (Exception)
         {
             try
             {
-                Load(YamlService.Load("Localization/en.yaml"));
+                Load(YamlService.Load(Path.Combine(LocalizationDirectory, "en.yaml")));
             }
             catch (Exception)
             {
@@ -72,7 +74,7 @@ public static class LocalizationService
             ["CrWinWidth"] = "Width",
             ["CrWinHeight"] = "Height",
             ["CrWinFormat"] = "Format",
-            ["CrWinBackgroundColor"] = "",
+            ["CrWinBackgroundColor"] = "Background color",
             ["CrWinCancel"] = "Cancel",
             ["CrWinCreate"] = "Create",
             ["SetWinTitle"] = "Settings",
@@ -162,12 +164,14 @@ public static class LocalizationService
             ["EmptyConfig"] = "Config file is empty.",
             ["Copy"] = "Copy",
             ["UnknownValue"] = "Unknown value",
-            ["ForEnum"] = "for enumTextBlockLayers2: Layers",
+            ["ForEnum"] = "for enum",
+            ["TextBlockLayers2"] = "Layers:",
             ["TextBlockOpacity2"] = "Opacity:",
             ["TextBlock4"] = "%",
             ["TextBlockCheckerboard2"] = "Checkerboard",
             ["TextBlockScaleCheckerboardWithCanvas2"] = "Scale checkerboard with canvas",
             ["TextBlockCheckerboardScale2"] = "Checkerboard Scale",
+            ["TextBlockPixellerTheBest2"] = "Pixeller - the best graphics editor",
             ["RadioButtonRgb3"] = "RGB",
             ["RadioButtonHsv3"] = "HSV",
             ["TextBlock5"] = "#",
@@ -199,12 +203,22 @@ public static class LocalizationService
             ["LayerGroup"] = "Group",
             ["LayerTheTop"] = "Move to the top",
             ["LayerTheBottom"] = "Move to the bottom",
+            ["HeaderFile"] = "File",
+            ["HeaderEdit"] = "Edit",
+            ["HeaderView"] = "View",
+            ["HeaderHelp"] = "Help",
+            ["MenuWindowStateF"] = "Fullscreen",
+            ["MenuWindowStateW"] = "Windowed",
+            ["Hide"] = "Hide",
+            ["Show"] = "Show",
+            ["Lock"] = "Lock",
+            ["Unlock"] = "Unlock"
         };
 
         foreach (var kvp in dict)
             Application.Current.Resources[kvp.Key] = kvp.Value;
 
-        Directory.CreateDirectory("Localization");
-        YamlService.Save(dict, "Localization/en.yaml");
+        Directory.CreateDirectory(LocalizationDirectory);
+        YamlService.Save(dict, Path.Combine(LocalizationDirectory, "en.yaml"));
     }
 }

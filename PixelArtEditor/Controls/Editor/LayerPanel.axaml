@@ -112,14 +112,14 @@
                         </Grid>
                         <ui:InstantToggleButton 
                             Classes="LayerItemBtn"
-                            Tag="Hide/Show" 
+                            Tag="{Binding HideShowTag}" 
                             IsChecked="{Binding IsVisible}" 
                             Margin="5,0,5,0">
                             <Image Source="{Binding VisibleIconSource}" />
                         </ui:InstantToggleButton>
                         <ui:InstantToggleButton 
                             Classes="LayerItemBtn" 
-                            Tag="Lock/Unlock" 
+                            Tag="{Binding LockUnlockTag}" 
                             IsChecked="{Binding IsLocked}"
                             Margin="2,0,5,0">
                             <Image Source="{Binding LockedIconSource}" />
