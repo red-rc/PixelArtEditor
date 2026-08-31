@@ -198,6 +198,7 @@ public partial class EditorView : UserControl
         if (ViewModel is not null)
         {
             ViewModel.SetCanvas(CanvasControl);
+            LayerPanelControl.LayerManager = ViewModel.LayerManager;
 
             _hotkeysService = new HotkeysService(LayerPanelControl.LayerCommands, ViewModel, OnCancel, OnConfirm);
 

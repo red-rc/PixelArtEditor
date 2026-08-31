@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Media;
+using PixelArtEditor.AppServices;
 using PixelArtEditor.AppServices.Canvas;
 using PixelArtEditor.AppServices.Tools;
 using PixelArtEditor.Controls.Editor;
@@ -124,10 +125,10 @@ public class EditorVM : ReactiveObject
         _canvas = canvas;
 
         LayerManager.InitializeFirstLayer(
-            _model.Width, 
-            _model.Height, 
-            _model.Data, 
-            _model.Name ?? $"Layer {LayerManager.Layers.Count + 1}");
+            _model.Width,
+            _model.Height,
+            _model.Data,
+            _model.Name ?? $"{LocalizationService.Get("Layer")} {LayerManager.Layers.Count + 1}");
 
         canvas.AttachLayerManager(LayerManager);
 

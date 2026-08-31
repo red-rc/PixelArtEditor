@@ -29,8 +29,7 @@ public class MenuCommandsVM : ReactiveObject
     public ReactiveCommand<RxVoid, RxVoid> ZoomOutCommand { get; }
     public ReactiveCommand<RxVoid, RxVoid> ResetZoomCommand { get; }
     public ReactiveCommand<RxVoid, RxVoid> ResetLayout { get; }
-    public ReactiveCommand<RxVoid, RxVoid> StandartCommand { get; }
-    public ReactiveCommand<RxVoid, RxVoid> FullScreenCommand { get; }
+    public ReactiveCommand<RxVoid, RxVoid> WindowStateCommand { get; }
     public ReactiveCommand<RxVoid, RxVoid> LightThemeCommand { get; }
     public ReactiveCommand<RxVoid, RxVoid> DarkThemeCommand { get; }
     
@@ -38,6 +37,13 @@ public class MenuCommandsVM : ReactiveObject
     public ReactiveCommand<RxVoid, RxVoid> ReportCommand { get; }
     public ReactiveCommand<RxVoid, RxVoid> ContactUsCommand { get; }
     public ReactiveCommand<RxVoid, RxVoid> AboutCommand { get; }
+
+    private string _windowStateHeader = LocalizationService.Get("MenuWindowStateF");
+    public string WindowStateHeader
+    {
+        get => _windowStateHeader;
+        set => this.RaiseAndSetIfChanged(ref _windowStateHeader, value);
+    }
 
     public MenuCommandsVM()
     {
@@ -70,8 +76,11 @@ public class MenuCommandsVM : ReactiveObject
         ZoomOutCommand = ReactiveCommand.Create(OnZoomOut, isDocumentOpen);
         ResetZoomCommand = ReactiveCommand.Create(OnResetZoom, isDocumentOpen);
         ResetLayout = ReactiveCommand.Create(OnResetLayout, isDocumentOpen);
-        StandartCommand = ReactiveCommand.Create(OnStandart, isFullScreen);
-        FullScreenCommand = ReactiveCommand.Create(OnFullScreen, isFullScreen.Select(x => !x));
+        WindowStateCommand = ReactiveCommand.CreateFromTask(async () =>
+        {
+            var isFullscreen = await isFullScreen.FirstAsync();
+            OnWindowState(isFullscreen);
+        });
         LightThemeCommand = ReactiveCommand.Create(OnLightTheme);
         DarkThemeCommand = ReactiveCommand.Create(OnDarkTheme);
         
@@ -144,9 +153,19 @@ public class MenuCommandsVM : ReactiveObject
         Settings.Save();
     }
 
-    private static void OnStandart() => Services.WindowState.Current = Services.WindowState.PrevWindowState;
-
-    private static void OnFullScreen() => Services.WindowState.Current = WindowState.FullScreen;
+    private void OnWindowState(bool isFullscreen) 
+    {
+        if (isFullscreen)
+        {
+            Services.WindowState.Current = Services.WindowState.PrevWindowState;
+            WindowStateHeader = LocalizationService.Get("MenuWindowStateF");
+        }
+        else
+        {
+            Services.WindowState.Current = WindowState.FullScreen;
+            WindowStateHeader = LocalizationService.Get("MenuWindowStateW");
+        }
+    }
 
     private static void OnLightTheme()
     {

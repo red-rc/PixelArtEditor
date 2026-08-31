@@ -22,32 +22,32 @@ public static class ImageImportService
 {
     private static readonly List<FilePickerFileType> ImportFileTypes =
     [
-        new("All Supported Images")
+        new(LocalizationService.Get("SupportedFormats"))
         {
             Patterns = ["*.png", "*.jpg", "*.jpeg", "*.bmp", "*.gif",
                         "*.tif", "*.tiff", "*.svg", "*.dds", "*.webp", 
                         "*.avif", "*.heif", "*.tga", "*.pbm", "*.qoi", "*.ico"]
         },
-        new("PNG Image")              { Patterns = ["*.png"] },
-        new("JPEG Image")             { Patterns = ["*.jpg", "*.jpeg"] },
-        new("Bitmap Image")           { Patterns = ["*.bmp"] },
-        new("GIF Image")              { Patterns = ["*.gif"] },
-        new("TIFF Image")             { Patterns = ["*.tif", "*.tiff"] },
-        new("SVG Image")              { Patterns = ["*.svg"] },
-        new("WebP Image")             { Patterns = ["*.webp"] },
-        new("DDS Image")              { Patterns = ["*.dds"] },
-        new("AVIF Image")             { Patterns = ["*.avif"] },
-        new("HEIF Image")             { Patterns = ["*.heif"] },
-        new("TGA Image")              { Patterns = ["*.tga"] },
-        new("Portable Bitmap")        { Patterns = ["*.pbm"] },
-        new("QOI Image")              { Patterns = ["*.qoi"] },
-        new("Icon")                   { Patterns = ["*.ico"] }
+        new($"PNG {LocalizationService.Get("Image")}")              { Patterns = ["*.png"] },
+        new($"JPEG {LocalizationService.Get("Image")}")             { Patterns = ["*.jpg", "*.jpeg"] },
+        new($"Bitmap {LocalizationService.Get("Image")}")           { Patterns = ["*.bmp"] },
+        new($"GIF {LocalizationService.Get("Image")}")              { Patterns = ["*.gif"] },
+        new($"TIFF {LocalizationService.Get("Image")}")             { Patterns = ["*.tif", "*.tiff"] },
+        new($"SVG {LocalizationService.Get("Image")}")              { Patterns = ["*.svg"] },
+        new($"WebP {LocalizationService.Get("Image")}")             { Patterns = ["*.webp"] },
+        new($"DDS {LocalizationService.Get("Image")}")              { Patterns = ["*.dds"] },
+        new($"AVIF {LocalizationService.Get("Image")}")             { Patterns = ["*.avif"] },
+        new($"HEIF {LocalizationService.Get("Image")}")             { Patterns = ["*.heif"] },
+        new($"TGA {LocalizationService.Get("Image")}")              { Patterns = ["*.tga"] },
+        new($"Portable {LocalizationService.Get("Image")}")         { Patterns = ["*.pbm"] },
+        new($"QOI {LocalizationService.Get("Image")}")              { Patterns = ["*.qoi"] },
+        new($"Icon")                                                { Patterns = ["*.ico"] }
     ];
     public static async Task<PixelModel?> ImportImageAsync()
     {
         var loadOptions = new FilePickerOpenOptions
         {
-            Title = "Import image",
+            Title = $"{LocalizationService.Get("ImportImage")}",
             AllowMultiple = false,
             FileTypeFilter = ImportFileTypes
         };
@@ -93,7 +93,7 @@ public static class ImageImportService
                 {
                     ms.Position = 0;
                     var result = SvgService.RenderToRgba32(ms);
-                    if (result is null) return ((PixelModel?)null, "Invalid or empty SVG file.");
+                    if (result is null) return ((PixelModel?)null, $"{LocalizationService.Get("InvalidSVG")}");
 
                     var (data, width, height) = result.Value;
 
@@ -133,7 +133,7 @@ public static class ImageImportService
 
                 if (ddsResult is null)
                 {
-                    await ActionService.ShowErrorAsync(ddsError ?? "Unsupported or invalid DDS format.");
+                    await ActionService.ShowErrorAsync(ddsError ?? $"{LocalizationService.Get("InvalidDDS")}");
                     return null;
                 }
 
@@ -164,7 +164,7 @@ public static class ImageImportService
                 if (ext == ".ico")
                 {
                     var extracted = IcoService.ExtractLargestImage(ms);
-                    if (extracted is null) return ((PixelModel?)null, "Invalid .ico file.");
+                    if (extracted is null) return ((PixelModel?)null, $"{LocalizationService.Get("InvalidICO")}");
 
                     ms.SetLength(0);
                     ms.Write(extracted, 0, extracted.Length);
@@ -174,10 +174,10 @@ public static class ImageImportService
 
                 ImageInfo? info;
                 try { info = SharpImage.Identify(ms); }
-                catch (UnknownImageFormatException) { return (null, "Unsupported image format."); }
-                catch (InvalidImageContentException) { return (null, "The file is corrupted or contains invalid content."); }
+                catch (UnknownImageFormatException) { return (null, $"{LocalizationService.Get("UnsupportedImage")}"); }
+                catch (InvalidImageContentException) { return (null, $"{LocalizationService.Get("FileCorrupted")}"); }
 
-                if (info is null) return ((PixelModel?)null, "Could not read image information.");
+                if (info is null) return ((PixelModel?)null, $"{LocalizationService.Get("CantRead")}");
 
                 ms.Position = 0;
                 using var image = SharpImage.Load(ms);

@@ -30,18 +30,19 @@ public static class LocalizationService
     private static void Load(Dictionary<string, string> langDict)
     {
         if (Application.Current == null)
-            throw new InvalidOperationException("Application.Current is null. Make sure Avalonia is initialized.");
+            throw new InvalidOperationException($"{Get("ApplicationCurrentNull")}");
 
         foreach (var key in langDict.Keys)
-        {
             Application.Current.Resources[key] = langDict[key];
-        }
     }
+
+    public static string Get(string key) =>
+        Application.Current?.Resources[key] as string ?? key;
 
     public static void SetDefaults()
     {
         if (Application.Current == null)
-            throw new InvalidOperationException("Application.Current is null. Make sure Avalonia is initialized.");
+            throw new InvalidOperationException($"{Get("ApplicationCurrentNull")}");
 
         var dict = new Dictionary<string, string>
         {
@@ -53,46 +54,37 @@ public static class LocalizationService
             ["MenuExport"] = "Export",
             ["MenuLastAutosave"] = "Last Autosave",
             ["MenuExit"] = "Exit",
-
             ["MenuUndo"] = "Undo",
             ["MenuRedo"] = "Redo",
             ["MenuImageProperties"] = "Image Properties",
             ["MenuSettings"] = "Settings",
-
             ["MenuZoomIn"] = "Zoom In",
             ["MenuZoomOut"] = "Zoom Out",
             ["MenuResetZoom"] = "Reset Zoom",
             ["MenuResetLayout"] = "Reset Layout",
             ["MenuLightTheme"] = "Light Theme",
             ["MenuDarkTheme"] = "Dark Theme",
-
             ["MenuCheckForUpdates"] = "Check For Updates",
             ["Report"] = "Report An Issue",
             ["MenuContactUs"] = "Contact Us",
             ["MenuAbout"] = "About",
-
             ["CrWinTitle"] = "Create File",
             ["CrWinWidth"] = "Width",
             ["CrWinHeight"] = "Height",
             ["CrWinFormat"] = "Format",
-            ["CrWinBackgroundColor"] = "Background\nColor",
+            ["CrWinBackgroundColor"] = "",
             ["CrWinCancel"] = "Cancel",
             ["CrWinCreate"] = "Create",
-
             ["SetWinTitle"] = "Settings",
             ["SetWinGeneral"] = "General",
             ["SetWinAppearance"] = "Appearance",
             ["SetWinCancel"] = "Cancel",
             ["SetWinReset"] = "Reset",
             ["SetWinSave"] = "Save",
-
             ["StartViewCreate"] = "Create",
             ["StartViewOpen"] = "Open",
-            ["StartViewText"] = "Pixeller - your pixel art editor",
-
             ["AprViewTheme"] = "Theme",
             ["AprViewAccentColor"] = "Accent Color",
-
             ["GenViewLanguage"] = "Language",
             ["GenViewGrid"] = "Pixel Grid",
             ["GenViewGridMaxSize"] = "Pixel grid max size",
@@ -102,7 +94,6 @@ public static class LocalizationService
             ["GenViewEnableAutosave"] = "Enable Autosave",
             ["GenViewAutosaveEvery"] = "Autosave every",
             ["GenViewSeconds"] = "seconds",
-
             ["ImgPropDpiXY"] = "DPI (x, y)",
             ["ImgPropColorMode"] = "Color Mode",
             ["ImgPropBitDepth"] = "Bit Depth",
@@ -114,8 +105,100 @@ public static class LocalizationService
             ["CrWinAdvanced"] = "Advanced",
             ["ExportConfirm"] = "Confirm",
             ["ImgPropSize"] = "Size",
-
-            ["Language"] = "English"
+            ["Language"] = "English",
+            ["TextBlockLayers"] = "Layers",
+            ["TextBlockOpacity"] = "Opacity:",
+            ["TextBlock"] = "%",
+            ["ui"] = "InstantToggleButtonHand: Hand",
+            ["TextBlockCheckerboard"] = "Checkerboard",
+            ["TextBlockScaleCheckerboardWithCanvas"] = "Scale checkerboard with canvas",
+            ["TextBlockCheckerboardScale"] = "Checkerboard Scale",
+            ["PanelHorizontal"] = "Horizontal",
+            ["GridVertical"] = "Vertical",
+            ["controls"] = "ToolbarVertical: Vertical",
+            ["PanelVertical"] = "Vertical",
+            ["TextBlockPixellerTheBest"] = "Pixeller — the best graphics editor",
+            ["RadioButtonRgb"] = "RGB",
+            ["RadioButtonHsv"] = "HSV",
+            ["TextBlock2"] = "#",
+            ["TextBlockR"] = "R",
+            ["TextBlockH"] = "H",
+            ["TextBlockG"] = "G",
+            ["TextBlockS"] = "S",
+            ["TextBlockB"] = "B",
+            ["TextBlockV"] = "V",
+            ["TextBlockA"] = "A",
+            ["RadioButtonRgb2"] = "RGB",
+            ["RadioButtonHsv2"] = "HSV",
+            ["TextBlock3"] = "#",
+            ["TextBlockR2"] = "R",
+            ["TextBlockH2"] = "H",
+            ["TextBlockG2"] = "G",
+            ["TextBlockS2"] = "S",
+            ["TextBlockB2"] = "B",
+            ["TextBlockV2"] = "V",
+            ["ListBoxItemCanvas"] = "Canvas",
+            ["ViewLocalotNotFound"] = "Not Found",
+            ["InvalidBitmap"] = "Invalid bitmap format.",
+            ["InvalidPixelData"] = "PixelData size mismatch with bitmap size.",
+            ["Layer"] = "Layer",
+            ["SupportedFormats"] = "All Supported Images",
+            ["Image"] = "Image",
+            ["ImportImage"] = "Import image",
+            ["InvalidSVG"] = "Invalid or empty SVG file.",
+            ["InvalidDDS"] = "Unsupported or invalid DDS format.",
+            ["InvalidICO"] = "Invalid .ico file.",
+            ["UnsupportedImage"] = "Unsupported image format.",
+            ["FileCorrupted"] = "The file is corrupted or contains invalid content.",
+            ["CantRead"] = "Could not read image information.",
+            ["Export"] = "Export",
+            ["Untitled"] = "untitled",
+            ["FailedExport"] = "Failed to export image.",
+            ["NotImplemented"] = "not yet implemented.",
+            ["NoPalette"] = "Indexed mode doesn't have palette.",
+            ["PfimFailed"] = "Pfim decode failed",
+            ["UnhandledPfim"] = "Unhandled Pfim format",
+            ["FileNotFound"] = "File not found",
+            ["EmptyConfig"] = "Config file is empty.",
+            ["Copy"] = "Copy",
+            ["UnknownValue"] = "Unknown value",
+            ["ForEnum"] = "for enumTextBlockLayers2: Layers",
+            ["TextBlockOpacity2"] = "Opacity:",
+            ["TextBlock4"] = "%",
+            ["TextBlockCheckerboard2"] = "Checkerboard",
+            ["TextBlockScaleCheckerboardWithCanvas2"] = "Scale checkerboard with canvas",
+            ["TextBlockCheckerboardScale2"] = "Checkerboard Scale",
+            ["RadioButtonRgb3"] = "RGB",
+            ["RadioButtonHsv3"] = "HSV",
+            ["TextBlock5"] = "#",
+            ["TextBlockR3"] = "R",
+            ["TextBlockH3"] = "H",
+            ["TextBlockG3"] = "G",
+            ["TextBlockS3"] = "S",
+            ["TextBlockB3"] = "B",
+            ["TextBlockV3"] = "V",
+            ["TextBlockA2"] = "A",
+            ["RadioButtonRgb4"] = "RGB",
+            ["RadioButtonHsv4"] = "HSV",
+            ["TextBlock6"] = "#",
+            ["TextBlockR4"] = "R",
+            ["TextBlockH4"] = "H",
+            ["TextBlockG4"] = "G",
+            ["TextBlockS4"] = "S",
+            ["TextBlockB4"] = "B",
+            ["TextBlockV4"] = "V",
+            ["ListBoxItemCanvas2"] = "Canvas",
+            ["ToolBarPen"] = "Pen",
+            ["ToolBarColorPicker"] = "Color picker",
+            ["ToolBarFill"] = "Fill",
+            ["ToolBarEraser"] = "Eraser",
+            ["ToolBarHand"] = "Hand",
+            ["LayerAdd"] = "Add",
+            ["LayerDelete"] = "Delete",
+            ["LayerDuplicate"] = "Duplicate",
+            ["LayerGroup"] = "Group",
+            ["LayerTheTop"] = "Move to the top",
+            ["LayerTheBottom"] = "Move to the bottom",
         };
 
         foreach (var kvp in dict)

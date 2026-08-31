@@ -20,7 +20,7 @@ public static class PixelModelService
             (ColorMode.Indexed, BitDepth.Bit8) => Indexed8ToRgba32(model),
             (ColorMode.Indexed, BitDepth.Bit4) => Indexed4ToRgba32(model),
             (ColorMode.Indexed, BitDepth.Bit1) => Indexed1ToRgba32(model),
-            _ => throw new NotImplementedException($"{model.Mode} {model.BitDepth} ще не реалізовано")
+            _ => throw new NotImplementedException($"{model.Mode} {model.BitDepth} {LocalizationService.Get("NotImplemented")}")
         };
     }
 
@@ -169,7 +169,7 @@ public static class PixelModelService
     private static byte[] Indexed8ToRgba32(PixelModel model)
     {
         if (model.Palette is null)
-            throw new InvalidOperationException("Indexed режим без палітри");
+            throw new InvalidOperationException($"{LocalizationService.Get("NoPalette")}");
 
         var src = model.Data;
         var dst = new byte[model.Width * model.Height * 4];
@@ -189,7 +189,7 @@ public static class PixelModelService
     private static byte[] Indexed4ToRgba32(PixelModel model)
     {
         if (model.Palette is null)
-            throw new InvalidOperationException("Indexed режим без палітри");
+            throw new InvalidOperationException($"{LocalizationService.Get("NoPalette")}");
 
         var src = model.Data;
         var dst = new byte[model.Width * model.Height * 4];
@@ -219,7 +219,7 @@ public static class PixelModelService
     private static byte[] Indexed1ToRgba32(PixelModel model)
     {
         if (model.Palette is null)
-            throw new InvalidOperationException("Indexed режим без палітри");
+            throw new InvalidOperationException($"{LocalizationService.Get("NoPalette")}");
 
         var src = model.Data;
         var dst = new byte[model.Width * model.Height * 4];

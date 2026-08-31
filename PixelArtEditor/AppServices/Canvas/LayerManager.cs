@@ -13,7 +13,7 @@ public class LayerManager
         Layers.Clear();
 
         if (layerName == "")
-            layerName = "Layer 1";
+            layerName = $"{LocalizationService.Get("Layer")} 1";
 
         var layer = new LayerModel(width, height, BitmapService.SwapRB(pixelData), layerName);
         Layers.Add(layer);

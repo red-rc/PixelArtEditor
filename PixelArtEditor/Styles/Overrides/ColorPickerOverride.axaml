@@ -239,7 +239,7 @@
                                     <RadioButton x:Name="RgbRadioButton"
                                                  Theme="{StaticResource ColorViewColorModelRadioButtonTheme}"
                                                  Grid.Column="0"
-                                                 Content="RGB"
+                                                 Content="{DynamicResource RadioButtonRgb3}"
                                                  CornerRadius="2.5,0,0,2.5"
                                                  BorderThickness="0"
                                                  Height="{Binding ElementName=PART_HexTextBox, Path=Bounds.Height}"
@@ -247,7 +247,7 @@
                                     <RadioButton x:Name="HsvRadioButton"
                                                  Theme="{StaticResource ColorViewColorModelRadioButtonTheme}"
                                                  Grid.Column="1"
-                                                 Content="HSV"
+                                                 Content="{DynamicResource RadioButtonHsv3}"
                                                  CornerRadius="0,2.5,2.5,0"
                                                  BorderThickness="0"
                                                  Height="{Binding ElementName=PART_HexTextBox, Path=Bounds.Height}"
@@ -268,7 +268,7 @@
                                             CornerRadius="2.5,0,0,2.5">
                                       <TextBlock Foreground="{DynamicResource ThemeForegroundBrush}"
                                                  FontWeight="SemiBold"
-                                                 Text="#"
+                                                 Text="{DynamicResource TextBlock5}"
                                                  HorizontalAlignment="Center"
                                                  VerticalAlignment="Center" />
                                     </Border>
@@ -301,11 +301,11 @@
                                          VerticalAlignment="Center">
                                     <TextBlock Foreground="{DynamicResource ThemeForegroundBrush}"
                                                FontWeight="SemiBold"
-                                               Text="R"
+                                               Text="{DynamicResource TextBlockR3}"
                                                IsVisible="{TemplateBinding ColorModel, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static controls:ColorModel.Rgba}, Mode=OneWay}" />
                                     <TextBlock Foreground="{DynamicResource ThemeForegroundBrush}"
                                                FontWeight="SemiBold"
-                                               Text="H"
+                                               Text="{DynamicResource TextBlockH3}"
                                                IsVisible="{TemplateBinding ColorModel, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static controls:ColorModel.Hsva}, Mode=OneWay}" />
                                   </Panel>
                                 </Border>
@@ -352,11 +352,11 @@
                                          VerticalAlignment="Center">
                                     <TextBlock Foreground="{DynamicResource ThemeForegroundBrush}"
                                                FontWeight="SemiBold"
-                                               Text="G"
+                                               Text="{DynamicResource TextBlockG3}"
                                                IsVisible="{TemplateBinding ColorModel, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static controls:ColorModel.Rgba}, Mode=OneWay}" />
                                     <TextBlock Foreground="{DynamicResource ThemeForegroundBrush}"
                                                FontWeight="SemiBold"
-                                               Text="S"
+                                               Text="{DynamicResource TextBlockS3}"
                                                IsVisible="{TemplateBinding ColorModel, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static controls:ColorModel.Hsva}, Mode=OneWay}" />
                                   </Panel>
                                 </Border>
@@ -403,11 +403,11 @@
                                          VerticalAlignment="Center">
                                     <TextBlock Foreground="{DynamicResource ThemeForegroundBrush}"
                                                FontWeight="SemiBold"
-                                               Text="B"
+                                               Text="{DynamicResource TextBlockB3}"
                                                IsVisible="{TemplateBinding ColorModel, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static controls:ColorModel.Rgba}, Mode=OneWay}" />
                                     <TextBlock Foreground="{DynamicResource ThemeForegroundBrush}"
                                                FontWeight="SemiBold"
-                                               Text="V"
+                                               Text="{DynamicResource TextBlockV3}"
                                                IsVisible="{TemplateBinding ColorModel, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static controls:ColorModel.Hsva}, Mode=OneWay}" />
                                   </Panel>
                                 </Border>
@@ -453,7 +453,7 @@
                                   <TextBlock x:Name="AlphaComponentTextBlock"
                                              Foreground="{DynamicResource ThemeForegroundBrush}"
                                              FontWeight="SemiBold"
-                                             Text="A"
+                                             Text="{DynamicResource TextBlockA2}"
                                              HorizontalAlignment="Center"
                                              VerticalAlignment="Center" />
                                   <Border.IsVisible>

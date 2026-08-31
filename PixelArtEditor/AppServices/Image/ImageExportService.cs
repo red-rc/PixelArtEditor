@@ -2,6 +2,7 @@
 using Avalonia.Platform.Storage;
 using HeyRed.ImageSharp.Heif.Formats.Avif;
 using HeyRed.ImageSharp.Heif.Formats.Heif;
+using PixelArtEditor.AppServices.Canvas;
 using PixelArtEditor.Models.Canvas;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats;
@@ -28,20 +29,20 @@ public static class ImageExportService
 {
     private static readonly List<FilePickerFileType> ExportFileTypes =
     [
-        new("PNG Image")              { Patterns = ["*.png"] },
-        new("JPEG Image")             { Patterns = ["*.jpg", "*.jpeg"] },
-        new("Bitmap Image")           { Patterns = ["*.bmp"] },
-        new("GIF Image")              { Patterns = ["*.gif"] },
-        new("TIFF Image")             { Patterns = ["*.tif", "*.tiff"] },
-        new("SVG Image")              { Patterns = ["*.svg"] },
-        new("WebP Image")             { Patterns = ["*.webp"] },
-        new("DDS Image")              { Patterns = ["*.dds"] },
-        new("AVIF Image")             { Patterns = ["*.avif"] },
-        new("HEIF Image")             { Patterns = ["*.heif"] },
-        new("TGA Image")              { Patterns = ["*.tga"] },
-        new("Portable Bitmap")        { Patterns = ["*.pbm"] },
-        new("QOI Image")              { Patterns = ["*.qoi"] },
-        new("Icon")                   { Patterns = ["*.ico"] }
+        new($"PNG {LocalizationService.Get("Image")}")             { Patterns = ["*.png"] },
+        new($"JPEG {LocalizationService.Get("Image")}")            { Patterns = ["*.jpg", "*.jpeg"] },
+        new($"Bitmap {LocalizationService.Get("Image")}")          { Patterns = ["*.bmp"] },
+        new($"GIF {LocalizationService.Get("Image")}")             { Patterns = ["*.gif"] },
+        new($"TIFF {LocalizationService.Get("Image")}")            { Patterns = ["*.tif", "*.tiff"] },
+        new($"SVG {LocalizationService.Get("Image")}")             { Patterns = ["*.svg"] },
+        new($"WebP {LocalizationService.Get("Image")}")            { Patterns = ["*.webp"] },
+        new($"DDS {LocalizationService.Get("Image")}")             { Patterns = ["*.dds"] },
+        new($"AVIF {LocalizationService.Get("Image")}")            { Patterns = ["*.avif"] },
+        new($"HEIF {LocalizationService.Get("Image")}")            { Patterns = ["*.heif"] },
+        new($"TGA {LocalizationService.Get("Image")}")             { Patterns = ["*.tga"] },
+        new($"Portable {LocalizationService.Get("Image")}")        { Patterns = ["*.pbm"] },
+        new($"QOI {LocalizationService.Get("Image")}")             { Patterns = ["*.qoi"] },
+        new($"Icon")                                               { Patterns = ["*.ico"] }
     ];
     public static async Task ExportImageAsync(Window dialog, PixelModel model)
     {
@@ -50,8 +51,8 @@ public static class ImageExportService
 
         var saveOptions = new FilePickerSaveOptions
         {
-            Title = "Export",
-            SuggestedFileName = model.Name ?? "untitled",
+            Title = $"{LocalizationService.Get("Export")}",
+            SuggestedFileName = model.Name ?? $"{LocalizationService.Get("Untitled")}",
             DefaultExtension = model.Extension,
             FileTypeChoices = defaultType is not null
                 ? [defaultType, .. ExportFileTypes.Where(t => t != defaultType)]
@@ -61,7 +62,6 @@ public static class ImageExportService
         var file = await dialog.StorageProvider.SaveFilePickerAsync(saveOptions);
         if (file == null) return;
 
-        // беремо поточні дані пікселів з canvas (завжди RGBA32)
         var pixelData = model.Data;
         if (pixelData == null) return;
 
@@ -69,10 +69,8 @@ public static class ImageExportService
         {
             try
             {
-                // конвертуємо з RGBA32 (робочий формат) в потрібний формат для збереження
                 var exportData = ConvertForExport(pixelData, model);
 
-                // створюємо базовий Rgba32 і одразу конвертуємо в потрібний формат
                 using var baseImage = SixLabors.ImageSharp.Image.LoadPixelData<Rgba32>(
                     exportData, model.Width, model.Height);
                 using var image = ConvertToTargetFormat(baseImage, model);
@@ -108,22 +106,14 @@ public static class ImageExportService
             }
             catch (Exception ex)
             {
-                throw new InvalidOperationException("Failed to export image.", ex);
+                throw new InvalidOperationException($"{LocalizationService.Get("FailedExport")}", ex);
             }
         });
     }
 
     private static byte[] ConvertForExport(byte[] bgra, PixelModel parameters)
     {
-        var result = new byte[bgra.Length];
-
-        for (var i = 0; i < result.Length; i += 4)
-        {
-            result[i + 0] = bgra[i + 2]; // R ← B
-            result[i + 1] = bgra[i + 1]; // G ← G
-            result[i + 2] = bgra[i + 0]; // B ← R
-            result[i + 3] = bgra[i + 3]; // A ← A
-        }
+        var result = BitmapService.SwapRB(bgra);
 
         if (parameters.Alpha == AlphaFormat.Premultiplied)
         {

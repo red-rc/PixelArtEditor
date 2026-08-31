@@ -47,7 +47,7 @@
                     <ListBoxItem
                         HorizontalContentAlignment="Center"
                         Classes="Heading"
-                        Content="Canvas" />
+                        Content="{DynamicResource ListBoxItemCanvas2}" />
                 </ListBox>
             </StackPanel>
             <StackPanel

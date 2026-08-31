@@ -6,7 +6,6 @@ using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Styling;
 using System;
-using System.Diagnostics;
 using System.IO;
 using AvaloniaStyles = Avalonia.Styling.Styles;
 using ColorHelper = PixelArtEditor.Helpers.ColorHelper;

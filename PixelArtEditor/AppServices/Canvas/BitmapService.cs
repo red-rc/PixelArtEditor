@@ -38,10 +38,10 @@ public static class BitmapService
     public static unsafe void UpdateBitmap(WriteableBitmap wb, byte[] pixelData, Rect dirtyRect)
     {
         if (wb.Format != PixelFormat.Bgra8888)
-            throw new InvalidOperationException("Invalid bitmap format.");
+            throw new InvalidOperationException(LocalizationService.Get("InvalidBitmap"));
 
         if (pixelData.Length < wb.PixelSize.Width * wb.PixelSize.Height * 4)
-            throw new ArgumentException("pixelData size mismatch with bitmap size.");
+            throw new ArgumentException(LocalizationService.Get("InvalidPixelData"));
 
         using var fb = wb.Lock();
 

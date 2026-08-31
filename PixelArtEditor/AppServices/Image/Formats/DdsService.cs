@@ -18,7 +18,7 @@ public static class DdsService
         }
         catch (Exception ex)
         {
-            error = $"Pfim decode failed: {ex.GetType().Name}: {ex.Message}";
+            error = $"{LocalizationService.Get("PfimFailed")}: {ex.GetType().Name}: {ex.Message}";
             return null;
         }
 
@@ -112,7 +112,8 @@ public static class DdsService
                     break;
 
                 default:
-                    error = $"Unhandled Pfim format: {image.Format} (Width={width}, Height={height}, DataLen={src.Length}, Stride={image.Stride})";
+                    error = $"{LocalizationService.Get("UnhandledPfim")}: {image.Format} (Width={width}, Height={height}, " +
+                        $"DataLen={src.Length}, Stride={image.Stride})";
                     return null;
             }
 

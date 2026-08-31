@@ -17,7 +17,7 @@ public class AddCmd(LayerPanelVM vm, ListBox layerListBox) : LayerCmdBase(vm, la
             Vm.OriginalWidth,
             Vm.OriginalHeight,
             new byte[Vm.OriginalWidth * Vm.OriginalHeight * 4],
-            $"Layer {layerManager.Layers.Count + 1}"
+            $"{LocalizationService.Get("Layer")} {layerManager.Layers.Count + 1}"
         );
 
         var targetIndex = layerManager.ActiveLayer is null ? 0 : Math.Max(0, layerManager.Layers.IndexOf(layerManager.ActiveLayer));

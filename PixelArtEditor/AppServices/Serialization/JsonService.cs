@@ -14,10 +14,10 @@ public static class JsonService
     
     public static void Populate<T>(T target, string filePath)
     {
-        if (!File.Exists(filePath)) throw new FileNotFoundException($"File not found: {filePath}");
+        if (!File.Exists(filePath)) throw new FileNotFoundException($"{LocalizationService.Get("FileNotFound")}: {filePath}");
 
         var jsonString = File.ReadAllText(filePath);
-        if (string.IsNullOrWhiteSpace(jsonString)) throw new InvalidDataException("Config file is empty.");
+        if (string.IsNullOrWhiteSpace(jsonString)) throw new InvalidDataException($"{LocalizationService.Get("EmptyConfig")}");
 
         if (target != null) Newtonsoft.Json.JsonConvert.PopulateObject(jsonString, target);
     }

@@ -1,13 +1,14 @@
-﻿using PixelArtEditor.AppServices.Canvas;
+﻿using PixelArtEditor.AppServices;
+using PixelArtEditor.AppServices.Canvas;
 using System;
 using System.Linq;
-using System.Xml.Linq;
 
 namespace PixelArtEditor.Helpers;
 
 public static class LayerNameHelper
 {
-    private static readonly string CopySuffix = " - Copy (";
+    private static readonly string Copy = LocalizationService.Get("Copy");
+    private static readonly string CopySuffix = $" - {Copy} (";
     public static string GetLayerName(LayerManager layerManager, string baseName)
     {
         string name;
@@ -17,15 +18,15 @@ public static class LayerNameHelper
 
         if (!trimmedName.Contains(CopySuffix))
         {
-            if (trimmedName.EndsWith(" - Copy"))
+            if (trimmedName.EndsWith($" - {Copy}"))
                 name = $"{trimmedName} (2)";
             else
-                name = $"{trimmedName} - Copy";
+                name = $"{trimmedName} - {Copy}";
 
             var copyCount = 1;
             while (NameExists(layerManager, name))
             {
-                if (name.EndsWith(" - Copy"))
+                if (name.EndsWith($" - {Copy}"))
                 {
                     copyCount++;
                     name = $"{name} ({copyCount})";

@@ -1,4 +1,5 @@
 ﻿using Avalonia.Media.Imaging;
+using PixelArtEditor.AppServices;
 using PixelArtEditor.Models;
 using PixelArtEditor.Models.Canvas;
 using System;
@@ -184,7 +185,8 @@ public class ImagePropertiesUCVM : ReactiveObject
         if (Enum.TryParse<T>(value, ignoreCase: false, out var result))
             return result;
 
-        throw new ArgumentException($"Unknown value '{value}' for enum {typeof(T).Name}");
+        throw new ArgumentException($"{LocalizationService.Get("UnknownValue")} '{value}' " +
+            $"{LocalizationService.Get("ForEnum")} {typeof(T).Name}");
     }
 
     private WriteableBitmap? _renderBitmap;

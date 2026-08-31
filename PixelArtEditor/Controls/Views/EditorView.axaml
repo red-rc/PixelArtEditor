@@ -80,8 +80,7 @@
 
                 <controls:LayerPanel 
                     x:Name="LayerPanelControl"
-                    Grid.Row="1" 
-                    LayerManager="{Binding LayerManager}"
+                    Grid.Row="1"
                     HorizontalAlignment="Stretch" 
                     VerticalAlignment="Stretch" />
             </Grid>
@@ -136,7 +135,7 @@
         </Grid>
         <Canvas x:Name="FloatingHost" ZIndex="1000" IsHitTestVisible="True" />
         <Canvas x:Name="RectHost" />
-        <Canvas Name="TooltipHost">
+        <Canvas Name="TooltipHost" IsHitTestVisible="False">
             <Border
                 x:Name="Tooltip"
                 Padding="5"
@@ -145,7 +144,7 @@
                 IsVisible="false">
                 <TextBlock
                     x:Name="TooltipText"
-                    FontSize="14"
+                    FontSize="13"
                     Foreground="{DynamicResource ForegroundColor}" />
             </Border>
         </Canvas>
