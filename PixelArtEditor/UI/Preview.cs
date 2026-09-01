@@ -1,7 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
-using Avalonia.Media.Imaging;
+using PixelArtEditor.AppServices;
 using PixelArtEditor.AppServices.Canvas;
 using PixelArtEditor.Models;
 using System.ComponentModel;
@@ -10,6 +10,8 @@ namespace PixelArtEditor.UI;
 
 public class Preview : Control
 {
+    private static ISettingsManager Settings => Services.Settings;
+
     public static readonly StyledProperty<PreviewData> RenderDataProperty =
         AvaloniaProperty.Register<Preview, PreviewData>(nameof(RenderData), defaultValue: new PreviewData(0, 0, null, null));
 
@@ -25,7 +27,14 @@ public class Preview : Control
 
     public Preview()
     {
-        RenderOptions.SetBitmapInterpolationMode(this, BitmapInterpolationMode.None);
+        RenderOptions.SetBitmapInterpolationMode(this, Settings.InterpolationMode);
+
+        Settings.PropertyChanged += (sender, e) =>
+        {
+            if (e.PropertyName == nameof(Settings.InterpolationMode))
+                RenderOptions.SetBitmapInterpolationMode(this, Settings.InterpolationMode);
+        };
+
         RenderDataProperty.Changed.AddClassHandler<Preview>((sender, e) => OnRenderDataChanged(e));
     }
 

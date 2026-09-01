@@ -1,4 +1,5 @@
 using Avalonia.Media;
+using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using PixelArtEditor.AppServices;
 using PixelArtEditor.Models.Canvas;
@@ -69,7 +70,8 @@ public class SettingsDialogVM : ReactiveObject
         }
     }
 
-    public static IEnumerable<KeyValuePair<CheckerboardScale, string>> ScaleOptions => new Dictionary<CheckerboardScale, string>()
+    public static IEnumerable<KeyValuePair<CheckerboardScale, string>> ScaleOptions
+        => new Dictionary<CheckerboardScale, string>()
     {
         { CheckerboardScale.Scale1, "1" },
         { CheckerboardScale.Scale2, "2" },
@@ -87,6 +89,26 @@ public class SettingsDialogVM : ReactiveObject
         {
             if (Scale.Equals(value)) return;
             Settings.CheckerboardScale = value.Key;
+            this.RaisePropertyChanged();
+        }
+    }
+
+    public static IEnumerable<KeyValuePair<BitmapInterpolationMode, string>> InterpolationOptions
+        => new Dictionary<BitmapInterpolationMode, string>()
+    {
+        { BitmapInterpolationMode.None, LocalizationService.Get("InterpolationNone") },
+        { BitmapInterpolationMode.LowQuality, LocalizationService.Get("InterpolationLow") },
+        { BitmapInterpolationMode.MediumQuality, LocalizationService.Get("InterpolationMedium") },
+        { BitmapInterpolationMode.HighQuality, LocalizationService.Get("InterpolationHigh") }
+    };
+
+    public KeyValuePair<BitmapInterpolationMode, string> InterpolationMode
+    {
+        get => InterpolationOptions.FirstOrDefault(i => i.Key == Settings.InterpolationMode);
+        set
+        {
+            if (InterpolationMode.Equals(value)) return;
+            Settings.InterpolationMode = value.Key;
             this.RaisePropertyChanged();
         }
     }

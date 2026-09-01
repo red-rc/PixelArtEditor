@@ -163,3 +163,9 @@ Hide: Сховати
 Show: Показати
 Lock: Заблокувати
 Unlock: Розблокувати
+TextBlockImage: Зображення
+TextBlockInterpolationMode: Режим інтерполяції
+InterpolationNone: Немає
+InterpolationLow: Низька якість
+InterpolationMedium: Середня якість
+InterpolationHigh: Висока якість

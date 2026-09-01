@@ -1,4 +1,5 @@
 using Avalonia.Media;
+using Avalonia.Media.Imaging;
 using PixelArtEditor.AppServices.Serialization;
 using PixelArtEditor.Models.Canvas;
 using PixelArtEditor.Models.Dock;
@@ -14,6 +15,14 @@ public sealed class SettingsManager : ISettingsManager
 
     private SettingsManager() => SetDefaults();
 
+    public int GridMaxSize { get; set; }
+    public Color GridColor { get; set; }
+    public bool EnableGrid { get; set; }
+    public bool ScaleCheckerboardWithCanvas { get; set; }
+    public CheckerboardScale CheckerboardScale { get; set; }
+    public bool EnableAutosave { get; set; }
+    public int AutosaveFrequency { get; set; }
+
     private string _language = null!;
     public string Language
     {
@@ -27,13 +36,18 @@ public sealed class SettingsManager : ISettingsManager
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Language)));
         }
     }
-    public int GridMaxSize { get; set; }
-    public Color GridColor { get; set; }
-    public bool EnableGrid { get; set; }
-    public bool ScaleCheckerboardWithCanvas { get; set; }
-    public CheckerboardScale CheckerboardScale { get; set; }
-    public bool EnableAutosave { get; set; }
-    public int AutosaveFrequency { get; set; }
+
+    private BitmapInterpolationMode _interpolationMode;
+    public BitmapInterpolationMode InterpolationMode
+    {
+        get => _interpolationMode;
+        set
+        {
+            if (_interpolationMode == value) return;
+            _interpolationMode = value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(InterpolationMode)));
+        }
+    }
 
     private Color _accentColor;
     public Color AccentColor
@@ -92,6 +106,7 @@ public sealed class SettingsManager : ISettingsManager
         EnableGrid = true;
         ScaleCheckerboardWithCanvas = false;
         CheckerboardScale = CheckerboardScale.Scale4;
+        InterpolationMode = BitmapInterpolationMode.None;
         EnableAutosave = true;
         AutosaveFrequency = 10;
         AccentColor = Color.Parse("DodgerBlue");

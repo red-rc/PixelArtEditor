@@ -163,3 +163,9 @@ Hide: Hide
 Show: Show
 Lock: Lock
 Unlock: Unlock
+TextBlockImage: Image
+TextBlockInterpolationMode: Interpolation mode
+InterpolationNone: None
+InterpolationLow: Low quality
+InterpolationMedium: Medium quality
+InterpolationHigh: High quality

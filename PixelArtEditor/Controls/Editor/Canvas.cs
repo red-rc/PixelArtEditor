@@ -2,7 +2,6 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
-using Avalonia.Media.Imaging;
 using PixelArtEditor.AppServices;
 using PixelArtEditor.AppServices.Canvas;
 using PixelArtEditor.AppServices.Tools;
@@ -136,7 +135,13 @@ public class Canvas : Control, ICanvasContext
 
     public Canvas()
     {
-        RenderOptions.SetBitmapInterpolationMode(this, BitmapInterpolationMode.None);
+        RenderOptions.SetBitmapInterpolationMode(this, Settings.InterpolationMode);
+
+        Settings.PropertyChanged += (sender, e) =>
+        {
+            if (e.PropertyName == nameof(Settings.InterpolationMode))
+                RenderOptions.SetBitmapInterpolationMode(this, Settings.InterpolationMode);
+        };
 
         ModelProperty.Changed.AddClassHandler<Canvas>((sender, e) =>
         {

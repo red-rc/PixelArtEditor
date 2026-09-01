@@ -1,4 +1,5 @@
 using Avalonia.Media;
+using Avalonia.Media.Imaging;
 using PixelArtEditor.Models.Canvas;
 using PixelArtEditor.Models.Dock;
 using System.Collections.Generic;
@@ -14,6 +15,7 @@ public interface ISettingsManager
     bool EnableGrid { get; set; }
     bool ScaleCheckerboardWithCanvas { get; set; }
     CheckerboardScale CheckerboardScale { get; set; }
+    BitmapInterpolationMode InterpolationMode { get; set; }
     bool EnableAutosave { get; set; }
     int AutosaveFrequency { get; set; }
 

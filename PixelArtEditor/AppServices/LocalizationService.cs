@@ -1,4 +1,5 @@
 ﻿using Avalonia;
+using ExCSS;
 using PixelArtEditor.AppServices.Serialization;
 using System;
 using System.Collections.Generic;
@@ -212,7 +213,13 @@ public static class LocalizationService
             ["Hide"] = "Hide",
             ["Show"] = "Show",
             ["Lock"] = "Lock",
-            ["Unlock"] = "Unlock"
+            ["Unlock"] = "Unlock",
+            ["TextBlockImage"] = "Image",
+            ["TextBlockInterpolationMode"] = "Interpolation mode",
+            ["InterpolationNone"] = "None",
+            ["InterpolationLow"] = "Low quality",
+            ["InterpolationMedium"] = "Medium quality",
+            ["InterpolationHigh"] = "High quality"
         };
 
         foreach (var kvp in dict)
