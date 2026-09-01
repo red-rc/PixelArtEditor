@@ -276,7 +276,8 @@ public class Canvas : Control, ICanvasContext
     protected override void OnPointerReleased(PointerReleasedEventArgs e)
     {
         base.OnPointerReleased(e);
-        
+        _currentTool.OnPointerReleased(this);
+
         if (e.InitialPressMouseButton == MouseButton.Left) _isLeftPressed = false;
     }
 
