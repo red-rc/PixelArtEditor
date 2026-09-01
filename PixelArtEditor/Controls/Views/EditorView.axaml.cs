@@ -141,7 +141,7 @@ public partial class EditorView : UserControl
             var rgba = PixelModelService.ToRgba32(pixelModel);
             var data = BitmapService.SwapRB(rgba);
 
-            if (targetW != pixelModel.Width || targetH != pixelModel.Height) { }
+            if (targetW != pixelModel.Width || targetH != pixelModel.Height)
                 data = BitmapService.ResizePixelDataScaled(data, pixelModel.Width, pixelModel.Height, targetW, targetH);
 
             data = BitmapService.CenterOnCanvas(data, targetW, targetH, vm.Model.Width, vm.Model.Height);

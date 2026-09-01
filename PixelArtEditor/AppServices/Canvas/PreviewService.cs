@@ -20,6 +20,7 @@ public static class PreviewService
             && layer.PreviewBitmap.PixelSize.Height == bmpH) return;
 
         RequestPreview(ctx, layer, invalidate, bmpW, bmpH);
+        cache.PreviewDirty = false;
     }
 
     private static void RequestPreview(ICanvasContext ctx, LayerModel layer, Action invalidate, int width, int height)
@@ -31,26 +32,36 @@ public static class PreviewService
         var token = cache.PreviewCts.Token;
         var thisCts = cache.PreviewCts;
 
+        var modelWidth = ctx.Model.Width;
+        var modelHeight = ctx.Model.Height;
+        var pixelData = layer.PixelData;
+
         Task.Run(() =>
         {
             var buffer = ArrayPool<byte>.Shared.Rent(width * height * 4);
 
             try
             {
-                BitmapService.DownscaleNearest(layer.PixelData, ctx.Model.Width, ctx.Model.Height, buffer, width, height, token);
-                if (token.IsCancellationRequested) return;
+                BitmapService.DownscaleNearest(pixelData, modelWidth, modelHeight, buffer, width, height, token);
+                if (token.IsCancellationRequested)
+                {
+                    ArrayPool<byte>.Shared.Return(buffer);
+                    return;
+                }
 
                 Dispatcher.UIThread.Post(() =>
                 {
-                    if (ReferenceEquals(cache.PreviewCts, thisCts))
+                    try
                     {
-                        layer.PreviewBitmap?.Dispose();
-                        layer.PreviewBitmap = BitmapService.CreateBitmap(width, height, buffer);
-                        cache.PreviewDirty = false;
-                        invalidate();
+                        if (ReferenceEquals(cache.PreviewCts, thisCts))
+                        {
+                            var old = layer.PreviewBitmap;
+                            layer.PreviewBitmap = BitmapService.CreateBitmap(width, height, buffer);
+                            Dispatcher.UIThread.Post(() => old?.Dispose(), DispatcherPriority.Background);
+                            invalidate();
+                        }
                     }
-
-                    ArrayPool<byte>.Shared.Return(buffer);
+                    finally { ArrayPool<byte>.Shared.Return(buffer); }
                 }, DispatcherPriority.Render);
             }
             catch { try { ArrayPool<byte>.Shared.Return(buffer); } catch { } }
