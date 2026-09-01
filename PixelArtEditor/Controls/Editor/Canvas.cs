@@ -324,7 +324,9 @@ public class Canvas : Control, ICanvasContext
         var srcRect = new Rect(0, 0, Model.Width, Model.Height);
         var destRect = new Rect(offsetX, offsetY, Model.Width * Scale, Model.Height * Scale);
 
-        if (Scale < 1 && layer.PreviewBitmap is not null)
+        if (!RenderCache.TryGetValue(layer, out var cache)) return;
+
+        if (Scale < 1 && layer.PreviewBitmap is not null && cache.PreviewDirty == false)
         {
             var scaleX = (double)layer.PreviewBitmap.PixelSize.Width / layer.Width;
             var scaleY = (double)layer.PreviewBitmap.PixelSize.Height / layer.Height;
@@ -405,6 +407,8 @@ public class Canvas : Control, ICanvasContext
 
             if (Scale < 1)
                 PreviewService.EnsurePreviewBitmap(this, layer, InvalidateVisual, bmpW, bmpH);
+            else if (layer.PreviewBitmap != null)
+                layer.PreviewBitmap = null;
         }
 
         DrawCheckerBoard(context, offsetX, offsetY, bmpW, bmpH);

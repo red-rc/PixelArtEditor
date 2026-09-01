@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
 using AlphaFormat = Avalonia.Platform.AlphaFormat;
 
 namespace PixelArtEditor.AppServices.Canvas;
@@ -295,6 +296,27 @@ public static class BitmapService
         }
 
         return dst;
+    }
+    public static void DownscaleNearest(byte[] src, int srcW, int srcH, byte[] dst, int dstW, int dstH, CancellationToken token)
+    {
+        for (var y = 0; y < dstH; y++)
+        {
+            if ((y & 7) == 0 && token.IsCancellationRequested) return;
+
+            var srcY = (int)((uint)y * srcH / dstH);
+            if (srcY >= srcH) srcY = srcH - 1;
+
+            var dstRow = y * dstW * 4;
+            var srcRow = srcY * srcW * 4;
+
+            for (var x = 0; x < dstW; x++)
+            {
+                var srcX = (int)((uint)x * srcW / dstW);
+                if (srcX >= srcW) srcX = srcW - 1;
+
+                Buffer.BlockCopy(src, srcRow + srcX * 4, dst, dstRow + x * 4, 4);
+            }
+        }
     }
 
     public static byte[] GetCompositePixelData(ObservableCollection<LayerModel> layers, int width, int height)
