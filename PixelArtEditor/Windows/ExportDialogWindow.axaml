@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:ui="clr-namespace:PixelArtEditor.UI"
+    xmlns:editor="clr-namespace:PixelArtEditor.Controls.Editor"
     xmlns:controls="clr-namespace:PixelArtEditor.Controls.Image"
     xmlns:controlsGlobal="clr-namespace:PixelArtEditor.Controls"
     xmlns:vm="clr-namespace:PixelArtEditor.ViewModels"
@@ -54,13 +54,14 @@
             <Grid Grid.Row="0"
                 Margin="20,30,20,0"
                 ColumnDefinitions="250,Auto">
-                <ui:Preview
+                <editor:PreviewControl
                     Grid.Column="0"
                     Margin="0,0,0,20"
                     Width="200"
                     Height="200"
                     VerticalAlignment="Center"
-                    RenderData="{Binding ImageProperties.RenderData}" />
+                    RenderData="{Binding ImageProperties.RenderData}"
+                    FixedTileSize="20" />
 
                 <StackPanel Grid.Column="1" Spacing="10">
                     <controls:PropertiesPanel DataContext="{Binding ImageProperties}" />

@@ -219,7 +219,9 @@ public static class LocalizationService
             ["InterpolationNone"] = "None",
             ["InterpolationLow"] = "Low quality",
             ["InterpolationMedium"] = "Medium quality",
-            ["InterpolationHigh"] = "High quality"
+            ["InterpolationHigh"] = "High quality",
+            ["InterpolateOnlyWhen"] = "Interpolate only when scaling down",
+            ["PreviewSquareError"] = "Preview control must be a square."
         };
 
         foreach (var kvp in dict)

@@ -487,13 +487,6 @@
         <Setter Property="Margin" Value="2" />
     </Style>
 
-    <Style Selector="Border.MenuBorder">
-        <Setter Property="Background" Value="{DynamicResource BackgroundColor}" />
-        <Setter Property="Padding" Value="6" />
-        <Setter Property="CornerRadius" Value="5" />
-        <Setter Property="BoxShadow" Value="{DynamicResource CardShadow}" />
-    </Style>
-
     <Style Selector="FlyoutPresenter">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderThickness" Value="0" />
@@ -526,7 +519,12 @@
                 <Setter Property="Background" Value="{DynamicResource BackgroundHoverColor}" />
                 <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}" />
             </Style>
-    
         </Style>
     </Style>
+
+    <Style Selector="Border.ShadowBorder">
+        <Setter Property="Background" Value="{DynamicResource BackgroundColor}" />
+        <Setter Property="BoxShadow" Value="{DynamicResource CardShadow}" />
+    </Style>
+
 </Styles>

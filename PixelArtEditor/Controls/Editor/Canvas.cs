@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
+using Avalonia.Media.Imaging;
 using PixelArtEditor.AppServices;
 using PixelArtEditor.AppServices.Canvas;
 using PixelArtEditor.AppServices.Tools;
@@ -51,14 +52,8 @@ public class Canvas : Control, ICanvasContext
     public double Scale
     {
         get => GetValue(ScaleProperty);
-        set
-        {
-            _prevScale = Scale;
-            SetValue(ScaleProperty, value);
-        }
+        set => SetValue(ScaleProperty, value);
     }
-
-    private double _prevScale;
 
     public static readonly StyledProperty<int> MaxScaleProperty =
         AvaloniaProperty.Register<Canvas, int>(nameof(MaxScale));
@@ -127,20 +122,18 @@ public class Canvas : Control, ICanvasContext
         set => SetValue(CurrentPixelCoordProperty, value);
     }
 
-    private bool _scaleWithCanvas = Settings.ScaleCheckerboardWithCanvas;
-    private DrawingBrush? _checkerboardBrush;
-
     public LayerManager LayerManager { get; private set; } = null!;
     public Dictionary<LayerModel, LayerRenderCache> RenderCache { get; } = [];
 
     public Canvas()
     {
-        RenderOptions.SetBitmapInterpolationMode(this, Settings.InterpolationMode);
-
-        Settings.PropertyChanged += (sender, e) =>
+        Settings.PropertyChanged += (_, e) =>
         {
-            if (e.PropertyName == nameof(Settings.InterpolationMode))
-                RenderOptions.SetBitmapInterpolationMode(this, Settings.InterpolationMode);
+            if (e.PropertyName is nameof(Settings.InterpolationMode) or nameof(Settings.InterpolateOnlyWhenScalingDown))
+            {
+                UpdateInterpolationMode();
+                InvalidateVisual();
+            }
         };
 
         ModelProperty.Changed.AddClassHandler<Canvas>((sender, e) =>
@@ -156,7 +149,21 @@ public class Canvas : Control, ICanvasContext
 
         this.GetObservable(ModelProperty).Subscribe(_ => OnModelChanged());
         this.GetObservable(OffsetProperty).Subscribe(_ => InvalidateVisual());
-        this.GetObservable(ScaleProperty).Subscribe(_ => InvalidateVisual());
+        this.GetObservable(ScaleProperty).Subscribe(_ =>
+        {
+            UpdateInterpolationMode();
+            InvalidateVisual();
+        });
+    }
+
+    private void UpdateInterpolationMode()
+    {
+        var mode = Settings.InterpolateOnlyWhenScalingDown
+            ? (Scale < 1 ? Settings.InterpolationMode : BitmapInterpolationMode.None)
+            : Settings.InterpolationMode;
+
+        if (RenderOptions.GetBitmapInterpolationMode(this) != mode)
+            RenderOptions.SetBitmapInterpolationMode(this, mode);
     }
 
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
@@ -281,42 +288,6 @@ public class Canvas : Control, ICanvasContext
         if (e.InitialPressMouseButton == MouseButton.Left) _isLeftPressed = false;
     }
 
-    private void DrawCheckerBoard(DrawingContext context, int offsetX, int offsetY, int bmpW, int bmpH)
-    {
-        if (_checkerboardBrush is null)
-        {
-            var imageDrawing = new ImageDrawing
-            {
-                ImageSource = BitmapService.CreateBitmap(2, 2, BitmapService.CreateCheckerBoardPixelData(2, 2)),
-                Rect = new Rect(0, 0, 2, 2)
-            };
-
-            _checkerboardBrush = new DrawingBrush(imageDrawing)
-            {
-                TileMode = TileMode.Tile,
-                Stretch = Stretch.Fill
-            };
-        }
-
-        if (_prevScale != Scale || Settings.ScaleCheckerboardWithCanvas != _scaleWithCanvas)
-        {
-            var tileSize = Settings.ScaleCheckerboardWithCanvas
-                ? Scale * (int)Settings.CheckerboardScale * 2
-                : MaxScale / 4;
-
-            while (Settings.ScaleCheckerboardWithCanvas && tileSize < 32)
-                tileSize *= 2;
-
-            _checkerboardBrush.DestinationRect = new RelativeRect(0, 0, tileSize, tileSize, RelativeUnit.Absolute);
-
-            _prevScale = Scale;
-            _scaleWithCanvas = Settings.ScaleCheckerboardWithCanvas;
-        }
-
-        _checkerboardBrush.Transform = new TranslateTransform(offsetX, offsetY);
-        context.FillRectangle(_checkerboardBrush, new Rect(offsetX, offsetY, bmpW, bmpH));
-    }
-
     private void DrawBitmap(DrawingContext context, LayerModel layer, double offsetX, double offsetY)
     {
         if (layer.RenderBitmap is null) return;
@@ -332,16 +303,12 @@ public class Canvas : Control, ICanvasContext
             var scaleY = (double)layer.PreviewBitmap.PixelSize.Height / layer.Height;
 
             using (context.PushOpacity(layer.Opacity))
-            {
                 context.DrawImage(layer.PreviewBitmap, new Rect(0, 0, Model.Width * scaleX, Model.Height * scaleY), destRect);
-            }
         }
         else
         {
             using (context.PushOpacity(layer.Opacity))
-            {
                 context.DrawImage(layer.RenderBitmap, srcRect, destRect);
-            }
         }
     }
 
@@ -389,7 +356,7 @@ public class Canvas : Control, ICanvasContext
     {
         base.Render(context);
 
-        var (bmpW, bmpH, offsetX, offsetY) = CanvasHelper.GetBitmapRenderInfo(this);
+        var (bmpW, bmpH, offsetX, offsetY) = CanvasHelper.GetBitmapRenderInfo(Scale, Offset, Bounds, Model);
         if (bmpW <= 0 || bmpH <= 0) return;
 
         foreach (var layer in LayerManager.Layers.Reverse())
@@ -410,8 +377,6 @@ public class Canvas : Control, ICanvasContext
             else if (layer.PreviewBitmap != null)
                 layer.PreviewBitmap = null;
         }
-
-        DrawCheckerBoard(context, offsetX, offsetY, bmpW, bmpH);
 
         foreach (var layer in LayerManager.Layers.Reverse())
             if (layer.IsVisible)

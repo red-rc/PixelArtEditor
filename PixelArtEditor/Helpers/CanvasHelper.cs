@@ -3,18 +3,20 @@ using Avalonia.Input;
 using Avalonia.Media;
 using PixelArtEditor.Models.Canvas;
 using System;
+using System.Numerics;
 
 namespace PixelArtEditor.Helpers;
 
 public static class CanvasHelper
 {
-    public static (int bmpW, int bmpH, int offsetX, int offsetY) GetBitmapRenderInfo(ICanvasContext ctx)
+    public static (int bmpW, int bmpH, int offsetX, int offsetY) GetBitmapRenderInfo(double Scale, Vector2 Offset, Rect Bounds, 
+        PixelModel model)
     {
-        var bmpW = (int)(ctx.Model.Width * ctx.Scale);
-        var bmpH = (int)(ctx.Model.Height * ctx.Scale);
+        var bmpW = (int)(model.Width * Scale);
+        var bmpH = (int)(model.Height * Scale);
 
-        var offsetX = (int)((ctx.Bounds.Width - bmpW) / 2 + ctx.Offset.X);
-        var offsetY = (int)((ctx.Bounds.Height - bmpH) / 2 + ctx.Offset.Y);
+        var offsetX = (int)((Bounds.Width - bmpW) / 2 + Offset.X);
+        var offsetY = (int)((Bounds.Height - bmpH) / 2 + Offset.Y);
 
         return (bmpW, bmpH, offsetX, offsetY);
     }
@@ -22,7 +24,7 @@ public static class CanvasHelper
     public static PixelPoint? GetPixelCoord(ICanvasContext ctx, Visual relativeTo, PointerEventArgs e)
     {
         var pos = e.GetPosition(relativeTo);
-        var (bmpW, bmpH, offsetX, offsetY) = GetBitmapRenderInfo(ctx);
+        var (bmpW, bmpH, offsetX, offsetY) = GetBitmapRenderInfo(ctx.Scale, ctx.Offset, ctx.Bounds, ctx.Model);
 
         var relX = pos.X - offsetX;
         var relY = pos.Y - offsetY;

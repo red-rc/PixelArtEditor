@@ -105,6 +105,11 @@
                 PointerWheelChanged="CanvasPanel_OnPointerWheelChanged"
                 SizeChanged="CanvasPanel_OnSizeChanged"
                 Tag="Vertical">
+                <controls:Checkerboard
+                    Model="{Binding Model}"
+                    Scale="{Binding Scale}"
+                    MaxScale="{Binding MaxScale}"
+                    Offset="{Binding Offset}" />
                 <controls:Canvas
                     x:Name="CanvasControl"
                     Model="{Binding Model}"

@@ -5,7 +5,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="clr-namespace:PixelArtEditor.ViewModels"
     x:Class="PixelArtEditor.Controls.Settings.CanvasView"
-    d:DesignHeight="350"
+    d:DesignHeight="400"
     d:DesignWidth="450"
     x:DataType="vm:SettingsDialogVM"
     Background="{DynamicResource SecondaryBackgroundColor}"
@@ -33,7 +33,8 @@
         </Style>
     </UserControl.Styles>
 
-    <StackPanel Orientation="Vertical" Spacing="15">
+  
+    <StackPanel Height="400" Orientation="Vertical" Spacing="15">
         <StackPanel Spacing="5">
             <TextBlock
                 Classes="Heading"
@@ -102,7 +103,7 @@
             <StackPanel Orientation="Horizontal" Spacing="10">
                 <TextBlock Text="{DynamicResource TextBlockInterpolationMode}" />
                 <ComboBox
-                    Width="125"
+                    Width="150"
                     ItemsSource="{Binding InterpolationOptions}"
                     SelectedItem="{Binding InterpolationMode, Mode=TwoWay}">
                     <ComboBox.ItemTemplate>
@@ -111,6 +112,10 @@
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="10">
+                <TextBlock Text="{DynamicResource InterpolateOnlyWhen}" />
+                <CheckBox IsChecked="{Binding InterpolateOnlyWhenScalingDown}" />
             </StackPanel>
         </StackPanel>
     </StackPanel>

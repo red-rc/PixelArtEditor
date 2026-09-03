@@ -18,8 +18,6 @@ public sealed class SettingsManager : ISettingsManager
     public int GridMaxSize { get; set; }
     public Color GridColor { get; set; }
     public bool EnableGrid { get; set; }
-    public bool ScaleCheckerboardWithCanvas { get; set; }
-    public CheckerboardScale CheckerboardScale { get; set; }
     public bool EnableAutosave { get; set; }
     public int AutosaveFrequency { get; set; }
 
@@ -37,6 +35,30 @@ public sealed class SettingsManager : ISettingsManager
         }
     }
 
+    private bool _scaleCheckerboardWithCanvas;
+    public bool ScaleCheckerboardWithCanvas
+    {
+        get => _scaleCheckerboardWithCanvas;
+        set
+        {
+            if (_scaleCheckerboardWithCanvas == value) return;
+            _scaleCheckerboardWithCanvas = value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ScaleCheckerboardWithCanvas)));
+        }
+    }
+
+    private CheckerboardScale _checkerboardScale;
+    public CheckerboardScale CheckerboardScale
+    {
+        get => _checkerboardScale;
+        set
+        {
+            if (_checkerboardScale == value) return;
+            _checkerboardScale = value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CheckerboardScale)));
+        }
+    }
+
     private BitmapInterpolationMode _interpolationMode;
     public BitmapInterpolationMode InterpolationMode
     {
@@ -46,6 +68,18 @@ public sealed class SettingsManager : ISettingsManager
             if (_interpolationMode == value) return;
             _interpolationMode = value;
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(InterpolationMode)));
+        }
+    }
+
+    private bool _interpolateOnlyWhenScalingDown;
+    public bool InterpolateOnlyWhenScalingDown
+    {
+        get => _interpolateOnlyWhenScalingDown;
+        set
+        {
+            if (_interpolateOnlyWhenScalingDown == value) return;
+            _interpolateOnlyWhenScalingDown = value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(InterpolateOnlyWhenScalingDown)));
         }
     }
 
@@ -107,6 +141,7 @@ public sealed class SettingsManager : ISettingsManager
         ScaleCheckerboardWithCanvas = false;
         CheckerboardScale = CheckerboardScale.Scale4;
         InterpolationMode = BitmapInterpolationMode.None;
+        InterpolateOnlyWhenScalingDown = true;
         EnableAutosave = true;
         AutosaveFrequency = 10;
         AccentColor = Color.Parse("DodgerBlue");

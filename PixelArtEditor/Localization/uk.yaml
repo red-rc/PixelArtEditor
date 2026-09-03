@@ -169,3 +169,5 @@ InterpolationNone: Немає
 InterpolationLow: Низька якість
 InterpolationMedium: Середня якість
 InterpolationHigh: Висока якість
+InterpolateOnlyWhen: Інтерполювати лише при зменшенні масштабу
+PreviewSquareError: Елемент попереднього перегляду має бути квадратом.

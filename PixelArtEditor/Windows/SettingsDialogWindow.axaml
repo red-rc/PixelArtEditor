@@ -23,7 +23,7 @@
         </Style>
     </Window.Styles>
 
-    <Grid RowDefinitions="Auto,*" Background="{DynamicResource SecondaryBackgroundColor}">
+    <Grid RowDefinitions="Auto,*,Auto" Background="{DynamicResource SecondaryBackgroundColor}">
         <controls:TitleBar 
             Grid.Row="0"
             Title="Settings" 
@@ -50,49 +50,49 @@
                         Content="{DynamicResource ListBoxItemCanvas2}" />
                 </ListBox>
             </StackPanel>
-            <StackPanel
-                Margin="20,20,40,0"
-                Grid.Column="1">
-                <ContentControl Content="{Binding SelectedTabIndex, Converter={StaticResource TabToViewConverter}}" />
+            <StackPanel Grid.Column="1" >
+                <ScrollViewer Height="370" HorizontalScrollBarVisibility="Hidden">
+                    <ContentControl Margin="20,20,40,0" Content="{Binding SelectedTabIndex, Converter={StaticResource TabToViewConverter}}" />
+                </ScrollViewer>
             </StackPanel>
-            <Grid
-                Height="100"
-                Grid.ColumnSpan="2"
-                VerticalAlignment="Bottom"
-                Background="{DynamicResource BackgroundColor}"
-                ColumnDefinitions="*,Auto,Auto"
-                DockPanel.Dock="Bottom">
-                <Button
-                    Grid.Column="0"
-                    Margin="0,25,10,25"
-                    Padding="30,0,30,0"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Stretch"
-                    Classes="CancelBtn"
-                    Command="{Binding CancelCommand}"
-                    Content="{DynamicResource SetWinCancel}"
-                    FontSize="20" />
-                <Button
-                    Grid.Column="1"
-                    Margin="0,25,10,25"
-                    Padding="30,0,30,0"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Stretch"
-                    Classes="ResetBtn"
-                    Command="{Binding ResetCommand}"
-                    Content="{DynamicResource SetWinReset}"
-                    FontSize="20" />
-                <Button
-                    Grid.Column="2"
-                    Margin="0,25,25,25"
-                    Padding="30,0,30,0"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Stretch"
-                    Classes="ConfirmBtn"
-                    Command="{Binding SaveCommand}"
-                    Content="{DynamicResource SetWinSave}"
-                    FontSize="20" />
-            </Grid>
+        </Grid>
+        <Grid
+            Grid.Row="2"
+            Height="100"
+            VerticalAlignment="Bottom"
+            Background="{DynamicResource BackgroundColor}"
+            ColumnDefinitions="*,Auto,Auto"
+            DockPanel.Dock="Bottom">
+            <Button
+                Grid.Column="0"
+                Margin="0,25,10,25"
+                Padding="30,0,30,0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Stretch"
+                Classes="CancelBtn"
+                Command="{Binding CancelCommand}"
+                Content="{DynamicResource SetWinCancel}"
+                FontSize="20" />
+            <Button
+                Grid.Column="1"
+                Margin="0,25,10,25"
+                Padding="30,0,30,0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Stretch"
+                Classes="ResetBtn"
+                Command="{Binding ResetCommand}"
+                Content="{DynamicResource SetWinReset}"
+                FontSize="20" />
+            <Button
+                Grid.Column="2"
+                Margin="0,25,25,25"
+                Padding="30,0,30,0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Stretch"
+                Classes="ConfirmBtn"
+                Command="{Binding SaveCommand}"
+                Content="{DynamicResource SetWinSave}"
+                FontSize="20" />
         </Grid>
     </Grid>
 </Window>

@@ -107,7 +107,7 @@ public class EditorVM : ReactiveObject
 
     public ToolSelection Tools { get; private set; } = new();
 
-    private Color _pickedColor = Colors.White;
+    private Color _pickedColor = Colors.Red;
     public Color PickedColor
     {
         get => _pickedColor;

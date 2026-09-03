@@ -113,6 +113,17 @@ public class SettingsDialogVM : ReactiveObject
         }
     }
 
+    public bool InterpolateOnlyWhenScalingDown
+    {
+        get => Settings.InterpolateOnlyWhenScalingDown;
+        set
+        {
+            if (Settings.InterpolateOnlyWhenScalingDown == value) return;
+            Settings.InterpolateOnlyWhenScalingDown = value;
+            this.RaisePropertyChanged();
+        }
+    }
+
     public bool EnableAutosave
     {
         get => Settings.EnableAutosave;
