@@ -22,10 +22,15 @@ public static class ToolManager
 
     public static void InvalidatePixelData(ICanvasContext ctx, LayerModel layer, Rect dirtyRect, bool notify = true)
     {
-        ctx.RenderCache[layer].RenderBitmapDirty = true;
-        ctx.RenderCache[layer].PreviewDirty = true;
-        ctx.RenderCache[layer].DirtyRect = ctx.RenderCache[layer].DirtyRect is Rect existing
-            ? existing.Union(dirtyRect) : dirtyRect;
+        var layerCache = ctx.RenderCache[layer];
+
+        layerCache.RenderBitmapDirty = true;
+        layerCache.PreviewDirty = true;
+        layerCache.DirtyRect = layerCache.DirtyRect is Rect existing ? existing.Union(dirtyRect) : dirtyRect;
+        layerCache.RenderRect = layerCache.RenderRect is Rect rendered ? rendered.Union(dirtyRect) : dirtyRect;
+
+        if (layer.IsEmpty)
+            layer.IsEmpty = false;
 
         if (notify)
             layer.NotifyPixelDataChanged();

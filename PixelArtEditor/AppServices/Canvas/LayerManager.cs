@@ -8,14 +8,14 @@ public class LayerManager
     public ObservableCollection<LayerModel> Layers { get; } = [];
     public LayerModel? ActiveLayer { get; set; }
 
-    public LayerModel InitializeFirstLayer(int width, int height, byte[] pixelData, string layerName)
+    public LayerModel InitializeFirstLayer(int width, int height, byte[] pixelData, string layerName, bool isEmpty)
     {
         Layers.Clear();
 
         if (layerName == "")
             layerName = $"{LocalizationService.Get("Layer")} 1";
 
-        var layer = new LayerModel(width, height, BitmapService.SwapRB(pixelData), layerName);
+        var layer = new LayerModel(width, height, BitmapService.SwapRB(pixelData), layerName, isEmpty);
         Layers.Add(layer);
         ActiveLayer = layer;
 

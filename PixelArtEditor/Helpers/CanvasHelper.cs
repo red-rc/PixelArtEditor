@@ -39,7 +39,7 @@ public static class CanvasHelper
 
     public static Color GetHighlightColor(Color color)
     {
-        var factor = color.A == 0 ? 0 : (Math.Max(Math.Max(color.R, color.G), color.B) <= 127 ? 255 : 0);
+        var factor = Math.Max(Math.Max(color.R, color.G), color.B) <= 127 ? 255 : 0;
 
         return new Color(
             65,

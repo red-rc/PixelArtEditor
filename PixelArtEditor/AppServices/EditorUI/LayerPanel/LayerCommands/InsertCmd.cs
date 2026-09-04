@@ -27,7 +27,8 @@ public class InsertCmd(LayerPanelVM vm, ListBox layerListBox) : LayerCmdBase(vm,
                 layers[i].Width, 
                 layers[i].Height,
                 (byte[])layers[i].PixelData.Clone(), 
-                Helpers.LayerNameHelper.GetLayerName(layerManager, layers[i].Name));
+                Helpers.LayerNameHelper.GetLayerName(layerManager, layers[i].Name),
+                layers[i].IsEmpty);
 
             layerManager.Layers.Insert(index + i, layer);
             newLayers.Add(layer);

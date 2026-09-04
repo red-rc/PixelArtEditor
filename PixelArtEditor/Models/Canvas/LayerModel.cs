@@ -5,10 +5,12 @@ using System.Runtime.CompilerServices;
 
 namespace PixelArtEditor.Models.Canvas;
 
-public class LayerModel(int width, int height, byte[] pixelData, string name) : INotifyPropertyChanged
+public class LayerModel(int width, int height, byte[] pixelData, string name, bool isEmpty) : INotifyPropertyChanged
 {
     public int Width { get; set; } = width;
     public int Height { get; set; } = height;
+
+    public bool IsEmpty { get; set; } = isEmpty;
 
     private byte[] _pixelData = pixelData;
     public byte[] PixelData

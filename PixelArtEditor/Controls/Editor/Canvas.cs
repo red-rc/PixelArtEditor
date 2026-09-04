@@ -195,7 +195,8 @@ public class Canvas : Control, ICanvasContext
             RenderCache[layer] = new LayerRenderCache
             {
                 RenderBitmapDirty = false,
-                PreviewDirty = true
+                PreviewDirty = true,
+                RenderRect = layer.IsEmpty ? null : new Rect(0, 0, layer.Width, layer.Height)
             };
 
             layer.PropertyChanged += OnLayerPropertyChanged;
@@ -215,7 +216,11 @@ public class Canvas : Control, ICanvasContext
         if (e.NewItems is not null)
             foreach (LayerModel layer in e.NewItems)
             {
-                RenderCache[layer] = new LayerRenderCache();
+                RenderCache[layer] = new LayerRenderCache()
+                {
+                    RenderRect = layer.IsEmpty ? null : new Rect(0, 0, layer.Width, layer.Height)
+                };
+
                 layer.PropertyChanged += OnLayerPropertyChanged;
             }
 
@@ -247,6 +252,18 @@ public class Canvas : Control, ICanvasContext
         InvalidateVisual();
     }
 
+    protected override void OnPointerPressed(PointerPressedEventArgs e)
+    {
+        base.OnPointerPressed(e);
+
+        if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed) return;
+
+        if (LayerManager.ActiveLayer is { IsVisible: false } or { IsLocked: true } || !CanEdit) return;
+
+        _isLeftPressed = true;
+        _currentTool.OnPointerPressed(this);
+    }
+
     protected override void OnPointerMoved(PointerEventArgs e)
     {
         base.OnPointerMoved(e);
@@ -259,18 +276,6 @@ public class Canvas : Control, ICanvasContext
         if (LayerManager.ActiveLayer is { IsVisible: false } or { IsLocked: true } || !CanEdit) return;
 
         _currentTool.OnPointerMoved(this);
-    }
-
-    protected override void OnPointerPressed(PointerPressedEventArgs e)
-    {
-        base.OnPointerPressed(e);
-
-        if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed) return;
-
-        if (LayerManager.ActiveLayer is { IsVisible: false } or { IsLocked: true } || !CanEdit) return;
-
-        _isLeftPressed = true;
-        _currentTool.OnPointerPressed(this);
     }
     
     protected override void OnPointerExited(PointerEventArgs e)
@@ -290,20 +295,33 @@ public class Canvas : Control, ICanvasContext
 
     private void DrawBitmap(DrawingContext context, LayerModel layer, double offsetX, double offsetY)
     {
-        if (layer.RenderBitmap is null) return;
+        if (layer.RenderBitmap is null || !RenderCache.TryGetValue(layer, out var cache) || cache.RenderRect is null) return;
 
-        var srcRect = new Rect(0, 0, Model.Width, Model.Height);
-        var destRect = new Rect(offsetX, offsetY, Model.Width * Scale, Model.Height * Scale);
+        var srcRect = new Rect(
+            cache.RenderRect.Value.X, 
+            cache.RenderRect.Value.Y, 
+            cache.RenderRect.Value.Width, 
+            cache.RenderRect.Value.Height);
 
-        if (!RenderCache.TryGetValue(layer, out var cache)) return;
+        var destRect = new Rect(
+            offsetX + cache.RenderRect.Value.X * Scale, 
+            offsetY + cache.RenderRect.Value.Y * Scale,
+            cache.RenderRect.Value.Width * Scale, 
+            cache.RenderRect.Value.Height * Scale);
 
         if (Scale < 1 && layer.PreviewBitmap is not null && cache.PreviewDirty == false)
         {
             var scaleX = (double)layer.PreviewBitmap.PixelSize.Width / layer.Width;
             var scaleY = (double)layer.PreviewBitmap.PixelSize.Height / layer.Height;
 
+            srcRect = new Rect(
+                srcRect.X * scaleX,
+                srcRect.Y * scaleY,
+                srcRect.Width * scaleX,
+                srcRect.Height * scaleY);
+
             using (context.PushOpacity(layer.Opacity))
-                context.DrawImage(layer.PreviewBitmap, new Rect(0, 0, Model.Width * scaleX, Model.Height * scaleY), destRect);
+                context.DrawImage(layer.PreviewBitmap, srcRect, destRect);
         }
         else
         {
@@ -361,7 +379,7 @@ public class Canvas : Control, ICanvasContext
 
         foreach (var layer in LayerManager.Layers.Reverse())
         {
-            if (!RenderCache.TryGetValue(layer, out var cache)) continue;
+            if (!RenderCache.TryGetValue(layer, out var cache) || !layer.IsVisible || cache.RenderRect is null) continue;
 
             if (cache.RenderBitmapDirty && cache.DirtyRect is Rect rect)
             {

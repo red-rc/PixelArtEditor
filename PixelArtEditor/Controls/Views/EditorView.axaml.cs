@@ -150,7 +150,8 @@ public partial class EditorView : UserControl
                 vm.Model.Width,
                 vm.Model.Height,
                 data,
-                pixelModel.Name ?? $"Layer {vm.LayerManager.Layers.Count + 1}"
+                pixelModel.Name ?? $"Layer {vm.LayerManager.Layers.Count + 1}",
+                false
             );
 
             vm.LayerManager.Layers.Insert(0, newLayer);
