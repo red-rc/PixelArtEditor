@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="clr-namespace:PixelArtEditor.Controls.Editor"
+    xmlns:ui="clr-namespace:PixelArtEditor.UI"
     xmlns:vm="clr-namespace:PixelArtEditor.ViewModels"
     d:DesignHeight="720"
     d:DesignWidth="1380"
@@ -105,12 +106,12 @@
                 PointerWheelChanged="CanvasPanel_OnPointerWheelChanged"
                 SizeChanged="CanvasPanel_OnSizeChanged"
                 Tag="Vertical">
-                <controls:Checkerboard
+                <ui:Checkerboard
                     Model="{Binding Model}"
                     Scale="{Binding Scale}"
                     MaxScale="{Binding MaxScale}"
                     Offset="{Binding Offset}" />
-                <controls:Canvas
+                <ui:Canvas
                     x:Name="CanvasControl"
                     Model="{Binding Model}"
                     PickedColor="{Binding PickedColor, Mode=TwoWay}"

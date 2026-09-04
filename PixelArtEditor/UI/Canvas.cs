@@ -18,13 +18,12 @@ using System.ComponentModel;
 using System.Linq;
 using System.Numerics;
 
-namespace PixelArtEditor.Controls.Editor;
+namespace PixelArtEditor.UI;
 
 public class Canvas : Control, ICanvasContext
 {
     private static ISettingsManager Settings => Services.Settings;
     private readonly Pen _gridPen = new(new SolidColorBrush(Settings.GridColor));
-    private bool _isLeftPressed;
 
     public static readonly StyledProperty<PixelModel> ModelProperty =
         AvaloniaProperty.Register<Canvas, PixelModel>(nameof(Model));
@@ -70,39 +69,29 @@ public class Canvas : Control, ICanvasContext
     public ToolType SelectedTool
     {
         get => GetValue(SelectedToolProperty);
-        set
-        {
-            SetValue(SelectedToolProperty, value);
-        }
+        set => SetValue(SelectedToolProperty, value);
     }
 
     private ITool _currentTool = new EmptyTool();
 
     public static bool CanEdit => Services.Navigation.GetViewModel() is EditorVM editorVM && !editorVM.IsTransforming;
 
-    private PixelPoint? _hoverPixel;
+    public static readonly StyledProperty<PixelPoint?> HoverPixelProperty =
+        AvaloniaProperty.Register<Canvas, PixelPoint?>(nameof(HoverPixel));
+
     public PixelPoint? HoverPixel
     {
-        get => _hoverPixel;
+        get => GetValue(HoverPixelProperty);
         set
         {
-            if (_hoverPixel == value) return;
-            _hoverPixel = value;
-            HoverPixelColor = null;
+            if (HoverPixel == value) return;
+            _hoverPixelColor = null;
+            SetValue(HoverPixelProperty, value);
             InvalidateVisual();
         }
     }
 
     private Color? _hoverPixelColor;
-    public Color? HoverPixelColor
-    {
-        get => _hoverPixelColor;
-        set
-        {
-            if (_hoverPixelColor == value) return;
-            _hoverPixelColor = value;
-        }
-    }
 
     public static readonly StyledProperty<Color> PickedColorProperty =
         AvaloniaProperty.Register<Canvas, Color>(nameof(PickedColor));
@@ -111,15 +100,6 @@ public class Canvas : Control, ICanvasContext
     {
         get => GetValue(PickedColorProperty);
         set => SetValue(PickedColorProperty, value);
-    }
-
-    public static readonly StyledProperty<PixelPoint?> CurrentPixelCoordProperty =
-    AvaloniaProperty.Register<Canvas, PixelPoint?>(nameof(CurrentPixelCoord));
-
-    public PixelPoint? CurrentPixelCoord
-    {
-        get => GetValue(CurrentPixelCoordProperty);
-        set => SetValue(CurrentPixelCoordProperty, value);
     }
 
     public LayerManager LayerManager { get; private set; } = null!;
@@ -247,7 +227,7 @@ public class Canvas : Control, ICanvasContext
         }
 
         if (e.PropertyName is nameof(LayerModel.PixelData) or nameof(LayerModel.Opacity))
-            HoverPixelColor = null;
+            _hoverPixelColor = null;
 
         InvalidateVisual();
     }
@@ -256,11 +236,9 @@ public class Canvas : Control, ICanvasContext
     {
         base.OnPointerPressed(e);
 
-        if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed) return;
+        if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed ||
+            LayerManager.ActiveLayer is { IsVisible: false } or { IsLocked: true } || !CanEdit) return;
 
-        if (LayerManager.ActiveLayer is { IsVisible: false } or { IsLocked: true } || !CanEdit) return;
-
-        _isLeftPressed = true;
         _currentTool.OnPointerPressed(this);
     }
 
@@ -268,12 +246,10 @@ public class Canvas : Control, ICanvasContext
     {
         base.OnPointerMoved(e);
 
-        CurrentPixelCoord = CanvasHelper.GetPixelCoord(this, this, e);
-        if (CurrentPixelCoord == HoverPixel) return;
-        HoverPixel = CurrentPixelCoord;
+        HoverPixel = CanvasHelper.GetPixelCoord(this, this, e);
 
-        if (!_isLeftPressed) return;
-        if (LayerManager.ActiveLayer is { IsVisible: false } or { IsLocked: true } || !CanEdit) return;
+        if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed
+            || LayerManager.ActiveLayer is { IsVisible: false } or { IsLocked: true } || !CanEdit) return;
 
         _currentTool.OnPointerMoved(this);
     }
@@ -281,7 +257,6 @@ public class Canvas : Control, ICanvasContext
     protected override void OnPointerExited(PointerEventArgs e)
     {
         base.OnPointerExited(e);
-        CurrentPixelCoord = null;
         HoverPixel = null;
     }
 
@@ -289,8 +264,6 @@ public class Canvas : Control, ICanvasContext
     {
         base.OnPointerReleased(e);
         _currentTool.OnPointerReleased(this);
-
-        if (e.InitialPressMouseButton == MouseButton.Left) _isLeftPressed = false;
     }
 
     private void DrawBitmap(DrawingContext context, LayerModel layer, double offsetX, double offsetY)
@@ -303,7 +276,7 @@ public class Canvas : Control, ICanvasContext
             cache.RenderRect.Value.Width, 
             cache.RenderRect.Value.Height);
 
-        var destRect = new Rect(
+        var dstRect = new Rect(
             offsetX + cache.RenderRect.Value.X * Scale, 
             offsetY + cache.RenderRect.Value.Y * Scale,
             cache.RenderRect.Value.Width * Scale, 
@@ -321,12 +294,12 @@ public class Canvas : Control, ICanvasContext
                 srcRect.Height * scaleY);
 
             using (context.PushOpacity(layer.Opacity))
-                context.DrawImage(layer.PreviewBitmap, srcRect, destRect);
+                context.DrawImage(layer.PreviewBitmap, srcRect, dstRect);
         }
         else
         {
             using (context.PushOpacity(layer.Opacity))
-                context.DrawImage(layer.RenderBitmap, srcRect, destRect);
+                context.DrawImage(layer.RenderBitmap, srcRect, dstRect);
         }
     }
 
@@ -339,9 +312,9 @@ public class Canvas : Control, ICanvasContext
             offsetY + HoverPixel.Value.Y * Scale,
             Scale, Scale);
 
-        HoverPixelColor ??= CanvasHelper.GetHighlightColor(BitmapService.GetCompositePixelColor(LayerManager.Layers, HoverPixel.Value));
+        _hoverPixelColor ??= CanvasHelper.GetHighlightColor(BitmapService.GetCompositePixelColor(LayerManager.Layers, HoverPixel.Value));
 
-        if (HoverPixelColor is Color color)
+        if (_hoverPixelColor is Color color)
             context.DrawRectangle(new SolidColorBrush(color), null, rect);
     }
 
@@ -379,7 +352,7 @@ public class Canvas : Control, ICanvasContext
 
         foreach (var layer in LayerManager.Layers.Reverse())
         {
-            if (!RenderCache.TryGetValue(layer, out var cache) || !layer.IsVisible || cache.RenderRect is null) continue;
+            if (!RenderCache.TryGetValue(layer, out var cache) || !layer.IsVisible || layer.IsEmpty) continue;
 
             if (cache.RenderBitmapDirty && cache.DirtyRect is Rect rect)
             {
@@ -396,8 +369,11 @@ public class Canvas : Control, ICanvasContext
                 layer.PreviewBitmap = null;
         }
 
+        context.DrawRectangle(new SolidColorBrush(Colors.Transparent), null, 
+            new Rect(offsetX, offsetY, Model.Width * Scale, Model.Height * Scale));
+
         foreach (var layer in LayerManager.Layers.Reverse())
-            if (layer.IsVisible)
+            if (layer.IsVisible && !layer.IsEmpty)
                 DrawBitmap(context, layer, offsetX, offsetY);
 
         if (Scale >= 1)

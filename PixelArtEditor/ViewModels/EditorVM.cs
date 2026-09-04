@@ -3,8 +3,8 @@ using Avalonia.Media;
 using PixelArtEditor.AppServices;
 using PixelArtEditor.AppServices.Canvas;
 using PixelArtEditor.AppServices.Tools;
-using PixelArtEditor.Controls.Editor;
 using PixelArtEditor.Models.Canvas;
+using PixelArtEditor.UI;
 using System;
 using System.Numerics;
 
@@ -133,7 +133,7 @@ public class EditorVM : ReactiveObject
 
         canvas.AttachLayerManager(LayerManager);
 
-        _canvas.WhenAnyValue(x => x.CurrentPixelCoord).Subscribe(coord =>
+        _canvas.WhenAnyValue(x => x.HoverPixel).Subscribe(coord =>
         {
             CoordinatesText = coord is null
                 ? "X: - Y: -"

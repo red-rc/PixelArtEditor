@@ -335,6 +335,8 @@
     <!-- ================= InstantToggleButton ================= -->
     <Style Selector="ui|InstantToggleButton.ToolBtn">
         <Setter Property="Background" Value="{DynamicResource UiColor}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource BackgroundPreesColor}" />
+        <Setter Property="BorderThickness" Value="0,0,0,1.25" />
 
         <Style Selector="^:pointerover /template/ ContentPresenter#PART_ContentPresenter">
             <Setter Property="Background" Value="{DynamicResource UiHoverColor}" />

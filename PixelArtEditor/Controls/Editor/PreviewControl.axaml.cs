@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using PixelArtEditor.Models;
+using PixelArtEditor.UI;
 
 namespace PixelArtEditor.Controls.Editor;
 

@@ -10,7 +10,6 @@ public interface ICanvasContext
 {
     PixelModel Model { get; }
     PixelPoint? HoverPixel { get; set; }
-    PixelPoint? CurrentPixelCoord { get; set; }
     Color PickedColor { get; set; }
 
     LayerManager LayerManager { get; }

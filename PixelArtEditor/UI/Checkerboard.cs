@@ -9,7 +9,7 @@ using PixelArtEditor.Models.Canvas;
 using System;
 using System.Numerics;
 
-namespace PixelArtEditor.Controls.Editor;
+namespace PixelArtEditor.UI;
 
 public class Checkerboard : Control
 {
