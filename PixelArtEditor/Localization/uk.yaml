@@ -1,173 +1,128 @@
-MenuCreateNew: Створити новий
-MenuOpen: Відкрити
-MenuImport: Імпортувати
-MenuSave: Зберегти
-MenuSaveAs: Зберегти як
-MenuExport: Експортувати
-MenuLastAutosave: Останнє автозбереження
-MenuExit: Вихід
-MenuUndo: Скасувати
-MenuRedo: Повторити
-MenuImageProperties: Властивості зображення
-MenuSettings: Налаштування
-MenuZoomIn: Збільшити
-MenuZoomOut: Зменшити
-MenuResetZoom: Скинути масштаб
-MenuResetLayout: Скинути макет
-MenuLightTheme: Світла тема
-MenuDarkTheme: Темна тема
-MenuCheckForUpdates: Перевірити оновлення
+CreateNew: Створити новий
+Open: Відкрити
+Import: Імпортувати
+Save: Зберегти
+SaveAs: Зберегти як
+Export: Експортувати
+LastAutosave: Останнє автозбереження
+Exit: Вихід
+Undo: Скасувати
+Redo: Повторити
+ImageProperties: Властивості зображення
+Settings: Налаштування
+ZoomIn: Збільшити
+ZoomOut: Зменшити
+ResetZoom: Скинути масштаб
+ResetLayout: Скинути компонування
+LightTheme: Світла тема
+DarkTheme: Темна тема
+CheckForUpdates: Перевірити наявність оновлень
 Report: Повідомити про проблему
-MenuContactUs: Зв'язатися з нами
-MenuAbout: Про програму
-CrWinTitle: Створити файл
-CrWinWidth: Ширина
-CrWinHeight: Висота
-CrWinFormat: Формат
-CrWinBackgroundColor: 'Колір тла'
-CrWinCancel: Скасувати
-CrWinCreate: Створити
-SetWinTitle: Налаштування
-SetWinGeneral: Загальні
-SetWinAppearance: Вигляд
-SetWinCancel: Скасувати
-SetWinReset: Скинути
-SetWinSave: Зберегти
-StartViewCreate: Створити
-StartViewOpen: Відкрити
-AprViewTheme: Тема
-AprViewAccentColor: Колір акценту
-GenViewLanguage: Мова
-GenViewGrid: Піксельна сітка
-GenViewGridMaxSize: Максимальний розмір піксельної сітки
-GenViewGridColor: Колір піксельної сітки
-GenViewEnableGrid: Увімкнути сітку
-GenViewAutosave: Автозбереження
-GenViewEnableAutosave: Увімкнути автозбереження
-GenViewAutosaveEvery: Автозбереження кожні
-GenViewSeconds: секунд
-ImgPropDpiXY: DPI (x, y)
-ImgPropColorMode: Колірний режим
-ImgPropBitDepth: Глибина кольору
-ImgPropAlphaFormat: Формат альфа-каналу
-ImgPropColorSpaces: Колірні простори
-ImgPropBigEndian: Big Endian
+ContactUs: Зв'язатися з нами
+About: Про програму
+Title: Створити файл
+Width: Ширина
+Height: Висота
+Format: Формат
+BackgroundColorStr: Колір фону
+Cancel: Скасувати
+Create: Створити
+General: Загальні
+Appearance: Зовнішній вигляд
+Reset: Скинути
+Theme: Тема
+AccentColor: Акцентний колір
+Language: Мова
+PixelGrid: Сітка пікселів
+PixelGridMaxSize: Максимальний розмір сітки пікселів
+PixelGridColor: Колір сітки пікселів
+EnablePixelGrid: Увімкнути сітку пікселів
+Autosave: Автозбереження
+EnableAutosave: Увімкнути автозбереження
+AutosaveEvery: Автозбереження кожні
+Seconds: секунди
+DpiXY: DPI (x, y)
+ColorMode: Колірний режим
+BitDepth: Розрядність
+AlphaFormat: Формат альфа-каналу
+ColorSpaces: Колірні простори
+BigEndian: Big Endian
 AppVersion: v1.0.0
-CrWinBasic: Основні
-CrWinAdvanced: Додатково
-ExportConfirm: Підтвердити
-ImgPropSize: Розмір
-Language: Українська
-TextBlockLayers: Шари
-TextBlockOpacity: 'Непрозорість:'
-TextBlock: '%'
+Basic: Базовий
+Advanced: Розширений
+Confirm: Підтвердити
+Size: Розмір
+Layers: Шари
+Opacity: 'Непрозорість:'
 ui: 'InstantToggleButtonHand: Рука'
-TextBlockCheckerboard: Шахова дошка
-TextBlockScaleCheckerboardWithCanvas: Масштабувати шахову дошку разом із полотном
-TextBlockCheckerboardScale: Масштаб шахової дошки
-PanelHorizontal: Горизонтально
-GridVertical: Вертикально
-controls: 'ToolbarVertical: Вертикально'
-PanelVertical: Вертикально
-TextBlockPixellerTheBest: Pixeller — найкращий графічний редактор
-RadioButtonRgb: RGB
-RadioButtonHsv: HSV
-TextBlock2: '#'
-TextBlockR: R
-TextBlockH: H
-TextBlockG: G
-TextBlockS: S
-TextBlockB: B
-TextBlockV: V
-TextBlockA: A
-RadioButtonRgb2: RGB
-RadioButtonHsv2: HSV
-TextBlock3: '#'
-TextBlockR2: R
-TextBlockH2: H
-TextBlockG2: G
-TextBlockS2: S
-TextBlockB2: B
-TextBlockV2: V
-ListBoxItemCanvas: Полотно
+Checkerboard: Шахівниця
+ScaleCheckerboardWithCanvas: Масштабувати шахівницю разом з полотном
+CheckerboardScale: Масштаб шахівниці
+PanelHorizontal: Горизонтальний
+GridVertical: Вертикальний
+controls: 'ToolbarVertical: Вертикальний'
+PixellerTheBest: Pixeller — найкращий графічний редактор
+Rgb: RGB
+Hsv: HSV
+R: R
+H: H
+G: G
+S: S
+B: B
+V: V
+A: A
+Canvas: Полотно
 ViewLocalotNotFound: Не знайдено
-InvalidBitmap: Невірний формат растрового зображення.
-InvalidPixelData: Розмір PixelData не збігається з розміром растрового зображення.
+InvalidBitmap: Недійсний формат растрового зображення.
+InvalidPixelData: Розмір PixelData не відповідає розміру растрового зображення.
 Layer: Шар
 SupportedFormats: Усі підтримувані зображення
 Image: Зображення
 ImportImage: Імпортувати зображення
-InvalidSVG: Невірний або порожній файл SVG.
-InvalidDDS: Непідтримуваний або невірний формат DDS.
-InvalidICO: Невірний файл .ico.
+InvalidSVG: Недійсний або порожній файл SVG.
+InvalidDDS: Непідтримуваний або недійсний формат DDS.
+InvalidICO: Недійсний файл .ico.
 UnsupportedImage: Непідтримуваний формат зображення.
-FileCorrupted: Файл пошкоджений або містить невірні дані.
+FileCorrupted: Файл пошкоджено або містить недійсний вміст.
 CantRead: Не вдалося прочитати інформацію про зображення.
-Export: Експортувати
 Untitled: без назви
 FailedExport: Не вдалося експортувати зображення.
 NotImplemented: ще не реалізовано.
 NoPalette: Індексований режим не має палітри.
-PfimFailed: Декодування Pfim не вдалося
+PfimFailed: Помилка декодування Pfim
 UnhandledPfim: Необроблений формат Pfim
 FileNotFound: Файл не знайдено
 EmptyConfig: Файл конфігурації порожній.
 Copy: Копіювати
 UnknownValue: Невідоме значення
-ForEnum: 'для переліку'
-TextBlockLayers2: 'Шари:'
-TextBlockOpacity2: 'Непрозорість:'
-TextBlock4: '%'
-TextBlockCheckerboard2: Шахова дошка
-TextBlockScaleCheckerboardWithCanvas2: Масштабувати шахову дошку разом із полотном
-TextBlockCheckerboardScale2: Масштаб шахової дошки
-TextBlockPixellerTheBest2: Pixeller - найкращий графічний редактор
-RadioButtonRgb3: RGB
-RadioButtonHsv3: HSV
-TextBlock5: '#'
-TextBlockR3: R
-TextBlockH3: H
-TextBlockG3: G
-TextBlockS3: S
-TextBlockB3: B
-TextBlockV3: V
-TextBlockA2: A
-RadioButtonRgb4: RGB
-RadioButtonHsv4: HSV
-TextBlock6: '#'
-TextBlockR4: R
-TextBlockH4: H
-TextBlockG4: G
-TextBlockS4: S
-TextBlockB4: B
-TextBlockV4: V
-ListBoxItemCanvas2: Полотно
-ToolBarPen: Олівець
-ToolBarColorPicker: Піпетка
-ToolBarFill: Заливка
-ToolBarEraser: Гумка
-ToolBarHand: Рука
-LayerAdd: Додати
-LayerDelete: Видалити
-LayerDuplicate: Дублювати
-LayerGroup: Групувати
-LayerTheTop: Перемістити нагору
-LayerTheBottom: Перемістити донизу
-HeaderFile: Файл
-HeaderEdit: Редагувати
-HeaderView: Вигляд
-HeaderHelp: Допомога
-MenuWindowStateF: Повноекранний режим
-MenuWindowStateW: Віконний режим
-Hide: Сховати
+ForEnum: для переліку
+Layers2: 'Шари:'
+Pen: Перо
+ColorPicker: Піпетка
+Fill: Заливка
+Eraser: Гумка
+Hand: Рука
+Add: Додати
+Delete: Видалити
+Duplicate: Дублювати
+Group: Групувати
+ToTheTop: Перемістити вгору
+ToTheBottom: Перемістити вниз
+File: Файл
+Edit: Редагувати
+View: Вигляд
+Help: Довідка
+FullScreen: Повноекранний режим
+Windowed: Віконний режим
+Hide: Приховати
 Show: Показати
 Lock: Заблокувати
 Unlock: Розблокувати
-TextBlockImage: Зображення
-TextBlockInterpolationMode: Режим інтерполяції
+InterpolationMode: Режим інтерполяції
 InterpolationNone: Немає
 InterpolationLow: Низька якість
 InterpolationMedium: Середня якість
 InterpolationHigh: Висока якість
 InterpolateOnlyWhen: Інтерполювати лише при зменшенні масштабу
-PreviewSquareError: Елемент попереднього перегляду має бути квадратом.
+PreviewSquareError: Елемент попереднього перегляду має бути квадратним.
+ApplicationCurrentNull: Application.Current є null. Переконайтеся, що Avalonia ініціалізовано.

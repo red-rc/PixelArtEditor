@@ -3,11 +3,13 @@ using PixelArtEditor.ViewModels;
 
 namespace PixelArtEditor.Windows;
 
-public partial class MessageDialogWindow : Window
+public partial class MessageDialogWindow : Window 
 {
     public MessageDialogWindow(string message, string name)
     {
         InitializeComponent();
         DataContext = new MessageDialogVM(this, message, name);
     }
+
+    public MessageDialogWindow() => InitializeComponent();
 }

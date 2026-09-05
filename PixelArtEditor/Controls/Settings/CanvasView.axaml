@@ -12,15 +12,14 @@
     mc:Ignorable="d">
   
     <UserControl.Styles>
-        <Style Selector="TextBlock">
-            <Setter Property="FontSize" Value="16" />
+        <Style Selector="TextBlock.Label">
+            <Setter Property="FontSize" Value="15" />
             <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
         <Style Selector="TextBlock.Heading">
             <Setter Property="FontSize" Value="20" />
         </Style>
         <Style Selector="NumericUpDown">
-            <Setter Property="FontSize" Value="14" />
             <Setter Property="ShowButtonSpinner" Value="False" />
             <Setter Property="Minimum" Value="0" />
             <Setter Property="Maximum" Value="8192" />
@@ -38,14 +37,14 @@
         <StackPanel Spacing="5">
             <TextBlock
                 Classes="Heading"
-                Text="{DynamicResource GenViewGrid}" />
+                Text="{DynamicResource PixelGrid}" />
             <Separator
                 Height="1"
                 Margin="0.5"
                 Background="Gray"
                 Foreground="{DynamicResource ForegroundColor}" />
             <StackPanel Orientation="Horizontal" Spacing="10">
-                <TextBlock Text="{DynamicResource GenViewGridMaxSize}" />
+                <TextBlock Classes="Label" Text="{DynamicResource PixelGridMaxSize}" />
                 <NumericUpDown
                     Width="50"
                     Maximum="8192"
@@ -53,11 +52,11 @@
                     Value="{Binding GridMaxSize, FallbackValue=0}" />
             </StackPanel>
             <StackPanel Orientation="Horizontal" Spacing="10">
-                <TextBlock Text="{DynamicResource GenViewGridColor}" />
+                <TextBlock Classes="Label" Text="{DynamicResource PixelGridColor}" />
                 <ColorPicker Width="100" Color="{Binding GridColor, Mode=TwoWay}" />
             </StackPanel>
             <StackPanel Orientation="Horizontal" Spacing="10">
-                <TextBlock Text="{DynamicResource GenViewEnableGrid}" />
+                <TextBlock Classes="Label" Text="{DynamicResource EnablePixelGrid}" />
                 <CheckBox IsChecked="{Binding EnableGrid}" />
             </StackPanel>
         </StackPanel>
@@ -65,18 +64,18 @@
             <TextBlock
                 Margin="0,10,0,0"
                 Classes="Heading"
-                Text="{DynamicResource TextBlockCheckerboard2}" />
+                Text="{DynamicResource Checkerboard}" />
             <Separator
                 Height="1"
                 Margin="0.5"
                 Background="Gray"
                 Foreground="{DynamicResource ForegroundColor}" />
             <StackPanel Orientation="Horizontal" Spacing="10">
-                <TextBlock Text="{DynamicResource TextBlockScaleCheckerboardWithCanvas2}" />
+                <TextBlock Classes="Label" Text="{DynamicResource ScaleCheckerboardWithCanvas}" />
                 <CheckBox IsChecked="{Binding ScaleCheckerboardWithCanvas}" />
             </StackPanel>
             <StackPanel Orientation="Horizontal" Spacing="10">
-                <TextBlock Text="{DynamicResource TextBlockCheckerboardScale2}" />
+                <TextBlock Classes="Label" Text="{DynamicResource CheckerboardScale}" />
                 <ComboBox
                     Width="75"
                     IsEnabled="{Binding ScaleCheckerboardWithCanvas}"
@@ -94,14 +93,14 @@
             <TextBlock
                 Margin="0,10,0,0"
                 Classes="Heading"
-                Text="{DynamicResource TextBlockImage}" />
+                Text="{DynamicResource Image}" />
             <Separator
                 Height="1"
                 Margin="0.5"
                 Background="Gray"
                 Foreground="{DynamicResource ForegroundColor}" />
             <StackPanel Orientation="Horizontal" Spacing="10">
-                <TextBlock Text="{DynamicResource TextBlockInterpolationMode}" />
+                <TextBlock Classes="Label" Text="{DynamicResource InterpolationMode}" />
                 <ComboBox
                     Width="150"
                     ItemsSource="{Binding InterpolationOptions}"
@@ -114,7 +113,7 @@
                 </ComboBox>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Spacing="10">
-                <TextBlock Text="{DynamicResource InterpolateOnlyWhen}" />
+                <TextBlock Classes="Label" Text="{DynamicResource InterpolateOnlyWhen}" />
                 <CheckBox IsChecked="{Binding InterpolateOnlyWhenScalingDown}" />
             </StackPanel>
         </StackPanel>

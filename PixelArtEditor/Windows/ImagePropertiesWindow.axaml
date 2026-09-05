@@ -21,12 +21,12 @@
 
     <Window.Styles>
         <Style Selector="TextBlock">
-            <Setter Property="FontSize" Value="16" />
+            <Setter Property="FontSize" Value="15" />
             <Setter Property="FontFamily" Value="{DynamicResource AppFont}" />
         </Style>
         <Style Selector="TextBlock.Header">
             <Setter Property="HorizontalAlignment" Value="Center" />
-            <Setter Property="FontSize" Value="16" />
+            <Setter Property="FontSize" Value="18" />
             <Setter Property="FontWeight" Value="Bold" />
             <Setter Property="FontFamily" Value="{DynamicResource HeadingFont}" />
             <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />
@@ -43,7 +43,8 @@
         <Grid RowDefinitions="*,Auto" Grid.Row="1">
             <Grid
                 Grid.Row="0"
-                Margin="20,30,20,0"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center"
                 ColumnDefinitions="250,Auto,10,Auto"
                 DockPanel.Dock="Top">
                 <editor:PreviewControl
@@ -56,11 +57,11 @@
                      FixedTileSize="20" />
 
                 <StackPanel Grid.Column="1" Spacing="10">
-                    <TextBlock Classes="Header" Text="{DynamicResource ImgPropSize}" />
+                    <TextBlock Classes="Header" Text="{DynamicResource Size}" />
                     <controls:SizePanel DataContext="{Binding ImageProperties}" />
                 </StackPanel>
                 <StackPanel Grid.Column="3" Spacing="10">
-                    <TextBlock Classes="Header" Text="{DynamicResource CrWinAdvanced}" />
+                    <TextBlock Classes="Header" Text="{DynamicResource Advanced}" />
                     <controls:PropertiesPanel DataContext="{Binding ImageProperties}" />
                 </StackPanel>
             </Grid>
@@ -74,33 +75,36 @@
                 DockPanel.Dock="Bottom">
                 <Button
                     Grid.Column="0"
+                    Height="50"
                     Margin="0,25,10,25"
-                    Padding="30,0,30,0"
+                    Padding="30,0"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Stretch"
                     Classes="CancelBtn"
                     Command="{Binding CancelCommand}"
-                    Content="{DynamicResource SetWinCancel}"
+                    Content="{DynamicResource Cancel}"
                     FontSize="20" />
                 <Button
                     Grid.Column="1"
+                    Height="50"
                     Margin="0,25,10,25"
-                    Padding="30,0,30,0"
+                    Padding="30,0"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Stretch"
                     Classes="ResetBtn"
                     Command="{Binding ResetCommand}"
-                    Content="{DynamicResource SetWinReset}"
+                    Content="{DynamicResource Reset}"
                     FontSize="20" />
                 <Button
                     Grid.Column="2"
+                    Height="50"
                     Margin="0,25,25,25"
-                    Padding="30,0,30,0"
+                    Padding="30,0"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Stretch"
                     Classes="ConfirmBtn"
                     Command="{Binding SaveCommand}"
-                    Content="{DynamicResource SetWinSave}"
+                    Content="{DynamicResource Save}"
                     FontSize="20" />
             </Grid>
         </Grid>

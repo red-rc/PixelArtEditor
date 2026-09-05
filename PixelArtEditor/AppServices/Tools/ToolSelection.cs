@@ -11,12 +11,11 @@ public class ToolSelection : ReactiveObject
         set
         {
             this.RaiseAndSetIfChanged(ref _selectedTool, value);
-
-            foreach (var property in GetType().GetProperties())
-            {
-                if (property.Name != nameof(SelectedTool))
-                    this.RaisePropertyChanged(property.Name);
-            }
+            this.RaisePropertyChanged(nameof(IsPenEnabled));
+            this.RaisePropertyChanged(nameof(IsColorPickerEnabled));
+            this.RaisePropertyChanged(nameof(IsFillEnabled));
+            this.RaisePropertyChanged(nameof(IsEraserEnabled));
+            this.RaisePropertyChanged(nameof(IsHandEnabled));
         }
     }
 

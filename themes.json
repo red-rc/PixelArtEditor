@@ -24,20 +24,279 @@
       },
       "MenuFlyoutItemBackground": "Transparent",
       "AppFont": {
-        "Name": "avares://PixelArtEditor/Assets/Fonts/OpenSans-Regular.ttf",
+        "Name": "Manrope Medium",
         "FamilyNames": [
-          "avares://PixelArtEditor/Assets/Fonts/OpenSans-Regular.ttf"
+          "Manrope Medium"
         ],
-        "Key": null,
-        "FamilyTypefaces": []
+        "Key": {
+          "Source": "avares://PixelArtEditor/Assets/Fonts/Manrope-Medium.ttf",
+          "BaseUri": null
+        },
+        "FamilyTypefaces": [
+          {
+            "Style": 0,
+            "Weight": 500,
+            "Stretch": 5,
+            "GlyphTypeface": {
+              "FamilyName": "Manrope Medium",
+              "TypographicFamilyName": "Manrope",
+              "FamilyNames": {
+                "en-US": "Manrope Medium"
+              },
+              "FaceNames": {
+                "en-US": "Regular"
+              },
+              "CharacterToGlyphMap": {},
+              "Metrics": {
+                "DesignEmHeight": 2000,
+                "IsFixedPitch": false,
+                "Ascent": -2132,
+                "Descent": 600,
+                "LineGap": 0,
+                "LineSpacing": 2732,
+                "UnderlinePosition": 100,
+                "UnderlineThickness": 50,
+                "StrikethroughPosition": -648,
+                "StrikethroughThickness": 50
+              },
+              "Weight": 500,
+              "Style": 0,
+              "Stretch": 5,
+              "FontSimulations": 0,
+              "GlyphCount": 740,
+              "SupportedFeatures": [
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {}
+              ],
+              "SupportedUnicodeRange": {},
+              "CodePageCoverage": 536871327,
+              "PlatformTypeface": {
+                "SKTypeface": {
+                  "IsEmpty": false,
+                  "FamilyName": "Manrope",
+                  "FontStyle": {
+                    "Weight": 500,
+                    "Width": 5,
+                    "Slant": 0,
+                    "Handle": {
+                      "value": 2409829739888
+                    }
+                  },
+                  "FontWeight": 500,
+                  "FontWidth": 5,
+                  "FontSlant": 0,
+                  "IsBold": false,
+                  "IsItalic": false,
+                  "IsFixedPitch": false,
+                  "UnitsPerEm": 2000,
+                  "GlyphCount": 740,
+                  "PostScriptName": "Manrope-Medium",
+                  "TableCount": 15,
+                  "HasGetKerningPairAdjustments": false,
+                  "VariationDesignParameterCount": 0,
+                  "VariationDesignParameters": [],
+                  "VariationDesignPositionCount": 0,
+                  "VariationDesignPosition": [],
+                  "Handle": {
+                    "value": 2409788320128
+                  }
+                },
+                "FontSimulations": 0,
+                "FamilyName": "Manrope",
+                "Weight": 500,
+                "Style": 0,
+                "Stretch": 5
+              },
+              "TextShaperTypeface": {
+                "HBFace": {
+                  "Index": 0,
+                  "UnitsPerEm": 2000,
+                  "GlyphCount": 740,
+                  "Tables": [],
+                  "IsImmutable": true,
+                  "HasVariationData": false,
+                  "VariationAxisCount": 0,
+                  "VariationAxisInfos": [],
+                  "NamedInstanceCount": 0,
+                  "HasPalettes": false,
+                  "PaletteCount": 0,
+                  "HasColorLayers": false,
+                  "HasColorPng": false,
+                  "HasColorSvg": false,
+                  "Handle": {
+                    "value": 2409793132672
+                  }
+                },
+                "HBFont": {
+                  "Parent": null,
+                  "OpenTypeMetrics": {},
+                  "SupportedShapers": [
+                    "ot"
+                  ],
+                  "VariationCoordsNormalized": [],
+                  "Handle": {
+                    "value": 2409793252752
+                  }
+                }
+              }
+            }
+          }
+        ]
       },
       "HeadingFont": {
-        "Name": "avares://PixelArtEditor/Assets/Fonts/Poppins-SemiBold.ttf",
+        "Name": "Montserrat SemiBold",
         "FamilyNames": [
-          "avares://PixelArtEditor/Assets/Fonts/Poppins-SemiBold.ttf"
+          "Montserrat SemiBold"
         ],
-        "Key": null,
-        "FamilyTypefaces": []
+        "Key": {
+          "Source": "avares://PixelArtEditor/Assets/Fonts/Montserrat-SemiBold.ttf",
+          "BaseUri": null
+        },
+        "FamilyTypefaces": [
+          {
+            "Style": 0,
+            "Weight": 600,
+            "Stretch": 5,
+            "GlyphTypeface": {
+              "FamilyName": "Montserrat SemiBold",
+              "TypographicFamilyName": "Montserrat",
+              "FamilyNames": {
+                "en-US": "Montserrat SemiBold"
+              },
+              "FaceNames": {
+                "en-US": "Regular"
+              },
+              "CharacterToGlyphMap": {},
+              "Metrics": {
+                "DesignEmHeight": 1000,
+                "IsFixedPitch": false,
+                "Ascent": -968,
+                "Descent": 251,
+                "LineGap": 0,
+                "LineSpacing": 1219,
+                "UnderlinePosition": 100,
+                "UnderlineThickness": 50,
+                "StrikethroughPosition": -320,
+                "StrikethroughThickness": 50
+              },
+              "Weight": 600,
+              "Style": 0,
+              "Stretch": 5,
+              "FontSimulations": 0,
+              "GlyphCount": 2658,
+              "SupportedFeatures": [
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {}
+              ],
+              "SupportedUnicodeRange": {},
+              "CodePageCoverage": 536871319,
+              "PlatformTypeface": {
+                "SKTypeface": {
+                  "IsEmpty": false,
+                  "FamilyName": "Montserrat",
+                  "FontStyle": {
+                    "Weight": 600,
+                    "Width": 5,
+                    "Slant": 0,
+                    "Handle": {
+                      "value": 2409793458400
+                    }
+                  },
+                  "FontWeight": 600,
+                  "FontWidth": 5,
+                  "FontSlant": 0,
+                  "IsBold": true,
+                  "IsItalic": false,
+                  "IsFixedPitch": false,
+                  "UnitsPerEm": 1000,
+                  "GlyphCount": 2658,
+                  "PostScriptName": "Montserrat-SemiBold",
+                  "TableCount": 18,
+                  "HasGetKerningPairAdjustments": false,
+                  "VariationDesignParameterCount": 0,
+                  "VariationDesignParameters": [],
+                  "VariationDesignPositionCount": 0,
+                  "VariationDesignPosition": [],
+                  "Handle": {
+                    "value": 2409788323040
+                  }
+                },
+                "FontSimulations": 0,
+                "FamilyName": "Montserrat",
+                "Weight": 600,
+                "Style": 0,
+                "Stretch": 5
+              },
+              "TextShaperTypeface": {
+                "HBFace": {
+                  "Index": 0,
+                  "UnitsPerEm": 1000,
+                  "GlyphCount": 2658,
+                  "Tables": [],
+                  "IsImmutable": true,
+                  "HasVariationData": false,
+                  "VariationAxisCount": 0,
+                  "VariationAxisInfos": [],
+                  "NamedInstanceCount": 0,
+                  "HasPalettes": false,
+                  "PaletteCount": 0,
+                  "HasColorLayers": false,
+                  "HasColorPng": false,
+                  "HasColorSvg": false,
+                  "Handle": {
+                    "value": 2409793133568
+                  }
+                },
+                "HBFont": {
+                  "Parent": null,
+                  "OpenTypeMetrics": {},
+                  "SupportedShapers": [
+                    "ot"
+                  ],
+                  "VariationCoordsNormalized": [],
+                  "Handle": {
+                    "value": 2409793254288
+                  }
+                }
+              }
+            }
+          }
+        ]
       },
       "ForegroundColor": {
         "A": 255,
@@ -730,20 +989,279 @@
       },
       "MenuFlyoutItemBackground": "Transparent",
       "AppFont": {
-        "Name": "avares://PixelArtEditor/Assets/Fonts/OpenSans-Regular.ttf",
+        "Name": "Manrope Medium",
         "FamilyNames": [
-          "avares://PixelArtEditor/Assets/Fonts/OpenSans-Regular.ttf"
+          "Manrope Medium"
         ],
-        "Key": null,
-        "FamilyTypefaces": []
+        "Key": {
+          "Source": "avares://PixelArtEditor/Assets/Fonts/Manrope-Medium.ttf",
+          "BaseUri": null
+        },
+        "FamilyTypefaces": [
+          {
+            "Style": 0,
+            "Weight": 500,
+            "Stretch": 5,
+            "GlyphTypeface": {
+              "FamilyName": "Manrope Medium",
+              "TypographicFamilyName": "Manrope",
+              "FamilyNames": {
+                "en-US": "Manrope Medium"
+              },
+              "FaceNames": {
+                "en-US": "Regular"
+              },
+              "CharacterToGlyphMap": {},
+              "Metrics": {
+                "DesignEmHeight": 2000,
+                "IsFixedPitch": false,
+                "Ascent": -2132,
+                "Descent": 600,
+                "LineGap": 0,
+                "LineSpacing": 2732,
+                "UnderlinePosition": 100,
+                "UnderlineThickness": 50,
+                "StrikethroughPosition": -648,
+                "StrikethroughThickness": 50
+              },
+              "Weight": 500,
+              "Style": 0,
+              "Stretch": 5,
+              "FontSimulations": 0,
+              "GlyphCount": 740,
+              "SupportedFeatures": [
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {}
+              ],
+              "SupportedUnicodeRange": {},
+              "CodePageCoverage": 536871327,
+              "PlatformTypeface": {
+                "SKTypeface": {
+                  "IsEmpty": false,
+                  "FamilyName": "Manrope",
+                  "FontStyle": {
+                    "Weight": 500,
+                    "Width": 5,
+                    "Slant": 0,
+                    "Handle": {
+                      "value": 2409831512944
+                    }
+                  },
+                  "FontWeight": 500,
+                  "FontWidth": 5,
+                  "FontSlant": 0,
+                  "IsBold": false,
+                  "IsItalic": false,
+                  "IsFixedPitch": false,
+                  "UnitsPerEm": 2000,
+                  "GlyphCount": 740,
+                  "PostScriptName": "Manrope-Medium",
+                  "TableCount": 15,
+                  "HasGetKerningPairAdjustments": false,
+                  "VariationDesignParameterCount": 0,
+                  "VariationDesignParameters": [],
+                  "VariationDesignPositionCount": 0,
+                  "VariationDesignPosition": [],
+                  "Handle": {
+                    "value": 2409788320128
+                  }
+                },
+                "FontSimulations": 0,
+                "FamilyName": "Manrope",
+                "Weight": 500,
+                "Style": 0,
+                "Stretch": 5
+              },
+              "TextShaperTypeface": {
+                "HBFace": {
+                  "Index": 0,
+                  "UnitsPerEm": 2000,
+                  "GlyphCount": 740,
+                  "Tables": [],
+                  "IsImmutable": true,
+                  "HasVariationData": false,
+                  "VariationAxisCount": 0,
+                  "VariationAxisInfos": [],
+                  "NamedInstanceCount": 0,
+                  "HasPalettes": false,
+                  "PaletteCount": 0,
+                  "HasColorLayers": false,
+                  "HasColorPng": false,
+                  "HasColorSvg": false,
+                  "Handle": {
+                    "value": 2409793132672
+                  }
+                },
+                "HBFont": {
+                  "Parent": null,
+                  "OpenTypeMetrics": {},
+                  "SupportedShapers": [
+                    "ot"
+                  ],
+                  "VariationCoordsNormalized": [],
+                  "Handle": {
+                    "value": 2409793252752
+                  }
+                }
+              }
+            }
+          }
+        ]
       },
       "HeadingFont": {
-        "Name": "avares://PixelArtEditor/Assets/Fonts/Poppins-SemiBold.ttf",
+        "Name": "Montserrat SemiBold",
         "FamilyNames": [
-          "avares://PixelArtEditor/Assets/Fonts/Poppins-SemiBold.ttf"
+          "Montserrat SemiBold"
         ],
-        "Key": null,
-        "FamilyTypefaces": []
+        "Key": {
+          "Source": "avares://PixelArtEditor/Assets/Fonts/Montserrat-SemiBold.ttf",
+          "BaseUri": null
+        },
+        "FamilyTypefaces": [
+          {
+            "Style": 0,
+            "Weight": 600,
+            "Stretch": 5,
+            "GlyphTypeface": {
+              "FamilyName": "Montserrat SemiBold",
+              "TypographicFamilyName": "Montserrat",
+              "FamilyNames": {
+                "en-US": "Montserrat SemiBold"
+              },
+              "FaceNames": {
+                "en-US": "Regular"
+              },
+              "CharacterToGlyphMap": {},
+              "Metrics": {
+                "DesignEmHeight": 1000,
+                "IsFixedPitch": false,
+                "Ascent": -968,
+                "Descent": 251,
+                "LineGap": 0,
+                "LineSpacing": 1219,
+                "UnderlinePosition": 100,
+                "UnderlineThickness": 50,
+                "StrikethroughPosition": -320,
+                "StrikethroughThickness": 50
+              },
+              "Weight": 600,
+              "Style": 0,
+              "Stretch": 5,
+              "FontSimulations": 0,
+              "GlyphCount": 2658,
+              "SupportedFeatures": [
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {}
+              ],
+              "SupportedUnicodeRange": {},
+              "CodePageCoverage": 536871319,
+              "PlatformTypeface": {
+                "SKTypeface": {
+                  "IsEmpty": false,
+                  "FamilyName": "Montserrat",
+                  "FontStyle": {
+                    "Weight": 600,
+                    "Width": 5,
+                    "Slant": 0,
+                    "Handle": {
+                      "value": 2409831512480
+                    }
+                  },
+                  "FontWeight": 600,
+                  "FontWidth": 5,
+                  "FontSlant": 0,
+                  "IsBold": true,
+                  "IsItalic": false,
+                  "IsFixedPitch": false,
+                  "UnitsPerEm": 1000,
+                  "GlyphCount": 2658,
+                  "PostScriptName": "Montserrat-SemiBold",
+                  "TableCount": 18,
+                  "HasGetKerningPairAdjustments": false,
+                  "VariationDesignParameterCount": 0,
+                  "VariationDesignParameters": [],
+                  "VariationDesignPositionCount": 0,
+                  "VariationDesignPosition": [],
+                  "Handle": {
+                    "value": 2409788323040
+                  }
+                },
+                "FontSimulations": 0,
+                "FamilyName": "Montserrat",
+                "Weight": 600,
+                "Style": 0,
+                "Stretch": 5
+              },
+              "TextShaperTypeface": {
+                "HBFace": {
+                  "Index": 0,
+                  "UnitsPerEm": 1000,
+                  "GlyphCount": 2658,
+                  "Tables": [],
+                  "IsImmutable": true,
+                  "HasVariationData": false,
+                  "VariationAxisCount": 0,
+                  "VariationAxisInfos": [],
+                  "NamedInstanceCount": 0,
+                  "HasPalettes": false,
+                  "PaletteCount": 0,
+                  "HasColorLayers": false,
+                  "HasColorPng": false,
+                  "HasColorSvg": false,
+                  "Handle": {
+                    "value": 2409793133568
+                  }
+                },
+                "HBFont": {
+                  "Parent": null,
+                  "OpenTypeMetrics": {},
+                  "SupportedShapers": [
+                    "ot"
+                  ],
+                  "VariationCoordsNormalized": [],
+                  "Handle": {
+                    "value": 2409793254288
+                  }
+                }
+              }
+            }
+          }
+        ]
       },
       "ForegroundColor": {
         "A": 255,
@@ -1436,20 +1954,279 @@
       },
       "MenuFlyoutItemBackground": "Transparent",
       "AppFont": {
-        "Name": "avares://PixelArtEditor/Assets/Fonts/OpenSans-Regular.ttf",
+        "Name": "Manrope Medium",
         "FamilyNames": [
-          "avares://PixelArtEditor/Assets/Fonts/OpenSans-Regular.ttf"
+          "Manrope Medium"
         ],
-        "Key": null,
-        "FamilyTypefaces": []
+        "Key": {
+          "Source": "avares://PixelArtEditor/Assets/Fonts/Manrope-Medium.ttf",
+          "BaseUri": null
+        },
+        "FamilyTypefaces": [
+          {
+            "Style": 0,
+            "Weight": 500,
+            "Stretch": 5,
+            "GlyphTypeface": {
+              "FamilyName": "Manrope Medium",
+              "TypographicFamilyName": "Manrope",
+              "FamilyNames": {
+                "en-US": "Manrope Medium"
+              },
+              "FaceNames": {
+                "en-US": "Regular"
+              },
+              "CharacterToGlyphMap": {},
+              "Metrics": {
+                "DesignEmHeight": 2000,
+                "IsFixedPitch": false,
+                "Ascent": -2132,
+                "Descent": 600,
+                "LineGap": 0,
+                "LineSpacing": 2732,
+                "UnderlinePosition": 100,
+                "UnderlineThickness": 50,
+                "StrikethroughPosition": -648,
+                "StrikethroughThickness": 50
+              },
+              "Weight": 500,
+              "Style": 0,
+              "Stretch": 5,
+              "FontSimulations": 0,
+              "GlyphCount": 740,
+              "SupportedFeatures": [
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {}
+              ],
+              "SupportedUnicodeRange": {},
+              "CodePageCoverage": 536871327,
+              "PlatformTypeface": {
+                "SKTypeface": {
+                  "IsEmpty": false,
+                  "FamilyName": "Manrope",
+                  "FontStyle": {
+                    "Weight": 500,
+                    "Width": 5,
+                    "Slant": 0,
+                    "Handle": {
+                      "value": 2409793157776
+                    }
+                  },
+                  "FontWeight": 500,
+                  "FontWidth": 5,
+                  "FontSlant": 0,
+                  "IsBold": false,
+                  "IsItalic": false,
+                  "IsFixedPitch": false,
+                  "UnitsPerEm": 2000,
+                  "GlyphCount": 740,
+                  "PostScriptName": "Manrope-Medium",
+                  "TableCount": 15,
+                  "HasGetKerningPairAdjustments": false,
+                  "VariationDesignParameterCount": 0,
+                  "VariationDesignParameters": [],
+                  "VariationDesignPositionCount": 0,
+                  "VariationDesignPosition": [],
+                  "Handle": {
+                    "value": 2409788320128
+                  }
+                },
+                "FontSimulations": 0,
+                "FamilyName": "Manrope",
+                "Weight": 500,
+                "Style": 0,
+                "Stretch": 5
+              },
+              "TextShaperTypeface": {
+                "HBFace": {
+                  "Index": 0,
+                  "UnitsPerEm": 2000,
+                  "GlyphCount": 740,
+                  "Tables": [],
+                  "IsImmutable": true,
+                  "HasVariationData": false,
+                  "VariationAxisCount": 0,
+                  "VariationAxisInfos": [],
+                  "NamedInstanceCount": 0,
+                  "HasPalettes": false,
+                  "PaletteCount": 0,
+                  "HasColorLayers": false,
+                  "HasColorPng": false,
+                  "HasColorSvg": false,
+                  "Handle": {
+                    "value": 2409793132672
+                  }
+                },
+                "HBFont": {
+                  "Parent": null,
+                  "OpenTypeMetrics": {},
+                  "SupportedShapers": [
+                    "ot"
+                  ],
+                  "VariationCoordsNormalized": [],
+                  "Handle": {
+                    "value": 2409793252752
+                  }
+                }
+              }
+            }
+          }
+        ]
       },
       "HeadingFont": {
-        "Name": "avares://PixelArtEditor/Assets/Fonts/Poppins-SemiBold.ttf",
+        "Name": "Montserrat SemiBold",
         "FamilyNames": [
-          "avares://PixelArtEditor/Assets/Fonts/Poppins-SemiBold.ttf"
+          "Montserrat SemiBold"
         ],
-        "Key": null,
-        "FamilyTypefaces": []
+        "Key": {
+          "Source": "avares://PixelArtEditor/Assets/Fonts/Montserrat-SemiBold.ttf",
+          "BaseUri": null
+        },
+        "FamilyTypefaces": [
+          {
+            "Style": 0,
+            "Weight": 600,
+            "Stretch": 5,
+            "GlyphTypeface": {
+              "FamilyName": "Montserrat SemiBold",
+              "TypographicFamilyName": "Montserrat",
+              "FamilyNames": {
+                "en-US": "Montserrat SemiBold"
+              },
+              "FaceNames": {
+                "en-US": "Regular"
+              },
+              "CharacterToGlyphMap": {},
+              "Metrics": {
+                "DesignEmHeight": 1000,
+                "IsFixedPitch": false,
+                "Ascent": -968,
+                "Descent": 251,
+                "LineGap": 0,
+                "LineSpacing": 1219,
+                "UnderlinePosition": 100,
+                "UnderlineThickness": 50,
+                "StrikethroughPosition": -320,
+                "StrikethroughThickness": 50
+              },
+              "Weight": 600,
+              "Style": 0,
+              "Stretch": 5,
+              "FontSimulations": 0,
+              "GlyphCount": 2658,
+              "SupportedFeatures": [
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {}
+              ],
+              "SupportedUnicodeRange": {},
+              "CodePageCoverage": 536871319,
+              "PlatformTypeface": {
+                "SKTypeface": {
+                  "IsEmpty": false,
+                  "FamilyName": "Montserrat",
+                  "FontStyle": {
+                    "Weight": 600,
+                    "Width": 5,
+                    "Slant": 0,
+                    "Handle": {
+                      "value": 2409793157856
+                    }
+                  },
+                  "FontWeight": 600,
+                  "FontWidth": 5,
+                  "FontSlant": 0,
+                  "IsBold": true,
+                  "IsItalic": false,
+                  "IsFixedPitch": false,
+                  "UnitsPerEm": 1000,
+                  "GlyphCount": 2658,
+                  "PostScriptName": "Montserrat-SemiBold",
+                  "TableCount": 18,
+                  "HasGetKerningPairAdjustments": false,
+                  "VariationDesignParameterCount": 0,
+                  "VariationDesignParameters": [],
+                  "VariationDesignPositionCount": 0,
+                  "VariationDesignPosition": [],
+                  "Handle": {
+                    "value": 2409788323040
+                  }
+                },
+                "FontSimulations": 0,
+                "FamilyName": "Montserrat",
+                "Weight": 600,
+                "Style": 0,
+                "Stretch": 5
+              },
+              "TextShaperTypeface": {
+                "HBFace": {
+                  "Index": 0,
+                  "UnitsPerEm": 1000,
+                  "GlyphCount": 2658,
+                  "Tables": [],
+                  "IsImmutable": true,
+                  "HasVariationData": false,
+                  "VariationAxisCount": 0,
+                  "VariationAxisInfos": [],
+                  "NamedInstanceCount": 0,
+                  "HasPalettes": false,
+                  "PaletteCount": 0,
+                  "HasColorLayers": false,
+                  "HasColorPng": false,
+                  "HasColorSvg": false,
+                  "Handle": {
+                    "value": 2409793133568
+                  }
+                },
+                "HBFont": {
+                  "Parent": null,
+                  "OpenTypeMetrics": {},
+                  "SupportedShapers": [
+                    "ot"
+                  ],
+                  "VariationCoordsNormalized": [],
+                  "Handle": {
+                    "value": 2409793254288
+                  }
+                }
+              }
+            }
+          }
+        ]
       },
       "ForegroundColor": {
         "A": 255,
@@ -2142,20 +2919,279 @@
       },
       "MenuFlyoutItemBackground": "Transparent",
       "AppFont": {
-        "Name": "avares://PixelArtEditor/Assets/Fonts/OpenSans-Regular.ttf",
+        "Name": "Manrope Medium",
         "FamilyNames": [
-          "avares://PixelArtEditor/Assets/Fonts/OpenSans-Regular.ttf"
+          "Manrope Medium"
         ],
-        "Key": null,
-        "FamilyTypefaces": []
+        "Key": {
+          "Source": "avares://PixelArtEditor/Assets/Fonts/Manrope-Medium.ttf",
+          "BaseUri": null
+        },
+        "FamilyTypefaces": [
+          {
+            "Style": 0,
+            "Weight": 500,
+            "Stretch": 5,
+            "GlyphTypeface": {
+              "FamilyName": "Manrope Medium",
+              "TypographicFamilyName": "Manrope",
+              "FamilyNames": {
+                "en-US": "Manrope Medium"
+              },
+              "FaceNames": {
+                "en-US": "Regular"
+              },
+              "CharacterToGlyphMap": {},
+              "Metrics": {
+                "DesignEmHeight": 2000,
+                "IsFixedPitch": false,
+                "Ascent": -2132,
+                "Descent": 600,
+                "LineGap": 0,
+                "LineSpacing": 2732,
+                "UnderlinePosition": 100,
+                "UnderlineThickness": 50,
+                "StrikethroughPosition": -648,
+                "StrikethroughThickness": 50
+              },
+              "Weight": 500,
+              "Style": 0,
+              "Stretch": 5,
+              "FontSimulations": 0,
+              "GlyphCount": 740,
+              "SupportedFeatures": [
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {}
+              ],
+              "SupportedUnicodeRange": {},
+              "CodePageCoverage": 536871327,
+              "PlatformTypeface": {
+                "SKTypeface": {
+                  "IsEmpty": false,
+                  "FamilyName": "Manrope",
+                  "FontStyle": {
+                    "Weight": 500,
+                    "Width": 5,
+                    "Slant": 0,
+                    "Handle": {
+                      "value": 2409793157616
+                    }
+                  },
+                  "FontWeight": 500,
+                  "FontWidth": 5,
+                  "FontSlant": 0,
+                  "IsBold": false,
+                  "IsItalic": false,
+                  "IsFixedPitch": false,
+                  "UnitsPerEm": 2000,
+                  "GlyphCount": 740,
+                  "PostScriptName": "Manrope-Medium",
+                  "TableCount": 15,
+                  "HasGetKerningPairAdjustments": false,
+                  "VariationDesignParameterCount": 0,
+                  "VariationDesignParameters": [],
+                  "VariationDesignPositionCount": 0,
+                  "VariationDesignPosition": [],
+                  "Handle": {
+                    "value": 2409788320128
+                  }
+                },
+                "FontSimulations": 0,
+                "FamilyName": "Manrope",
+                "Weight": 500,
+                "Style": 0,
+                "Stretch": 5
+              },
+              "TextShaperTypeface": {
+                "HBFace": {
+                  "Index": 0,
+                  "UnitsPerEm": 2000,
+                  "GlyphCount": 740,
+                  "Tables": [],
+                  "IsImmutable": true,
+                  "HasVariationData": false,
+                  "VariationAxisCount": 0,
+                  "VariationAxisInfos": [],
+                  "NamedInstanceCount": 0,
+                  "HasPalettes": false,
+                  "PaletteCount": 0,
+                  "HasColorLayers": false,
+                  "HasColorPng": false,
+                  "HasColorSvg": false,
+                  "Handle": {
+                    "value": 2409793132672
+                  }
+                },
+                "HBFont": {
+                  "Parent": null,
+                  "OpenTypeMetrics": {},
+                  "SupportedShapers": [
+                    "ot"
+                  ],
+                  "VariationCoordsNormalized": [],
+                  "Handle": {
+                    "value": 2409793252752
+                  }
+                }
+              }
+            }
+          }
+        ]
       },
       "HeadingFont": {
-        "Name": "avares://PixelArtEditor/Assets/Fonts/Poppins-SemiBold.ttf",
+        "Name": "Montserrat SemiBold",
         "FamilyNames": [
-          "avares://PixelArtEditor/Assets/Fonts/Poppins-SemiBold.ttf"
+          "Montserrat SemiBold"
         ],
-        "Key": null,
-        "FamilyTypefaces": []
+        "Key": {
+          "Source": "avares://PixelArtEditor/Assets/Fonts/Montserrat-SemiBold.ttf",
+          "BaseUri": null
+        },
+        "FamilyTypefaces": [
+          {
+            "Style": 0,
+            "Weight": 600,
+            "Stretch": 5,
+            "GlyphTypeface": {
+              "FamilyName": "Montserrat SemiBold",
+              "TypographicFamilyName": "Montserrat",
+              "FamilyNames": {
+                "en-US": "Montserrat SemiBold"
+              },
+              "FaceNames": {
+                "en-US": "Regular"
+              },
+              "CharacterToGlyphMap": {},
+              "Metrics": {
+                "DesignEmHeight": 1000,
+                "IsFixedPitch": false,
+                "Ascent": -968,
+                "Descent": 251,
+                "LineGap": 0,
+                "LineSpacing": 1219,
+                "UnderlinePosition": 100,
+                "UnderlineThickness": 50,
+                "StrikethroughPosition": -320,
+                "StrikethroughThickness": 50
+              },
+              "Weight": 600,
+              "Style": 0,
+              "Stretch": 5,
+              "FontSimulations": 0,
+              "GlyphCount": 2658,
+              "SupportedFeatures": [
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {}
+              ],
+              "SupportedUnicodeRange": {},
+              "CodePageCoverage": 536871319,
+              "PlatformTypeface": {
+                "SKTypeface": {
+                  "IsEmpty": false,
+                  "FamilyName": "Montserrat",
+                  "FontStyle": {
+                    "Weight": 600,
+                    "Width": 5,
+                    "Slant": 0,
+                    "Handle": {
+                      "value": 2409793157760
+                    }
+                  },
+                  "FontWeight": 600,
+                  "FontWidth": 5,
+                  "FontSlant": 0,
+                  "IsBold": true,
+                  "IsItalic": false,
+                  "IsFixedPitch": false,
+                  "UnitsPerEm": 1000,
+                  "GlyphCount": 2658,
+                  "PostScriptName": "Montserrat-SemiBold",
+                  "TableCount": 18,
+                  "HasGetKerningPairAdjustments": false,
+                  "VariationDesignParameterCount": 0,
+                  "VariationDesignParameters": [],
+                  "VariationDesignPositionCount": 0,
+                  "VariationDesignPosition": [],
+                  "Handle": {
+                    "value": 2409788323040
+                  }
+                },
+                "FontSimulations": 0,
+                "FamilyName": "Montserrat",
+                "Weight": 600,
+                "Style": 0,
+                "Stretch": 5
+              },
+              "TextShaperTypeface": {
+                "HBFace": {
+                  "Index": 0,
+                  "UnitsPerEm": 1000,
+                  "GlyphCount": 2658,
+                  "Tables": [],
+                  "IsImmutable": true,
+                  "HasVariationData": false,
+                  "VariationAxisCount": 0,
+                  "VariationAxisInfos": [],
+                  "NamedInstanceCount": 0,
+                  "HasPalettes": false,
+                  "PaletteCount": 0,
+                  "HasColorLayers": false,
+                  "HasColorPng": false,
+                  "HasColorSvg": false,
+                  "Handle": {
+                    "value": 2409793133568
+                  }
+                },
+                "HBFont": {
+                  "Parent": null,
+                  "OpenTypeMetrics": {},
+                  "SupportedShapers": [
+                    "ot"
+                  ],
+                  "VariationCoordsNormalized": [],
+                  "Handle": {
+                    "value": 2409793254288
+                  }
+                }
+              }
+            }
+          }
+        ]
       },
       "ForegroundColor": {
         "A": 255,

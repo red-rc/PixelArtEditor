@@ -17,7 +17,9 @@
         </Style>
 
         <Style Selector="MenuItem">
-            <Setter Property="FontSize" Value="12.5" />
+            <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />
+            <Setter Property="FontFamily" Value="{DynamicResource AppFont}" />
+            <Setter Property="FontSize" Value="13" />
         </Style>
 
         <Style Selector="MenuItem.DeleteItem">

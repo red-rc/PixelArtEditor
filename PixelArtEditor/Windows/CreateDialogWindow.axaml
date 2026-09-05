@@ -9,10 +9,10 @@
     xmlns:controlsGlobal="clr-namespace:PixelArtEditor.Controls"
     xmlns:vm="clr-namespace:PixelArtEditor.ViewModels"
     Title=""
-    Width="725"
+    Width="700"
     Height="450"
     d:DesignHeight="450"
-    d:DesignWidth="725"
+    d:DesignWidth="700"
     x:DataType="vm:CreateDialogVM"
     Background="{DynamicResource BackgroundColor}"
     ExtendClientAreaToDecorationsHint="True"
@@ -22,12 +22,12 @@
 
     <Window.Styles>
         <Style Selector="TextBlock">
-            <Setter Property="FontSize" Value="16" />
+            <Setter Property="FontSize" Value="15" />
             <Setter Property="FontFamily" Value="{DynamicResource AppFont}" />
         </Style>
         <Style Selector="TextBlock.Header">
             <Setter Property="HorizontalAlignment" Value="Center" />
-            <Setter Property="FontSize" Value="16" />
+            <Setter Property="FontSize" Value="18" />
             <Setter Property="FontWeight" Value="Bold" />
             <Setter Property="FontFamily" Value="{DynamicResource HeadingFont}" />
             <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />
@@ -48,13 +48,14 @@
     <Grid RowDefinitions="Auto,*" Background="{DynamicResource SecondaryBackgroundColor}">
         <controlsGlobal:TitleBar 
             Grid.Row="0" 
-            Title="{DynamicResource CrWinTitle}" 
+            Title="{DynamicResource Title}" 
             IconVisible="False" 
             CanMinimize="False" 
             CanMaximize="False" />
         <Grid RowDefinitions="*,Auto" Grid.Row="1">
             <Grid
-                Margin="20,20,20,0"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
                 ColumnDefinitions="250,Auto,10,Auto">
                 <editor:PreviewControl
                     Grid.Row="0"
@@ -67,16 +68,16 @@
                     FixedTileSize="20" />
 
                 <StackPanel Grid.Column="1" Spacing="10">
-                    <TextBlock Classes="Header" Text="{DynamicResource CrWinBasic}" />
+                    <TextBlock Classes="Header" Text="{DynamicResource Basic}" />
                     <controls:SizePanel DataContext="{Binding ImageProperties}" />
 
-                    <StackPanel Margin="0,-15,0,0">
+                    <StackPanel Margin="0,-20,0,0">
                         <TextBlock 
                             TextAlignment="Center" 
                             HorizontalAlignment="Center" 
                             Width="100"
                             TextWrapping="Wrap"
-                            Text="{DynamicResource CrWinBackgroundColor}" />
+                            Text="{DynamicResource BackgroundColorStr}" />
                         <ColorPicker
                             x:Name="BackgroundColorPicker"
                             Width="100"
@@ -85,7 +86,7 @@
                     </StackPanel>
                 </StackPanel>
                 <StackPanel Grid.Column="3" Spacing="10">
-                    <TextBlock Classes="Header" Text="{DynamicResource CrWinAdvanced}" />
+                    <TextBlock Classes="Header" Text="{DynamicResource Advanced}" />
                     <controls:PropertiesPanel DataContext="{Binding ImageProperties}" />
                 </StackPanel>
             </Grid>
@@ -98,23 +99,25 @@
                 ColumnDefinitions="*,Auto,Auto">
                 <Button
                     Grid.Column="0"
+                    Height="50"
                     Margin="0,25,10,25"
-                    Padding="30,0,30,0"
+                    Padding="30,0"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Stretch"
                     Classes="CancelBtn"
                     Command="{Binding CancelCommand}"
-                    Content="{DynamicResource CrWinCancel}"
+                    Content="{DynamicResource Cancel}"
                     FontSize="20" />
                 <Button
                     Grid.Column="1"
+                    Height="50"
                     Margin="0,25,25,25"
-                    Padding="30,0,30,0"
+                    Padding="30,0"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Stretch"
                     Classes="ConfirmBtn"
                     Command="{Binding CreateCommand}"
-                    Content="{DynamicResource CrWinCreate}"
+                    Content="{DynamicResource Create}"
                     FontSize="20" />
             </Grid>
         </Grid>

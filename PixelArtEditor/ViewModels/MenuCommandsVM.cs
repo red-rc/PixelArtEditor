@@ -39,7 +39,7 @@ public class MenuCommandsVM : ReactiveObject
     public ReactiveCommand<RxVoid, RxVoid> ContactUsCommand { get; }
     public ReactiveCommand<RxVoid, RxVoid> AboutCommand { get; }
 
-    private string _windowStateHeader = LocalizationService.Get("MenuWindowStateF");
+    private string _windowStateHeader = LocalizationService.Get("FullScreen");
     public string WindowStateHeader
     {
         get => _windowStateHeader;
@@ -99,8 +99,8 @@ public class MenuCommandsVM : ReactiveObject
         {
             WindowStateHeader = LocalizationService.Get(
                 Services.WindowState.Current == WindowState.FullScreen
-                    ? "MenuWindowStateW"
-                    : "MenuWindowStateF");
+                    ? "Windowed"
+                    : "FullScreen");
         }
     }
 
@@ -172,12 +172,12 @@ public class MenuCommandsVM : ReactiveObject
         if (isFullscreen)
         {
             Services.WindowState.Current = Services.WindowState.PrevWindowState;
-            WindowStateHeader = LocalizationService.Get("MenuWindowStateF");
+            WindowStateHeader = LocalizationService.Get("FullScreen");
         }
         else
         {
             Services.WindowState.Current = WindowState.FullScreen;
-            WindowStateHeader = LocalizationService.Get("MenuWindowStateW");
+            WindowStateHeader = LocalizationService.Get("Windowed");
         }
     }
 

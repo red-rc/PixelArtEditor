@@ -26,7 +26,7 @@
                 HorizontalAlignment="Center"
                 Classes="ToolBtn"
                 IsChecked="{Binding Tools.IsPenEnabled}"
-                Tag="{DynamicResource ToolBarPen}">
+                Tag="{DynamicResource Pen}">
                 <Image
                     Width="18"
                     Height="18"
@@ -38,7 +38,7 @@
                 HorizontalAlignment="Center"
                 Classes="ToolBtn"
                 IsChecked="{Binding Tools.IsColorPickerEnabled}"
-                Tag="{DynamicResource ToolBarColorPicker}">
+                Tag="{DynamicResource ColorPicker}">
                 <Image
                     Width="18"
                     Height="18"
@@ -50,7 +50,7 @@
                 HorizontalAlignment="Center"
                 Classes="ToolBtn"
                 IsChecked="{Binding Tools.IsFillEnabled}"
-                Tag="{DynamicResource ToolBarFill}">
+                Tag="{DynamicResource Fill}">
                 <Image
                     Width="18"
                     Height="18"
@@ -62,7 +62,7 @@
                 HorizontalAlignment="Center"
                 Classes="ToolBtn"
                 IsChecked="{Binding Tools.IsEraserEnabled}"
-                Tag="{DynamicResource ToolBarEraser}">
+                Tag="{DynamicResource Eraser}">
                 <Image
                     Width="18"
                     Height="18"
@@ -74,7 +74,7 @@
                 HorizontalAlignment="Center"
                 Classes="ToolBtn"
                 IsChecked="{Binding Tools.IsHandEnabled}"
-                Tag="{DynamicResource ToolBarHand}">
+                Tag="{DynamicResource Hand}">
                 <Image
                     Width="18"
                     Height="18"

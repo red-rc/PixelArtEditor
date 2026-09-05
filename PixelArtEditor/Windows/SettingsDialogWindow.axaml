@@ -19,7 +19,16 @@
 
     <Window.Styles>
         <Style Selector="ListBoxItem">
-            <Setter Property="FontSize" Value="20" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Width" Value="150" />
+            <Setter Property="Height" Value="50" />
+            <Setter Property="FontSize" Value="18" />
+            <Setter Property="Padding" Value="10,0" />
+        </Style>
+        <Style Selector="ListBoxItem /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="TextBlock.TextWrapping" Value="Wrap" />
+            <Setter Property="TextBlock.TextAlignment" Value="Center" />
         </Style>
     </Window.Styles>
 
@@ -32,22 +41,24 @@
             CanMaximize="False" />
         <Grid ColumnDefinitions="Auto,*" Grid.Row="1">
             <StackPanel
+                Grid.Column="0"
                 Width="150"
                 HorizontalAlignment="Left"
-                Grid.Column="0">
-                <ListBox Classes="SelListBox" SelectedIndex="{Binding SelectedTabIndex, Mode=TwoWay}">
+                Background="{DynamicResource TertiaryBackgroundColor}">
+                <ListBox 
+                    Classes="SelListBox" 
+                    VerticalAlignment="Stretch"
+                    SelectedIndex="{Binding SelectedTabIndex, Mode=TwoWay}"
+                    ScrollViewer.HorizontalScrollBarVisibility="Hidden">
                     <ListBoxItem
-                        HorizontalContentAlignment="Center"
                         Classes="Heading"
-                        Content="{DynamicResource SetWinGeneral}" />
+                        Content="{DynamicResource General}" />
                     <ListBoxItem
-                        HorizontalContentAlignment="Center"
                         Classes="Heading"
-                        Content="{DynamicResource SetWinAppearance}" />
+                        Content="{DynamicResource Appearance}" />
                     <ListBoxItem
-                        HorizontalContentAlignment="Center"
                         Classes="Heading"
-                        Content="{DynamicResource ListBoxItemCanvas2}" />
+                        Content="{DynamicResource Canvas}" />
                 </ListBox>
             </StackPanel>
             <StackPanel Grid.Column="1" >
@@ -71,8 +82,8 @@
                 VerticalAlignment="Stretch"
                 Classes="CancelBtn"
                 Command="{Binding CancelCommand}"
-                Content="{DynamicResource SetWinCancel}"
-                FontSize="20" />
+                Content="{DynamicResource Cancel}"
+                FontSize="22.5" />
             <Button
                 Grid.Column="1"
                 Margin="0,25,10,25"
@@ -81,8 +92,8 @@
                 VerticalAlignment="Stretch"
                 Classes="ResetBtn"
                 Command="{Binding ResetCommand}"
-                Content="{DynamicResource SetWinReset}"
-                FontSize="20" />
+                Content="{DynamicResource Reset}"
+                FontSize="22.5" />
             <Button
                 Grid.Column="2"
                 Margin="0,25,25,25"
@@ -91,8 +102,8 @@
                 VerticalAlignment="Stretch"
                 Classes="ConfirmBtn"
                 Command="{Binding SaveCommand}"
-                Content="{DynamicResource SetWinSave}"
-                FontSize="20" />
+                Content="{DynamicResource Save}"
+                FontSize="22.5" />
         </Grid>
     </Grid>
 </Window>

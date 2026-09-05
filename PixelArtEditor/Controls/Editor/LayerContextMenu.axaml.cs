@@ -1,23 +1,19 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using PixelArtEditor.AppServices;
 using PixelArtEditor.AppServices.Canvas;
 using PixelArtEditor.AppServices.Shell;
 using PixelArtEditor.AppServices.Tools;
 using PixelArtEditor.Models.Canvas;
 using PixelArtEditor.Models.LayerPanel;
-using PixelArtEditor.ViewModels;
-using Splat.ModeDetection;
 using System;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace PixelArtEditor.Controls.Editor
 {
     public partial class LayerContextMenu : UserControl
     {
-        private readonly ILayerPanelContext _ctx;
-        private readonly Action _closeFlyout;
+        private readonly ILayerPanelContext _ctx = null!;
+        private readonly Action _closeFlyout = null!;
 
         public LayerContextMenu(ILayerPanelContext ctx, Action closeFlyout)
         {
@@ -26,6 +22,8 @@ namespace PixelArtEditor.Controls.Editor
             _ctx = ctx;
             _closeFlyout = closeFlyout;
         }
+
+        public LayerContextMenu() => InitializeComponent();
 
         private void RenameClick(object? sender, RoutedEventArgs e)
         {

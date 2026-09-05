@@ -26,7 +26,7 @@
                                       ContentTemplate="{TemplateBinding HeaderTemplate}">
                       <ContentPresenter.DataTemplates>
                         <DataTemplate DataType="sys:String">
-                            <AccessText Text="{Binding}" VerticalAlignment="Center" />
+                            <AccessText Margin="0,2,0,0" Text="{Binding}" VerticalAlignment="Center" />
                         </DataTemplate>
                       </ContentPresenter.DataTemplates>
                     </ContentPresenter>

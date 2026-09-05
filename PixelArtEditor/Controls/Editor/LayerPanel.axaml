@@ -14,18 +14,31 @@
 
     <Grid RowDefinitions="40, *, 50">
         <Grid Grid.Row="0" ColumnDefinitions="*, Auto" Background="{DynamicResource BackgroundColor}">
-            <TextBlock Grid.Column="0" Margin="10,10,10,5" Text="{DynamicResource TextBlockLayers2}" FontWeight="Bold" FontSize="16"/>
-            <StackPanel Grid.Column="1" Margin="0,0,30,0" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                <TextBlock Margin="0,5,5,0" Text="{DynamicResource TextBlockOpacity2}" FontSize="14"/>
+            <TextBlock 
+                Grid.Column="0" 
+                Margin="10,10,10,5" 
+                Text="{DynamicResource Layers2}" 
+                FontFamily="{DynamicResource HeadingFont}" 
+                FontSize="16"
+                HorizontalAlignment="Left" 
+                VerticalAlignment="Center" />
+            <StackPanel 
+                Grid.Column="1" 
+                Margin="0,0,30,0" 
+                Orientation="Horizontal"
+                HorizontalAlignment="Right" 
+                VerticalAlignment="Center">
+                <TextBlock Margin="0,5,5,0" Text="{DynamicResource Opacity}" FontSize="14" />
                 <ui:NumberBox
                     Classes="NumberBox"
+                    FontSize="13"
                     ShowButtonSpinner="False"
                     Minimum="0"
                     Maximum="100"
                     Value="{Binding Opacity, Mode=TwoWay}"
                     Width="35" 
                     Height="25" />
-                <TextBlock Text="{DynamicResource TextBlock4}" Margin="5,0,0,0" FontSize="20"/>
+                <TextBlock VerticalAlignment="Center" Text="%" Margin="5,0,0,0" FontSize="16"/>
             </StackPanel>
         </Grid>
         <ListBox 
@@ -139,22 +152,22 @@
                 HorizontalAlignment="Stretch"
                 FlowDirection="LeftToRight"
                 Orientation="Horizontal">
-            <Button Classes="ActionBtn" Tag="{DynamicResource LayerAdd}" Click="AddClick">
+            <Button Classes="ActionBtn" Tag="{DynamicResource Add}" Click="AddClick">
                 <Image Source="{DynamicResource AddIcon}" />
             </Button>
-            <Button Classes="ActionBtn" Tag="{DynamicResource LayerDelete}" Click="DeleteClick">
+            <Button Classes="ActionBtn" Tag="{DynamicResource Delete}" Click="DeleteClick">
                 <Image Source="{DynamicResource DeleteIcon}" />
             </Button>
-            <Button Classes="ActionBtn" Tag="{DynamicResource LayerDuplicate}" Click="DuplicateClick">
+            <Button Classes="ActionBtn" Tag="{DynamicResource Duplicate}" Click="DuplicateClick">
                 <Image Source="{DynamicResource DuplicateIcon}" />
             </Button>
-            <Button Classes="ActionBtn" Tag="{DynamicResource LayerGroup}" Click="GroupClick">
+            <Button Classes="ActionBtn" Tag="{DynamicResource Group}" Click="GroupClick">
                 <Image Source="{DynamicResource GroupIcon}" />
             </Button>
-            <Button Classes="ActionBtn" Tag="{DynamicResource LayerTheTop}" Click="ToTheTopClick">
+            <Button Classes="ActionBtn" Tag="{DynamicResource ToTheTop}" Click="ToTheTopClick">
                 <Image Source="{DynamicResource UpIcon}" />
             </Button>
-            <Button Classes="ActionBtn" Tag="{DynamicResource LayerTheBottom}" Click="ToTheBottomClick">
+            <Button Classes="ActionBtn" Tag="{DynamicResource ToTheBottom}" Click="ToTheBottomClick">
                 <Image Source="{DynamicResource DownIcon}" />
             </Button>
         </StackPanel>

@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -46,7 +47,7 @@ public class TooltipManager(Control tooltipControl, TextBlock tooltipText, Panel
 
             var formatted = new FormattedText(
                 _tooltipText.Text,
-                System.Globalization.CultureInfo.CurrentCulture,
+                CultureInfo.CurrentCulture,
                 FlowDirection.LeftToRight,
                 Typeface.Default,
                 13,

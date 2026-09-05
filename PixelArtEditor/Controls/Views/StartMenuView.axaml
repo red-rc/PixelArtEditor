@@ -18,16 +18,16 @@
                 Orientation="Vertical"
                 Spacing="10">
                 <Button
-                    Padding="30,10,30,10"
+                    Padding="30,5"
                     HorizontalAlignment="Stretch"
                     Classes="ConfirmBtn"
                     Command="{Binding CreateCommand}"
-                    Content="{DynamicResource StartViewCreate}" />
+                    Content="{DynamicResource Create}" />
                 <Button
-                    Padding="30,10,30,10"
+                    Padding="30,5"
                     HorizontalAlignment="Stretch"
                     Classes="CancelBtn"
-                    Content="{DynamicResource StartViewOpen}" />
+                    Content="{DynamicResource Open}" />
             </StackPanel>
         </Grid>
         <Grid Background="{DynamicResource SecondaryBackgroundColor}" Grid.Column="1">
@@ -35,7 +35,7 @@
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 FontSize="28"
-                Text="{DynamicResource TextBlockPixellerTheBest}" />
+                Text="{DynamicResource PixellerTheBest}" />
             <TextBlock
                 Margin="0,0,10,10"
                 HorizontalAlignment="Right"

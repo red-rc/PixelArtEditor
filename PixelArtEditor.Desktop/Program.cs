@@ -1,6 +1,7 @@
-﻿using System;
-using Avalonia;
+﻿using Avalonia;
+using Avalonia.Rendering.Composition;
 using ReactiveUI.Avalonia;
+using System;
 
 namespace PixelArtEditor.Desktop;
 
@@ -28,7 +29,7 @@ sealed class Program
             {
                 MaxGpuResourceSizeBytes = 1024 * 1024 * 1024 // Виділяємо 1 ГБ під GPU-кеш текстур
             })
-            .WithInterFont()
             .UseReactiveUI(_ => { })
+            .With(new CompositionOptions { UseSaveLayerRootClip = false })
             .LogToTrace();
 }

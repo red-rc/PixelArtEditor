@@ -22,12 +22,19 @@
     <!-- ================= Button base ================= -->
     <Style Selector="Button">
         <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />
+        <Setter Property="FontFamily" Value="{DynamicResource HeadingFont}" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+
+        <Style Selector="^ AccessText">
+            <Setter Property="Padding" Value="0,5" />
+        </Style>
     </Style>
 
     <!-- ================= Button variants ================= -->
     <Style Selector="Button.ConfirmBtn">
         <Setter Property="Background" Value="{DynamicResource PrimaryColor}" />
-        <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />
         <Setter Property="ClipToBounds" Value="False" />
         <Setter Property="CornerRadius" Value="25" />
         <Setter Property="FontSize" Value="22.5" />
@@ -45,7 +52,6 @@
 
     <Style Selector="Button.CancelBtn">
         <Setter Property="Background" Value="{DynamicResource BackgroundColor}" />
-        <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />
         <Setter Property="BorderBrush" Value="{DynamicResource ForegroundColor}" />
         <Setter Property="ClipToBounds" Value="False" />
         <Setter Property="BorderThickness" Value="2.5" />
@@ -67,7 +73,6 @@
 
     <Style Selector="Button.ResetBtn">
         <Setter Property="Background" Value="{DynamicResource GrayColor}" />
-        <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />
         <Setter Property="ClipToBounds" Value="False" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="CornerRadius" Value="25" />
@@ -151,6 +156,8 @@
         <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />
         <Setter Property="Background" Value="{DynamicResource BackgroundColor}" />
         <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}" />
+        <Setter Property="FontFamily" Value="{DynamicResource AppFont}" />
+        <Setter Property="FontSize" Value="14" />
         <Setter Property="ClipToBounds" Value="False" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="BorderThickness" Value="1" />
@@ -248,6 +255,8 @@
         <Setter Property="Background" Value="{DynamicResource BackgroundColor}" />
         <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}" />
         <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />
+        <Setter Property="FontFamily" Value="{DynamicResource AppFont}" />
+        <Setter Property="FontSize" Value="14" />
         <Setter Property="ClipToBounds" Value="False" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="CornerRadius" Value="2.5" />
@@ -327,7 +336,7 @@
         <Setter Property="FontSize" Value="14" />
     </Style>
 
-    <Style Selector="ListBoxItem.Heading">
+    <Style Selector="ListBoxItem.Heading TextBlock">
         <Setter Property="FontFamily" Value="{DynamicResource HeadingFont}" />
         <Setter Property="FontWeight" Value="SemiBold" />
     </Style>
@@ -336,7 +345,7 @@
     <Style Selector="ui|InstantToggleButton.ToolBtn">
         <Setter Property="Background" Value="{DynamicResource UiColor}" />
         <Setter Property="BorderBrush" Value="{DynamicResource BackgroundPreesColor}" />
-        <Setter Property="BorderThickness" Value="0,0,0,1.25" />
+        <Setter Property="BorderThickness" Value="0,0,0,2" />
 
         <Style Selector="^:pointerover /template/ ContentPresenter#PART_ContentPresenter">
             <Setter Property="Background" Value="{DynamicResource UiHoverColor}" />
@@ -389,10 +398,6 @@
     <Style Selector="ListBox.SelListBox">
         <Setter Property="Background" Value="{DynamicResource TertiaryBackgroundColor}" />
 
-        <Style Selector="^ ListBoxItem">
-            <Setter Property="CornerRadius" Value="4" />
-            <Setter Property="Padding" Value="7" />
-        </Style>
         <Style Selector="^ ListBoxItem:pointerover ContentPresenter#PART_ContentPresenter">
             <Setter Property="Background" Value="{DynamicResource UiHoverColor}" />
         </Style>

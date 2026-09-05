@@ -16,8 +16,7 @@
 
     <UserControl.Styles>
         <Style Selector="TextBlock">
-            <Setter Property="FontSize" Value="16" />
-            <Setter Property="FontFamily" Value="sans-serif" />
+            <Setter Property="FontSize" Value="15" />
         </Style>
         <Style Selector="NumericUpDown.NumberBox">
             <Setter Property="FontSize" Value="14" />
@@ -41,7 +40,7 @@
         Background="{DynamicResource SecondaryBackgroundColor}">
         <StackPanel Grid.Column="0" Spacing="10">
             <StackPanel>
-                <TextBlock HorizontalAlignment="Center" Text="{DynamicResource ImgPropDpiXY}" />
+                <TextBlock HorizontalAlignment="Center" Text="{DynamicResource DpiXY}" />
                 <StackPanel
                     HorizontalAlignment="Center"
                     Orientation="Horizontal"
@@ -51,7 +50,7 @@
                 </StackPanel>
             </StackPanel>
             <StackPanel>
-                <TextBlock HorizontalAlignment="Center" Text="{DynamicResource ImgPropColorMode}" />
+                <TextBlock HorizontalAlignment="Center" Text="{DynamicResource ColorMode}" />
                 <StackPanel
                     HorizontalAlignment="Center"
                     Orientation="Horizontal"
@@ -61,7 +60,7 @@
                 </StackPanel>
             </StackPanel>
             <StackPanel>
-                <TextBlock HorizontalAlignment="Center" Text="{DynamicResource ImgPropBitDepth}" />
+                <TextBlock HorizontalAlignment="Center" Text="{DynamicResource BitDepth}" />
                 <StackPanel
                     HorizontalAlignment="Center"
                     Orientation="Horizontal"
@@ -73,7 +72,7 @@
         </StackPanel>
         <StackPanel Grid.Column="1" Spacing="10">
 			<StackPanel>
-                <TextBlock HorizontalAlignment="Center" Text="{DynamicResource ImgPropAlphaFormat}" />
+                <TextBlock TextWrapping="Wrap" HorizontalAlignment="Center" Text="{DynamicResource AlphaFormat}" />
                 <StackPanel
                     HorizontalAlignment="Center"
                     Orientation="Horizontal"
@@ -83,7 +82,7 @@
                 </StackPanel>
 			</StackPanel>
             <StackPanel>
-                <TextBlock HorizontalAlignment="Center" Text="{DynamicResource ImgPropColorSpaces}" />
+                <TextBlock HorizontalAlignment="Center" Text="{DynamicResource ColorSpaces}" />
                 <StackPanel
                     HorizontalAlignment="Center"
                     Orientation="Horizontal"
@@ -93,7 +92,7 @@
                 </StackPanel>
             </StackPanel>
             <StackPanel Margin="10,0,0,0" HorizontalAlignment="Center" Orientation="Horizontal" Spacing="10">
-                <TextBlock VerticalAlignment="Center" Text="{DynamicResource ImgPropBigEndian}" />
+                <TextBlock VerticalAlignment="Center" Text="{DynamicResource BigEndian}" />
                 <CheckBox IsChecked="{Binding BigEndian, Mode=TwoWay}" />
             </StackPanel>
         </StackPanel>

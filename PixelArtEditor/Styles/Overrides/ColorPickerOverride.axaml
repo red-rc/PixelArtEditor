@@ -107,6 +107,8 @@
                                 <!-- Spectrum Tab -->
                                 <TabItem Theme="{StaticResource ColorViewTabItemTheme}"
                                          IsVisible="{TemplateBinding IsColorSpectrumVisible}"
+                                         BorderBrush="{DynamicResource BackgroundPreesColor}"
+                                         BorderThickness="0,0,2,0"
                                          CornerRadius="5,0,0,0">
                                   <TabItem.Header>
                                     <Border Height="{DynamicResource ColorViewTabStripHeight}"
@@ -216,6 +218,8 @@
                                 <!-- Components Tab -->
                                 <TabItem Theme="{StaticResource ColorViewTabItemTheme}"
                                          IsVisible="{TemplateBinding IsColorComponentsVisible}"
+                                         BorderBrush="{DynamicResource BackgroundPreesColor}"
+                                         BorderThickness="2,0,0,0"
                                          CornerRadius="0,5,0,0">
                                   <TabItem.Header>
                                     <Border Height="{DynamicResource ColorViewTabStripHeight}"
@@ -240,7 +244,7 @@
                                         <RadioButton x:Name="RgbRadioButton"
                                                      Theme="{StaticResource ColorViewColorModelRadioButtonTheme}"
                                                      Grid.Column="0"
-                                                     Content="{DynamicResource RadioButtonRgb3}"
+                                                     Content="{DynamicResource Rgb}"
                                                      CornerRadius="2.5,0,0,2.5"
                                                      BorderThickness="0"
                                                      Height="{Binding ElementName=PART_HexTextBox, Path=Bounds.Height}"
@@ -248,7 +252,7 @@
                                         <RadioButton x:Name="HsvRadioButton"
                                                      Theme="{StaticResource ColorViewColorModelRadioButtonTheme}"
                                                      Grid.Column="1"
-                                                     Content="{DynamicResource RadioButtonHsv3}"
+                                                     Content="{DynamicResource Hsv}"
                                                      CornerRadius="0,2.5,2.5,0"
                                                      BorderThickness="0"
                                                      Height="{Binding ElementName=PART_HexTextBox, Path=Bounds.Height}"
@@ -269,7 +273,7 @@
                                                 CornerRadius="2.5,0,0,2.5">
                                           <TextBlock Foreground="{DynamicResource ThemeForegroundBrush}"
                                                      FontWeight="SemiBold"
-                                                     Text="{DynamicResource TextBlock5}"
+                                                     Text="#"
                                                      HorizontalAlignment="Center"
                                                      VerticalAlignment="Center" />
                                         </Border>
@@ -302,11 +306,11 @@
                                              VerticalAlignment="Center">
                                         <TextBlock Foreground="{DynamicResource ThemeForegroundBrush}"
                                                    FontWeight="SemiBold"
-                                                   Text="{DynamicResource TextBlockR3}"
+                                                   Text="{DynamicResource R}"
                                                    IsVisible="{TemplateBinding ColorModel, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static controls:ColorModel.Rgba}, Mode=OneWay}" />
                                         <TextBlock Foreground="{DynamicResource ThemeForegroundBrush}"
                                                    FontWeight="SemiBold"
-                                                   Text="{DynamicResource TextBlockH3}"
+                                                   Text="{DynamicResource H}"
                                                    IsVisible="{TemplateBinding ColorModel, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static controls:ColorModel.Hsva}, Mode=OneWay}" />
                                       </Panel>
                                     </Border>
@@ -353,11 +357,11 @@
                                              VerticalAlignment="Center">
                                         <TextBlock Foreground="{DynamicResource ThemeForegroundBrush}"
                                                    FontWeight="SemiBold"
-                                                   Text="{DynamicResource TextBlockG3}"
+                                                   Text="{DynamicResource G}"
                                                    IsVisible="{TemplateBinding ColorModel, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static controls:ColorModel.Rgba}, Mode=OneWay}" />
                                         <TextBlock Foreground="{DynamicResource ThemeForegroundBrush}"
                                                    FontWeight="SemiBold"
-                                                   Text="{DynamicResource TextBlockS3}"
+                                                   Text="{DynamicResource S}"
                                                    IsVisible="{TemplateBinding ColorModel, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static controls:ColorModel.Hsva}, Mode=OneWay}" />
                                       </Panel>
                                     </Border>
@@ -404,11 +408,11 @@
                                              VerticalAlignment="Center">
                                         <TextBlock Foreground="{DynamicResource ThemeForegroundBrush}"
                                                    FontWeight="SemiBold"
-                                                   Text="{DynamicResource TextBlockB3}"
+                                                   Text="{DynamicResource B}"
                                                    IsVisible="{TemplateBinding ColorModel, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static controls:ColorModel.Rgba}, Mode=OneWay}" />
                                         <TextBlock Foreground="{DynamicResource ThemeForegroundBrush}"
                                                    FontWeight="SemiBold"
-                                                   Text="{DynamicResource TextBlockV3}"
+                                                   Text="{DynamicResource V}"
                                                    IsVisible="{TemplateBinding ColorModel, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static controls:ColorModel.Hsva}, Mode=OneWay}" />
                                       </Panel>
                                     </Border>
@@ -454,7 +458,7 @@
                                       <TextBlock x:Name="AlphaComponentTextBlock"
                                                  Foreground="{DynamicResource ThemeForegroundBrush}"
                                                  FontWeight="SemiBold"
-                                                 Text="{DynamicResource TextBlockA2}"
+                                                 Text="{DynamicResource A}"
                                                  HorizontalAlignment="Center"
                                                  VerticalAlignment="Center" />
                                       <Border.IsVisible>

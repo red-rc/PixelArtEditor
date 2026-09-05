@@ -16,8 +16,6 @@
   <ItemGroup>
     <PackageReference Include="Avalonia" />
     <PackageReference Include="Avalonia.Controls.ColorPicker" />
-    <PackageReference Include="Avalonia.Themes.Fluent" />
-    <PackageReference Include="Avalonia.Fonts.Inter" />
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
     <PackageReference Include="Avalonia.Themes.Simple" />
     <PackageReference Include="Avalonia.Markup.Xaml.Loader" />
@@ -35,22 +33,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Localization\**\*" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="Localization\**\*" Exclude="Localization\convert.py" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <Content Include="Styles\SimpleStyle.axaml" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="Controls\Image\PropertiesPanel.axaml.cs">
-      <DependentUpon>PropertiesPanel.axaml</DependentUpon>
-    </Compile>
-    <Compile Update="Controls\Image\SizePanel.axaml.cs">
-      <DependentUpon>SizePanel.axaml</DependentUpon>
-    </Compile>
-    <Compile Update="Controls\MenuBar.axaml.cs">
-      <DependentUpon>MenuBar.axaml</DependentUpon>
-    </Compile>
-    <Compile Update="Windows\ImagePropertiesWindow.axaml.cs">
-      <DependentUpon>ImagePropertiesWindow.axaml</DependentUpon>
-    </Compile>
   </ItemGroup>
 </Project>

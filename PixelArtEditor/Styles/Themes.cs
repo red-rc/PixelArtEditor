@@ -5,6 +5,7 @@ using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Styling;
+using PixelArtEditor.AppServices;
 using System;
 using System.IO;
 using AvaloniaStyles = Avalonia.Styling.Styles;
@@ -22,7 +23,7 @@ public abstract class BaseTheme
     public void Apply()
     {
         if (Application.Current == null)
-            throw new InvalidOperationException("Application.Current is null. Make sure Avalonia is initialized.");
+            throw new InvalidOperationException(LocalizationService.Get("ApplicationCurrentNull"));
 
         foreach (var key in Resources.Keys)
             Application.Current.Resources[key] = Resources[key];
@@ -122,8 +123,8 @@ public abstract class BaseTheme
 
         Resources["MenuFlyoutItemBackground"] = new SolidColorBrush(Colors.Transparent);
 
-        Resources["AppFont"] = new FontFamily("avares://PixelArtEditor/Assets/Fonts/OpenSans-Regular.ttf");
-        Resources["HeadingFont"] = new FontFamily("avares://PixelArtEditor/Assets/Fonts/Poppins-SemiBold.ttf");
+        Resources["AppFont"] = new FontFamily("avares://PixelArtEditor/Assets/Fonts/Manrope-Medium.ttf#Manrope Medium");
+        Resources["HeadingFont"] = new FontFamily("avares://PixelArtEditor/Assets/Fonts/Montserrat-SemiBold.ttf#Montserrat SemiBold");
     }
 
     public void SetDarkIcons()
