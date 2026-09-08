@@ -54,13 +54,9 @@ Confirm: Підтвердити
 Size: Розмір
 Layers: Шари
 Opacity: 'Непрозорість:'
-ui: 'InstantToggleButtonHand: Рука'
 Checkerboard: Шахівниця
 ScaleCheckerboardWithCanvas: Масштабувати шахівницю разом з полотном
 CheckerboardScale: Масштаб шахівниці
-PanelHorizontal: Горизонтальний
-GridVertical: Вертикальний
-controls: 'ToolbarVertical: Вертикальний'
 PixellerTheBest: Pixeller — найкращий графічний редактор
 Rgb: RGB
 Hsv: HSV
@@ -96,7 +92,6 @@ EmptyConfig: Файл конфігурації порожній.
 Copy: Копіювати
 UnknownValue: Невідоме значення
 ForEnum: для переліку
-Layers2: 'Шари:'
 Pen: Перо
 ColorPicker: Піпетка
 Fill: Заливка

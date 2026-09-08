@@ -53,7 +53,7 @@ public partial class LayerPanel : UserControl, ILayerPanelContext
 
     public LayerModel? GetActiveLayer() => LayerManager?.ActiveLayer;
     public ObservableCollection<LayerModel>? GetLayers() => LayerManager?.Layers;
-    public ObservableCollection<LayerModel> GetSelLayers() 
+    public ObservableCollection<LayerModel> GetSelLayers()
     {
         return new ObservableCollection<LayerModel>(
             _vm?.SelLayerItems?
@@ -86,19 +86,12 @@ public partial class LayerPanel : UserControl, ILayerPanelContext
         LayerListBox.AddHandler(PointerMovedEvent, OnItemPointerMoved, RoutingStrategies.Tunnel);
         LayerListBox.AddHandler(PointerReleasedEvent, OnItemPointerReleased, RoutingStrategies.Tunnel);
         LayerListBox.AddHandler(PointerPressedEvent, OnLockButtonPointerPressed, RoutingStrategies.Tunnel);
-
-        LayerListBox.SelectionChanged += OnSelectionChanged;
     }
 
     private void LayerListBox_PointerPressed(object? sender, PointerPressedEventArgs e) => LayerListBox.SelectedItems?.Clear();
-    
-    private void OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
-    {
-        if (_vm is null) return;
 
-        _vm.SelLayerItems = new ObservableCollection<LayerItem>(
-            LayerListBox.SelectedItems?.OfType<LayerItem>() ?? []);
-    }
+    private void LayerListBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
+        => _vm?.SelLayerItems = new ObservableCollection<LayerItem>(LayerListBox.SelectedItems?.OfType<LayerItem>() ?? []);
 
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
@@ -119,13 +112,28 @@ public partial class LayerPanel : UserControl, ILayerPanelContext
             return;
         }
 
-        if (!(e.GetCurrentPoint(this).Properties.IsLeftButtonPressed ||
-            e.GetCurrentPoint(this).Properties.IsRightButtonPressed)
-            || _dragging
-            || LayerManager?.Layers.Count <= 1
-            || (e.Source as Control)?.FindAncestorOfType<ScrollBar>() is not null) return;
+        if (e.Source is not Control source) return;
 
-        var pressedListBoxItem = (e.Source as Control)?.FindAncestorOfType<ListBoxItem>();
+        if (AncestorElementNotNull<InstantToggleButton>(source))
+        {
+            if (e.GetCurrentPoint(this).Properties.IsRightButtonPressed)
+            {
+                e.Handled = true;
+                return;
+            }
+            else if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+                return;
+        }
+
+        if (e.GetCurrentPoint(this).Properties.IsRightButtonPressed && AncestorElementNotNull<ListBoxItem>(source))
+        {
+            if (AncestorElementNotNull<InstantToggleButton>(source) || AncestorElementNotNull<Preview>(source)) return;
+            ShowFlyout(e.GetPosition(this));
+        }
+
+        if (!CanPress(e)) return;
+
+        var pressedListBoxItem = source?.FindAncestorOfType<ListBoxItem>();
 
         if (pressedListBoxItem is not null
             && e.GetCurrentPoint(this).Properties.IsRightButtonPressed
@@ -136,11 +144,11 @@ public partial class LayerPanel : UserControl, ILayerPanelContext
         }
 
         var selected = LayerListBox.SelectedItems?
-                .Cast<LayerItem>()
-                .OrderBy(LayerListBox.Items.IndexOf)
-                .Select(item => LayerListBox.ContainerFromItem(item) as ListBoxItem)
-                .OfType<ListBoxItem>()
-                .ToList() ?? [];
+            .Cast<LayerItem>()
+            .OrderBy(LayerListBox.Items.IndexOf)
+            .Select(item => LayerListBox.ContainerFromItem(item) as ListBoxItem)
+            .OfType<ListBoxItem>()
+            .ToList() ?? [];
 
         if (pressedListBoxItem is not null && !selected.Contains(pressedListBoxItem))
             _dndManager.DraggedItems = [pressedListBoxItem];
@@ -153,13 +161,7 @@ public partial class LayerPanel : UserControl, ILayerPanelContext
 
     private void OnItemPointerMoved(object? sender, PointerEventArgs e)
     {
-        if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed
-            || LayerManager is null
-            || LayerManager.Layers.Count <= 1
-            || _dndManager.DraggedItems.Count == 0
-            || Services.Navigation.GetViewModel() is not EditorVM editorVM
-            || editorVM.IsTransforming
-            || (e.Source as Control)?.FindAncestorOfType<ScrollBar>() is not null) return;
+        if (!CanStartDrag(e)) return;
 
         var dx = e.GetPosition(this).X - _mousePressPos.X;
         var dy = e.GetPosition(this).Y - _mousePressPos.Y;
@@ -194,8 +196,8 @@ public partial class LayerPanel : UserControl, ILayerPanelContext
             for (var i = 0; i < FloatingHost.Children.Count; i++)
             {
                 var top = Math.Clamp(
-                    e.GetPosition(FloatingHost).Y + i * _dndManager.ItemHeight, 
-                    i * _dndManager.ItemHeight, 
+                    e.GetPosition(FloatingHost).Y + i * _dndManager.ItemHeight,
+                    i * _dndManager.ItemHeight,
                     LayerListBox.Bounds.Height + i * _dndManager.ItemHeight);
                 Avalonia.Controls.Canvas.SetTop(FloatingHost.Children[i], top);
             }
@@ -235,6 +237,43 @@ public partial class LayerPanel : UserControl, ILayerPanelContext
 
     private void TextBlock_DoubleTapped(object? sender, TappedEventArgs e) => ShowAndFocusTextBox(sender);
 
+    private void RenameTextBox_KeyDown(object? sender, KeyEventArgs e)
+    {
+        var textBox = (TextBox)sender!;
+        var item = textBox.DataContext as LayerItem;
+
+        switch (e.Key)
+        {
+            case Key.Enter:
+                item?.Layer.Name = textBox.Text?.Trim() ?? "";
+                item?.IsEditing = false;
+                e.Handled = true;
+                break;
+            case Key.Escape:
+                item?.Name = "";
+                item?.IsEditing = false;
+                e.Handled = true;
+                break;
+            case Key.Left:
+            case Key.Right:
+                e.Handled = true;
+                break;
+        }
+    }
+
+    private void RenameTextBox_LostFocus(object? sender, FocusChangedEventArgs e)
+    {
+        var textBox = (TextBox)sender!;
+        var item = textBox.DataContext as LayerItem;
+
+        Dispatcher.UIThread.Post(() =>
+        {
+            if (textBox.IsFocused) return;
+            item?.IsEditing = false;
+            item?.Layer.Name = textBox.Text?.Trim() ?? "";
+        }, DispatcherPriority.Input);
+    }
+
     private void ShowAndFocusTextBox(object? sender = null)
     {
         TextBlock? textBlock;
@@ -262,34 +301,8 @@ public partial class LayerPanel : UserControl, ILayerPanelContext
         }, DispatcherPriority.Loaded);
     }
 
-    private void RenameTextBox_KeyDown(object? sender, KeyEventArgs e)
+    private void ShowFlyout(Point point)
     {
-        var textBox = (TextBox)sender!;
-        var item = textBox.DataContext as LayerItem;
-
-        if (e.Key == Key.Enter)
-            item?.IsEditing = false;
-        else if (e.Key == Key.Escape)
-        {
-            item?.LayerName = "";
-            item?.IsEditing = false;
-        }
-    }
-
-    private void RenameTextBox_LostFocus(object? sender, FocusChangedEventArgs e)
-    {
-        var textBox = (TextBox)sender!;
-        (textBox.DataContext as LayerItem)?.IsEditing = false;
-    }
-
-    private void LayerItem_PointerPressed(object? sender, PointerPressedEventArgs e)
-    {
-        if (!e.GetCurrentPoint((Visual)sender!).Properties.IsRightButtonPressed
-            || sender is not Control root) return;
-
-        if (root.FindAncestorOfType<InstantToggleButton>(includeSelf: true) is not null ||
-            root.FindAncestorOfType<Preview>(includeSelf: true) is not null) return;
-
         var flyout = new Flyout
         {
             Placement = PlacementMode.Pointer,
@@ -307,14 +320,39 @@ public partial class LayerPanel : UserControl, ILayerPanelContext
             if (content is null) return;
 
             var popupScreenPos = content.PointToScreen(new Point(0, 0));
-            var clickScreenPos = this.PointToScreen(e.GetPosition(this));
+            var clickScreenPos = this.PointToScreen(point);
 
             var dx = popupScreenPos.X < clickScreenPos.X ? 6 : -6;
 
             flyout.Popup.HorizontalOffset = dx;
         };
 
-        flyout.ShowAt(root, showAtPointer: true);
-        e.Handled = true;
+        flyout.ShowAt(LayerListBox, showAtPointer: true);
     }
+
+    private bool CanStartDrag(PointerEventArgs e)
+    {
+        if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed
+            || LayerManager is null || LayerManager.Layers.Count <= 1
+            || _dndManager.DraggedItems.Count == 0
+            || Services.Navigation.GetViewModel() is not EditorVM editorVM || editorVM.IsTransforming
+            || AncestorElementNotNull<ScrollBar>(e.Source as Control)) return false;
+
+        return true;
+    }
+
+    private bool CanPress(PointerEventArgs e)
+    {
+        var properties = e.GetCurrentPoint(this).Properties;
+
+        if (!(properties.IsLeftButtonPressed || properties.IsRightButtonPressed)
+            || _dragging
+            || LayerManager?.Layers.Count <= 1
+            || AncestorElementNotNull<ScrollBar>(e.Source as Control)) return false;
+
+        return true;
+    }
+
+    private static bool AncestorElementNotNull<T>(Control? source) where T : Control
+        => source?.FindAncestorOfType<T>(includeSelf: true) is not null;
 }

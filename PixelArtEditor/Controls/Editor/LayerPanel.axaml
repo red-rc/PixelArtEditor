@@ -17,7 +17,7 @@
             <TextBlock 
                 Grid.Column="0" 
                 Margin="10,10,10,5" 
-                Text="{DynamicResource Layers2}" 
+                Text="{DynamicResource Layers}" 
                 FontFamily="{DynamicResource HeadingFont}" 
                 FontSize="16"
                 HorizontalAlignment="Left" 
@@ -46,6 +46,7 @@
             Grid.Row="1"
             ItemsSource="{Binding LayerItems}"
             PointerPressed="LayerListBox_PointerPressed"
+            SelectionChanged="LayerListBox_SelectionChanged"
             SelectedItem="{Binding SelLayerItem}" 
             Background="{DynamicResource BackgroundColor}"
             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
@@ -98,28 +99,28 @@
 
             <ListBox.ItemTemplate>
                 <DataTemplate x:DataType="model:LayerItem">
-                    <StackPanel Orientation="Horizontal" Background="Transparent" PointerPressed="LayerItem_PointerPressed">
+                    <Grid ColumnDefinitions="Auto,*,Auto,Auto" Background="Transparent">
                        <editor:PreviewControl
-                           Margin="5"
+                           Grid.Column="0"
+                           Margin="5,5,10,5"
                            Width="36"
                            Height="36"
                            RenderData="{Binding RenderData}"
                            FixedTileSize="12" />
 
-                       <Grid>
+                       <Grid Grid.Column="1">
                             <TextBlock 
                                 Classes="LayerItemText" 
-                                Text="{Binding LayerName}" 
-                                Margin="5,0,5,0"
+                                Text="{Binding Name}" 
+                                HorizontalAlignment="Left"
                                 Width="150"
                                 IsVisible="{Binding !IsEditing}"
                                 DoubleTapped="TextBlock_DoubleTapped"/>
                             <TextBox 
                                 Classes="RenameTextBox" 
-                                Text="{Binding LayerName}" 
-                                Margin="5,0,5,0" 
-                                Width="150"
-                                Height="25" 
+                                Text="{Binding Name}" 
+                                HorizontalAlignment="Left"
+                                Height="30" 
                                 FontSize="14"
                                 Name="RenameTextBox"
                                 IsVisible="{Binding IsEditing}"
@@ -127,6 +128,7 @@
                                 LostFocus="RenameTextBox_LostFocus"/>
                         </Grid>
                         <ui:InstantToggleButton 
+                            Grid.Column="2"
                             Classes="LayerItemBtn"
                             Tag="{Binding HideShowTag}" 
                             IsChecked="{Binding IsVisible}" 
@@ -134,13 +136,14 @@
                             <Image Source="{Binding VisibleIconSource}" />
                         </ui:InstantToggleButton>
                         <ui:InstantToggleButton 
+                            Grid.Column="3"
                             Classes="LayerItemBtn" 
                             Tag="{Binding LockUnlockTag}" 
                             IsChecked="{Binding IsLocked}"
-                            Margin="2,0,5,0">
+                            Margin="0,0,15,0">
                             <Image Source="{Binding LockedIconSource}" />
                         </ui:InstantToggleButton>
-                    </StackPanel>
+                    </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>

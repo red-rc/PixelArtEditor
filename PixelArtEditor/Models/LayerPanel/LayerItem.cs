@@ -17,14 +17,14 @@ public class LayerItem: ReactiveObject
         private set => this.RaiseAndSetIfChanged(ref _renderData, value);
     }
 
-    private string _layerName;
-    public string LayerName
+    private string _name;
+    public string Name
     {
-        get => _layerName;
+        get => _name;
         set
         {
             if (!string.IsNullOrWhiteSpace(value) && value.Length < 256)
-                this.RaiseAndSetIfChanged(ref _layerName, value);
+                this.RaiseAndSetIfChanged(ref _name, value);
         }
     }
 
@@ -105,7 +105,7 @@ public class LayerItem: ReactiveObject
     {
         Layer = layer;
         _renderData = new PreviewData(layer.Width, layer.Height, layer.RenderBitmap, null);
-        _layerName = layer.Name;
+        _name = layer.Name;
         _isVisible = layer.IsVisible;
         _isLocked = layer.IsLocked;
 

@@ -54,13 +54,9 @@ Confirm: Confirm
 Size: Size
 Layers: Layers
 Opacity: 'Opacity:'
-ui: 'InstantToggleButtonHand: Hand'
 Checkerboard: Checkerboard
 ScaleCheckerboardWithCanvas: Scale checkerboard with canvas
 CheckerboardScale: Checkerboard scale
-PanelHorizontal: Horizontal
-GridVertical: Vertical
-controls: 'ToolbarVertical: Vertical'
 PixellerTheBest: Pixeller — the best graphics editor
 Rgb: RGB
 Hsv: HSV
@@ -96,7 +92,6 @@ EmptyConfig: Config file is empty.
 Copy: Copy
 UnknownValue: Unknown value
 ForEnum: 'for enum'
-Layers2: 'Layers:'
 Pen: Pen
 ColorPicker: Color picker
 Fill: Fill
