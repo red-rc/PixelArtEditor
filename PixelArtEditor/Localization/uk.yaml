@@ -46,7 +46,6 @@ ColorMode: Колірний режим
 BitDepth: Розрядність
 AlphaFormat: Формат альфа-каналу
 ColorSpaces: Колірні простори
-BigEndian: Big Endian
 AppVersion: v1.0.0
 Basic: Базовий
 Advanced: Розширений

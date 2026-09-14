@@ -4,7 +4,7 @@ using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using PixelArtEditor.AppServices;
 using PixelArtEditor.AppServices.EditorUI;
-using PixelArtEditor.AppServices.Image;
+using PixelArtEditor.AppServices.ImageProcessing;
 using PixelArtEditor.Models.Canvas;
 using PixelArtEditor.ViewModels;
 using System.Linq;

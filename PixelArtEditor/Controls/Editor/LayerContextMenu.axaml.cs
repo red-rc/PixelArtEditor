@@ -80,6 +80,8 @@ namespace PixelArtEditor.Controls.Editor
                 Height = layer.Height,
                 Data = layer.PixelData
             });
+
+            _closeFlyout();
         }
 
         private void FiltersClick(object? sender, RoutedEventArgs e)
@@ -87,6 +89,10 @@ namespace PixelArtEditor.Controls.Editor
 
         }
 
-        private void DeleteClick(object? sender, RoutedEventArgs e) => _ctx.DeleteClick(sender, e);
+        private void DeleteClick(object? sender, RoutedEventArgs e)
+        {
+            _ctx.DeleteClick(sender, e);
+            _closeFlyout();
+        }
     }
 }

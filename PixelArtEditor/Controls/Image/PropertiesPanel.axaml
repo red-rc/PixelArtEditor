@@ -55,8 +55,9 @@
                     HorizontalAlignment="Center"
                     Orientation="Horizontal"
                     Spacing="6">
-                    <ComboBox Classes="ComboBox" ItemsSource="{Binding ColorModesNames}" 
-                              SelectedItem="{Binding ColorModeName, Mode=TwoWay}" />
+                    <ComboBox
+                        ItemsSource="{Binding ColorModeNames}" 
+                        SelectedItem="{Binding ColorModeName, Mode=TwoWay}" />
                 </StackPanel>
             </StackPanel>
             <StackPanel>
@@ -65,8 +66,9 @@
                     HorizontalAlignment="Center"
                     Orientation="Horizontal"
                     Spacing="6">
-                    <ComboBox Classes="ComboBox" ItemsSource="{Binding BitDepthsNames}" 
-                              SelectedItem="{Binding BitDepthName, Mode=TwoWay}" />
+                    <ComboBox
+                        ItemsSource="{Binding BitDepthNames}" 
+                        SelectedItem="{Binding BitDepthName, Mode=TwoWay}" />
                 </StackPanel>
 			</StackPanel>
         </StackPanel>
@@ -77,8 +79,10 @@
                     HorizontalAlignment="Center"
                     Orientation="Horizontal"
                     Spacing="6">
-                    <ComboBox Classes="ComboBox" ItemsSource="{Binding AlphaFormatNames}" 
-                              SelectedItem="{Binding AlphaFormatName, Mode=TwoWay}" />
+                    <ComboBox
+                        IsEnabled="{Binding AlphaFormatEnabled}"
+                        ItemsSource="{Binding AlphaFormatNames}" 
+                        SelectedItem="{Binding AlphaFormatName, Mode=TwoWay}" />
                 </StackPanel>
 			</StackPanel>
             <StackPanel>
@@ -87,13 +91,10 @@
                     HorizontalAlignment="Center"
                     Orientation="Horizontal"
                     Spacing="6">
-                    <ComboBox Classes="ComboBox" ItemsSource="{Binding ColorSpacesNames}" 
-                              SelectedItem="{Binding ColorSpaceName, Mode=TwoWay}" />
+                    <ComboBox
+                        ItemsSource="{Binding ColorSpaceNames}" 
+                        SelectedItem="{Binding ColorSpaceName, Mode=TwoWay}" />
                 </StackPanel>
-            </StackPanel>
-            <StackPanel Margin="10,0,0,0" HorizontalAlignment="Center" Orientation="Horizontal" Spacing="10">
-                <TextBlock VerticalAlignment="Center" Text="{DynamicResource BigEndian}" />
-                <CheckBox IsChecked="{Binding BigEndian, Mode=TwoWay}" />
             </StackPanel>
         </StackPanel>
     </Grid>

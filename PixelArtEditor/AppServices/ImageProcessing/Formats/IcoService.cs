@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace PixelArtEditor.AppServices.Image.Formats;
+namespace PixelArtEditor.AppServices.ImageProcessing.Formats;
 
 public static class IcoService
 {

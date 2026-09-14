@@ -96,7 +96,6 @@ public static class LocalizationService
             ["BitDepth"] = "Bit Depth",
             ["AlphaFormat"] = "Alpha Format",
             ["ColorSpaces"] = "Color Spaces",
-            ["BigEndian"] = "Big Endian",
             ["AppVersion"] = "v1.0.0",
             ["Basic"] = "Basic",
             ["Advanced"] = "Advanced",

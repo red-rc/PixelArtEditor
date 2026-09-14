@@ -175,46 +175,6 @@
                                         IsVisible="{TemplateBinding IsColorSpectrumSliderVisible}" />
                                   </Grid>
                                 </TabItem>
-                                <!-- Palette Tab -->
-                                <TabItem Theme="{StaticResource ColorViewTabItemTheme}"
-                                         IsVisible="{TemplateBinding IsColorPaletteVisible}">
-                                  <TabItem.Header>
-                                    <Border Height="{DynamicResource ColorViewTabStripHeight}"
-                                            Background="Transparent">
-                                      <PathIcon Width="18"
-                                                Height="18"
-                                                Data="{DynamicResource ColorViewPaletteIconGeometry}" />
-                                    </Border>
-                                  </TabItem.Header>
-                                  <ListBox Theme="{StaticResource ColorViewPaletteListBoxTheme}"
-                                           ItemContainerTheme="{StaticResource ColorViewPaletteListBoxItemTheme}"
-                                           ItemsSource="{TemplateBinding PaletteColors}"
-                                           SelectedItem="{Binding Color, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource DoNothingForNullConverter}, Mode=TwoWay}"
-                                           UseLayoutRounding="False"
-                                           Margin="12">
-                                    <ListBox.ItemTemplate>
-                                      <DataTemplate DataType="{x:Type Color}">
-                                        <Panel AutomationProperties.Name="{Binding Converter={StaticResource ColorToDisplayNameConverter}}"
-                                               ToolTip.Tip="{Binding Converter={StaticResource ColorToDisplayNameConverter}}"
-                                               HorizontalAlignment="Stretch"
-                                               VerticalAlignment="Stretch">
-                                          <Border Background="{StaticResource ColorControlCheckeredBackgroundBrush}" />
-                                          <Border HorizontalAlignment="Stretch"
-                                                  VerticalAlignment="Stretch">
-                                            <Border.Background>
-                                              <SolidColorBrush Color="{Binding}" />
-                                            </Border.Background>
-                                          </Border>
-                                        </Panel>
-                                      </DataTemplate>
-                                    </ListBox.ItemTemplate>
-                                    <ListBox.ItemsPanel>
-                                      <ItemsPanelTemplate>
-                                        <UniformGrid Columns="{Binding $parent[ColorView].PaletteColumnCount}" />
-                                      </ItemsPanelTemplate>
-                                    </ListBox.ItemsPanel>
-                                  </ListBox>
-                                </TabItem>
                                 <!-- Components Tab -->
                                 <TabItem Theme="{StaticResource ColorViewTabItemTheme}"
                                          IsVisible="{TemplateBinding IsColorComponentsVisible}"

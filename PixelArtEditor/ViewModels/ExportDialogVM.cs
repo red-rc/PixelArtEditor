@@ -1,6 +1,6 @@
 ﻿using Avalonia.Controls;
 using PixelArtEditor.AppServices.Canvas;
-using PixelArtEditor.AppServices.Image;
+using PixelArtEditor.AppServices.ImageProcessing;
 using PixelArtEditor.Models.Canvas;
 
 namespace PixelArtEditor.ViewModels;

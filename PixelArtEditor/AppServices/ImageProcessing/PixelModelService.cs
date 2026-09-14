@@ -2,7 +2,7 @@
 using PixelArtEditor.Models.Canvas;
 using System;
 
-namespace PixelArtEditor.AppServices.Image;
+namespace PixelArtEditor.AppServices.ImageProcessing;
 
 public static class PixelModelService
 {
@@ -10,16 +10,16 @@ public static class PixelModelService
     {
         return (model.Mode, model.BitDepth) switch
         {
-            (ColorMode.RGBA, BitDepth.Bit8) => model.Data, // вже готово
-            (ColorMode.RGB, BitDepth.Bit8) => Rgb24ToRgba32(model),
+            (ColorMode.RGBA, BitDepth.Bit8) => model.Data,
             (ColorMode.RGBA, BitDepth.Bit16) => Rgba64ToRgba32(model),
+            (ColorMode.RGB, BitDepth.Bit8) => Rgb24ToRgba32(model),
             (ColorMode.RGB, BitDepth.Bit16) => Rgb48ToRgba32(model),
+            (ColorMode.RGB, BitDepth.RGB565) => Rgb565ToRgba32(model),
             (ColorMode.Grayscale, BitDepth.Bit8) => L8ToRgba32(model),
             (ColorMode.Grayscale, BitDepth.Bit16) => L16ToRgba32(model),
-            (ColorMode.RGB, BitDepth.RGB565) => Rgb565ToRgba32(model),
-            (ColorMode.Indexed, BitDepth.Bit8) => Indexed8ToRgba32(model),
-            (ColorMode.Indexed, BitDepth.Bit4) => Indexed4ToRgba32(model),
             (ColorMode.Indexed, BitDepth.Bit1) => Indexed1ToRgba32(model),
+            (ColorMode.Indexed, BitDepth.Bit4) => Indexed4ToRgba32(model),
+            (ColorMode.Indexed, BitDepth.Bit8) => Indexed8ToRgba32(model),
             _ => throw new NotImplementedException($"{model.Mode} {model.BitDepth} {LocalizationService.Get("NotImplemented")}")
         };
     }
@@ -36,6 +36,22 @@ public static class PixelModelService
             dst[i + 1] = src[j + 1]; // G
             dst[i + 2] = src[j + 2]; // B
             dst[i + 3] = 255;         // A
+        }
+        return dst;
+    }
+    
+    // RGB48 → RGBA32
+    private static byte[] Rgb48ToRgba32(PixelModel model)
+    {
+        var src = model.Data;
+        var dst = new byte[model.Width * model.Height * 4];
+
+        for (int i = 0, j = 0; i < dst.Length; i += 4, j += 6)
+        {
+            dst[i + 0] = (byte)((src[j + 0] | (src[j + 1] << 8)) * 255 / 65535); // R
+            dst[i + 1] = (byte)((src[j + 2] | (src[j + 3] << 8)) * 255 / 65535); // G
+            dst[i + 2] = (byte)((src[j + 4] | (src[j + 5] << 8)) * 255 / 65535); // B
+            dst[i + 3] = 255;
         }
         return dst;
     }
@@ -57,17 +73,27 @@ public static class PixelModelService
         return dst;
     }
 
-    // RGB48 → RGBA32
-    private static byte[] Rgb48ToRgba32(PixelModel model)
+
+    // RGB565 → RGBA32
+    private static byte[] Rgb565ToRgba32(PixelModel model)
     {
         var src = model.Data;
         var dst = new byte[model.Width * model.Height * 4];
 
-        for (int i = 0, j = 0; i < dst.Length; i += 4, j += 6)
+        for (int i = 0, j = 0; i < dst.Length; i += 4, j += 2)
         {
-            dst[i + 0] = (byte)((src[j + 0] | (src[j + 1] << 8)) * 255 / 65535); // R
-            dst[i + 1] = (byte)((src[j + 2] | (src[j + 3] << 8)) * 255 / 65535); // G
-            dst[i + 2] = (byte)((src[j + 4] | (src[j + 5] << 8)) * 255 / 65535); // B
+            // зібрати ushort з двох байт (little-endian)
+            var packed = (ushort)(src[j] | (src[j + 1] << 8));
+
+            // розпакувати R5G6B5
+            var r5 = (packed >> 11) & 0x1F;
+            var g6 = (packed >> 5) & 0x3F;
+            var b5 = packed & 0x1F;
+
+            // масштабувати до 8-bit: R5→8: r * 255 / 31
+            dst[i + 0] = (byte)(r5 * 255 / 31);
+            dst[i + 1] = (byte)(g6 * 255 / 63);
+            dst[i + 2] = (byte)(b5 * 255 / 31);
             dst[i + 3] = 255;
         }
         return dst;
@@ -136,31 +162,6 @@ public static class PixelModelService
                 dst[i + 2] = l;
                 dst[i + 3] = 255;
             }
-        }
-        return dst;
-    }
-
-    // RGB565 → RGBA32
-    private static byte[] Rgb565ToRgba32(PixelModel model)
-    {
-        var src = model.Data;
-        var dst = new byte[model.Width * model.Height * 4];
-
-        for (int i = 0, j = 0; i < dst.Length; i += 4, j += 2)
-        {
-            // зібрати ushort з двох байт (little-endian)
-            var packed = (ushort)(src[j] | (src[j + 1] << 8));
-
-            // розпакувати R5G6B5
-            var r5 = (packed >> 11) & 0x1F;
-            var g6 = (packed >> 5) & 0x3F;
-            var b5 = packed & 0x1F;
-
-            // масштабувати до 8-bit: R5→8: r * 255 / 31
-            dst[i + 0] = (byte)(r5 * 255 / 31);
-            dst[i + 1] = (byte)(g6 * 255 / 63);
-            dst[i + 2] = (byte)(b5 * 255 / 31);
-            dst[i + 3] = 255;
         }
         return dst;
     }

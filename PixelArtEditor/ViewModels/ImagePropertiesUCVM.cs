@@ -105,7 +105,7 @@ public class ImagePropertiesUCVM : ReactiveObject
     }
 
     // --- ColorMode ---
-    public List<string> ColorModesNames { get; } = [.. Enum.GetValues<ColorMode>().Select(cm => cm.ToString())];
+    public List<string> ColorModeNames { get; } = [.. Enum.GetValues<ColorMode>().Select(cm => cm.ToString())];
 
     private string _colorModeName = "RGBA";
     public string ColorModeName
@@ -116,13 +116,29 @@ public class ImagePropertiesUCVM : ReactiveObject
             if (_colorModeName == value) return;
             ColorMode = StringToEnum<ColorMode>(value);
             this.RaiseAndSetIfChanged(ref _colorModeName, value);
+
+            AlphaFormatEnabled = ColorMode == ColorMode.RGBA || ColorMode == ColorMode.Grayscale;
+            UpdateAvailableBitDepths();
         }
     }
 
     public ColorMode ColorMode = ColorMode.RGBA;
 
     // --- BitDepth ---
-    public List<string> BitDepthsNames { get; } = [.. Enum.GetValues<BitDepth>().Select(cm => cm.ToString())];
+    private static readonly Dictionary<ColorMode, BitDepth[]> ValidBitDepths = new()
+    {
+        [ColorMode.RGBA] = [BitDepth.Bit8, BitDepth.Bit16],
+        [ColorMode.RGB] = [BitDepth.Bit8, BitDepth.Bit16, BitDepth.RGB565],
+        [ColorMode.Grayscale] = [BitDepth.Bit8, BitDepth.Bit16],
+        [ColorMode.Indexed] = [BitDepth.Bit1, BitDepth.Bit4, BitDepth.Bit8],
+    };
+
+    private List<string> _bitDepthNames = [.. ValidBitDepths[ColorMode.RGBA].Select(b => b.ToString())];
+    public List<string> BitDepthNames
+    {
+        get => _bitDepthNames;
+        private set => this.RaiseAndSetIfChanged(ref _bitDepthNames, value);
+    }
 
     private string _bitDepthName = "Bit8";
     public string BitDepthName
@@ -130,7 +146,7 @@ public class ImagePropertiesUCVM : ReactiveObject
         get => _bitDepthName;
         set 
         {
-            if (_bitDepthName == value) return;
+            if (_bitDepthName == value || !BitDepthNames.Contains(value)) return;
             BitDepth = StringToEnum<BitDepth>(value);
             this.RaiseAndSetIfChanged(ref _bitDepthName, value);
         }
@@ -138,8 +154,17 @@ public class ImagePropertiesUCVM : ReactiveObject
 
     public BitDepth BitDepth = BitDepth.Bit8;
 
+    private void UpdateAvailableBitDepths()
+    {
+        var valid = ValidBitDepths[ColorMode];
+        BitDepthNames = [.. valid.Select(b => b.ToString())];
+
+        if (!valid.Contains(BitDepth))
+            BitDepthName = valid[0].ToString();
+    }
+
     // --- ColorSpace ---
-    public List<string> ColorSpacesNames { get; } = [..Enum.GetValues<ColorSpace>().Select(cm => cm.ToString())];
+    public List<string> ColorSpaceNames { get; } = [..Enum.GetValues<ColorSpace>().Select(cm => cm.ToString())];
 
     private string _colorSpaceName = "sRGB";
     public string ColorSpaceName
@@ -156,6 +181,13 @@ public class ImagePropertiesUCVM : ReactiveObject
     public ColorSpace ColorSpace = ColorSpace.sRGB;
 
     // --- AlphaFormat ---
+    private bool _alphaFormatEnabled = true;
+    public bool AlphaFormatEnabled
+    {
+        get => _alphaFormatEnabled;
+        set => this.RaiseAndSetIfChanged(ref _alphaFormatEnabled, value);
+    }
+
     public List<string> AlphaFormatNames { get; } = [.. Enum.GetValues<AlphaFormat>().Select(cm => cm.ToString())];
 
     private string _alphaFormatName = "Straight";
@@ -171,14 +203,6 @@ public class ImagePropertiesUCVM : ReactiveObject
     }
 
     public AlphaFormat AlphaFormat = AlphaFormat.Straight;
-
-    // --- BigEndian ---
-    private bool _bigEndian = false;
-    public bool BigEndian
-    {
-        get => _bigEndian;
-        set => this.RaiseAndSetIfChanged(ref _bigEndian, value);
-    }
 
     private static T StringToEnum<T>(string value) where T : struct, Enum
     {
@@ -225,7 +249,6 @@ public class ImagePropertiesUCVM : ReactiveObject
             Alpha = AlphaFormat,
             DpiX = DpiX,
             DpiY = DpiY,
-            BigEndian = BigEndian,
             Data = data
         };
     }

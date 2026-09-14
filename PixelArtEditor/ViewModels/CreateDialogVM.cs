@@ -1,6 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Media;
-using PixelArtEditor.AppServices.Image;
+using PixelArtEditor.AppServices.ImageProcessing;
 using PixelArtEditor.Models;
 using PixelArtEditor.Models.Canvas;
 using System;
@@ -59,7 +59,6 @@ public class CreateDialogVM : ReactiveObject
                 BitDepth = ImageProperties.BitDepth,
                 ColorSpace = ImageProperties.ColorSpace,
                 Alpha = ImageProperties.AlphaFormat,
-                BigEndian = ImageProperties.BigEndian,
                 DpiX = ImageProperties.DpiX,
                 DpiY = ImageProperties.DpiY,
                 Data = pixelData

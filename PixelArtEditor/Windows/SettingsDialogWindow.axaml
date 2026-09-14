@@ -77,7 +77,7 @@
             <Button
                 Grid.Column="0"
                 Margin="0,25,10,25"
-                Padding="30,0,30,0"
+                Padding="30,0"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Stretch"
                 Classes="CancelBtn"
@@ -87,7 +87,7 @@
             <Button
                 Grid.Column="1"
                 Margin="0,25,10,25"
-                Padding="30,0,30,0"
+                Padding="30,0"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Stretch"
                 Classes="ResetBtn"
@@ -97,7 +97,7 @@
             <Button
                 Grid.Column="2"
                 Margin="0,25,25,25"
-                Padding="30,0,30,0"
+                Padding="30,0"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Stretch"
                 Classes="ConfirmBtn"

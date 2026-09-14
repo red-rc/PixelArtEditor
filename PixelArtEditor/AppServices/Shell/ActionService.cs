@@ -1,4 +1,4 @@
-using PixelArtEditor.AppServices.Image;
+using PixelArtEditor.AppServices.ImageProcessing;
 using PixelArtEditor.Models.Canvas;
 using PixelArtEditor.ViewModels;
 using PixelArtEditor.Windows;

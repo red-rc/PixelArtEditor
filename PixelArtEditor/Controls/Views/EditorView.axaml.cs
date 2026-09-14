@@ -7,7 +7,7 @@ using Avalonia.VisualTree;
 using PixelArtEditor.AppServices;
 using PixelArtEditor.AppServices.Canvas;
 using PixelArtEditor.AppServices.EditorUI;
-using PixelArtEditor.AppServices.Image;
+using PixelArtEditor.AppServices.ImageProcessing;
 using PixelArtEditor.Models.Canvas;
 using PixelArtEditor.ViewModels;
 using System;

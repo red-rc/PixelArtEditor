@@ -36,7 +36,7 @@
     <Style Selector="Button.ConfirmBtn">
         <Setter Property="Background" Value="{DynamicResource PrimaryColor}" />
         <Setter Property="ClipToBounds" Value="False" />
-        <Setter Property="CornerRadius" Value="25" />
+        <Setter Property="CornerRadius" Value="50" />
         <Setter Property="FontSize" Value="22.5" />
         <Setter Property="FontWeight" Value="DemiBold" />
 
@@ -55,7 +55,7 @@
         <Setter Property="BorderBrush" Value="{DynamicResource ForegroundColor}" />
         <Setter Property="ClipToBounds" Value="False" />
         <Setter Property="BorderThickness" Value="2.5" />
-        <Setter Property="CornerRadius" Value="25" />
+        <Setter Property="CornerRadius" Value="50" />
         <Setter Property="FontSize" Value="22.5" />
         <Setter Property="FontWeight" Value="DemiBold" />
 
@@ -75,7 +75,7 @@
         <Setter Property="Background" Value="{DynamicResource GrayColor}" />
         <Setter Property="ClipToBounds" Value="False" />
         <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="CornerRadius" Value="25" />
+        <Setter Property="CornerRadius" Value="50" />
         <Setter Property="FontSize" Value="22.5" />
         <Setter Property="FontWeight" Value="DemiBold" />
 

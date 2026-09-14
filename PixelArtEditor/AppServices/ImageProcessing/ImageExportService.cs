@@ -22,8 +22,9 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AlphaFormat = PixelArtEditor.Models.Canvas.AlphaFormat;
+using Image = SixLabors.ImageSharp.Image;
 
-namespace PixelArtEditor.AppServices.Image;
+namespace PixelArtEditor.AppServices.ImageProcessing;
 
 public static class ImageExportService
 {
@@ -71,7 +72,7 @@ public static class ImageExportService
             {
                 var exportData = ConvertForExport(pixelData, model);
 
-                using var baseImage = SixLabors.ImageSharp.Image.LoadPixelData<Rgba32>(
+                using var baseImage = Image.LoadPixelData<Rgba32>(
                     exportData, model.Width, model.Height);
                 using var image = ConvertToTargetFormat(baseImage, model);
 
@@ -130,11 +131,11 @@ public static class ImageExportService
         return result;
     }
 
-    private static async Task ExportAsSvgWrapper(SixLabors.ImageSharp.Image image, Stream stream, int width, int height)
+    private static async Task ExportAsSvgWrapper(Image image, Stream stream, int width, int height)
     {
         using var pngStream = new MemoryStream();
         await image.SaveAsPngAsync(pngStream);
-        var base64 = System.Convert.ToBase64String(pngStream.ToArray());
+        var base64 = Convert.ToBase64String(pngStream.ToArray());
 
         var svg = $"""
         <svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}">
@@ -146,57 +147,21 @@ public static class ImageExportService
         await writer.WriteAsync(svg);
     }
 
-    private static SixLabors.ImageSharp.Image ConvertToTargetFormat(Image<Rgba32> baseImage, PixelModel parameters)
+    private static Image ConvertToTargetFormat(Image<Rgba32> baseImage, PixelModel parameters)
     {
         return (parameters.Mode, parameters.BitDepth) switch
         {
             (ColorMode.RGBA, BitDepth.Bit8) => baseImage.CloneAs<Rgba32>(),
+            (ColorMode.RGBA, BitDepth.Bit16) => baseImage.CloneAs<Rgba64>(),
             (ColorMode.RGB, BitDepth.Bit8) => baseImage.CloneAs<Rgb24>(),
-            (ColorMode.RGBA, BitDepth.Bit16) => ToRgba64Image(baseImage),
             (ColorMode.RGB, BitDepth.Bit16) => baseImage.CloneAs<Rgb48>(),
+            (ColorMode.RGB, BitDepth.RGB565) => baseImage.CloneAs<Bgr565>(),
             (ColorMode.Grayscale, BitDepth.Bit8) => baseImage.CloneAs<L8>(),
             (ColorMode.Grayscale, BitDepth.Bit16) => baseImage.CloneAs<L16>(),
-            (ColorMode.RGB, BitDepth.RGB565) => baseImage.CloneAs<Bgr565>(),
             _ => baseImage.CloneAs<Rgba32>()
         };
     }
 
-    // ToRgba64Image тепер приймає Image<Rgba32> замість byte[]
-    private static Image<Rgba64> ToRgba64Image(Image<Rgba32> src)
-    {
-        var width = src.Width;
-        var height = src.Height;
-        var rgba64Data = new byte[width * height * 8];
-
-        src.ProcessPixelRows(accessor =>
-        {
-            for (var y = 0; y < height; y++)
-            {
-                var row = accessor.GetRowSpan(y);
-                for (var x = 0; x < width; x++)
-                {
-                    var j = (y * width + x) * 8;
-                    var r = (ushort)(row[x].R * 65535 / 255);
-                    var g = (ushort)(row[x].G * 65535 / 255);
-                    var b = (ushort)(row[x].B * 65535 / 255);
-                    var a = (ushort)(row[x].A * 65535 / 255);
-
-                    rgba64Data[j + 0] = (byte)(r & 0xFF);
-                    rgba64Data[j + 1] = (byte)(r >> 8);
-                    rgba64Data[j + 2] = (byte)(g & 0xFF);
-                    rgba64Data[j + 3] = (byte)(g >> 8);
-                    rgba64Data[j + 4] = (byte)(b & 0xFF);
-                    rgba64Data[j + 5] = (byte)(b >> 8);
-                    rgba64Data[j + 6] = (byte)(a & 0xFF);
-                    rgba64Data[j + 7] = (byte)(a >> 8);
-                }
-            }
-        });
-
-        return SixLabors.ImageSharp.Image.LoadPixelData<Rgba64>(rgba64Data, width, height);
-    }
-
-    // PNG encoder з урахуванням bit depth
     private static PngEncoder BuildPngEncoder(PixelModel parameters)
     {
         var bitDepth = parameters.BitDepth switch

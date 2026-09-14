@@ -46,32 +46,18 @@ public class PixelModel
     public ColorMode Mode;
     public BitDepth BitDepth;
     public ColorSpace ColorSpace;
-
-    /// <summary>
-    /// Чи є окремий альфа-канал у даних.
-    /// Для Mode=RGB: false=Rgb24, true=Rgba32.
-    /// Для Mode=Grayscale + Bit8: false=L8 (1 байт/піксель), true=La16 (2 байти/піксель).
-    /// Для Mode=Grayscale + Bit16: false=L16 (2 байти/піксель), true=La32 (4 байти/піксель).
-    /// </summary>
-    public bool HasAlphaChannel => Alpha != AlphaFormat.None;
-
-    public AlphaFormat Alpha; // None / Straight / Premultiplied
-
-    /// <summary>
-    /// Тільки для Bit16 і RGB565.
-    /// </summary>
-    public bool BigEndian;
+    public AlphaFormat Alpha;
+    public Palette? Palette;
 
     public byte[] Data = [];
-    public Palette? Palette;
 
     public event Action? ModelChanged;
     public void NotifyModelChanged() => ModelChanged?.Invoke();
 }
 
 // RGBA Bit8:    [R,G,B,A, R,G,B,A, ...]
-// RGBA Bit16:   [Rlo,Rhi,Glo,Ghi,Blo,Bhi,Alo,Ahi, ...] (little-endian) or [Rhi,Rlo,...] (big-endian)
+// RGBA Bit16:   [Rlo,Rhi,Glo,Ghi,Blo,Bhi,Alo,Ahi, ...] (little-endian) or [Rhi,Rlo,...]
 // Grayscale:    [G, G, G, ...]
 // Indexed Bit4: two pixels per byte, high nibble first: [p0p1, p2p3, ...]
 // Indexed Bit1: eight pixels per byte, MSB first: [p0p1p2p3p4p5p6p7, ...]
-// RGB565:       [lo,hi, lo,hi, ...] packed as RRRRRGGGGGGBBBBB per 2 bytes (little-endian) or reversed (big-endian)
+// RGB565:       [lo,hi, lo,hi, ...] packed as RRRRRGGGGGGBBBBB per 2 bytes (little-endian)
