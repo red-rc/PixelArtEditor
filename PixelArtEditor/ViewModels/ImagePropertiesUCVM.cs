@@ -235,6 +235,8 @@ public class ImagePropertiesUCVM : ReactiveObject
         RenderData.NotifyPropertyChanged();
     }
 
+    public FellowOakDicom.DicomDataset? DicomDataset { get; set; }
+
     public PixelModel GetFinalPixelMode(byte[] data)
     {
         return new PixelModel
@@ -249,7 +251,8 @@ public class ImagePropertiesUCVM : ReactiveObject
             Alpha = AlphaFormat,
             DpiX = DpiX,
             DpiY = DpiY,
-            Data = data
+            Data = data,
+            DicomDataset = DicomDataset
         };
     }
 }

@@ -87,6 +87,13 @@ localPairs:
   CantRead: Не вдалося прочитати інформацію про зображення.
   Untitled: без назви
   FailedExport: Не вдалося експортувати зображення.
+  DicomInvalidFile: Недійсний або пошкоджений файл DICOM.
+  DicomInvalidImage: Недійсні розміри або піксельні дані DICOM-зображення.
+  DicomMultiFrameUnsupported: Багатокадрові DICOM-зображення поки не підтримуються.
+  DicomUnsupportedEncoding: Це кодування пікселів DICOM не підтримується.
+  Document: Документ
+  InvalidPdf: Недійсний або пошкоджений файл PDF.
+  PdfNoPages: Файл PDF не містить сторінок.
   NotImplemented: ще не реалізовано.
   NoPalette: Індексований режим не має палітри.
   PfimFailed: Помилка декодування Pfim

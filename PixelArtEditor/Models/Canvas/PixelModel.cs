@@ -51,6 +51,8 @@ public class PixelModel
 
     public byte[] Data = [];
 
+    public FellowOakDicom.DicomDataset? DicomDataset;
+
     public event Action? ModelChanged;
     public void NotifyModelChanged() => ModelChanged?.Invoke();
 }

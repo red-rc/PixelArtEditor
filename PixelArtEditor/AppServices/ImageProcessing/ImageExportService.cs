@@ -3,6 +3,7 @@ using Avalonia.Platform.Storage;
 using HeyRed.ImageSharp.Heif.Formats.Avif;
 using HeyRed.ImageSharp.Heif.Formats.Heif;
 using PixelArtEditor.AppServices.Canvas;
+using PixelArtEditor.AppServices.ImageProcessing.Formats;
 using PixelArtEditor.Models.Canvas;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats;
@@ -43,6 +44,8 @@ public static class ImageExportService
         new($"TGA {LocalizationService.Get("Image")}")             { Patterns = ["*.tga"] },
         new($"Portable {LocalizationService.Get("Image")}")        { Patterns = ["*.pbm"] },
         new($"QOI {LocalizationService.Get("Image")}")             { Patterns = ["*.qoi"] },
+        new($"DICOM {LocalizationService.Get("Image")}")           { Patterns = ["*.dcm"] },
+        new($"PDF {LocalizationService.Get("Document")}")          { Patterns = ["*.pdf"] },
         new($"Icon")                                               { Patterns = ["*.ico"] }
     ];
     public static async Task ExportImageAsync(Window dialog, PixelModel model)
@@ -81,7 +84,15 @@ public static class ImageExportService
 
                 await using var stream = await file.OpenWriteAsync();
 
-                if (Path.GetExtension(file.Name).Equals(".svg", StringComparison.InvariantCultureIgnoreCase))
+                if (Path.GetExtension(file.Name).Equals(".dcm", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    DicomService.Save(stream, exportData, model.Width, model.Height, model.DicomDataset);
+                }
+                else if (Path.GetExtension(file.Name).Equals(".pdf", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    PdfService.Save(stream, exportData, model.Width, model.Height, model.DpiX, model.DpiY);
+                }
+                else if (Path.GetExtension(file.Name).Equals(".svg", StringComparison.InvariantCultureIgnoreCase))
                 {
                     await ExportAsSvgWrapper(image, stream, model.Width, model.Height);
                 }

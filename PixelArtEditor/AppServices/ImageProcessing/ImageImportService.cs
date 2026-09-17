@@ -25,8 +25,8 @@ public static class ImageImportService
         new(LocalizationService.Get("SupportedFormats"))
         {
             Patterns = ["*.png", "*.jpg", "*.jpeg", "*.bmp", "*.gif",
-                        "*.tif", "*.tiff", "*.svg", "*.dds", "*.webp", 
-                        "*.avif", "*.heif", "*.tga", "*.pbm", "*.qoi", "*.ico"]
+                        "*.tif", "*.tiff", "*.svg", "*.dds", "*.webp",
+                        "*.avif", "*.heif", "*.tga", "*.pbm", "*.qoi", "*.dcm", "*.dicom", "*.pdf", "*.ico"]
         },
         new($"PNG {LocalizationService.Get("Image")}")              { Patterns = ["*.png"] },
         new($"JPEG {LocalizationService.Get("Image")}")             { Patterns = ["*.jpg", "*.jpeg"] },
@@ -41,6 +41,8 @@ public static class ImageImportService
         new($"TGA {LocalizationService.Get("Image")}")              { Patterns = ["*.tga"] },
         new($"Portable {LocalizationService.Get("Image")}")         { Patterns = ["*.pbm"] },
         new($"QOI {LocalizationService.Get("Image")}")              { Patterns = ["*.qoi"] },
+        new($"DICOM {LocalizationService.Get("Image")}")            { Patterns = ["*.dcm", "*.dicom"] },
+        new($"PDF {LocalizationService.Get("Document")}")           { Patterns = ["*.pdf"] },
         new($"Icon")                                                { Patterns = ["*.ico"] }
     ];
     public static async Task<PixelModel?> ImportImageAsync()
@@ -124,6 +126,50 @@ public static class ImageImportService
                 }
 
                 return svgModel;
+            }
+            else if (ext is ".dcm" or ".dicom")
+            {
+                var (dicomModel, dicomError) = await Task.Run(() =>
+                {
+                    ms.Position = 0;
+                    return DicomService.Load(ms);
+                });
+
+                if (dicomError is not null)
+                {
+                    await ActionService.ShowErrorAsync(dicomError);
+                    return null;
+                }
+
+                if (dicomModel is not null)
+                {
+                    dicomModel.Name = Path.GetFileNameWithoutExtension(file.Name);
+                    dicomModel.Extension = "dcm";
+                }
+
+                return dicomModel;
+            }
+            else if (ext == ".pdf")
+            {
+                var (pdfModel, pdfError) = await Task.Run(() =>
+                {
+                    ms.Position = 0;
+                    return PdfService.Load(ms);
+                });
+
+                if (pdfError is not null)
+                {
+                    await ActionService.ShowErrorAsync(pdfError);
+                    return null;
+                }
+
+                if (pdfModel is not null)
+                {
+                    pdfModel.Name = Path.GetFileNameWithoutExtension(file.Name);
+                    pdfModel.Extension = "pdf";
+                }
+
+                return pdfModel;
             }
             else if (ext == ".dds")
             {

@@ -88,6 +88,13 @@ localPairs:
   CantRead: 画像情報を読み取れませんでした。
   Untitled: 無題
   FailedExport: 画像のエクスポートに失敗しました。
+  DicomInvalidFile: 無効または破損したDICOMファイルです。
+  DicomInvalidImage: DICOM画像の寸法またはピクセルデータが無効です。
+  DicomMultiFrameUnsupported: マルチフレームDICOM画像はまだサポートされていません。
+  DicomUnsupportedEncoding: このDICOMピクセルエンコーディングはサポートされていません。
+  Document: ドキュメント
+  InvalidPdf: 無効または破損したPDFファイルです。
+  PdfNoPages: PDFファイルにページが含まれていません。
   NotImplemented: まだ実装されていません。
   NoPalette: インデックスモードにはパレットがありません。
   PfimFailed: Pfimデコードに失敗しました

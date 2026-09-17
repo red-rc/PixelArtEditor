@@ -152,8 +152,8 @@ public sealed class SettingsManager : ISettingsManager
         }
         catch (Exception ex)
         {
-            Dispatcher.UIThread.InvokeAsync(async () => await ActionService.ShowErrorAsync(ex.ToString()));
-            Save();
+            try { Save(); }
+            catch { Dispatcher.UIThread.InvokeAsync(async () => await ActionService.ShowErrorAsync(ex.ToString())); }
         }
     }
 
@@ -165,7 +165,7 @@ public sealed class SettingsManager : ISettingsManager
         EnableGrid = true;
         ScaleCheckerboardWithCanvas = false;
         CheckerboardScale = CheckerboardScale.Scale4;
-        InterpolationMode = BitmapInterpolationMode.None;
+        InterpolationMode = BitmapInterpolationMode.HighQuality;
         InterpolateOnlyWhenScalingDown = true;
         EnableAutosave = true;
         AutosaveFrequency = 10;

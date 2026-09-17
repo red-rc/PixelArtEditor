@@ -88,6 +88,13 @@ localPairs:
   CantRead: Could not read image information.
   Untitled: untitled
   FailedExport: Failed to export image.
+  DicomInvalidFile: Invalid or corrupted DICOM file.
+  DicomInvalidImage: DICOM image dimensions or pixel data are invalid.
+  DicomMultiFrameUnsupported: Multi-frame DICOM images are not supported yet.
+  DicomUnsupportedEncoding: This DICOM pixel encoding is not supported.
+  Document: Document
+  InvalidPdf: Invalid or corrupted PDF file.
+  PdfNoPages: PDF file contains no pages.
   NotImplemented: not yet implemented.
   NoPalette: Indexed mode doesn't have palette.
   PfimFailed: Pfim decode failed

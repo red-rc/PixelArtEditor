@@ -17,6 +17,7 @@ public static class ImagePropertiesMapper
         vm.AlphaFormat = model.Alpha;
         vm.DpiX = model.DpiX;
         vm.DpiY = model.DpiY;
+        vm.DicomDataset = model.DicomDataset;
     }
 
     public static void SaveTo(this ImagePropertiesUCVM vm, PixelModel model)
@@ -27,5 +28,6 @@ public static class ImagePropertiesMapper
         model.Alpha = vm.AlphaFormat;
         model.DpiX = vm.DpiX;
         model.DpiY = vm.DpiY;
+        model.DicomDataset = vm.DicomDataset;
     }
 }
