@@ -1,42 +1,34 @@
-using Newtonsoft.Json;
+using PixelArtEditor.Styles;
 using System.IO;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Text.Json.Serialization.Metadata;
 
 namespace PixelArtEditor.AppServices.Serialization;
 
 public static class JsonService
 {
-    public static T? Load<T>(string filePath)
+    public static T? Load<T>(string filePath, JsonTypeInfo<T> typeInfo)
     {
         if (!File.Exists(filePath)) return default;
-            
-        var jsonString = File.ReadAllText(filePath);
-        return string.IsNullOrWhiteSpace(jsonString) ? default : JsonConvert.DeserializeObject<T>(jsonString);
-    }
-    
-    public static void Populate<T>(T target, string filePath)
-    {
-        if (!File.Exists(filePath)) throw new FileNotFoundException($"{LocalizationService.Get("FileNotFound")}: {filePath}");
 
         var jsonString = File.ReadAllText(filePath);
-        if (string.IsNullOrWhiteSpace(jsonString)) throw new InvalidDataException($"{LocalizationService.Get("EmptyConfig")}");
-
-        if (target != null) JsonConvert.PopulateObject(jsonString, target);
+        return string.IsNullOrWhiteSpace(jsonString) ? default : JsonSerializer.Deserialize(jsonString, typeInfo);
     }
-    
-    public static void Save<T>(T data, string filePath)
-    {
-        var settings = new JsonSerializerSettings
-        {
-            ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-        };
 
-        var jsonString = JsonConvert.SerializeObject(data, Formatting.Indented, settings);
+    public static void Save<T>(T data, string filePath, JsonTypeInfo<T> typeInfo)
+    {
+        var jsonString = JsonSerializer.Serialize(data, typeInfo);
 
         var tmp = filePath + ".tmp";
         File.WriteAllText(tmp, jsonString);
-        
-        if (File.Exists(filePath)) File.Delete(filePath);
 
+        if (File.Exists(filePath)) File.Delete(filePath);
         File.Move(tmp, filePath);
     }
 }
+
+[JsonSerializable(typeof(SettingsData))]
+[JsonSerializable(typeof(ThemeData[]))]
+[JsonSourceGenerationOptions(WriteIndented = true, IgnoreReadOnlyProperties = false)]
+public partial class AppJsonContext : JsonSerializerContext;

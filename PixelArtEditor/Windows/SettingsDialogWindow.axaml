@@ -77,33 +77,33 @@
             <Button
                 Grid.Column="0"
                 Margin="0,25,10,25"
-                Padding="30,0"
+                Padding="30,1"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Stretch"
                 Classes="CancelBtn"
                 Command="{Binding CancelCommand}"
                 Content="{DynamicResource Cancel}"
-                FontSize="22.5" />
+                FontSize="20" />
             <Button
                 Grid.Column="1"
                 Margin="0,25,10,25"
-                Padding="30,0"
+                Padding="30,1"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Stretch"
                 Classes="ResetBtn"
                 Command="{Binding ResetCommand}"
                 Content="{DynamicResource Reset}"
-                FontSize="22.5" />
+                FontSize="20" />
             <Button
                 Grid.Column="2"
                 Margin="0,25,25,25"
-                Padding="30,0"
+                Padding="30,1"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Stretch"
                 Classes="ConfirmBtn"
                 Command="{Binding SaveCommand}"
                 Content="{DynamicResource Save}"
-                FontSize="22.5" />
+                FontSize="20" />
         </Grid>
     </Grid>
 </Window>

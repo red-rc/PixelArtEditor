@@ -88,7 +88,7 @@
                              VerticalOffset="-6">
                         <Border Background="{DynamicResource ThemeBackgroundBrush}"
                                 BorderBrush="{DynamicResource ThemeBorderMidBrush}"
-                                BorderThickness="1" Margin="6">
+                                BorderThickness="0" Margin="6">
                           <ScrollViewer HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
                                         VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
                                         IsDeferredScrollingEnabled="{TemplateBinding (ScrollViewer.IsDeferredScrollingEnabled)}"

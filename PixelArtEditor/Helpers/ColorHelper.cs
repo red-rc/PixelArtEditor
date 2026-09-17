@@ -4,8 +4,9 @@ namespace PixelArtEditor.Helpers;
 
 public static class ColorHelper
 {
-    public static Color AdjustBrightness(this Color color, double factor)
+    public static string AdjustBrightness(string hexColor, double factor)
     {
+        var color = HexToColor(hexColor);
         byte r, g, b;
 
         if (factor > 0)
@@ -22,6 +23,18 @@ public static class ColorHelper
             b = (byte)(color.B * k);
         }
 
-        return Color.FromArgb(color.A, r, g, b);
+        return Color.FromArgb(color.A, r, g, b).ToString();
+    }
+
+    public static Color HexToColor(string hexColor)
+    {
+        var color = System.Drawing.ColorTranslator.FromHtml(hexColor);
+
+        return Color.FromArgb(
+            color.A,
+            color.R,
+            color.G,
+            color.B
+        );
     }
 }

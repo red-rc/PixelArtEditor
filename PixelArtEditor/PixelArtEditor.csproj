@@ -3,6 +3,8 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
+    <PublishAot>true</PublishAot>
+    <IsAotCompatible>true</IsAotCompatible>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <AssemblyName></AssemblyName>
@@ -10,7 +12,6 @@
   
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />
-    <EmbeddedResource Include="Styles\SimpleStyle.axaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -27,13 +28,15 @@
     <PackageReference Include="SixLabors.ImageSharp" />
     <PackageReference Include="SkiaSharp" />
     <PackageReference Include="Svg.Skia" />
+    <PackageReference Include="Vecc.YamlDotNet.Analyzers.StaticGenerator" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
     <PackageReference Include="YamlDotNet" />
     <PackageReference Include="Avalonia.Desktop" />
     <PackageReference Include="System.Reactive" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Localization\**\*" Exclude="Localization\convert.py" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
-    <Content Include="Styles\SimpleStyle.axaml" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <AvaloniaResource Include="Localization\**\*.yaml" />
+    <AvaloniaResource Include="Styles\Fonts\**\*.ttf" />
+    <Content Include="Styles\Fonts\**\*.ttf" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

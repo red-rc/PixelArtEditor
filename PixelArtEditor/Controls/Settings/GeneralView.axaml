@@ -53,9 +53,7 @@
                 Text="{DynamicResource Autosave}" />
             <Separator
                 Height="1"
-                Margin="0.5"
-                Background="Gray"
-                Foreground="{DynamicResource ForegroundColor}" />
+                Margin="0.5" />
             <StackPanel Orientation="Horizontal" Spacing="10">
                 <TextBlock Classes="Label" Text="{DynamicResource EnableAutosave}" />
                 <CheckBox IsChecked="{Binding EnableAutosave}" />

@@ -1,4 +1,4 @@
-﻿using Avalonia;
+using Avalonia;
 using Avalonia.Rendering.Composition;
 using ReactiveUI.Avalonia;
 using System;

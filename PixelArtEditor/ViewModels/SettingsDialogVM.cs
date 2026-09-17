@@ -1,7 +1,7 @@
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
-using Avalonia.Threading;
 using PixelArtEditor.AppServices;
+using PixelArtEditor.Helpers;
 using PixelArtEditor.Models.Canvas;
 using PixelArtEditor.Windows;
 using System.Collections.Generic;
@@ -13,7 +13,7 @@ public class SettingsDialogVM : ReactiveObject
 {
     private static ISettingsManager Settings => Services.Settings;
 
-    public static IEnumerable<KeyValuePair<string, string>> LanguagePairs => ResourceManager.LanguageOptions;
+    public static Dictionary<string, string> LanguagePairs => ResourceManager.LanguageOptions;
 
     public KeyValuePair<string, string> Language
     {
@@ -39,11 +39,11 @@ public class SettingsDialogVM : ReactiveObject
     
     public Color GridColor
     {
-        get => Settings.GridColor;
+        get => ColorHelper.HexToColor(Settings.GridColor);
         set
         {
-            if (Settings.GridColor == value) return;
-            Settings.GridColor = value;
+            if (Settings.GridColor == value.ToString()) return;
+            Settings.GridColor = value.ToString();
             this.RaisePropertyChanged();
         }
     }
@@ -70,8 +70,7 @@ public class SettingsDialogVM : ReactiveObject
         }
     }
 
-    public static IEnumerable<KeyValuePair<CheckerboardScale, string>> ScaleOptions
-        => new Dictionary<CheckerboardScale, string>()
+    public static Dictionary<CheckerboardScale, string> ScaleOptions => new()
     {
         { CheckerboardScale.Scale1, "1" },
         { CheckerboardScale.Scale2, "2" },
@@ -148,27 +147,25 @@ public class SettingsDialogVM : ReactiveObject
 
     public Color AccentColor
     {
-        get => Settings.AccentColor;
+        get => ColorHelper.HexToColor(Settings.AccentColor);
         set
         {
-            if (Settings.AccentColor == value) return;
-            Settings.AccentColor = value;
+            if (Settings.AccentColor == value.ToString()) return;
+            Settings.AccentColor = value.ToString();
             this.RaisePropertyChanged();
         }
     }
 
-    public List<string> ThemeOptions { get; set; } = [.. ResourceManager.ThemeOptions.Select(t => t.Name)];
+    public static Dictionary<string, string> ThemeOptions 
+        => ResourceManager.ThemeOptions.ToDictionary(t => t.Name, t => LocalizationService.Get(t.Name));
 
-    public string Theme
+    public KeyValuePair<string, string> Theme
     {
-        get => Settings.Theme;
+        get => new(Settings.Theme, LocalizationService.Get(Settings.Theme));
         set
         {
-            if (Settings.Theme == value) return;
-
-            Settings.Theme = value;
-
-            Dispatcher.UIThread.Post(_dialog.RestartWindow, DispatcherPriority.Background);
+            if (Settings.Theme == value.Key) return;
+            Settings.Theme = value.Key;
             this.RaisePropertyChanged();
         }
     }
@@ -180,38 +177,39 @@ public class SettingsDialogVM : ReactiveObject
         set => this.RaiseAndSetIfChanged(ref _selectedTabIndex, value);
     }
 
-    private readonly SettingsDialogWindow _dialog;
-
     public ReactiveCommand<RxVoid, RxVoid> ResetCommand { get; }
     public ReactiveCommand<RxVoid, RxVoid> CancelCommand { get; }
     public ReactiveCommand<RxVoid, RxVoid> SaveCommand { get; }
+
+    private bool _savePress = false;
 
     public SettingsDialogVM(SettingsDialogWindow dialog)
     {
         ResetCommand = ReactiveCommand.Create(() => {
             Settings.Reset();
             OnClosing();
-        }
-        );
-        CancelCommand = ReactiveCommand.Create(() =>
-        {
-            Settings.Load();
-            dialog.Close();
         });
+
+        CancelCommand = ReactiveCommand.Create(dialog.Close);
+
         SaveCommand = ReactiveCommand.Create(() =>
         {
             Settings.Save();
+            _savePress = true;
             dialog.Close();
         });
 
         _selectedTabIndex = 0;
-
-        _dialog = dialog;
     }
 
     public void OnClosing()
     {
         foreach (var prop in typeof(ISettingsManager).GetProperties())
             this.RaisePropertyChanged(prop.Name);
+
+        if (!_savePress)
+            Settings.Load();
+
+        _savePress = false;
     }
 }

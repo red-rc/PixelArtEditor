@@ -1,4 +1,3 @@
-using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using PixelArtEditor.Models.Canvas;
 using PixelArtEditor.Models.Dock;
@@ -10,7 +9,7 @@ namespace PixelArtEditor.AppServices;
 public interface ISettingsManager
 {
     int GridMaxSize { get; set; }
-    Color GridColor { get; set; }
+    string GridColor { get; set; }
     bool EnableGrid { get; set; }
     bool ScaleCheckerboardWithCanvas { get; set; }
     CheckerboardScale CheckerboardScale { get; set; }
@@ -20,7 +19,7 @@ public interface ISettingsManager
 
     string Language { get; set; }
     BitmapInterpolationMode InterpolationMode { get; set; }
-    Color AccentColor { get; set; }
+    string AccentColor { get; set; }
     string Theme { get; set; }
     List<PanelLayout> Layout { get; set; }
 

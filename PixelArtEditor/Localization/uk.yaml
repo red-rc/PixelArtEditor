@@ -1,122 +1,128 @@
-CreateNew: Створити новий
-Open: Відкрити
-Import: Імпортувати
-Save: Зберегти
-SaveAs: Зберегти як
-Export: Експортувати
-LastAutosave: Останнє автозбереження
-Exit: Вихід
-Undo: Скасувати
-Redo: Повторити
-ImageProperties: Властивості зображення
-Settings: Налаштування
-ZoomIn: Збільшити
-ZoomOut: Зменшити
-ResetZoom: Скинути масштаб
-ResetLayout: Скинути компонування
-LightTheme: Світла тема
-DarkTheme: Темна тема
-CheckForUpdates: Перевірити наявність оновлень
-Report: Повідомити про проблему
-ContactUs: Зв'язатися з нами
-About: Про програму
-Title: Створити файл
-Width: Ширина
-Height: Висота
-Format: Формат
-BackgroundColorStr: Колір фону
-Cancel: Скасувати
-Create: Створити
-General: Загальні
-Appearance: Зовнішній вигляд
-Reset: Скинути
-Theme: Тема
-AccentColor: Акцентний колір
-Language: Мова
-PixelGrid: Сітка пікселів
-PixelGridMaxSize: Максимальний розмір сітки пікселів
-PixelGridColor: Колір сітки пікселів
-EnablePixelGrid: Увімкнути сітку пікселів
-Autosave: Автозбереження
-EnableAutosave: Увімкнути автозбереження
-AutosaveEvery: Автозбереження кожні
-Seconds: секунди
-DpiXY: DPI (x, y)
-ColorMode: Колірний режим
-BitDepth: Розрядність
-AlphaFormat: Формат альфа-каналу
-ColorSpaces: Колірні простори
-AppVersion: v1.0.0
-Basic: Базовий
-Advanced: Розширений
-Confirm: Підтвердити
-Size: Розмір
-Layers: Шари
-Opacity: 'Непрозорість:'
-Checkerboard: Шахівниця
-ScaleCheckerboardWithCanvas: Масштабувати шахівницю разом з полотном
-CheckerboardScale: Масштаб шахівниці
-PixellerTheBest: Pixeller — найкращий графічний редактор
-Rgb: RGB
-Hsv: HSV
-R: R
-H: H
-G: G
-S: S
-B: B
-V: V
-A: A
-Canvas: Полотно
-ViewLocalotNotFound: Не знайдено
-InvalidBitmap: Недійсний формат растрового зображення.
-InvalidPixelData: Розмір PixelData не відповідає розміру растрового зображення.
-Layer: Шар
-SupportedFormats: Усі підтримувані зображення
-Image: Зображення
-ImportImage: Імпортувати зображення
-InvalidSVG: Недійсний або порожній файл SVG.
-InvalidDDS: Непідтримуваний або недійсний формат DDS.
-InvalidICO: Недійсний файл .ico.
-UnsupportedImage: Непідтримуваний формат зображення.
-FileCorrupted: Файл пошкоджено або містить недійсний вміст.
-CantRead: Не вдалося прочитати інформацію про зображення.
-Untitled: без назви
-FailedExport: Не вдалося експортувати зображення.
-NotImplemented: ще не реалізовано.
-NoPalette: Індексований режим не має палітри.
-PfimFailed: Помилка декодування Pfim
-UnhandledPfim: Необроблений формат Pfim
-FileNotFound: Файл не знайдено
-EmptyConfig: Файл конфігурації порожній.
-Copy: Копіювати
-UnknownValue: Невідоме значення
-ForEnum: для переліку
-Pen: Перо
-ColorPicker: Піпетка
-Fill: Заливка
-Eraser: Гумка
-Hand: Рука
-Add: Додати
-Delete: Видалити
-Duplicate: Дублювати
-Group: Групувати
-ToTheTop: Перемістити вгору
-ToTheBottom: Перемістити вниз
-File: Файл
-Edit: Редагувати
-View: Вигляд
-Help: Довідка
-FullScreen: Повноекранний режим
-Windowed: Віконний режим
-Hide: Приховати
-Show: Показати
-Lock: Заблокувати
-Unlock: Розблокувати
-InterpolationMode: Режим інтерполяції
-InterpolationNone: Немає
-InterpolationLow: Низька якість
-InterpolationMedium: Середня якість
-InterpolationHigh: Висока якість
-InterpolateOnlyWhen: Інтерполювати лише при зменшенні масштабу
-PreviewSquareError: Елемент попереднього перегляду має бути квадратним.
-ApplicationCurrentNull: Application.Current є null. Переконайтеся, що Avalonia ініціалізовано.
+localPairs:
+  CreateNew: Створити новий
+  Open: Відкрити
+  Import: Імпортувати
+  Save: Зберегти
+  SaveAs: Зберегти як
+  Export: Експортувати
+  LastAutosave: Останнє автозбереження
+  Exit: Вихід
+  Undo: Скасувати
+  Redo: Повторити
+  ImageProperties: Властивості зображення
+  Settings: Налаштування
+  ZoomIn: Збільшити
+  ZoomOut: Зменшити
+  ResetZoom: Скинути масштаб
+  ResetLayout: Скинути компонування
+  LightTheme: Світла тема
+  DarkTheme: Темна тема
+  Light: Світла
+  Dark: Темна
+  Gray: Сіра
+  System: Системна
+  CheckForUpdates: Перевірити наявність оновлень
+  Report: Повідомити про проблему
+  ContactUs: Зв'язатися з нами
+  About: Про програму
+  Title: Створити файл
+  Width: Ширина
+  Height: Висота
+  Format: Формат
+  BackgroundColorStr: Колір фону
+  Cancel: Скасувати
+  Create: Створити
+  General: Загальні
+  Appearance: Зовнішній вигляд
+  Reset: Скинути
+  Theme: Тема
+  AccentColor: Акцентний колір
+  Language: Мова
+  PixelGrid: Сітка пікселів
+  PixelGridMaxSize: Максимальний розмір сітки пікселів
+  PixelGridColor: Колір сітки пікселів
+  EnablePixelGrid: Увімкнути сітку пікселів
+  Autosave: Автозбереження
+  EnableAutosave: Увімкнути автозбереження
+  AutosaveEvery: Автозбереження кожні
+  Seconds: секунди
+  DpiXY: DPI (x, y)
+  ColorMode: Колірний режим
+  BitDepth: Розрядність
+  AlphaFormat: Формат альфа-каналу
+  ColorSpaces: Колірні простори
+  AppVersion: v1.0.0
+  Basic: Базовий
+  Advanced: Розширений
+  Confirm: Підтвердити
+  Size: Розмір
+  Layers: Шари
+  Opacity: 'Непрозорість:'
+  Checkerboard: Шахівниця
+  ScaleCheckerboardWithCanvas: Масштабувати шахівницю разом з полотном
+  CheckerboardScale: Масштаб шахівниці
+  PixellerTheBest: Pixeller — найкращий графічний редактор
+  Rgb: RGB
+  Hsv: HSV
+  R: R
+  H: H
+  G: G
+  S: S
+  B: B
+  V: V
+  A: A
+  Canvas: Полотно
+  ViewLocalotNotFound: Не знайдено
+  InvalidBitmap: Недійсний формат растрового зображення.
+  InvalidPixelData: Розмір PixelData не відповідає розміру растрового зображення.
+  Layer: Шар
+  SupportedFormats: Усі підтримувані зображення
+  Image: Зображення
+  ImportImage: Імпортувати зображення
+  InvalidSVG: Недійсний або порожній файл SVG.
+  InvalidDDS: Непідтримуваний або недійсний формат DDS.
+  InvalidICO: Недійсний файл .ico.
+  UnsupportedImage: Непідтримуваний формат зображення.
+  FileCorrupted: Файл пошкоджено або містить недійсний вміст.
+  CantRead: Не вдалося прочитати інформацію про зображення.
+  Untitled: без назви
+  FailedExport: Не вдалося експортувати зображення.
+  NotImplemented: ще не реалізовано.
+  NoPalette: Індексований режим не має палітри.
+  PfimFailed: Помилка декодування Pfim
+  UnhandledPfim: Необроблений формат Pfim
+  FileNotFound: Файл не знайдено
+  EmptyConfig: Файл конфігурації порожній.
+  Copy: Копіювати
+  UnknownValue: Невідоме значення
+  ForEnum: для переліку
+  Pen: Перо
+  ColorPicker: Піпетка
+  Fill: Заливка
+  Eraser: Гумка
+  Hand: Рука
+  Add: Додати
+  Delete: Видалити
+  Duplicate: Дублювати
+  Group: Групувати
+  ToTheTop: Перемістити вгору
+  ToTheBottom: Перемістити вниз
+  File: Файл
+  Edit: Редагувати
+  View: Вигляд
+  Help: Довідка
+  FullScreen: Повноекранний режим
+  Windowed: Віконний режим
+  Hide: Приховати
+  Show: Показати
+  Lock: Заблокувати
+  Unlock: Розблокувати
+  InterpolationMode: Режим інтерполяції
+  InterpolationNone: Немає
+  InterpolationLow: Низька якість
+  InterpolationMedium: Середня якість
+  InterpolationHigh: Висока якість
+  InterpolateOnlyWhen: Інтерполювати лише при зменшенні масштабу
+  PreviewSquareError: Елемент попереднього перегляду має бути квадратним.
+  ApplicationCurrentNull: Application.Current є null. Переконайтеся, що Avalonia ініціалізовано.
+  ThemeFontLoadError: Не вдалося завантажити шрифт теми. Переконайтеся, що шрифт існує та доступний.

@@ -18,13 +18,13 @@
                 Orientation="Vertical"
                 Spacing="10">
                 <Button
-                    Padding="30,7.5"
+                    Padding="30,15"
                     HorizontalAlignment="Stretch"
                     Classes="ConfirmBtn"
                     Command="{Binding CreateCommand}"
                     Content="{DynamicResource Create}" />
                 <Button
-                    Padding="30,7.5"
+                    Padding="30,15"
                     HorizontalAlignment="Stretch"
                     Classes="CancelBtn"
                     Content="{DynamicResource Open}" />

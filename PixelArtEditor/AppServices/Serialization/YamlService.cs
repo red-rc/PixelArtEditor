@@ -1,32 +1,30 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using YamlDotNet.Serialization;
-using YamlDotNet.Serialization.NamingConventions;
 
 namespace PixelArtEditor.AppServices.Serialization;
 
+public class YamlData
+{
+    public Dictionary<string, string> LocalPairs { get; set; } = [];
+}
+
 public static class YamlService
 {
-    public static Dictionary<string, string> Load(string path)
-    {
-        var deserializer = new DeserializerBuilder()
-            .WithNamingConvention(CamelCaseNamingConvention.Instance)
+    private static readonly IDeserializer Deserializer =
+        new StaticDeserializerBuilder(new YamlStaticContext())
+            .WithNamingConvention(YamlDotNet.Serialization.NamingConventions.CamelCaseNamingConvention.Instance)
             .Build();
 
-        var result = deserializer.Deserialize<Dictionary<string, string>>(File.ReadAllText(path));
-        return result;
-    }
-
-    public static void Save(Dictionary<string, string> data, string path)
+    public static YamlData Load(Stream stream)
     {
-        var directory = Path.GetDirectoryName(path);
-        if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
-            Directory.CreateDirectory(directory);
-
-        var serializer = new SerializerBuilder()
-            .WithNamingConvention(CamelCaseNamingConvention.Instance)
-            .Build();
-        var yaml = serializer.Serialize(data);
-        File.WriteAllText(path, yaml);
+        using var reader = new StreamReader(stream, new UTF8Encoding(false));
+        var text = reader.ReadToEnd().TrimStart('\uFEFF');
+        return Deserializer.Deserialize<YamlData>(text);
     }
 }
+
+[YamlStaticContext]
+[YamlSerializable(typeof(YamlData))]
+public partial class YamlStaticContext : StaticContext;

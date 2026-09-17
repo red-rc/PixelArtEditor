@@ -40,9 +40,7 @@
                 Text="{DynamicResource PixelGrid}" />
             <Separator
                 Height="1"
-                Margin="0.5"
-                Background="Gray"
-                Foreground="{DynamicResource ForegroundColor}" />
+                Margin="0.5" />
             <StackPanel Orientation="Horizontal" Spacing="10">
                 <TextBlock Classes="Label" Text="{DynamicResource PixelGridMaxSize}" />
                 <NumericUpDown
@@ -67,9 +65,7 @@
                 Text="{DynamicResource Checkerboard}" />
             <Separator
                 Height="1"
-                Margin="0.5"
-                Background="Gray"
-                Foreground="{DynamicResource ForegroundColor}" />
+                Margin="0.5" />
             <StackPanel Orientation="Horizontal" Spacing="10">
                 <TextBlock Classes="Label" Text="{DynamicResource ScaleCheckerboardWithCanvas}" />
                 <CheckBox IsChecked="{Binding ScaleCheckerboardWithCanvas}" />
@@ -96,9 +92,7 @@
                 Text="{DynamicResource Image}" />
             <Separator
                 Height="1"
-                Margin="0.5"
-                Background="Gray"
-                Foreground="{DynamicResource ForegroundColor}" />
+                Margin="0.5" />
             <StackPanel Orientation="Horizontal" Spacing="10">
                 <TextBlock Classes="Label" Text="{DynamicResource InterpolationMode}" />
                 <ComboBox

@@ -26,10 +26,6 @@
         <Setter Property="FontFamily" Value="{DynamicResource HeadingFont}" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
-
-        <Style Selector="^ AccessText">
-            <Setter Property="Padding" Value="0,5" />
-        </Style>
     </Style>
 
     <!-- ================= Button variants ================= -->

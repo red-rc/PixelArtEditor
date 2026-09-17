@@ -2,7 +2,6 @@
     x:Class="PixelArtEditor.App"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:PixelArtEditor"
     xmlns:viewModels="clr-namespace:PixelArtEditor.ViewModels"
     xmlns:controls="clr-namespace:PixelArtEditor.Controls.Views"
     xmlns:conv="using:PixelArtEditor.Converters">
@@ -18,16 +17,13 @@
     </Application.DataTemplates>
 
     <Application.Resources>
-        <SolidColorBrush x:Key="ThemeBorderHighBrush" Color="{DynamicResource BorderColor}" />
-        <SolidColorBrush x:Key="ThemeBackgroundBrush" Color="{DynamicResource UiColor}" />
-        <SolidColorBrush x:Key="ThemeBorderMidBrush" Color="{DynamicResource ShadowColor}" />
-
         <conv:AddConverter x:Key="AddConverter"/>
         <conv:TabToViewConverter x:Key="TabToViewConverter" />
     </Application.Resources>
 
     <Application.Styles>
         <SimpleTheme />
+        <StyleInclude Source="avares://PixelArtEditor/Styles/SimpleStyle.axaml" />
         <StyleInclude Source="avares://Avalonia.Controls.ColorPicker/Themes/Simple/Simple.xaml" />
         <StyleInclude Source="avares://PixelArtEditor/Styles/Overrides/ColorViewOverride.axaml" />
         <StyleInclude Source="avares://PixelArtEditor/Styles/Overrides/ColorPickerOverride.axaml" />

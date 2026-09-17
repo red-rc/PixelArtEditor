@@ -23,7 +23,7 @@ namespace PixelArtEditor.UI;
 public class Canvas : Control, ICanvasContext
 {
     private static ISettingsManager Settings => Services.Settings;
-    private readonly Pen _gridPen = new(new SolidColorBrush(Settings.GridColor));
+    private readonly Pen _gridPen = new(new SolidColorBrush(ColorHelper.HexToColor(Settings.GridColor)));
 
     public static readonly StyledProperty<PixelModel> ModelProperty =
         AvaloniaProperty.Register<Canvas, PixelModel>(nameof(Model));

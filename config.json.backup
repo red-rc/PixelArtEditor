@@ -1,15 +1,25 @@
 {
   "GridMaxSize": 32,
-  "GridColor": "#7f7f7f",
+  "GridColor": {
+    "A": 255,
+    "R": 127,
+    "G": 127,
+    "B": 127
+  },
   "EnableGrid": true,
   "EnableAutosave": true,
   "AutosaveFrequency": 10,
   "Language": "en",
   "ScaleCheckerboardWithCanvas": false,
   "CheckerboardScale": 4,
-  "InterpolateOnlyWhenScalingDown": true,
   "InterpolationMode": 1,
-  "AccentColor": "#1e90ff",
+  "InterpolateOnlyWhenScalingDown": true,
+  "AccentColor": {
+    "A": 255,
+    "R": 30,
+    "G": 144,
+    "B": 255
+  },
   "Theme": "System",
   "Layout": [
     {

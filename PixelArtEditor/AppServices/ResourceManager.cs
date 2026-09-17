@@ -1,4 +1,5 @@
-﻿using Avalonia.Threading;
+﻿using Avalonia.Platform;
+using Avalonia.Threading;
 using PixelArtEditor.AppServices.Serialization;
 using PixelArtEditor.AppServices.Shell;
 using PixelArtEditor.Models.Dock;
@@ -13,7 +14,7 @@ namespace PixelArtEditor.AppServices;
 public static class ResourceManager
 {
     public const string ConfigPath = "config.json";
-    public const string ThemesPath = "themes.json";
+    public const string ThemesPath = "Styles/themes.json";
 
     public static List<PanelLayout> DefaultLayout { get; } =
     [
@@ -42,54 +43,42 @@ public static class ResourceManager
 
     public static void Initialize()
     {
-        BaseTheme[]? loadedThemes;
+        List<BaseTheme> themes;
 
-        try { loadedThemes = JsonService.Load<BaseTheme[]>(ThemesPath); }
-        catch { loadedThemes = null; }
+        ThemeData[]? loadedData;
+        try { loadedData = JsonService.Load(ThemesPath, AppJsonContext.Default.ThemeDataArray); }
+        catch { loadedData = null; }
 
-        if (loadedThemes is null || loadedThemes.Length == 0)
-            loadedThemes = CreateDefaultThemes();
-
-        ThemeOptions = loadedThemes;
-
-        if (!Directory.Exists("Localization"))
-            Directory.CreateDirectory("Localization");
-
-        var files = Directory.GetFiles("Localization", "*.yaml");
-
-        if (files.Length == 0)
+        if (loadedData is null || loadedData.Length == 0)
         {
-            LocalizationService.SetDefaults();
-            files = Directory.GetFiles("Localization", "*.yaml");
+            themes = [DefaultThemes.CreateDark(), DefaultThemes.CreateLight(),
+                DefaultThemes.CreateGray(), DefaultThemes.CreateSystem()];
+
+            var toSave = themes.Select(ThemeSerializer.ToData).ToArray();
+            try { JsonService.Save(toSave, ThemesPath, AppJsonContext.Default.ThemeDataArray); }
+            catch (Exception ex)
+            {
+                Dispatcher.UIThread.InvokeAsync(async () => await ActionService.ShowErrorAsync(ex.Message));
+            }
+        }
+        else
+        {
+            themes = [];
+            foreach (var data in loadedData)
+            {
+                var theme = new BaseTheme();
+                ThemeSerializer.ApplyData(theme, data);
+                themes.Add(theme);
+            }
         }
 
-        List<string> langKeys = [.. files
-            .Select(x => Path.GetFileNameWithoutExtension(x))
-            .Where(x => x is not null && !string.IsNullOrEmpty(x) && LanguageNames.ContainsKey(x!))];
+        ThemeOptions = [.. themes];
+
+        var langKeys = AssetLoader.GetAssets(new Uri("avares://PixelArtEditor/Localization/"), null)
+            .Select(uri => Path.GetFileNameWithoutExtension(uri.AbsolutePath))
+            .Where(LanguageNames.ContainsKey)
+            .ToList();
 
         LanguageOptions = langKeys.ToDictionary(x => x, y => LanguageNames[y]);
-    }
-
-    private static BaseTheme[] CreateDefaultThemes()
-    {
-        try
-        {
-            var defaults = new BaseTheme[]
-            {
-                new DarkTheme(),
-                new LightTheme(),
-                new GrayTheme(),
-                new SystemTheme()
-            };
-
-            JsonService.Save(defaults, ThemesPath);
-
-            return defaults;
-        }
-        catch (Exception ex)
-        {
-            Dispatcher.UIThread.InvokeAsync(async () => await ActionService.ShowErrorAsync(ex.Message));
-            return [];
-        }
     }
 }

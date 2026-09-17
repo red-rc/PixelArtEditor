@@ -29,7 +29,13 @@
                 Height="30"
                 Padding="10,0,10,0"
                 ItemsSource="{Binding ThemeOptions}"
-                SelectedItem="{Binding Theme, Mode=TwoWay}" />
+                SelectedItem="{Binding Theme, Mode=TwoWay}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Value}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Spacing="10">
             <TextBlock Classes="Label" Text="{DynamicResource AccentColor}" />
@@ -48,7 +54,7 @@
             <Border
                 Width="40"
                 Height="30"
-                Background="{DynamicResource PrimaryPressedColor}"
+                Background="{DynamicResource PrimaryPressColor}"
                 CornerRadius="4" />
         </StackPanel>
     </StackPanel>

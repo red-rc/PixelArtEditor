@@ -9,8 +9,8 @@
     x:DataType="vm:MessageDialogVM"
     Title="{Binding Name}"
     Width="375"
-    Height="150"
-    d:DesignHeight="150"
+    Height="175"
+    d:DesignHeight="175"
     d:DesignWidth="375"
     Background="{DynamicResource BackgroundColor}"
     ExtendClientAreaToDecorationsHint="True"
@@ -19,14 +19,15 @@
     mc:Ignorable="d">
 
     <Window.Styles>
-        <Style Selector="Button.OKButton">
+        <Style Selector="Button.OKBtn">
             <Setter Property="Background" Value="{DynamicResource PrimaryColor}" />
-             <Setter Property="FontFamily" Value="{DynamicResource AppFont}" />
+            <Setter Property="FontFamily" Value="{DynamicResource AppFont}" />
             <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />
             <Setter Property="FontSize" Value="13" />
             <Setter Property="Width" Value="80" />
             <Setter Property="Height" Value="25" />
             <Setter Property="CornerRadius" Value="2.5" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
             
             <Style Selector="^:pointerover /template/ ContentPresenter#PART_ContentPresenter">
                 <Setter Property="Background" Value="{DynamicResource PrimaryHoverColor}" />
@@ -34,6 +35,25 @@
             </Style>
             <Style Selector="^:pressed /template/ ContentPresenter#PART_ContentPresenter">
                 <Setter Property="Background" Value="{DynamicResource PrimaryPressColor}" />
+                <Setter Property="BoxShadow" Value="{DynamicResource CardShadow}" />
+            </Style>
+        </Style>
+
+        <Style Selector="Button.CopyBtn">
+            <Setter Property="Background" Value="{DynamicResource UiColor}" />
+            <Setter Property="FontFamily" Value="{DynamicResource AppFont}" />
+            <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Width" Value="25" />
+            <Setter Property="Height" Value="25" />
+            <Setter Property="CornerRadius" Value="2.5" />
+            
+            <Style Selector="^:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+                <Setter Property="Background" Value="{DynamicResource UiHoverColor}" />
+                <Setter Property="BoxShadow" Value="{DynamicResource CardShadow}" />
+            </Style>
+            <Style Selector="^:pressed /template/ ContentPresenter#PART_ContentPresenter">
+                <Setter Property="Background" Value="{DynamicResource UiPressColor}" />
                 <Setter Property="BoxShadow" Value="{DynamicResource CardShadow}" />
             </Style>
         </Style>
@@ -52,26 +72,36 @@
             <StackPanel
                 HorizontalAlignment="Center" 
                 VerticalAlignment="Center"
-                Orientation="Horizontal"
-                Spacing="7.5">
-                <Image 
-                    Source="/Assets/error.ico"
-                    Width="32" 
-                    Height="32"
-                    VerticalAlignment="Center"
-                    RenderOptions.BitmapInterpolationMode="None" />
-                <TextBlock VerticalAlignment="Center" TextWrapping="Wrap" MaxWidth="300" Text="{Binding Message}" />
+                Orientation="Horizontal">
+                <StackPanel Width="56" VerticalAlignment="Center">
+                    <Image 
+                        Source="/Assets/error.ico"
+                        Width="32" 
+                        Height="32"
+                        RenderOptions.BitmapInterpolationMode="None" />
+                </StackPanel>
+                <ScrollViewer>
+                    <TextBlock x:Name="MsgText" VerticalAlignment="Center" TextWrapping="Wrap" MaxWidth="301" Text="{Binding Message}" />
+                </ScrollViewer>
             </StackPanel>
         </Grid>
 
         <Grid Grid.Row="2" Background="{DynamicResource SecondaryBackgroundColor}">
-            <Button 
-                HorizontalAlignment="Right" 
-                VerticalAlignment="Center"
-                Classes="OKButton"
-                Margin="0,0,20,0"
-                Content="OK" 
-                Command="{Binding OKCommand}" />
+            <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft" Spacing="7.5" Margin="15,0">
+                <Button
+                    Classes="OKBtn"
+                    Content="OK" 
+                    Command="{Binding OKCommand}" />
+                <Button
+                    Classes="CopyBtn"
+                    Click="CopyClick">
+                    <Image 
+                        Source="{DynamicResource DuplicateIcon}"
+                        Width="13" 
+                        Height="13"
+                        RenderOptions.BitmapInterpolationMode="None" />
+                </Button>
+            </StackPanel>
         </Grid>
     </Grid>
 </Window>
