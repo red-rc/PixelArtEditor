@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Media;
 using PixelArtEditor.AppServices;
 using PixelArtEditor.AppServices.Canvas;
+using PixelArtEditor.AppServices.ImageProcessing;
 using PixelArtEditor.AppServices.Tools;
 using PixelArtEditor.Models.Canvas;
 using PixelArtEditor.UI;
@@ -49,13 +50,22 @@ public class EditorVM : ReactiveObject
 
     public PixelModel GetPreparedModel()
     {
-        if (_canvas is not null)
+        return new PixelModel
         {
-            _model.Data = LayerManager.GetCompositePixelData(Model.Width, Model.Height);
-            this.RaisePropertyChanged(nameof(Model));
-        }
-
-        return _model;
+            Name = _model.Name,
+            Extension = _model.Extension,
+            Width = _model.Width,
+            Height = _model.Height,
+            Mode = _model.Mode,
+            BitDepth = _model.BitDepth,
+            ColorSpace = _model.ColorSpace,
+            Alpha = _model.Alpha,
+            DpiX = _model.DpiX,
+            DpiY = _model.DpiY,
+            Palette = _model.Palette,
+            Data = LayerManager.GetCompositePixelData(Model.Width, Model.Height),
+            DicomDataset = _model.DicomDataset
+        };
     }
 
     private LayerManager _layerManager = new ();
@@ -111,7 +121,13 @@ public class EditorVM : ReactiveObject
     public Color PickedColor
     {
         get => _pickedColor;
-        set => this.RaiseAndSetIfChanged(ref _pickedColor, value);
+        set
+        {
+            if (_model?.Mode == ColorMode.Indexed && _model.Palette is not null)
+                value = ImageConverterService.ResolveColorForPalette(value, _model.Palette, _model.BitDepth);
+
+            this.RaiseAndSetIfChanged(ref _pickedColor, value);
+        }
     }
 
     public string? CoordinatesText { get; set; }

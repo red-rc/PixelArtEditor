@@ -133,7 +133,7 @@ public sealed class SettingsManager : ISettingsManager
     {
         try
         {
-            var loaded = JsonService.Load(ResourceManager.ConfigPath, AppJsonContext.Default.SettingsData)
+            var loaded = JsonService.Load(ResourceManager.SettingsPath, AppJsonContext.Default.SettingsData)
                 ?? throw new InvalidDataException();
 
             GridMaxSize = loaded.GridMaxSize;
@@ -153,7 +153,7 @@ public sealed class SettingsManager : ISettingsManager
         catch (Exception ex)
         {
             try { Save(); }
-            catch { Dispatcher.UIThread.InvokeAsync(async () => await ActionService.ShowErrorAsync(ex.ToString())); }
+            catch { Dispatcher.UIThread.InvokeAsync(async () => await ActionService.ShowError(ex.ToString())); }
         }
     }
 
@@ -189,7 +189,7 @@ public sealed class SettingsManager : ISettingsManager
         AccentColor = AccentColor,
         Theme = Theme,
         Layout = Layout
-    }, ResourceManager.ConfigPath, AppJsonContext.Default.SettingsData);
+    }, ResourceManager.SettingsPath, AppJsonContext.Default.SettingsData);
     public void Reset()
     {
         SetDefaults();

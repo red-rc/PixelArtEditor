@@ -1,4 +1,8 @@
-﻿using System.IO;
+﻿using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats.Png;
+using SixLabors.ImageSharp.PixelFormats;
+using System;
+using System.IO;
 
 namespace PixelArtEditor.AppServices.ImageProcessing.Formats;
 
@@ -56,5 +60,35 @@ public static class IcoService
         }
 
         return data;
+    }
+
+    // Зберігає одне зображення у форматі .ico (PNG-фрейм, Vista-style)
+    public static void Save(Stream stream, Image<Rgba32> image)
+    {
+        if (image.Width > 256 || image.Height > 256)
+            throw new InvalidOperationException(LocalizationService.Get("IcoTooLarge"));
+
+        using var pngStream = new MemoryStream();
+        image.Save(pngStream, new PngEncoder());
+        var pngBytes = pngStream.ToArray();
+
+        using var writer = new BinaryWriter(stream, System.Text.Encoding.UTF8, leaveOpen: true);
+
+        // ICONDIR
+        writer.Write((ushort)0); // reserved
+        writer.Write((ushort)1); // type = icon
+        writer.Write((ushort)1); // count
+
+        // ICONDIRENTRY
+        writer.Write((byte)(image.Width >= 256 ? 0 : image.Width));
+        writer.Write((byte)(image.Height >= 256 ? 0 : image.Height));
+        writer.Write((byte)0);  // color count
+        writer.Write((byte)0);  // reserved
+        writer.Write((ushort)1);  // planes
+        writer.Write((ushort)32); // bpp
+        writer.Write((uint)pngBytes.Length);
+        writer.Write((uint)22);   // offset = 6 (header) + 16 (entry)
+
+        writer.Write(pngBytes);
     }
 }

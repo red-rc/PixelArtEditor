@@ -10,7 +10,7 @@ using System.Linq;
 using System.Threading;
 using AlphaFormat = Avalonia.Platform.AlphaFormat;
 
-namespace PixelArtEditor.AppServices.Canvas;
+namespace PixelArtEditor.AppServices;
 
 public static class BitmapService
 {
@@ -377,5 +377,97 @@ public static class BitmapService
         }
 
         return bgra;
+    }
+
+    public static byte? GetClosestPaletteColorIdx(Color color, Palette palette)
+    {
+        if (palette.Colors.Count == 0) return null;
+
+        byte bestIdx = 0;
+        var minDistance = int.MaxValue;
+
+        for (byte i = 0; i < palette.Colors.Count; i++)
+        {
+            var c = palette.Colors[i];
+
+            var dr = color.R - c.R;
+            var dg = color.G - c.G;
+            var db = color.B - c.B;
+            var da = color.A - c.A;
+            var dist = dr * dr + dg * dg + db * db + da * da;
+
+            if (dist < minDistance)
+            {
+                minDistance = dist;
+                bestIdx = i;
+
+                if (dist == 0) break;
+            }
+        }
+
+        return bestIdx;
+    }
+
+    public static Color GetClosestPaletteColor(Color color, Palette palette)
+    {
+        if (palette.Colors.Count > 0 && GetClosestPaletteColorIdx(color, palette) is byte idx)
+            return palette.Colors[idx];
+
+        return color;
+    }
+
+    public static unsafe byte[] QuantizeToPalette(byte[] bgraData, Palette palette)
+    {
+        if (palette.Colors.Count == 0) return bgraData;
+
+        var result = new byte[bgraData.Length];
+
+        fixed (byte* srcPtr = bgraData)
+        fixed (byte* dstPtr = result)
+        {
+            uint* src = (uint*)srcPtr;
+            uint* dst = (uint*)dstPtr;
+
+            var cache = new Dictionary<uint, uint>();
+
+            for (var i = 0; i < bgraData.Length / 4; i++)
+            {
+                var packed = src[i];
+                var a = (byte)((packed >> 24) & 0xFF);
+
+                if (a == 0)
+                {
+                    dst[i] = 0;
+                    continue;
+                }
+
+                if (cache.TryGetValue(packed, out var cachedPacked))
+                {
+                    dst[i] = cachedPacked;
+                    continue;
+                }
+
+                var b = (byte)(packed & 0xFF);
+                var g = (byte)((packed >> 8) & 0xFF);
+                var r = (byte)((packed >> 16) & 0xFF);
+
+                var best = GetClosestPaletteColor(Color.FromArgb(a, r, g, b), palette);
+                var outPacked = (uint)best.B | ((uint)best.G << 8) | ((uint)best.R << 16) | ((uint)best.A << 24);
+                cache[packed] = outPacked;
+                dst[i] = outPacked;
+            }
+        }
+
+        return result;
+    }
+
+    public static List<Color> GetPalette(byte[] data, int width, PaletteQuantization quantizationMethod, bool dither)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal static byte[] GetIndexedBitmap(byte[] data, Palette? palette)
+    {
+        throw new NotImplementedException();
     }
 }

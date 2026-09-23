@@ -25,7 +25,12 @@ localPairs:
   Report: 問題を報告
   ContactUs: お問い合わせ
   About: バージョン情報
-  Title: ファイルを作成
+  CreateTitle: ファイルを作成
+  ExportTitle: エクスポート
+  SettingsTitle: 設定
+  MessageTitle: エラー
+  ImagePropertiesTitle: 画像プロパティ
+  IndexedTitle: インデックスカラー
   Width: 幅
   Height: 高さ
   Format: フォーマット
@@ -96,7 +101,7 @@ localPairs:
   InvalidPdf: 無効または破損したPDFファイルです。
   PdfNoPages: PDFファイルにページが含まれていません。
   NotImplemented: まだ実装されていません。
-  NoPalette: インデックスモードにはパレットがありません。
+  InvalidPalette: 画像パレットが破損しているか、無効です。
   PfimFailed: Pfimデコードに失敗しました
   UnhandledPfim: 未対応のPfim形式
   FileNotFound: ファイルが見つかりません
@@ -134,3 +139,7 @@ localPairs:
   PreviewSquareError: プレビューコントロールは正方形である必要があります。
   ApplicationCurrentNull: Application.Currentがnullです。Avaloniaが初期化されていることを確認してください。
   ThemeFontLoadError: テーマフォントの読み込みに失敗しました。フォントが存在し、利用可能であることを確認してください。
+  IcoTooLarge: ICOファイルのサイズが最大制限の256x256ピクセルを超えています。
+  Quantization: 量子化
+  ColorCount: 色数
+  Dither: ディザリング

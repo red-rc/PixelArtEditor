@@ -8,7 +8,6 @@
     xmlns:controls="clr-namespace:PixelArtEditor.Controls.Image"
     xmlns:controlsGlobal="clr-namespace:PixelArtEditor.Controls"
     xmlns:vm="clr-namespace:PixelArtEditor.ViewModels"
-    Title=""
     Width="700"
     Height="450"
     d:DesignHeight="450"
@@ -48,7 +47,7 @@
     <Grid RowDefinitions="Auto,*" Background="{DynamicResource SecondaryBackgroundColor}">
         <controlsGlobal:TitleBar 
             Grid.Row="0" 
-            Title="{DynamicResource Title}" 
+            Title="{DynamicResource CreateTitle}" 
             IconVisible="False" 
             CanMinimize="False" 
             CanMaximize="False" />
@@ -87,7 +86,10 @@
                 </StackPanel>
                 <StackPanel Grid.Column="3" Spacing="10">
                     <TextBlock Classes="Header" Text="{DynamicResource Advanced}" />
-                    <controls:PropertiesPanel DataContext="{Binding ImageProperties}" />
+                    <controls:PropertiesPanel 
+                        DataContext="{Binding ImageProperties}" 
+                        ConfigureVisible="False" 
+                        ConfigureEnabled="False" />
                 </StackPanel>
             </Grid>
             <Grid

@@ -11,9 +11,9 @@ public partial class ImagePropertiesWindow : Window
         InitializeComponent();
     }
 
-    public ImagePropertiesWindow(PixelModel model) : this()
+    public ImagePropertiesWindow(PixelModel model, EditorVM editorVM) : this()
     {
         InitializeComponent();
-        DataContext = new ImagePropertiesVM(this, model);
+        DataContext = new ImagePropertiesVM(this, model, editorVM);
     }
 }

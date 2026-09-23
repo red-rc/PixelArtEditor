@@ -13,7 +13,7 @@ namespace PixelArtEditor.AppServices;
 
 public static class ResourceManager
 {
-    public const string ConfigPath = "config.json";
+    public const string SettingsPath = "settings.json";
     public const string ThemesPath = "Styles/themes.json";
 
     public static List<PanelLayout> DefaultLayout { get; } =
@@ -58,7 +58,7 @@ public static class ResourceManager
             try { JsonService.Save(toSave, ThemesPath, AppJsonContext.Default.ThemeDataArray); }
             catch (Exception ex)
             {
-                Dispatcher.UIThread.InvokeAsync(async () => await ActionService.ShowErrorAsync(ex.Message));
+                Dispatcher.UIThread.InvokeAsync(async () => await ActionService.ShowError(ex.Message));
             }
         }
         else

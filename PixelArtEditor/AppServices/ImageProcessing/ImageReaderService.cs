@@ -1,13 +1,19 @@
-﻿using PixelArtEditor.Models.Canvas;
+﻿using PixelArtEditor.Helpers;
+using PixelArtEditor.Models.Canvas;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats.Bmp;
+using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.Metadata;
 using SixLabors.ImageSharp.PixelFormats;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
+using Color = Avalonia.Media.Color;
 
 namespace PixelArtEditor.AppServices.ImageProcessing;
 
 public static class ImageReaderService
 {
-
     public static (float dpiX, float dpiY) GetDpi(ImageMetadata meta)
     {
         var x = meta.HorizontalResolution > 0 ? (float)meta.HorizontalResolution : 96f;
@@ -316,6 +322,143 @@ public static class ImageReaderService
             DpiX = dpiX,
             DpiY = dpiY,
             Data = data
+        };
+    }
+
+    public static PixelModel? ReadIndexed(Image<Rgba32> image, BitDepth targetBitDepth, MemoryStream ms)
+    {
+        var (dpiX, dpiY) = GetDpi(image.Metadata);
+        var indices = new byte[image.Width * image.Height];
+
+        var palette = ExtractPaletteColors(image, ms);
+        if (palette.Colors.Count == 0 || palette.Colors.Count > 256) return null;
+
+        var maxIndex = (byte)(palette.Colors.Count - 1);
+        var cache = new Dictionary<Color, byte>(palette.Colors.Count);
+
+        for (var i = 0; i < palette.Colors.Count; i++)
+            cache.TryAdd(palette.Colors[i], (byte)i);
+
+        image.ProcessPixelRows(accessor =>
+        {
+            for (var y = 0; y < image.Height; y++)
+            {
+                var row = accessor.GetRowSpan(y);
+                for (var x = 0; x < image.Width; x++)
+                {
+                    var pixel = row[x];
+                    var pixelColor = Color.FromArgb(pixel.A, pixel.R, pixel.G, pixel.B);
+
+                    if (!cache.TryGetValue(pixelColor, out var idx))
+                    {
+                        var bestIdx = BitmapService.GetClosestPaletteColorIdx(pixelColor, palette);
+                        cache[pixelColor] = bestIdx is byte bIdx ? bIdx : (byte)0;
+                    }
+
+                    indices[y * image.Width + x] = idx <= maxIndex ? idx : maxIndex;
+                }
+            }
+        });
+
+        return new PixelModel
+        {
+            Width = image.Width,
+            Height = image.Height,
+            Mode = ColorMode.Indexed,
+            Palette = palette,
+            BitDepth = targetBitDepth,
+            Alpha = AlphaFormat.None,
+            ColorSpace = ColorSpace.sRGB,
+            DpiX = dpiX,
+            DpiY = dpiY,
+            Data = ImageConverterService.PackIndices(indices, targetBitDepth)
+        };
+    }
+
+    private static Palette ExtractPaletteColors(Image<Rgba32> image, MemoryStream ms)
+    {
+        var result = new List<Color>();
+
+        var pngMeta = image.Metadata.GetPngMetadata();
+        if (pngMeta?.ColorType == PngColorType.Palette && pngMeta.ColorTable.HasValue)
+        {
+            var colorTable = pngMeta.ColorTable.Value;
+
+            for (var i = 0; i < colorTable.Length; i++)
+            {
+                var rgba = colorTable.Span[i].ToPixel<Rgba32>();
+                result.Add(Color.FromArgb(rgba.A, rgba.R, rgba.G, rgba.B));
+            }
+
+            return new Palette(result);
+        }
+
+        var gifMeta = image.Metadata.GetGifMetadata();
+        var gifColorTable = gifMeta?.GlobalColorTable;
+
+        if (!gifColorTable.HasValue && image.Frames.Count > 0)
+        {
+            var frameMeta = image.Frames.RootFrame.Metadata.GetGifMetadata();
+            gifColorTable = frameMeta?.LocalColorTable;
+        }
+
+        if (gifColorTable.HasValue)
+        {
+            var colorTable = gifColorTable.Value;
+
+            for (var i = 0; i < colorTable.Length; i++)
+            {
+                var rgba = colorTable.Span[i].ToPixel<Rgba32>();
+                result.Add(Color.FromArgb(rgba.A, rgba.R, rgba.G, rgba.B));
+            }
+
+            return new Palette(result);
+        }
+
+        var bmpPalette = BmpHelper.ExtractBmpPalette(ms);
+        if (bmpPalette.Count > 0)
+            return new Palette(bmpPalette);
+
+        return new Palette([]);
+    }
+
+    public static BitDepth? DetectIndexedBitDepth(Image image)
+    {
+        var pngMeta = image.Metadata.GetPngMetadata();
+        if (pngMeta?.ColorType == PngColorType.Palette && pngMeta.ColorTable.HasValue)
+        {
+            return pngMeta.ColorTable.Value.Length switch
+            {
+                <= 2 => BitDepth.Bit1,
+                <= 4 => BitDepth.Bit2,
+                <= 16 => BitDepth.Bit4,
+                _ => BitDepth.Bit8
+            };
+        }
+
+        var gifMeta = image.Metadata.GetGifMetadata();
+
+        var hasGifGlobal = gifMeta?.GlobalColorTable.HasValue == true;
+        var hasGifLocal = image.Frames.Count > 0 
+            && image.Frames.RootFrame.Metadata.GetGifMetadata()?.LocalColorTable.HasValue == true;
+
+        if (hasGifGlobal || hasGifLocal)
+        {
+            var ct = hasGifGlobal
+                ? gifMeta!.GlobalColorTable!.Value
+                : image.Frames.RootFrame.Metadata.GetGifMetadata().LocalColorTable!.Value;
+
+            return ct.Length <= 16 ? BitDepth.Bit4 : BitDepth.Bit8;
+        }
+
+        var bmpMeta = image.Metadata.GetBmpMetadata();
+        return bmpMeta.BitsPerPixel switch
+        {
+            BmpBitsPerPixel.Pixel1 => BitDepth.Bit1,
+            BmpBitsPerPixel.Pixel2 => BitDepth.Bit2,
+            BmpBitsPerPixel.Pixel4 => BitDepth.Bit4,
+            BmpBitsPerPixel.Pixel8 => BitDepth.Bit8,
+            _ => null
         };
     }
 

@@ -1,5 +1,5 @@
 ﻿using Avalonia.Media.Imaging;
-using PixelArtEditor.AppServices.Canvas;
+using PixelArtEditor.AppServices;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 

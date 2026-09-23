@@ -1,11 +1,12 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using PixelArtEditor.AppServices.Canvas;
+using PixelArtEditor.AppServices;
 using PixelArtEditor.AppServices.Shell;
 using PixelArtEditor.AppServices.Tools;
 using PixelArtEditor.Models.Canvas;
 using PixelArtEditor.Models.LayerPanel;
+using PixelArtEditor.ViewModels;
 using System;
 
 namespace PixelArtEditor.Controls.Editor
@@ -71,15 +72,17 @@ namespace PixelArtEditor.Controls.Editor
         private async void ExportClick(object? sender, RoutedEventArgs e)
         {
             var layer = _ctx.GetActiveLayer();
-            if (layer is null) return;
+            if (layer is null || Services.Navigation.GetViewModel() is not EditorVM editorVM) return;
 
-            await ActionService.ShowExportWindowAsync(new PixelModel
+            await ActionService.ShowExportWindow(new PixelModel
             { 
                 Name = layer.Name,
                 Width = layer.Width,
                 Height = layer.Height,
+                Mode = ColorMode.RGBA,
+                BitDepth = BitDepth.Bit8,
                 Data = layer.PixelData
-            });
+            }, editorVM);
 
             _closeFlyout();
         }

@@ -35,7 +35,7 @@
     <Grid RowDefinitions="Auto,*,Auto" Background="{DynamicResource SecondaryBackgroundColor}">
         <controls:TitleBar 
             Grid.Row="0"
-            Title="Settings" 
+            Title="{DynamicResource SettingsTitle}" 
             IconVisible="False" 
             CanMinimize="False" 
             CanMaximize="False" />

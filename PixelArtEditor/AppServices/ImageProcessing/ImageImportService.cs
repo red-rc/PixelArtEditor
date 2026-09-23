@@ -12,9 +12,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using AlphaFormat = PixelArtEditor.Models.Canvas.AlphaFormat;
-using SharpImage = SixLabors.ImageSharp.Image;
 using ImageReader = PixelArtEditor.AppServices.ImageProcessing.ImageReaderService;
+using SharpImage = SixLabors.ImageSharp.Image;
 
 namespace PixelArtEditor.AppServices.ImageProcessing;
 
@@ -78,7 +77,7 @@ public static class ImageImportService
         }
         catch (Exception ex)
         {
-            await ActionService.ShowErrorAsync(ex.Message);
+            await ActionService.ShowError(ex.Message);
             return null;
         }
 
@@ -94,28 +93,12 @@ public static class ImageImportService
                 var (svgModel, svgError) = await Task.Run(() =>
                 {
                     ms.Position = 0;
-                    var result = SvgService.RenderToRgba32(ms);
-                    if (result is null) return ((PixelModel?)null, $"{LocalizationService.Get("InvalidSVG")}");
-
-                    var (data, width, height) = result.Value;
-
-                    return (new PixelModel
-                    {
-                        Width = width,
-                        Height = height,
-                        Mode = ColorMode.RGBA,
-                        BitDepth = BitDepth.Bit8,
-                        Alpha = AlphaFormat.Straight,
-                        ColorSpace = ColorSpace.sRGB,
-                        DpiX = 96f,
-                        DpiY = 96f,
-                        Data = data
-                    }, (string?)null);
+                    return SvgService.Load(ms);
                 });
 
                 if (svgError is not null)
                 {
-                    await ActionService.ShowErrorAsync(svgError);
+                    await ActionService.ShowError(svgError);
                     return null;
                 }
 
@@ -137,7 +120,7 @@ public static class ImageImportService
 
                 if (dicomError is not null)
                 {
-                    await ActionService.ShowErrorAsync(dicomError);
+                    await ActionService.ShowError(dicomError);
                     return null;
                 }
 
@@ -159,7 +142,7 @@ public static class ImageImportService
 
                 if (pdfError is not null)
                 {
-                    await ActionService.ShowErrorAsync(pdfError);
+                    await ActionService.ShowError(pdfError);
                     return null;
                 }
 
@@ -173,32 +156,23 @@ public static class ImageImportService
             }
             else if (ext == ".dds")
             {
-                ms.Position = 0;
-
-                var ddsResult = DdsService.LoadAsRgba32(ms, out var ddsError);
-
-                if (ddsResult is null)
+                var (ddsModel, ddsError) = await Task.Run(() =>
                 {
-                    await ActionService.ShowErrorAsync(ddsError ?? $"{LocalizationService.Get("InvalidDDS")}");
+                    ms.Position = 0;
+                    return DdsService.Load(ms);
+                });
+
+                if (ddsError is not null)
+                {
+                    await ActionService.ShowError(ddsError);
                     return null;
                 }
 
-                var (data, width, height) = ddsResult.Value;
-
-                var ddsModel = new PixelModel
+                if (ddsModel is not null)
                 {
-                    Width = width,
-                    Height = height,
-                    Mode = ColorMode.RGBA,
-                    BitDepth = BitDepth.Bit8,
-                    Alpha = AlphaFormat.Straight,
-                    ColorSpace = ColorSpace.sRGB,
-                    DpiX = 96f,
-                    DpiY = 96f,
-                    Data = data,
-                    Name = Path.GetFileNameWithoutExtension(file.Name),
-                    Extension = ext.TrimStart('.')
-                };
+                    ddsModel.Name = Path.GetFileNameWithoutExtension(file.Name);
+                    ddsModel.Extension = "dds";
+                }
 
                 return ddsModel;
             }
@@ -229,7 +203,19 @@ public static class ImageImportService
                 using var image = SharpImage.Load(ms);
                 image.Mutate(x => x.AutoOrient());
 
-                PixelModel result = image switch
+                var indexedBitDepth = ImageReader.DetectIndexedBitDepth(image);
+                if (indexedBitDepth.HasValue)
+                {
+                    ms.Position = 0;
+                    using var indexedImage = image.CloneAs<Rgba32>();
+                    var result = ImageReader.ReadIndexed(indexedImage, indexedBitDepth.Value, ms);
+
+                    return result is null
+                        ? ((PixelModel?)null, LocalizationService.Get("InvalidIndexed"))
+                        : (result, (string?)null);
+                }
+
+                PixelModel model = image switch
                 {
                     Image<Rgb24> img => ImageReader.ReadRgb24(img),
                     Image<Rgb48> img => ImageReader.ReadRgb48(img),
@@ -243,12 +229,12 @@ public static class ImageImportService
                     _ => ImageReader.ReadFallback(image)
                 };
 
-                return (result, (string?)null);
+                return (model, (string?)null);
             });
 
             if (error is not null)
             {
-                await ActionService.ShowErrorAsync(error);
+                await ActionService.ShowError(error);
                 return null;
             }
 

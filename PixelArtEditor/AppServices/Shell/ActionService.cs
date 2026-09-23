@@ -8,35 +8,34 @@ namespace PixelArtEditor.AppServices.Shell;
 
 public static class ActionService
 {
-    public static async Task ShowCreateWindowAsync()
+    public static async Task ShowCreateWindow()
     {
         var model = await DialogService.ShowDialogAsync<CreateDialogWindow, PixelModel>();
-        if (model == null) return;
+        if (model is null) return;
 
         Services.Navigation.NavigateTo(new EditorVM(model));
     }
 
-    public static async Task ShowImportWindowAsync()
+    public static async Task ShowImportWindow()
     {
         var model = await ImageImportService.ImportImageAsync();
-        if (model == null) return;
-
-        model.Data = PixelModelService.ToRgba32(model);
-        model.Mode = ColorMode.RGBA;
-        model.BitDepth = BitDepth.Bit8;
+        if (model is null) return;
 
         Services.Navigation.NavigateTo(new EditorVM(model));
     }
 
-    public static async Task ShowExportWindowAsync(PixelModel model)
-        => await DialogService.ShowDialogAsync<ExportDialogWindow, PixelModel>(model);
+    public static async Task ShowExportWindow(PixelModel model, EditorVM editorVM)
+        => await DialogService.ShowDialogAsync<ExportDialogWindow, PixelModel>(model, editorVM);
 
-    public static async Task ShowSettingsWindowAsync()
+    public static async Task ShowSettingsWindow()
         => await DialogService.ShowDialogAsync<SettingsDialogWindow>();
 
-    public static async Task ShowImagePropertiesWindowAsync(PixelModel model)
-        => await DialogService.ShowDialogAsync<ImagePropertiesWindow>(model);
+    public static async Task ShowImagePropertiesWindow(PixelModel model, EditorVM editorVM)
+        => await DialogService.ShowDialogAsync<ImagePropertiesWindow>(model, editorVM);
 
-    public static async Task ShowErrorAsync(string message, string name = "Error")
+    public static async Task ShowIndexedPropertiesWindow(PixelModel model)
+        => await DialogService.ShowDialogAsync<IndexedDialogWindow, PixelModel>(model);
+
+    public static async Task ShowError(string message, string name = "Error")
         => await DialogService.ShowDialogAsync<MessageDialogWindow>(message, name);
 }

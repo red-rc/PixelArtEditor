@@ -12,41 +12,17 @@
     Height="400"
     d:DesignHeight="400"
     d:DesignWidth="600"
-    x:DataType="vm:ExportDialogVM"
+    x:DataType="vm:ImagePropertiesVM"
     Background="{DynamicResource BackgroundColor}"
     ExtendClientAreaToDecorationsHint="True"
     CanResize="False"
     WindowStartupLocation="CenterOwner"
     mc:Ignorable="d">
-    <Window.Styles>
-        <Style Selector="TextBlock">
-            <Setter Property="FontSize" Value="16" />
-            <Setter Property="FontFamily" Value="sans-serif" />
-        </Style>
-        <Style Selector="TextBlock.Header">
-            <Setter Property="HorizontalAlignment" Value="Center" />
-            <Setter Property="FontSize" Value="16" />
-            <Setter Property="FontWeight" Value="Bold" />
-            <Setter Property="FontFamily" Value="sans-serif" />
-            <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />
-        </Style>
-        <Style Selector="NumericUpDown">
-            <Setter Property="FontSize" Value="14" />
-            <Setter Property="ShowButtonSpinner" Value="False" />
-            <Setter Property="Minimum" Value="0" />
-            <Setter Property="Maximum" Value="8192" />
-            <Setter Property="Height" Value="30" />
-        </Style>
-        <Style Selector="ComboBox">
-            <Setter Property="Height" Value="30" />
-            <Setter Property="Padding" Value="10,0,10,0" />
-        </Style>
-    </Window.Styles>
 
     <Grid RowDefinitions="Auto,*" Background="{DynamicResource SecondaryBackgroundColor}">
         <controlsGlobal:TitleBar 
             Grid.Row="0" 
-            Title="Export" 
+            Title="{DynamicResource ExportTitle}" 
             IconVisible="False" 
             CanMinimize="False" 
             CanMaximize="False" />
@@ -61,11 +37,14 @@
                     Width="200"
                     Height="200"
                     VerticalAlignment="Center"
-                    RenderData="{Binding ImageProperties.RenderData}"
+                    RenderData="{Binding ImageProps.RenderData}"
                     FixedTileSize="20" />
 
                 <StackPanel Grid.Column="1" Spacing="10">
-                    <controls:PropertiesPanel DataContext="{Binding ImageProperties}" />
+                    <controls:PropertiesPanel 
+                        DataContext="{Binding ImageProps}" 
+                        ConfigureVisible="True"
+                        ConfigureEnabled="{Binding IsIndexed}" />
                 </StackPanel>
             </Grid>
             <Grid
@@ -94,7 +73,7 @@
                     HorizontalAlignment="Right"
                     VerticalAlignment="Stretch"
                     Classes="ConfirmBtn"
-                    Command="{Binding ConfirmCommand}"
+                    Command="{Binding SaveCommand}"
                     Content="{DynamicResource Confirm}"
                     FontSize="20" />
             </Grid>

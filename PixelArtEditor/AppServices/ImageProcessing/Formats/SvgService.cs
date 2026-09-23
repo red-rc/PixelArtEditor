@@ -1,4 +1,5 @@
-﻿using SkiaSharp;
+﻿using PixelArtEditor.Models.Canvas;
+using SkiaSharp;
 using Svg.Skia;
 using System.IO;
 
@@ -33,5 +34,26 @@ public static class SvgService
 
         var data = bitmap.Bytes; // вже RGBA8888, unpremul
         return (data, width, height);
+    }
+
+    public static (PixelModel? model, string? error) Load(Stream stream)
+    {
+        var result = RenderToRgba32(stream);
+        if (result is null) return ((PixelModel?)null, $"{LocalizationService.Get("InvalidSVG")}");
+
+        var (data, width, height) = result.Value;
+
+        return (new PixelModel
+        {
+            Width = width,
+            Height = height,
+            Mode = ColorMode.RGBA,
+            BitDepth = BitDepth.Bit8,
+            Alpha = AlphaFormat.Straight,
+            ColorSpace = ColorSpace.sRGB,
+            DpiX = 96f,
+            DpiY = 96f,
+            Data = data
+        }, (string?)null);
     }
 }

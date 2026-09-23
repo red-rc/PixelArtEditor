@@ -25,7 +25,12 @@ localPairs:
   Report: Повідомити про проблему
   ContactUs: Зв'язатися з нами
   About: Про програму
-  Title: Створити файл
+  CreateTitle: Створити файл
+  ExportTitle: Експорт
+  SettingsTitle: Налаштування
+  MessageTitle: Помилка
+  ImagePropertiesTitle: Властивості зображення
+  IndexedTitle: Індексовані кольори
   Width: Ширина
   Height: Висота
   Format: Формат
@@ -95,7 +100,7 @@ localPairs:
   InvalidPdf: Недійсний або пошкоджений файл PDF.
   PdfNoPages: Файл PDF не містить сторінок.
   NotImplemented: ще не реалізовано.
-  NoPalette: Індексований режим не має палітри.
+  InvalidPalette: Палітра зображення пошкоджена або недійсна.
   PfimFailed: Помилка декодування Pfim
   UnhandledPfim: Необроблений формат Pfim
   FileNotFound: Файл не знайдено
@@ -133,3 +138,7 @@ localPairs:
   PreviewSquareError: Елемент попереднього перегляду має бути квадратним.
   ApplicationCurrentNull: Application.Current є null. Переконайтеся, що Avalonia ініціалізовано.
   ThemeFontLoadError: Не вдалося завантажити шрифт теми. Переконайтеся, що шрифт існує та доступний.
+  IcoTooLarge: Розмір ICO-файлу перевищує максимальне обмеження у 256x256 пікселів.
+  Quantization: Метод квантування
+  ColorCount: Кількість кольорів
+  Dither: Дизеринг

@@ -226,6 +226,13 @@ public class Canvas : Control, ICanvasContext
             RenderCache[layer].PreviewDirty = true;
         }
 
+        if (e.PropertyName == nameof(LayerModel.PixelData))
+        {
+            RenderCache[layer].RenderBitmapDirty = true;
+            RenderCache[layer].DirtyRect = new Rect(0, 0, layer.Width, layer.Height);
+            RenderCache[layer].PreviewDirty = true;
+        }
+
         if (e.PropertyName is nameof(LayerModel.PixelData) or nameof(LayerModel.Opacity))
             _hoverPixelColor = null;
 

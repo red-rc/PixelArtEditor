@@ -61,7 +61,7 @@ public class MenuCommandsVM : ReactiveObject
 
         Services.Settings.PropertyChanged += OnSettingsPropertyChanged;
 
-        CreateCommand = ReactiveCommand.CreateFromTask(ActionService.ShowCreateWindowAsync);
+        CreateCommand = ReactiveCommand.CreateFromTask(ActionService.ShowCreateWindow);
         OpenCommand = ReactiveCommand.Create(OnOpen);
         ImportCommand = ReactiveCommand.Create(OnImport);
         SaveCommand = ReactiveCommand.Create(OnSave, isDocumentOpen); 
@@ -73,7 +73,7 @@ public class MenuCommandsVM : ReactiveObject
         UndoCommand = ReactiveCommand.Create(OnUndo, isDocumentOpen);
         RedoCommand = ReactiveCommand.Create(OnRedo, isDocumentOpen);
         ImagePropertiesCommand = ReactiveCommand.Create(OnImageProperties, isDocumentOpen);
-        SettingsCommand = ReactiveCommand.CreateFromTask(ActionService.ShowSettingsWindowAsync);
+        SettingsCommand = ReactiveCommand.CreateFromTask(ActionService.ShowSettingsWindow);
         
         ZoomInCommand = ReactiveCommand.Create(OnZoomIn, isDocumentOpen);
         ZoomOutCommand = ReactiveCommand.Create(OnZoomOut, isDocumentOpen);
@@ -108,7 +108,7 @@ public class MenuCommandsVM : ReactiveObject
     {
     }
     
-    private async void OnImport() => await ActionService.ShowImportWindowAsync();
+    private async void OnImport() => await ActionService.ShowImportWindow();
     
     private void OnSave()
     {
@@ -121,7 +121,7 @@ public class MenuCommandsVM : ReactiveObject
     private async void OnExport()
     {
         if (Services.Navigation.GetViewModel() is not EditorVM editorVM) return;
-        await ActionService.ShowExportWindowAsync(editorVM.GetPreparedModel());
+        await ActionService.ShowExportWindow(editorVM.GetPreparedModel(), editorVM);
     }
 
     private void OnLastAutosave()
@@ -139,7 +139,7 @@ public class MenuCommandsVM : ReactiveObject
     private async void OnImageProperties()
     {
         if (Services.Navigation.GetViewModel() is not EditorVM editorVM) return;
-        await ActionService.ShowImagePropertiesWindowAsync(editorVM.GetPreparedModel());
+        await ActionService.ShowImagePropertiesWindow(editorVM.GetPreparedModel(), editorVM);
     }
 
     private static void OnZoomIn()

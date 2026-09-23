@@ -1,5 +1,7 @@
 ﻿using Avalonia.Media.Imaging;
+using FellowOakDicom;
 using PixelArtEditor.AppServices;
+using PixelArtEditor.AppServices.Shell;
 using PixelArtEditor.Models;
 using PixelArtEditor.Models.Canvas;
 using System;
@@ -12,20 +14,6 @@ public class ImagePropertiesUCVM : ReactiveObject
 {
     private float _imageProportion = 0f;
     private bool _isUpdating = false;
-
-    private string? _name;
-    public string? Name
-    {
-        get => _name;
-        set => this.RaiseAndSetIfChanged(ref _name, value);
-    }
-
-    private string _extension = "png";
-    public string Extension
-    {
-        get => _extension;
-        set => this.RaiseAndSetIfChanged(ref _extension, value);
-    }
 
     private int _width = 32;
     public int Width
@@ -115,6 +103,7 @@ public class ImagePropertiesUCVM : ReactiveObject
         {
             if (_colorModeName == value) return;
             ColorMode = StringToEnum<ColorMode>(value);
+            this.RaisePropertyChanged(nameof(IsIndexed));
             this.RaiseAndSetIfChanged(ref _colorModeName, value);
 
             AlphaFormatEnabled = ColorMode == ColorMode.RGBA || ColorMode == ColorMode.Grayscale;
@@ -124,13 +113,15 @@ public class ImagePropertiesUCVM : ReactiveObject
 
     public ColorMode ColorMode = ColorMode.RGBA;
 
+    public bool IsIndexed => ColorMode == ColorMode.Indexed;
+
     // --- BitDepth ---
     private static readonly Dictionary<ColorMode, BitDepth[]> ValidBitDepths = new()
     {
         [ColorMode.RGBA] = [BitDepth.Bit8, BitDepth.Bit16],
         [ColorMode.RGB] = [BitDepth.Bit8, BitDepth.Bit16, BitDepth.RGB565],
         [ColorMode.Grayscale] = [BitDepth.Bit8, BitDepth.Bit16],
-        [ColorMode.Indexed] = [BitDepth.Bit1, BitDepth.Bit4, BitDepth.Bit8],
+        [ColorMode.Indexed] = [BitDepth.Bit1, BitDepth.Bit2, BitDepth.Bit4, BitDepth.Bit8],
     };
 
     private List<string> _bitDepthNames = [.. ValidBitDepths[ColorMode.RGBA].Select(b => b.ToString())];
@@ -213,6 +204,11 @@ public class ImagePropertiesUCVM : ReactiveObject
             $"{LocalizationService.Get("ForEnum")} {typeof(T).Name}");
     }
 
+    public PixelModel Model = null!;
+
+    public ReactiveCommand<RxVoid, RxVoid> ConfigureCommand
+        => ReactiveCommand.CreateFromTask(async () => await ActionService.ShowIndexedPropertiesWindow(Model));
+
     private WriteableBitmap? _renderBitmap;
     public WriteableBitmap? RenderBitmap
     {
@@ -235,14 +231,13 @@ public class ImagePropertiesUCVM : ReactiveObject
         RenderData.NotifyPropertyChanged();
     }
 
-    public FellowOakDicom.DicomDataset? DicomDataset { get; set; }
-
-    public PixelModel GetFinalPixelMode(byte[] data)
+    public PixelModel GetFinalPixelModel(byte[] data, string? name, string extension, Palette? palette, DicomDataset? dicomDataset)
     {
         return new PixelModel
         {
-            Name = Name,
-            Extension = Extension,
+            Name = name,
+            Extension = extension,
+            Palette = palette,
             Width = Width,
             Height = Height,
             Mode = ColorMode,
@@ -252,7 +247,7 @@ public class ImagePropertiesUCVM : ReactiveObject
             DpiX = DpiX,
             DpiY = DpiY,
             Data = data,
-            DicomDataset = DicomDataset
+            DicomDataset = dicomDataset
         };
     }
 }

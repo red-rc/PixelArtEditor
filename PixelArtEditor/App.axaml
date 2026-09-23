@@ -31,5 +31,6 @@
         <StyleInclude Source="avares://PixelArtEditor/Styles/Overrides/MenuOverride.axaml" />
         <StyleInclude Source="avares://PixelArtEditor/Styles/Overrides/ComboBoxOverride.axaml" />
         <StyleInclude Source="avares://PixelArtEditor/Styles/Overrides/WindowDrawnDecorationsOverride.axaml" />
+        <StyleInclude Source="avares://PixelArtEditor/Styles/Overrides/SliderOverride.axaml" />
     </Application.Styles>
 </Application>

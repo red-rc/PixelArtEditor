@@ -34,25 +34,13 @@ public static class DicomService
                 _ => ((PixelModel?)null, LocalizationService.Get("DicomUnsupportedEncoding"))
             };
 
-            if (model is not null)
-            {
-                model.DicomDataset = file.Dataset.Clone();
-            }
+            model?.DicomDataset = file.Dataset.Clone();
 
             return (model, error);
         }
-        catch (InvalidOperationException ex)
-        {
-            return (null, ex.Message);
-        }
-        catch (DicomFileException)
-        {
-            return (null, LocalizationService.Get("DicomInvalidFile"));
-        }
-        catch (Exception)
-        {
-            return (null, LocalizationService.Get("DicomInvalidFile"));
-        }
+        catch (InvalidOperationException ex) { return (null, ex.Message); }
+        catch (DicomFileException) { return (null, LocalizationService.Get("DicomInvalidFile")); }
+        catch (Exception) { return (null, LocalizationService.Get("DicomInvalidFile")); }
     }
 
     public static void Save(Stream stream, byte[] rgba, int width, int height, DicomDataset? sourceDataset = null)
@@ -198,9 +186,9 @@ public static class DicomService
         Width = width,
         Height = height,
         Mode = ColorMode.RGBA,
-        BitDepth = PixelArtEditor.Models.Canvas.BitDepth.Bit8,
+        BitDepth = Models.Canvas.BitDepth.Bit8,
         Alpha = AlphaFormat.Straight,
-        ColorSpace = PixelArtEditor.Models.Canvas.ColorSpace.sRGB,
+        ColorSpace = Models.Canvas.ColorSpace.sRGB,
         DpiX = 96f,
         DpiY = 96f,
         Data = data

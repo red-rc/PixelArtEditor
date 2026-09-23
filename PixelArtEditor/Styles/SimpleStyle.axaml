@@ -15,6 +15,7 @@
         <Setter Property="Transitions">
             <Transitions>
                 <BrushTransition Property="Background" Duration="0:0:0.05" />
+                <DoubleTransition Property="Opacity" Duration="0:0:0.05" />
             </Transitions>
         </Setter>
     </Style>
@@ -144,6 +145,21 @@
         <Style Selector="^:pressed /template/ ContentPresenter#PART_ContentPresenter">
             <Setter Property="Background" Value="{DynamicResource UiPressColor}" />
             <Setter Property="BoxShadow" Value="{DynamicResource CardShadow}" />
+        </Style>
+    </Style>
+
+    <Style Selector="Button.ProportionBtn">
+        <Setter Property="Background" Value="Transparent" />
+
+        <Style Selector="^:disabled /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Opacity" Value="0.5" />
+        </Style>
+        <Style Selector="^:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Opacity" Value="0.8" />
+        </Style>
+        <Style Selector="^:pressed /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Opacity" Value="0.6" />
         </Style>
     </Style>
 

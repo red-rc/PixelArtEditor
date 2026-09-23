@@ -11,9 +11,9 @@ public partial class ExportDialogWindow : Window
         InitializeComponent();
     }
 
-    public ExportDialogWindow(PixelModel model) : this()
+    public ExportDialogWindow(PixelModel model, EditorVM editorVM) : this()
     {
         InitializeComponent();
-        DataContext = new ExportDialogVM(this, model);
+        DataContext = new ImagePropertiesVM(this, model, editorVM, true);
     }
 }

@@ -55,6 +55,7 @@ public class BaseTheme
         resources["ThemeBorderHighBrush"] = new SolidColorBrush(ColorHelper.HexToColor(Resources.Colors["BorderColor"]));
         resources["ThemeBackgroundBrush"] = new SolidColorBrush(ColorHelper.HexToColor(Resources.Colors["UiColor"]));
         resources["ThemeBorderMidBrush"] = new SolidColorBrush(ColorHelper.HexToColor(Resources.Colors["ShadowColor"]));
+        resources["ThemeBorderLowBrush"] = new SolidColorBrush(ColorHelper.HexToColor(Resources.Colors["GrayColor"]));
 
         resources["CardShadow"] = new BoxShadows(new BoxShadow 
         { 
@@ -128,6 +129,7 @@ public class BaseTheme
         resources["UndoIcon"] = ThemeHelper.LoadBitmap("avares://PixelArtEditor/Assets/Dark/UIElements/undo.png");
         resources["UploadIcon"] = ThemeHelper.LoadBitmap("avares://PixelArtEditor/Assets/Dark/UIElements/upload.png");
         resources["CheckMarkIcon"] = ThemeHelper.LoadBitmap("avares://PixelArtEditor/Assets/Dark/UIElements/checkMark.png");
+        resources["GearIcon"] = ThemeHelper.LoadBitmap("avares://PixelArtEditor/Assets/Dark/UIElements/gear.png");
     }
 
     public static void SetLightIcons()
@@ -164,6 +166,7 @@ public class BaseTheme
         resources["UndoIcon"] = ThemeHelper.LoadBitmap("avares://PixelArtEditor/Assets/Light/UIElements/undo.png");
         resources["UploadIcon"] = ThemeHelper.LoadBitmap("avares://PixelArtEditor/Assets/Light/UIElements/upload.png");
         resources["CheckMarkIcon"] = ThemeHelper.LoadBitmap("avares://PixelArtEditor/Assets/Light/UIElements/checkMark.png");
+        resources["GearIcon"] = ThemeHelper.LoadBitmap("avares://PixelArtEditor/Assets/Light/UIElements/gear.png");
     }
 }
 
@@ -203,6 +206,7 @@ public static class DefaultThemes
         var theme = new BaseTheme { Name = "Light", Variant = ThemeVariant.Light };
         theme.SetDefaults();
 
+        theme.Resources.Colors["ForegroundColor"] = "#101010";
         theme.Resources.Colors["DisabledForegroundColor"] = "#7a7a7a";
         theme.Resources.Colors["BorderColor"] = "#b0b0b0";
 

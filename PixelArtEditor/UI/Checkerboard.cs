@@ -3,7 +3,6 @@ using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using PixelArtEditor.AppServices;
-using PixelArtEditor.AppServices.Canvas;
 using PixelArtEditor.Helpers;
 using PixelArtEditor.Models.Canvas;
 using System;

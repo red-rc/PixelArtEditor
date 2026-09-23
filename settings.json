@@ -1,0 +1,36 @@
+{
+  "GridMaxSize": 32,
+  "GridColor": "#7f7f7f",
+  "EnableGrid": true,
+  "EnableAutosave": true,
+  "AutosaveFrequency": 10,
+  "Language": "en",
+  "ScaleCheckerboardWithCanvas": false,
+  "CheckerboardScale": 4,
+  "InterpolateOnlyWhenScalingDown": true,
+  "InterpolationMode": 4,
+  "AccentColor": "#1e90ff",
+  "Theme": "System",
+  "Layout": [
+    {
+      "Name": "OptionsPanel",
+      "Row": 0,
+      "Col": 0
+    },
+    {
+      "Name": "LayerPanel",
+      "Row": 1,
+      "Col": 2
+    },
+    {
+      "Name": "Toolbar",
+      "Row": 1,
+      "Col": 0
+    },
+    {
+      "Name": "CanvasPanel",
+      "Row": 1,
+      "Col": 1
+    }
+  ]
+}

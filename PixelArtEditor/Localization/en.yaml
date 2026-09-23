@@ -25,7 +25,12 @@ localPairs:
   Report: Report An Issue
   ContactUs: Contact Us
   About: About
-  Title: Create File
+  CreateTitle: Create File
+  ExportTitle: Export
+  SettingsTitle: Settings
+  MessageTitle: Error
+  ImagePropertiesTitle: Image Properties
+  IndexedTitle: Indexed Colors
   Width: Width
   Height: Height
   Format: Format
@@ -96,7 +101,7 @@ localPairs:
   InvalidPdf: Invalid or corrupted PDF file.
   PdfNoPages: PDF file contains no pages.
   NotImplemented: not yet implemented.
-  NoPalette: Indexed mode doesn't have palette.
+  InvalidPalette: Image palette is corrupted or invalid.
   PfimFailed: Pfim decode failed
   UnhandledPfim: Unhandled Pfim format
   FileNotFound: File not found
@@ -134,3 +139,7 @@ localPairs:
   PreviewSquareError: Preview control must be square.
   ApplicationCurrentNull: Application.Current is null. Make sure Avalonia is initialized.
   ThemeFontLoadError: Failed to load theme font. Make sure the font exists and is accessible.
+  IcoTooLarge: The ICO file size exceeds the maximum limit of 256x256 pixels.
+  Quantization: Quantization method
+  ColorCount: Color count
+  Dither: Dithering

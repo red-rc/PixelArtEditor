@@ -12,7 +12,8 @@
     d:DesignWidth="300"
     x:DataType="vm:ImagePropertiesUCVM"
     Background="{DynamicResource BackgroundColor}"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    x:Name="Root">
 
     <UserControl.Styles>
         <Style Selector="TextBlock">
@@ -51,50 +52,46 @@
             </StackPanel>
             <StackPanel>
                 <TextBlock HorizontalAlignment="Center" Text="{DynamicResource ColorMode}" />
-                <StackPanel
-                    HorizontalAlignment="Center"
-                    Orientation="Horizontal"
-                    Spacing="6">
-                    <ComboBox
-                        ItemsSource="{Binding ColorModeNames}" 
-                        SelectedItem="{Binding ColorModeName, Mode=TwoWay}" />
-                </StackPanel>
+                <ComboBox
+                    ItemsSource="{Binding ColorModeNames}" 
+                    SelectedItem="{Binding ColorModeName, Mode=TwoWay}" />
             </StackPanel>
             <StackPanel>
-                <TextBlock HorizontalAlignment="Center" Text="{DynamicResource BitDepth}" />
-                <StackPanel
-                    HorizontalAlignment="Center"
-                    Orientation="Horizontal"
-                    Spacing="6">
-                    <ComboBox
-                        ItemsSource="{Binding BitDepthNames}" 
-                        SelectedItem="{Binding BitDepthName, Mode=TwoWay}" />
-                </StackPanel>
+                <Grid>
+                    <TextBlock Text="{DynamicResource BitDepth}" HorizontalAlignment="Center" />
+                    <Button
+                        Width="18"
+                        Height="18"
+                        HorizontalAlignment="Right"
+                        Margin="0,0,20,0"
+                        Classes="ProportionBtn"
+                        Command="{Binding ConfigureCommand}" 
+                        IsVisible="{Binding ConfigureVisible, ElementName=Root}"
+                        IsEnabled="{Binding ConfigureEnabled, ElementName=Root}">
+                        <Image 
+                            Width="16"
+                            Height="16"
+                            Source="{DynamicResource GearIcon}" />
+                    </Button>
+                </Grid>
+                <ComboBox
+                    ItemsSource="{Binding BitDepthNames}" 
+                    SelectedItem="{Binding BitDepthName, Mode=TwoWay}" />
 			</StackPanel>
         </StackPanel>
         <StackPanel Grid.Column="1" Spacing="10">
 			<StackPanel>
                 <TextBlock TextWrapping="Wrap" HorizontalAlignment="Center" Text="{DynamicResource AlphaFormat}" />
-                <StackPanel
-                    HorizontalAlignment="Center"
-                    Orientation="Horizontal"
-                    Spacing="6">
-                    <ComboBox
-                        IsEnabled="{Binding AlphaFormatEnabled}"
-                        ItemsSource="{Binding AlphaFormatNames}" 
-                        SelectedItem="{Binding AlphaFormatName, Mode=TwoWay}" />
-                </StackPanel>
+                <ComboBox
+                    IsEnabled="{Binding AlphaFormatEnabled}"
+                    ItemsSource="{Binding AlphaFormatNames}" 
+                    SelectedItem="{Binding AlphaFormatName, Mode=TwoWay}" />
 			</StackPanel>
             <StackPanel>
                 <TextBlock HorizontalAlignment="Center" Text="{DynamicResource ColorSpaces}" />
-                <StackPanel
-                    HorizontalAlignment="Center"
-                    Orientation="Horizontal"
-                    Spacing="6">
-                    <ComboBox
-                        ItemsSource="{Binding ColorSpaceNames}" 
-                        SelectedItem="{Binding ColorSpaceName, Mode=TwoWay}" />
-                </StackPanel>
+                <ComboBox
+                    ItemsSource="{Binding ColorSpaceNames}" 
+                    SelectedItem="{Binding ColorSpaceName, Mode=TwoWay}" />
             </StackPanel>
         </StackPanel>
     </Grid>

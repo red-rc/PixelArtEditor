@@ -1,5 +1,4 @@
-﻿using PixelArtEditor.AppServices.Canvas;
-using PixelArtEditor.Models.Canvas;
+﻿using PixelArtEditor.Models.Canvas;
 using PixelArtEditor.Models.Tools;
 
 namespace PixelArtEditor.AppServices.Tools.Implementations;

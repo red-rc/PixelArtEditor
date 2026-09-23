@@ -5,7 +5,6 @@ using Avalonia.Interactivity;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using PixelArtEditor.AppServices;
-using PixelArtEditor.AppServices.Canvas;
 using PixelArtEditor.AppServices.EditorUI;
 using PixelArtEditor.AppServices.ImageProcessing;
 using PixelArtEditor.Models.Canvas;

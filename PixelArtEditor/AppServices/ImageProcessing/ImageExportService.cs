@@ -2,7 +2,6 @@
 using Avalonia.Platform.Storage;
 using HeyRed.ImageSharp.Heif.Formats.Avif;
 using HeyRed.ImageSharp.Heif.Formats.Heif;
-using PixelArtEditor.AppServices.Canvas;
 using PixelArtEditor.AppServices.ImageProcessing.Formats;
 using PixelArtEditor.Models.Canvas;
 using SixLabors.ImageSharp;
@@ -85,25 +84,23 @@ public static class ImageExportService
                 await using var stream = await file.OpenWriteAsync();
 
                 if (Path.GetExtension(file.Name).Equals(".dcm", StringComparison.InvariantCultureIgnoreCase))
-                {
                     DicomService.Save(stream, exportData, model.Width, model.Height, model.DicomDataset);
-                }
                 else if (Path.GetExtension(file.Name).Equals(".pdf", StringComparison.InvariantCultureIgnoreCase))
-                {
                     PdfService.Save(stream, exportData, model.Width, model.Height, model.DpiX, model.DpiY);
-                }
+                else if (Path.GetExtension(file.Name).Equals(".ico", StringComparison.InvariantCultureIgnoreCase))
+                    IcoService.Save(stream, image.CloneAs<Rgba32>());
+                else if (Path.GetExtension(file.Name).Equals(".dds", StringComparison.InvariantCultureIgnoreCase))
+                    DdsService.Save(stream, exportData, model.Width, model.Height);
                 else if (Path.GetExtension(file.Name).Equals(".svg", StringComparison.InvariantCultureIgnoreCase))
-                {
                     await ExportAsSvgWrapper(image, stream, model.Width, model.Height);
-                }
                 else
                 {
                     IImageEncoder encoder = Path.GetExtension(file.Name).ToLowerInvariant() switch
                     {
                         ".png" => BuildPngEncoder(model),
                         ".jpg" or ".jpeg" => new JpegEncoder { Quality = 100 },
-                        ".bmp" => new BmpEncoder(),
-                        ".gif" => new GifEncoder(),
+                        ".bmp" => BuildBmpEncoder(model),
+                        ".gif" => BuildGifEncoder(model),
                         ".tif" or ".tiff" => new TiffEncoder(),
                         ".webp" => new WebpEncoder { Quality = 100 },
                         ".tga" => new TgaEncoder(),
@@ -123,11 +120,11 @@ public static class ImageExportService
         });
     }
 
-    private static byte[] ConvertForExport(byte[] bgra, PixelModel parameters)
+    private static byte[] ConvertForExport(byte[] bgra, PixelModel model)
     {
         var result = BitmapService.SwapRB(bgra);
 
-        if (parameters.Alpha == AlphaFormat.Premultiplied)
+        if (model.Alpha == AlphaFormat.Premultiplied)
         {
             for (var i = 0; i < result.Length; i += 4)
             {
@@ -158,9 +155,9 @@ public static class ImageExportService
         await writer.WriteAsync(svg);
     }
 
-    private static Image ConvertToTargetFormat(Image<Rgba32> baseImage, PixelModel parameters)
+    private static Image ConvertToTargetFormat(Image<Rgba32> baseImage, PixelModel model)
     {
-        return (parameters.Mode, parameters.BitDepth) switch
+        return (model.Mode, model.BitDepth) switch
         {
             (ColorMode.RGBA, BitDepth.Bit8) => baseImage.CloneAs<Rgba32>(),
             (ColorMode.RGBA, BitDepth.Bit16) => baseImage.CloneAs<Rgba64>(),
@@ -173,17 +170,76 @@ public static class ImageExportService
         };
     }
 
-    private static PngEncoder BuildPngEncoder(PixelModel parameters)
+    private static PngEncoder BuildPngEncoder(PixelModel model)
     {
-        var bitDepth = parameters.BitDepth switch
+        var bitDepth = model.BitDepth switch
         {
             BitDepth.Bit1 => PngBitDepth.Bit1,
+            BitDepth.Bit2 => PngBitDepth.Bit2,
             BitDepth.Bit4 => PngBitDepth.Bit4,
             BitDepth.Bit8 => PngBitDepth.Bit8,
             BitDepth.Bit16 => PngBitDepth.Bit16,
             _ => PngBitDepth.Bit8
         };
 
+        if (model.Mode == ColorMode.Indexed && model.Palette is not null)
+        {
+            var sharpColors = model.Palette.Colors
+                .Select(c => new Color(new Rgba32(c.R, c.G, c.B, c.A)))
+                .ToArray();
+
+            return new PngEncoder
+            {
+                BitDepth = bitDepth,
+                ColorType = PngColorType.Palette,
+                Quantizer = new SixLabors.ImageSharp.Processing.Processors.Quantization.PaletteQuantizer(sharpColors)
+            };
+        }
+
         return new PngEncoder { BitDepth = bitDepth };
+    }
+
+    private static BmpEncoder BuildBmpEncoder(PixelModel model)
+    {
+        var bitsPerPixel = model.BitDepth switch
+        {
+            BitDepth.Bit1 => BmpBitsPerPixel.Pixel1,
+            BitDepth.Bit2 => BmpBitsPerPixel.Pixel2,
+            BitDepth.Bit4 => BmpBitsPerPixel.Pixel4,
+            BitDepth.Bit8 => BmpBitsPerPixel.Pixel8,
+            _ => BmpBitsPerPixel.Pixel8
+        };
+
+        if (model.Mode == ColorMode.Indexed && model.Palette is not null)
+        {
+            var sharpColors = model.Palette.Colors
+                .Select(c => new Color(new Rgba32(c.R, c.G, c.B, c.A)))
+                .ToArray();
+
+            return new BmpEncoder
+            {
+                BitsPerPixel = bitsPerPixel,
+                Quantizer = new SixLabors.ImageSharp.Processing.Processors.Quantization.PaletteQuantizer(sharpColors)
+            };
+        }
+
+        return new BmpEncoder() { BitsPerPixel = bitsPerPixel };
+    }
+
+    private static GifEncoder BuildGifEncoder(PixelModel model)
+    {
+        if (model.Mode == ColorMode.Indexed && model.Palette is not null)
+        {
+            var sharpColors = model.Palette.Colors
+                .Select(c => new Color(new Rgba32(c.R, c.G, c.B, c.A)))
+                .ToArray();
+
+            return new GifEncoder
+            {
+                Quantizer = new SixLabors.ImageSharp.Processing.Processors.Quantization.PaletteQuantizer(sharpColors)
+            };
+        }
+
+        return new GifEncoder();
     }
 }

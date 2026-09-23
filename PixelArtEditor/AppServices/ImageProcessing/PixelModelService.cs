@@ -18,6 +18,7 @@ public static class PixelModelService
             (ColorMode.Grayscale, BitDepth.Bit8) => L8ToRgba32(model),
             (ColorMode.Grayscale, BitDepth.Bit16) => L16ToRgba32(model),
             (ColorMode.Indexed, BitDepth.Bit1) => Indexed1ToRgba32(model),
+            (ColorMode.Indexed, BitDepth.Bit2) => Indexed2ToRgba32(model),
             (ColorMode.Indexed, BitDepth.Bit4) => Indexed4ToRgba32(model),
             (ColorMode.Indexed, BitDepth.Bit8) => Indexed8ToRgba32(model),
             _ => throw new NotImplementedException($"{model.Mode} {model.BitDepth} {LocalizationService.Get("NotImplemented")}")
@@ -37,6 +38,7 @@ public static class PixelModelService
             dst[i + 2] = src[j + 2]; // B
             dst[i + 3] = 255;         // A
         }
+
         return dst;
     }
     
@@ -53,6 +55,7 @@ public static class PixelModelService
             dst[i + 2] = (byte)((src[j + 4] | (src[j + 5] << 8)) * 255 / 65535); // B
             dst[i + 3] = 255;
         }
+
         return dst;
     }
 
@@ -70,6 +73,7 @@ public static class PixelModelService
             dst[i + 2] = (byte)((src[j + 4] | (src[j + 5] << 8)) * 255 / 65535); // B
             dst[i + 3] = (byte)((src[j + 6] | (src[j + 7] << 8)) * 255 / 65535); // A
         }
+
         return dst;
     }
 
@@ -96,6 +100,7 @@ public static class PixelModelService
             dst[i + 2] = (byte)(b5 * 255 / 31);
             dst[i + 3] = 255;
         }
+
         return dst;
     }
 
@@ -128,6 +133,7 @@ public static class PixelModelService
                 dst[i + 3] = 255;
             }
         }
+
         return dst;
     }
 
@@ -163,26 +169,33 @@ public static class PixelModelService
                 dst[i + 3] = 255;
             }
         }
+
         return dst;
     }
 
-    // Indexed8 → RGBA32: індекс → колір з палітри
     private static byte[] Indexed8ToRgba32(PixelModel model)
     {
         if (model.Palette is null)
-            throw new InvalidOperationException($"{LocalizationService.Get("NoPalette")}");
+            throw new InvalidOperationException($"{LocalizationService.Get("InvalidPalette")}");
 
         var src = model.Data;
         var dst = new byte[model.Width * model.Height * 4];
+        var paletteColors = model.Palette.Colors;
 
-        for (int i = 0, j = 0; i < dst.Length; i += 4, j++)
+        for (int i = 0, j = 0; i < dst.Length && j < src.Length; i += 4, j++)
         {
-            var color = model.Palette.Colors[src[j]];
-            dst[i + 0] = color.R;
-            dst[i + 1] = color.G;
-            dst[i + 2] = color.B;
-            dst[i + 3] = color.A;
+            var idx = src[j];
+
+            if (idx < paletteColors.Count)
+            {
+                var color = paletteColors[idx];
+                dst[i + 0] = color.R;
+                dst[i + 1] = color.G;
+                dst[i + 2] = color.B;
+                dst[i + 3] = color.A;
+            }
         }
+
         return dst;
     }
 
@@ -190,29 +203,73 @@ public static class PixelModelService
     private static byte[] Indexed4ToRgba32(PixelModel model)
     {
         if (model.Palette is null)
-            throw new InvalidOperationException($"{LocalizationService.Get("NoPalette")}");
+            throw new InvalidOperationException($"{LocalizationService.Get("InvalidPalette")}");
 
         var src = model.Data;
-        var dst = new byte[model.Width * model.Height * 4];
-        var dstIdx = 0;
+        var totalPixels = model.Width * model.Height;
+        var dst = new byte[totalPixels * 4];
+        var pixelIdx = 0;
+        var paletteColors = model.Palette.Colors;
 
-        for (var j = 0; j < src.Length; j++)
+        for (var j = 0; j < src.Length && pixelIdx < totalPixels; j++)
         {
-            var hi = (src[j] >> 4) & 0xF; // перший піксель
-            var lo = src[j] & 0xF; // другий піксель
+            var hi = (src[j] >> 4) & 0xF;
+            if (hi < paletteColors.Count)
+            {
+                var c1 = paletteColors[hi];
+                dst[pixelIdx * 4 + 0] = c1.R;
+                dst[pixelIdx * 4 + 1] = c1.G;
+                dst[pixelIdx * 4 + 2] = c1.B;
+                dst[pixelIdx * 4 + 3] = c1.A;
+            }
+            pixelIdx++;
+            if (pixelIdx >= totalPixels) break;
 
-            var c1 = model.Palette.Colors[hi];
-            dst[dstIdx++] = c1.R;
-            dst[dstIdx++] = c1.G;
-            dst[dstIdx++] = c1.B;
-            dst[dstIdx++] = c1.A;
-
-            var c2 = model.Palette.Colors[lo];
-            dst[dstIdx++] = c2.R;
-            dst[dstIdx++] = c2.G;
-            dst[dstIdx++] = c2.B;
-            dst[dstIdx++] = c2.A;
+            var lo = src[j] & 0xF;
+            if (lo < paletteColors.Count)
+            {
+                var c2 = paletteColors[lo];
+                dst[pixelIdx * 4 + 0] = c2.R;
+                dst[pixelIdx * 4 + 1] = c2.G;
+                dst[pixelIdx * 4 + 2] = c2.B;
+                dst[pixelIdx * 4 + 3] = c2.A;
+            }
+            pixelIdx++;
         }
+
+        return dst;
+    }
+
+    // Indexed2 → RGBA32: чотири пікселі на байт
+    private static byte[] Indexed2ToRgba32(PixelModel model)
+    {
+        if (model.Palette is null)
+            throw new InvalidOperationException($"{LocalizationService.Get("InvalidPalette")}");
+
+        var src = model.Data;
+        var totalPixels = model.Width * model.Height;
+        var dst = new byte[totalPixels * 4];
+        var pixelIdx = 0;
+        var paletteColors = model.Palette.Colors;
+
+        for (var j = 0; j < src.Length && pixelIdx < totalPixels; j++)
+        {
+            for (var shift = 6; shift >= 0; shift -= 2)
+            {
+                if (pixelIdx >= totalPixels) break;
+                var idx = (src[j] >> shift) & 0x03;
+                if (idx < paletteColors.Count)
+                {
+                    var color = paletteColors[idx];
+                    dst[pixelIdx * 4 + 0] = color.R;
+                    dst[pixelIdx * 4 + 1] = color.G;
+                    dst[pixelIdx * 4 + 2] = color.B;
+                    dst[pixelIdx * 4 + 3] = color.A;
+                }
+                pixelIdx++;
+            }
+        }
+
         return dst;
     }
 
@@ -220,24 +277,32 @@ public static class PixelModelService
     private static byte[] Indexed1ToRgba32(PixelModel model)
     {
         if (model.Palette is null)
-            throw new InvalidOperationException($"{LocalizationService.Get("NoPalette")}");
+            throw new InvalidOperationException($"{LocalizationService.Get("InvalidPalette")}");
 
         var src = model.Data;
-        var dst = new byte[model.Width * model.Height * 4];
-        var dstIdx = 0;
+        var totalPixels = model.Width * model.Height;
+        var dst = new byte[totalPixels * 4];
+        var pixelIdx = 0;
+        var paletteColors = model.Palette.Colors;
 
-        for (var j = 0; j < src.Length; j++)
+        for (var j = 0; j < src.Length && pixelIdx < totalPixels; j++)
         {
-            for (var bit = 7; bit >= 0; bit--) // MSB first
+            for (var bit = 7; bit >= 0; bit--)
             {
+                if (pixelIdx >= totalPixels) break;
                 var idx = (src[j] >> bit) & 1;
-                var color = model.Palette.Colors[idx];
-                dst[dstIdx++] = color.R;
-                dst[dstIdx++] = color.G;
-                dst[dstIdx++] = color.B;
-                dst[dstIdx++] = color.A;
+                if (idx < paletteColors.Count)
+                {
+                    var color = paletteColors[idx];
+                    dst[pixelIdx * 4 + 0] = color.R;
+                    dst[pixelIdx * 4 + 1] = color.G;
+                    dst[pixelIdx * 4 + 2] = color.B;
+                    dst[pixelIdx * 4 + 3] = color.A;
+                }
+                pixelIdx++;
             }
         }
+
         return dst;
     }
 
@@ -251,6 +316,7 @@ public static class PixelModelService
             data[i + 2] = color.B;
             data[i + 3] = color.A;
         }
+
         return data;
     }
 }

@@ -38,7 +38,7 @@ public static class ThemeHelper
         catch (Exception)
         {
             Dispatcher.UIThread.InvokeAsync(
-                async () => await ActionService.ShowErrorAsync(LocalizationService.Get("ThemeFontLoadError")));
+                async () => await ActionService.ShowError(LocalizationService.Get("ThemeFontLoadError")));
 
             AppFont = new FontFamily("avares://PixelArtEditor/Styles/Fonts/Manrope-Medium.ttf#Manrope Medium");
             HeadingFont = new FontFamily("avares://PixelArtEditor/Styles/Fonts/Montserrat-SemiBold.ttf#Montserrat SemiBold");

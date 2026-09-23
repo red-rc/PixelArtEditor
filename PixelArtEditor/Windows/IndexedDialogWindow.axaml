@@ -1,18 +1,17 @@
 <Window
-    x:Class="PixelArtEditor.Windows.ImagePropertiesWindow"
+    x:Class="PixelArtEditor.Windows.IndexedDialogWindow"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:controls="clr-namespace:PixelArtEditor.Controls.Image"
     xmlns:controlsGlobal="clr-namespace:PixelArtEditor.Controls"
     xmlns:vm="clr-namespace:PixelArtEditor.ViewModels"
     xmlns:editor="clr-namespace:PixelArtEditor.Controls.Editor"
-    Width="700"
-    Height="450"
-    d:DesignHeight="450"
-    d:DesignWidth="700"
-    x:DataType="vm:ImagePropertiesVM"
+    Width="500"
+    Height="375"
+    d:DesignHeight="375"
+    d:DesignWidth="500"
+    x:DataType="vm:IndexedPropertiesVM"
     Background="{DynamicResource BackgroundColor}"
     ExtendClientAreaToDecorationsHint="True"
     CanResize="False"
@@ -20,19 +19,16 @@
     mc:Ignorable="d">
 
     <Window.Styles>
-        <Style Selector="TextBlock.Header">
-            <Setter Property="HorizontalAlignment" Value="Center" />
-            <Setter Property="FontSize" Value="18" />
-            <Setter Property="FontWeight" Value="Bold" />
-            <Setter Property="FontFamily" Value="{DynamicResource HeadingFont}" />
-            <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />
+        <Style Selector="TextBlock">
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="FontFamily" Value="{DynamicResource AppFont}" />
         </Style>
     </Window.Styles>
 
     <Grid RowDefinitions="Auto,*" Background="{DynamicResource SecondaryBackgroundColor}">
         <controlsGlobal:TitleBar 
             Grid.Row="0" 
-            Title="{DynamicResource ImagePropertiesTitle}" 
+            Title="{DynamicResource IndexedTitle}" 
             IconVisible="False" 
             CanMinimize="False" 
             CanMaximize="False" />
@@ -41,7 +37,7 @@
                 Grid.Row="0"
                 VerticalAlignment="Center"
                 HorizontalAlignment="Center"
-                ColumnDefinitions="250,Auto,10,Auto"
+                ColumnDefinitions="250,Auto"
                 DockPanel.Dock="Top">
                 <editor:PreviewControl
                      Grid.Column="0"
@@ -49,19 +45,38 @@
                      Width="200"
                      Height="200"
                      VerticalAlignment="Center"
-                     RenderData="{Binding ImageProps.RenderData}"
+                     RenderData="{Binding RenderData}"
                      FixedTileSize="20" />
 
-                <StackPanel Grid.Column="1" Spacing="10">
-                    <TextBlock Classes="Header" Text="{DynamicResource Size}" />
-                    <controls:SizePanel DataContext="{Binding ImageProps}" />
-                </StackPanel>
-                <StackPanel Grid.Column="3" Spacing="10">
-                    <TextBlock Classes="Header" Text="{DynamicResource Advanced}" />
-                    <controls:PropertiesPanel 
-                        DataContext="{Binding ImageProps}" 
-                        ConfigureVisible="True"
-                        ConfigureEnabled="{Binding IsIndexed}" />
+                <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="10">
+                    <StackPanel>
+                        <TextBlock HorizontalAlignment="Center" Text="{DynamicResource Quantization}" />
+                        <ComboBox
+                            ItemsSource="{Binding QuantizationNames}" 
+                            SelectedItem="{Binding QuantizationName, Mode=TwoWay}" />
+			        </StackPanel>
+                    <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Width="175">
+                        <StackPanel>
+                            <TextBlock HorizontalAlignment="Center" Text="{DynamicResource ColorCount}" />
+                            <Slider 
+                                Name="MySlider" 
+                                Width="150"
+                                Minimum="0" 
+                                Maximum="{Binding MaxColorCountXaml}" 
+                                Value="{Binding ColorCountXaml}"
+                                TickFrequency="1" 
+                                IsSnapToTickEnabled="True" />
+                        </StackPanel>
+                    
+                        <TextBlock
+                            Text="{Binding #MySlider.Value}" 
+                            HorizontalAlignment="Center" 
+                            Margin="0,10,0,0"/>
+			        </StackPanel>
+                    <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Spacing="10">
+                        <TextBlock HorizontalAlignment="Center" Text="{DynamicResource Dither}" />
+                        <CheckBox IsChecked="{Binding Dither}" />
+			        </StackPanel>
                 </StackPanel>
             </Grid>
             <Grid

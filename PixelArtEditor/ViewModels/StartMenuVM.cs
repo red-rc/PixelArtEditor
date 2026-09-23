@@ -19,5 +19,5 @@ public class StartMenuVM() : ReactiveObject
     }
 
     public ReactiveCommand<RxVoid, RxVoid> CreateCommand { get; } = 
-        ReactiveCommand.CreateFromTask(ActionService.ShowCreateWindowAsync);
+        ReactiveCommand.CreateFromTask(ActionService.ShowCreateWindow);
 }
