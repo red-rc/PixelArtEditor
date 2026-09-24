@@ -10,7 +10,7 @@ using System.Linq;
 using System.Threading;
 using AlphaFormat = Avalonia.Platform.AlphaFormat;
 
-namespace PixelArtEditor.AppServices;
+namespace PixelArtEditor.AppServices.Bitmap;
 
 public static class BitmapService
 {
@@ -36,12 +36,12 @@ public static class BitmapService
         return pixelData;
     }
 
-    public static unsafe void UpdateBitmap(WriteableBitmap wb, byte[] pixelData, Rect dirtyRect)
+    public static unsafe void UpdateBitmap(WriteableBitmap wb, byte[] data, Rect dirtyRect)
     {
         if (wb.Format != PixelFormat.Bgra8888)
             throw new InvalidOperationException(LocalizationService.Get("InvalidBitmap"));
 
-        if (pixelData.Length < wb.PixelSize.Width * wb.PixelSize.Height * 4)
+        if (data.Length < wb.PixelSize.Width * wb.PixelSize.Height * 4)
             throw new ArgumentException(LocalizationService.Get("InvalidPixelData"));
 
         using var fb = wb.Lock();
@@ -52,7 +52,7 @@ public static class BitmapService
         var endY = startY + (int)dirtyRect.Height;
         var copyBytes = (int)dirtyRect.Width * 4;
 
-        fixed (byte* srcPtr = pixelData)
+        fixed (byte* srcPtr = data)
         {
             for (var y = startY; y < endY; y++)
             {
@@ -64,15 +64,15 @@ public static class BitmapService
         }
     }
 
-    public static WriteableBitmap CreateBitmap(int width, int height, byte[] pixelData)
+    public static WriteableBitmap CreateBitmap(byte[] data, int width, int height)
     {
         var wb = new WriteableBitmap(new PixelSize(width, height), new Vector(96, 96), PixelFormat.Bgra8888, AlphaFormat.Unpremul);
-        UpdateBitmap(wb, pixelData, new Rect(0, 0, width, height));
+        UpdateBitmap(wb, data, new Rect(0, 0, width, height));
 
         return wb;
     }
 
-    public static WriteableBitmap CreateBitmap(int width, int height, Color color)
+    public static WriteableBitmap CreateBitmap(Color color, int width, int height)
     {
         var wb = new WriteableBitmap(new PixelSize(width, height), new Vector(96, 96), PixelFormat.Bgra8888, AlphaFormat.Unpremul);
         var pixelData = Enumerable.Repeat(color, width * height).SelectMany(c => new[] { c.B, c.G, c.R, c.A }).ToArray();
@@ -82,9 +82,9 @@ public static class BitmapService
         return wb;
     }
 
-    public static unsafe void BrushSquare(byte[] pixelData, int width, Rect rect, Color dstColor)
+    public static unsafe void BrushSquare(byte[] data, int width, Rect rect, Color dstColor)
     {
-        fixed (byte* ptr = pixelData)
+        fixed (byte* ptr = data)
         {
             uint color =
                 (uint)dstColor.B |
@@ -131,7 +131,7 @@ public static class BitmapService
 
             var index = (pixel.Y * layer.Width + pixel.X) * 4;
 
-            var src = layer.PixelData;
+            var src = layer.Data;
             if ((uint)(index + 3) >= (uint)src.Length) continue;
 
             var srcA = src[index + 3] / 255f * layer.Opacity;
@@ -151,12 +151,53 @@ public static class BitmapService
         return Color.FromArgb(255, r, g, b);
     }
 
-    public static unsafe Rect? FillSimilarPixels(byte[] pixelData, int width, PixelPoint startPixel, Color dstColor)
+    public static byte[] GetCompositePixelData(ObservableCollection<LayerModel> layers, int width, int height)
     {
-        var srcColor = GetPixelColor(pixelData, width, startPixel);
+        var result = new byte[width * height * 4];
+
+        foreach (var layer in layers.Reverse())
+        {
+            if (!layer.IsVisible) continue;
+
+            var src = layer.Data;
+
+            for (var y = 0; y < height; y++)
+            {
+                if (y >= layer.Height) continue;
+
+                var dstRow = y * width * 4;
+                var srcRow = y * layer.Width * 4;
+
+                for (var x = 0; x < width; x++)
+                {
+                    if (x >= layer.Width) continue;
+
+                    var srcIdx = srcRow + x * 4;
+                    var dstIdx = dstRow + x * 4;
+
+                    var srcA = src[srcIdx + 3] / 255f * layer.Opacity;
+                    var dstA = result[dstIdx + 3] / 255f;
+
+                    var outA = srcA + dstA * (1f - srcA);
+                    if (outA <= 0f) continue;
+
+                    result[dstIdx + 0] = (byte)((src[srcIdx + 0] * srcA + result[dstIdx + 0] * dstA * (1f - srcA)) / outA);
+                    result[dstIdx + 1] = (byte)((src[srcIdx + 1] * srcA + result[dstIdx + 1] * dstA * (1f - srcA)) / outA);
+                    result[dstIdx + 2] = (byte)((src[srcIdx + 2] * srcA + result[dstIdx + 2] * dstA * (1f - srcA)) / outA);
+                    result[dstIdx + 3] = (byte)(outA * 255f);
+                }
+            }
+        }
+
+        return result;
+    }
+
+    public static unsafe Rect? FillSimilarPixels(byte[] data, int width, PixelPoint startPixel, Color dstColor)
+    {
+        var srcColor = GetPixelColor(data, width, startPixel);
         if (srcColor == dstColor) return null;
 
-        var height = pixelData.Length / width / 4;
+        var height = data.Length / width / 4;
         var visited = new byte[width * height];
         var stack = new Stack<int>(512);
 
@@ -176,12 +217,12 @@ public static class BitmapService
             ((uint)dstColor.R << 16) |
             ((uint)dstColor.A << 24);
 
-        int minX = startPixel.X;
-        int maxX = startPixel.X;
-        int minY = startPixel.Y;
-        int maxY = startPixel.Y;
+        var minX = startPixel.X;
+        var maxX = startPixel.X;
+        var minY = startPixel.Y;
+        var maxY = startPixel.Y;
 
-        fixed (byte* pBase = pixelData)
+        fixed (byte* pBase = data)
         {
             uint* pPixels = (uint*)pBase;
 
@@ -219,7 +260,7 @@ public static class BitmapService
     public static WriteableBitmap GetResizedBitmap(byte[] src, int srcW, int srcH, int dstW, int dstH)
     {
         var resized = ResizePixelData(src, srcW, srcH, dstW, dstH);
-        return CreateBitmap(dstW, dstH, resized);
+        return CreateBitmap(resized, dstW, dstH);
     }
 
     public static byte[] ResizePixelData(byte[] src, int srcW, int srcH, int dstW, int dstH)
@@ -319,55 +360,14 @@ public static class BitmapService
         }
     }
 
-    public static byte[] GetCompositePixelData(ObservableCollection<LayerModel> layers, int width, int height)
+    public static unsafe byte[] SwapRB(byte[] data)
     {
-        var result = new byte[width * height * 4];
+        var bgra = new byte[data.Length];
 
-        foreach (var layer in layers.Reverse())
-        {
-            if (!layer.IsVisible) continue;
-
-            var src = layer.PixelData;
-
-            for (var y = 0; y < height; y++)
-            {
-                if (y >= layer.Height) continue;
-
-                var dstRow = y * width * 4;
-                var srcRow = y * layer.Width * 4;
-
-                for (var x = 0; x < width; x++)
-                {
-                    if (x >= layer.Width) continue;
-
-                    var srcIdx = srcRow + x * 4;
-                    var dstIdx = dstRow + x * 4;
-
-                    var srcA = src[srcIdx + 3] / 255f * layer.Opacity;
-                    var dstA = result[dstIdx + 3] / 255f;
-
-                    var outA = srcA + dstA * (1f - srcA);
-                    if (outA <= 0f) continue;
-
-                    result[dstIdx + 0] = (byte)((src[srcIdx + 0] * srcA + result[dstIdx + 0] * dstA * (1f - srcA)) / outA);
-                    result[dstIdx + 1] = (byte)((src[srcIdx + 1] * srcA + result[dstIdx + 1] * dstA * (1f - srcA)) / outA);
-                    result[dstIdx + 2] = (byte)((src[srcIdx + 2] * srcA + result[dstIdx + 2] * dstA * (1f - srcA)) / outA);
-                    result[dstIdx + 3] = (byte)(outA * 255f);
-                }
-            }
-        }
-
-        return result;
-    }
-
-    public static unsafe byte[] SwapRB(byte[] rgba)
-    {
-        var bgra = new byte[rgba.Length];
-
-        fixed (byte* srcPtr = rgba)
+        fixed (byte* srcPtr = data)
         fixed (byte* dstPtr = bgra)
         {
-            for (var i = 0; i < rgba.Length; i += 4)
+            for (var i = 0; i < data.Length; i += 4)
             {
                 dstPtr[i] = srcPtr[i + 2];      // B ← R
                 dstPtr[i + 1] = srcPtr[i + 1];  // G
@@ -379,50 +379,13 @@ public static class BitmapService
         return bgra;
     }
 
-    public static byte? GetClosestPaletteColorIdx(Color color, Palette palette)
+    public static unsafe byte[] QuantizeToPalette(byte[] data, Palette palette)
     {
-        if (palette.Colors.Count == 0) return null;
+        if (palette.Colors.Count == 0) return data;
 
-        byte bestIdx = 0;
-        var minDistance = int.MaxValue;
+        var result = new byte[data.Length];
 
-        for (byte i = 0; i < palette.Colors.Count; i++)
-        {
-            var c = palette.Colors[i];
-
-            var dr = color.R - c.R;
-            var dg = color.G - c.G;
-            var db = color.B - c.B;
-            var da = color.A - c.A;
-            var dist = dr * dr + dg * dg + db * db + da * da;
-
-            if (dist < minDistance)
-            {
-                minDistance = dist;
-                bestIdx = i;
-
-                if (dist == 0) break;
-            }
-        }
-
-        return bestIdx;
-    }
-
-    public static Color GetClosestPaletteColor(Color color, Palette palette)
-    {
-        if (palette.Colors.Count > 0 && GetClosestPaletteColorIdx(color, palette) is byte idx)
-            return palette.Colors[idx];
-
-        return color;
-    }
-
-    public static unsafe byte[] QuantizeToPalette(byte[] bgraData, Palette palette)
-    {
-        if (palette.Colors.Count == 0) return bgraData;
-
-        var result = new byte[bgraData.Length];
-
-        fixed (byte* srcPtr = bgraData)
+        fixed (byte* srcPtr = data)
         fixed (byte* dstPtr = result)
         {
             uint* src = (uint*)srcPtr;
@@ -430,7 +393,7 @@ public static class BitmapService
 
             var cache = new Dictionary<uint, uint>();
 
-            for (var i = 0; i < bgraData.Length / 4; i++)
+            for (var i = 0; i < data.Length / 4; i++)
             {
                 var packed = src[i];
                 var a = (byte)((packed >> 24) & 0xFF);
@@ -451,7 +414,7 @@ public static class BitmapService
                 var g = (byte)((packed >> 8) & 0xFF);
                 var r = (byte)((packed >> 16) & 0xFF);
 
-                var best = GetClosestPaletteColor(Color.FromArgb(a, r, g, b), palette);
+                var best = PaletteService.GetClosestPaletteColor(Color.FromArgb(a, r, g, b), palette);
                 var outPacked = (uint)best.B | ((uint)best.G << 8) | ((uint)best.R << 16) | ((uint)best.A << 24);
                 cache[packed] = outPacked;
                 dst[i] = outPacked;
@@ -461,13 +424,21 @@ public static class BitmapService
         return result;
     }
 
-    public static List<Color> GetPalette(byte[] data, int width, PaletteQuantization quantizationMethod, bool dither)
+    public static (byte[], Palette palette) GetQuantized(byte[] data, int width, BitDepth bitDepth, Palette? palette = null)
     {
-        throw new NotImplementedException();
-    }
+        var maxColors = PaletteService.GetMaxPaletteColorIdx(bitDepth);
 
-    internal static byte[] GetIndexedBitmap(byte[] data, Palette? palette)
-    {
-        throw new NotImplementedException();
+        if (palette is not null && palette.Colors.Count - 1 <= maxColors)
+            return (data, palette);
+
+        var newPalette = PaletteService.GetPalette(
+            data,
+            width,
+            maxColors,
+            palette?.QuantizationMethod ?? PaletteQuantization.MedianCut,
+            palette?.Dither ?? false);
+
+        var newData = QuantizeToPalette(data, newPalette);
+        return (newData, newPalette);
     }
 }

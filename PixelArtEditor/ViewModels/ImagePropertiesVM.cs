@@ -1,6 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
-using PixelArtEditor.AppServices;
+using PixelArtEditor.AppServices.Bitmap;
 using PixelArtEditor.AppServices.ImageProcessing;
 using PixelArtEditor.Models.Canvas;
 using System;
@@ -34,7 +34,7 @@ public class ImagePropertiesVM : ReactiveObject
 
         ResetCommand = ReactiveCommand.Create(() => {
             ImageProps.LoadFrom(model, handleModelChanged);
-            ImageProps.RenderBitmap = BitmapService.CreateBitmap(model.Width, model.Height, model.Data);
+            ImageProps.RenderBitmap = BitmapService.CreateBitmap(model.Data, model.Width, model.Height);
         });
 
         CancelCommand = ReactiveCommand.Create(() =>
@@ -76,26 +76,12 @@ public class ImagePropertiesVM : ReactiveObject
                     previewData = model.Data;
                 else
                 {
-                    var (indices, palette) = ImageConverterService.ToIndexed(
-                        ImageProps.Model.Data,
-                        model.Width,
-                        ImageProps.BitDepth,
-                        model.Palette?.Colors.Count,
-                        model.Palette?.QuantizationMethod,
-                        model.Palette?.Dither);
+                    var (indices, palette) = 
+                        BitmapService.GetQuantized(ImageProps.Model.Data, model.Width, ImageProps.BitDepth, model.Palette);
 
-                    var tempModel = new PixelModel
-                    {
-                        Width = model.Width,
-                        Height = model.Height,
-                        Mode = model.Mode,
-                        BitDepth = model.BitDepth,
-                        Data = indices,
-                        Palette = palette
-                    };
-
-                    previewData = BitmapService.SwapRB(PixelModelService.ToRgba32(tempModel));
+                    previewData = indices;
                     model.Palette = palette;
+                    model.BitDepth = ImageProps.BitDepth;
                 }
             }
             else if (ImageProps.ColorMode == ColorMode.Grayscale)
@@ -113,7 +99,7 @@ public class ImagePropertiesVM : ReactiveObject
             else
             {
                 ImageProps.RenderBitmap?.Dispose();
-                ImageProps.RenderBitmap = BitmapService.CreateBitmap(ImageProps.Width, ImageProps.Height, previewData);
+                ImageProps.RenderBitmap = BitmapService.CreateBitmap(previewData, ImageProps.Width, ImageProps.Height);
             }
         }
         else
@@ -126,7 +112,7 @@ public class ImagePropertiesVM : ReactiveObject
                 ImageProps.Height);
 
             ImageProps.RenderBitmap?.Dispose();
-            ImageProps.RenderBitmap = BitmapService.CreateBitmap(ImageProps.Width, ImageProps.Height, previewData);
+            ImageProps.RenderBitmap = BitmapService.CreateBitmap(previewData, ImageProps.Width, ImageProps.Height);
         }
 
         ImageProps.PushRenderData();

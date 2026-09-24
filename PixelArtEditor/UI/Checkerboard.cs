@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using PixelArtEditor.AppServices;
+using PixelArtEditor.AppServices.Bitmap;
 using PixelArtEditor.Helpers;
 using PixelArtEditor.Models.Canvas;
 using System;
@@ -158,7 +159,7 @@ public class Checkerboard : Control
     {
         var imageDrawing = new ImageDrawing
         {
-            ImageSource = BitmapService.CreateBitmap(2, 2, BitmapService.CreateCheckerBoardPixelData(2, 2)),
+            ImageSource = BitmapService.CreateBitmap(BitmapService.CreateCheckerBoardPixelData(2, 2), 2, 2),
             Rect = new Rect(0, 0, 2, 2)
         };
 

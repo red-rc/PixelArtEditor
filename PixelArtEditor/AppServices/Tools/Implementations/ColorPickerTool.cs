@@ -1,4 +1,5 @@
-﻿using PixelArtEditor.Models.Canvas;
+﻿using PixelArtEditor.AppServices.Bitmap;
+using PixelArtEditor.Models.Canvas;
 using PixelArtEditor.Models.Tools;
 
 namespace PixelArtEditor.AppServices.Tools.Implementations;
@@ -27,6 +28,6 @@ public class ColorPickerTool : ITool
         var layer = ctx.LayerManager.ActiveLayer;
         if (layer is null || ctx.HoverPixel is null) return;
 
-        ctx.PickedColor = BitmapService.GetPixelColor(layer.PixelData, layer.Width, ctx.HoverPixel.Value);
+        ctx.PickedColor = BitmapService.GetPixelColor(layer.Data, layer.Width, ctx.HoverPixel.Value);
     }
 }

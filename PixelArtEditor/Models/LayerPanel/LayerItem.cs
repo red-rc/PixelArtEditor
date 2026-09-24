@@ -117,7 +117,7 @@ public class LayerItem: ReactiveObject
 
     private void OnLayerPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(LayerModel.PixelData))
+        if (e.PropertyName == nameof(LayerModel.Data))
         {
             RenderData.Width = Layer.Width;
             RenderData.Height = Layer.Height;

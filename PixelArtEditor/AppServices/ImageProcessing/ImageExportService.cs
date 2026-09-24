@@ -2,6 +2,7 @@
 using Avalonia.Platform.Storage;
 using HeyRed.ImageSharp.Heif.Formats.Avif;
 using HeyRed.ImageSharp.Heif.Formats.Heif;
+using PixelArtEditor.AppServices.Bitmap;
 using PixelArtEditor.AppServices.ImageProcessing.Formats;
 using PixelArtEditor.Models.Canvas;
 using SixLabors.ImageSharp;

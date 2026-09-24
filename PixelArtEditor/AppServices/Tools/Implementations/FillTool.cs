@@ -1,4 +1,5 @@
 ﻿using Avalonia;
+using PixelArtEditor.AppServices.Bitmap;
 using PixelArtEditor.Models.Canvas;
 using PixelArtEditor.Models.Tools;
 
@@ -29,7 +30,7 @@ public class FillTool : ITool
         if (layer is null || ctx.HoverPixel is null) return;
 
         var dirtyRect = BitmapService.FillSimilarPixels(
-            layer.PixelData, 
+            layer.Data, 
             layer.Width, 
             ctx.HoverPixel.Value, 
             ctx.PickedColor);

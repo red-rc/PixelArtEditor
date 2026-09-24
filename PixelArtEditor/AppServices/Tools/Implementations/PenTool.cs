@@ -1,4 +1,5 @@
 ﻿using Avalonia;
+using PixelArtEditor.AppServices.Bitmap;
 using PixelArtEditor.Helpers;
 using PixelArtEditor.Models.Canvas;
 using PixelArtEditor.Models.Tools;
@@ -23,7 +24,7 @@ public class PenTool : ITool
     private static void Paint(ICanvasContext ctx)
     {
         var layer = ctx.LayerManager.ActiveLayer;
-        if (ctx.HoverPixel is null || layer is null || layer.PixelData is null) return;
+        if (ctx.HoverPixel is null || layer is null || layer.Data is null) return;
 
         // Do not forget to change it with tool width and height
         var current = ctx.HoverPixel.Value;
@@ -35,7 +36,7 @@ public class PenTool : ITool
 
         foreach (var pixel in pixels)
         {
-            BitmapService.BrushSquare(layer.PixelData, layer.Width, new Rect(pixel.X, pixel.Y, 1, 1), ctx.PickedColor);
+            BitmapService.BrushSquare(layer.Data, layer.Width, new Rect(pixel.X, pixel.Y, 1, 1), ctx.PickedColor);
             dirtyRect = dirtyRect.Union(new Rect(pixel.X, pixel.Y, 1, 1));
         }
 

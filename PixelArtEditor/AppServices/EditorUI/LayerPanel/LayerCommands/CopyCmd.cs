@@ -19,7 +19,7 @@ public class CopyCmd(LayerPanelVM vm, ListBox layerListBox) : LayerCmdBase(vm, l
         Vm.CopiedLayers = [.. ordered.Select(x => new LayerModel(
             x.Layer.Width,
             x.Layer.Height,
-            (byte[])x.Layer.PixelData.Clone(),
+            (byte[])x.Layer.Data.Clone(),
             LayerNameHelper.GetLayerName(layerManager, x.Layer.Name),
             x.Layer.IsEmpty))];
     }

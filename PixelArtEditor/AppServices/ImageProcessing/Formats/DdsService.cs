@@ -1,4 +1,5 @@
 ﻿using Pfim;
+using PixelArtEditor.AppServices.Bitmap;
 using PixelArtEditor.Models.Canvas;
 using System;
 using System.IO;

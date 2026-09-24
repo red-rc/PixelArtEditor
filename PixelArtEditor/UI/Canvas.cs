@@ -4,6 +4,7 @@ using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using PixelArtEditor.AppServices;
+using PixelArtEditor.AppServices.Bitmap;
 using PixelArtEditor.AppServices.Canvas;
 using PixelArtEditor.AppServices.Tools;
 using PixelArtEditor.AppServices.Tools.Implementations;
@@ -226,14 +227,14 @@ public class Canvas : Control, ICanvasContext
             RenderCache[layer].PreviewDirty = true;
         }
 
-        if (e.PropertyName == nameof(LayerModel.PixelData))
+        if (e.PropertyName == nameof(LayerModel.Data))
         {
             RenderCache[layer].RenderBitmapDirty = true;
             RenderCache[layer].DirtyRect = new Rect(0, 0, layer.Width, layer.Height);
             RenderCache[layer].PreviewDirty = true;
         }
 
-        if (e.PropertyName is nameof(LayerModel.PixelData) or nameof(LayerModel.Opacity))
+        if (e.PropertyName is nameof(LayerModel.Data) or nameof(LayerModel.Opacity))
             _hoverPixelColor = null;
 
         InvalidateVisual();
@@ -363,7 +364,7 @@ public class Canvas : Control, ICanvasContext
 
             if (cache.RenderBitmapDirty && cache.DirtyRect is Rect rect)
             {
-                BitmapService.UpdateBitmap(layer.RenderBitmap, layer.PixelData, rect);
+                BitmapService.UpdateBitmap(layer.RenderBitmap, layer.Data, rect);
 
                 cache.RenderBitmapDirty = false;
                 cache.PreviewDirty = true;

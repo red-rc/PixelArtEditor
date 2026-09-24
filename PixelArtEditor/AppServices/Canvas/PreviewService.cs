@@ -1,4 +1,5 @@
 ﻿using Avalonia.Threading;
+using PixelArtEditor.AppServices.Bitmap;
 using PixelArtEditor.Models.Canvas;
 using System;
 using System.Buffers;
@@ -13,7 +14,7 @@ public static class PreviewService
     {
         if (!ctx.RenderCache.TryGetValue(layer, out var cache)
             || layer.RenderBitmap is null
-            || layer.PixelData is null) return;
+            || layer.Data is null) return;
 
         if (!cache.PreviewDirty && layer.PreviewBitmap != null
             && layer.PreviewBitmap.PixelSize.Width == bmpW
@@ -34,7 +35,7 @@ public static class PreviewService
 
         var modelWidth = ctx.Model.Width;
         var modelHeight = ctx.Model.Height;
-        var pixelData = layer.PixelData;
+        var pixelData = layer.Data;
 
         Task.Run(() =>
         {
@@ -56,7 +57,7 @@ public static class PreviewService
                         if (ReferenceEquals(cache.PreviewCts, thisCts))
                         {
                             var old = layer.PreviewBitmap;
-                            layer.PreviewBitmap = BitmapService.CreateBitmap(width, height, buffer);
+                            layer.PreviewBitmap = BitmapService.CreateBitmap(buffer, width, height);
                             Dispatcher.UIThread.Post(() => old?.Dispose(), DispatcherPriority.Background);
                             invalidate();
                         }

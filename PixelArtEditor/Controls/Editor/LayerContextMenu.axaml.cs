@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using PixelArtEditor.AppServices;
+using PixelArtEditor.AppServices.Bitmap;
 using PixelArtEditor.AppServices.Shell;
 using PixelArtEditor.AppServices.Tools;
 using PixelArtEditor.Models.Canvas;
@@ -53,7 +54,7 @@ namespace PixelArtEditor.Controls.Editor
             {
                 ToolManager.InvalidatePixelData(canvasCtx, activeLayer, new Rect(0, 0, activeLayer.Width, activeLayer.Height), false);
 
-                activeLayer.PixelData =
+                activeLayer.Data =
                     BitmapService.GetCompositePixelData(selLayers, activeLayer.Width, activeLayer.Height);
 
                 foreach (var item in selLayers)
@@ -81,7 +82,7 @@ namespace PixelArtEditor.Controls.Editor
                 Height = layer.Height,
                 Mode = ColorMode.RGBA,
                 BitDepth = BitDepth.Bit8,
-                Data = layer.PixelData
+                Data = layer.Data
             }, editorVM);
 
             _closeFlyout();

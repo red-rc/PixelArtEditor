@@ -1,5 +1,5 @@
 ﻿using Avalonia.Media.Imaging;
-using PixelArtEditor.AppServices;
+using PixelArtEditor.AppServices.Bitmap;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
@@ -12,13 +12,13 @@ public class LayerModel(int width, int height, byte[] pixelData, string name, bo
 
     public bool IsEmpty { get; set; } = isEmpty;
 
-    private byte[] _pixelData = pixelData;
-    public byte[] PixelData
+    private byte[] _Data = pixelData;
+    public byte[] Data
     {
-        get => _pixelData;
+        get => _Data;
         set
         {
-            _pixelData = value;
+            _Data = value;
             OnPropertyChanged();
         }
     }
@@ -26,7 +26,7 @@ public class LayerModel(int width, int height, byte[] pixelData, string name, bo
     private WriteableBitmap? _renderBitmap;
     public WriteableBitmap RenderBitmap
     {
-        get => _renderBitmap ??= BitmapService.CreateBitmap(Width, Height, PixelData);
+        get => _renderBitmap ??= BitmapService.CreateBitmap(Data, Width, Height);
         set => _renderBitmap = value;
     }
 
@@ -62,5 +62,5 @@ public class LayerModel(int width, int height, byte[] pixelData, string name, bo
     private void OnPropertyChanged([CallerMemberName] string? name = null)
         => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
-    public void NotifyPixelDataChanged() => OnPropertyChanged(nameof(PixelData));
+    public void NotifyPixelDataChanged() => OnPropertyChanged(nameof(Data));
 }

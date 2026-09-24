@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Media;
 using PixelArtEditor.AppServices;
+using PixelArtEditor.AppServices.Bitmap;
 using PixelArtEditor.AppServices.Canvas;
 using PixelArtEditor.AppServices.ImageProcessing;
 using PixelArtEditor.AppServices.Tools;
@@ -124,7 +125,7 @@ public class EditorVM : ReactiveObject
         set
         {
             if (_model?.Mode == ColorMode.Indexed && _model.Palette is not null)
-                value = ImageConverterService.ResolveColorForPalette(value, _model.Palette, _model.BitDepth);
+                value = PaletteService.ResolveColorForPalette(value, _model.Palette, _model.BitDepth);
 
             this.RaiseAndSetIfChanged(ref _pickedColor, value);
         }

@@ -1,7 +1,9 @@
-﻿using Avalonia.Controls;
+﻿using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using PixelArtEditor.AppServices;
+using PixelArtEditor.AppServices.Bitmap;
 using PixelArtEditor.AppServices.ImageProcessing;
 using PixelArtEditor.Models;
 using PixelArtEditor.Models.Canvas;
@@ -60,8 +62,6 @@ public class IndexedPropertiesVM : ReactiveObject
         set => this.RaiseAndSetIfChanged(ref _dither, value);
     }
 
-    public List<Color> PaletteColors = [];
-
     private static T StringToEnum<T>(string value) where T : struct, Enum
     {
         if (Enum.TryParse<T>(value, ignoreCase: false, out var result))
@@ -81,14 +81,6 @@ public class IndexedPropertiesVM : ReactiveObject
         private set => this.RaiseAndSetIfChanged(ref _renderData, value);
     }
 
-    public void PushRenderData(WriteableBitmap bitmap, int width, int height)
-    {
-        RenderData.Width = width;
-        RenderData.Height = height;
-        RenderData.Bitmap = bitmap;
-        RenderData.NotifyPropertyChanged();
-    }
-
     public ReactiveCommand<RxVoid, RxVoid> ResetCommand { get; }
     public ReactiveCommand<RxVoid, RxVoid> CancelCommand { get; }
     public ReactiveCommand<RxVoid, RxVoid> SaveCommand { get; }
@@ -105,7 +97,7 @@ public class IndexedPropertiesVM : ReactiveObject
         ResetCommand = ReactiveCommand.Create(() =>
         {
             LoadFrom(model);
-            RenderData.Bitmap = BitmapService.CreateBitmap(model.Width, model.Height, model.Data);
+            RenderData.Bitmap = BitmapService.CreateBitmap(model.Data, model.Width, model.Height);
         });
 
         CancelCommand = ReactiveCommand.Create(() =>
@@ -125,7 +117,10 @@ public class IndexedPropertiesVM : ReactiveObject
 
     public void LoadFrom(PixelModel model)
     {
-        MaxColorCountXaml = ImageConverterService.GetMaxPaletteColorIdx(model.BitDepth) + 1;
+        RenderData.Width = model.Width;
+        RenderData.Height = model.Height;
+
+        MaxColorCountXaml = PaletteService.GetMaxPaletteColorIdx(model.BitDepth) + 1;
         ColorCountXaml = MaxColorCountXaml;
 
         if (model.Palette is not null)
@@ -137,13 +132,16 @@ public class IndexedPropertiesVM : ReactiveObject
 
     private void UpdatePreview(PixelModel model)
     {
-        //if (model.Data is null || model.Data.Length == 0) return;
-        //
-        //PaletteColors = BitmapService.GetPalette(model.Data, model.Width, Quantization, Dither);
-        //
-        //_palette = new Palette(PaletteColors, Quantization, Dither);
-        //_modelData = BitmapService.GetIndexedBitmap(model.Data, _palette);
-        //
-        //PushRenderData(BitmapService.CreateBitmap(model.Width, model.Height, _modelData));
+        if (model.Data is null || model.Data.Length == 0) return;
+        
+        _palette = PaletteService.GetPalette(model.Data, model.Width, ColorCount, Quantization, Dither);
+        _modelData = BitmapService.QuantizeToPalette(model.Data, _palette);
+        
+        if (RenderData.Bitmap is null)
+            RenderData.Bitmap = BitmapService.CreateBitmap(_modelData, model.Width, model.Height);
+        else
+            BitmapService.UpdateBitmap(RenderData.Bitmap, _modelData, new Rect(0, 0, model.Width, model.Height));
+
+        RenderData.NotifyPropertyChanged();
     }
 }

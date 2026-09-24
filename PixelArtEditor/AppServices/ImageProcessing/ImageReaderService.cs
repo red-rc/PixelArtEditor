@@ -1,4 +1,5 @@
-﻿using PixelArtEditor.Helpers;
+﻿using PixelArtEditor.AppServices.Bitmap;
+using PixelArtEditor.Helpers;
 using PixelArtEditor.Models.Canvas;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Bmp;
@@ -351,7 +352,7 @@ public static class ImageReaderService
 
                     if (!cache.TryGetValue(pixelColor, out var idx))
                     {
-                        var bestIdx = BitmapService.GetClosestPaletteColorIdx(pixelColor, palette);
+                        var bestIdx = PaletteService.GetClosestPaletteColorIdx(pixelColor, palette);
                         cache[pixelColor] = bestIdx is byte bIdx ? bIdx : (byte)0;
                     }
 

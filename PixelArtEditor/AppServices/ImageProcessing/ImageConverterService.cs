@@ -1,65 +1,15 @@
 ﻿using PixelArtEditor.Models.Canvas;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
-using SixLabors.ImageSharp.Processing;
-using SixLabors.ImageSharp.Processing.Processors.Quantization;
 using System;
-using System.Collections.Generic;
-using Color = Avalonia.Media.Color;
 
 namespace PixelArtEditor.AppServices.ImageProcessing;
 
 public class ImageConverterService
 {
-    public static (byte[] data, Palette palette) ToIndexed(byte[] bgraData, int width, BitDepth bitDepth, 
-        int? colorCount = null, PaletteQuantization? quantization = PaletteQuantization.MedianCut, bool? dither = null)
+    public static byte[] ToIndexed(byte[] bgraData, int width, Palette palette)
     {
-        //byte maxColors;
-        //if (colorCount is not null)
-        //{
-        //    maxColors = (byte)(colorCount - 1) <= GetMaxPaletteColorIdx(bitDepth)
-        //        ? (byte)(colorCount - 1) : GetMaxPaletteColorIdx(bitDepth);
-        //}
-        //else
-        //    maxColors = GetMaxPaletteColorIdx(bitDepth);
-        //using var image = Image.LoadPixelData<Bgra32>(bgraData, width, height);
-        //var quantizer = new OctreeQuantizer(new QuantizerOptions { MaxColors = maxColors });
-        //
-        //image.Mutate(ctx => ctx.Quantize(quantizer));
-        //
-        //var colorMap = new Dictionary<uint, byte>();
-        //
-        //var indices = new byte[bgraData.Length / 4];
-        //var paletteColors = new List<Color>();
-        //
-        //image.ProcessPixelRows(accessor =>
-        //{
-        //    for (var y = 0; y < accessor.Height; y++)
-        //    {
-        //        var row = accessor.GetRowSpan(y);
-        //        for (var x = 0; x < accessor.Width; x++)
-        //        {
-        //            var pixel = row[x];
-        //            var packed = ((uint)pixel.A << 24) | ((uint)pixel.R << 16) | ((uint)pixel.G << 8) | pixel.B;
-        //
-        //            if (!colorMap.TryGetValue(packed, out byte value))
-        //            {
-        //                value = (byte)paletteColors.Count;
-        //
-        //                colorMap.Add(packed, value);
-        //                paletteColors.Add(Color.FromArgb(pixel.A, pixel.R, pixel.G, pixel.B));
-        //            }
-        //
-        //            indices[y * width + x] = value;
-        //        }
-        //    }
-        //});
-
-            //return (PackIndices(indices, bitDepth), new Palette([.. paletteColors]));
         throw new NotImplementedException();
     }
 
-    // Pack according to bit depth
     public static byte[] PackIndices(byte[] indices, BitDepth bitDepth)
     {
         return bitDepth switch
@@ -112,34 +62,6 @@ public class ImageConverterService
 
         return packed;
     }
-
-    public static Color ResolveColorForPalette(Color color, Palette palette, BitDepth bitDepth)
-    {
-        var colors = palette.Colors;
-
-        for (var i = 0; i < colors.Count; i++)
-        {
-            if (colors[i] == color)
-                return color;
-        }
-
-        if (colors.Count < GetMaxPaletteColorIdx(bitDepth) + 1)
-        {
-            palette.Colors.Add(color);
-            return color;
-        }
-
-        return BitmapService.GetClosestPaletteColor(color, palette);
-    }
-
-    public static byte GetMaxPaletteColorIdx(BitDepth bitDepth) => bitDepth switch
-    {
-        BitDepth.Bit1 => 1,
-        BitDepth.Bit2 => 3,
-        BitDepth.Bit4 => 15,
-        BitDepth.Bit8 => 255,
-        _ => 255
-    };
 
     public static unsafe byte[] ConvertToGrayscale(byte[] bgraData)
     {

@@ -1,4 +1,5 @@
-﻿using PixelArtEditor.Models.Canvas;
+﻿using PixelArtEditor.AppServices.Bitmap;
+using PixelArtEditor.Models.Canvas;
 using System.Collections.ObjectModel;
 
 namespace PixelArtEditor.AppServices.Canvas;
@@ -26,12 +27,12 @@ public class LayerManager
     {
         foreach (var layer in Layers)
         {
-            var resized = BitmapService.ResizePixelData(layer.PixelData, layer.Width, layer.Height, newWidth, newHeight);
+            var resized = BitmapService.ResizePixelData(layer.Data, layer.Width, layer.Height, newWidth, newHeight);
             layer.Width = newWidth;
             layer.Height = newHeight;
             layer.RenderBitmap?.Dispose();
-            layer.RenderBitmap = BitmapService.CreateBitmap(newWidth, newHeight, resized);
-            layer.PixelData = resized;
+            layer.RenderBitmap = BitmapService.CreateBitmap(resized, newWidth, newHeight);
+            layer.Data = resized;
             layer.NotifyPixelDataChanged();
         }
     }
@@ -40,7 +41,7 @@ public class LayerManager
     {
         foreach (var layer in Layers)
         {
-            layer.PixelData = BitmapService.QuantizeToPalette(layer.PixelData, palette);
+            layer.Data = BitmapService.QuantizeToPalette(layer.Data, palette);
             layer.RenderBitmap = null!; // Force complete RenderBitmap rebuild
             layer.NotifyPixelDataChanged();
         }
