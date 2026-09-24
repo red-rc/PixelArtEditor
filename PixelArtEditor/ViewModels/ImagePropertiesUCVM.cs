@@ -2,6 +2,7 @@
 using FellowOakDicom;
 using PixelArtEditor.AppServices;
 using PixelArtEditor.AppServices.Shell;
+using PixelArtEditor.Helpers;
 using PixelArtEditor.Models;
 using PixelArtEditor.Models.Canvas;
 using System;
@@ -102,7 +103,7 @@ public class ImagePropertiesUCVM : ReactiveObject
         set
         {
             if (_colorModeName == value) return;
-            ColorMode = StringToEnum<ColorMode>(value);
+            ColorMode = EnumHelper.StringToEnum<ColorMode>(value);
             this.RaisePropertyChanged(nameof(IsIndexed));
             this.RaiseAndSetIfChanged(ref _colorModeName, value);
 
@@ -138,7 +139,7 @@ public class ImagePropertiesUCVM : ReactiveObject
         set 
         {
             if (_bitDepthName == value || !BitDepthNames.Contains(value)) return;
-            BitDepth = StringToEnum<BitDepth>(value);
+            BitDepth = EnumHelper.StringToEnum<BitDepth>(value);
             this.RaiseAndSetIfChanged(ref _bitDepthName, value);
         }
     }
@@ -164,7 +165,7 @@ public class ImagePropertiesUCVM : ReactiveObject
         set
         {
             if (_colorSpaceName == value) return;
-            ColorSpace = StringToEnum<ColorSpace>(value);
+            ColorSpace = EnumHelper.StringToEnum<ColorSpace>(value);
             this.RaiseAndSetIfChanged(ref _colorSpaceName, value);
         }
     }
@@ -188,21 +189,12 @@ public class ImagePropertiesUCVM : ReactiveObject
         set
         {
             if (_alphaFormatName == value) return;
-            AlphaFormat = StringToEnum<AlphaFormat>(value);
+            AlphaFormat = EnumHelper.StringToEnum<AlphaFormat>(value);
             this.RaiseAndSetIfChanged(ref _alphaFormatName, value);
         }
     }
 
     public AlphaFormat AlphaFormat = AlphaFormat.Straight;
-
-    private static T StringToEnum<T>(string value) where T : struct, Enum
-    {
-        if (Enum.TryParse<T>(value, ignoreCase: false, out var result))
-            return result;
-
-        throw new ArgumentException($"{LocalizationService.Get("UnknownValue")} '{value}' " +
-            $"{LocalizationService.Get("ForEnum")} {typeof(T).Name}");
-    }
 
     public PixelModel Model = null!;
 

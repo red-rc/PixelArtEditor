@@ -1,14 +1,15 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Media;
-using Avalonia.Media.Imaging;
-using PixelArtEditor.AppServices;
+using Avalonia.Threading;
 using PixelArtEditor.AppServices.Bitmap;
-using PixelArtEditor.AppServices.ImageProcessing;
+using PixelArtEditor.Helpers;
 using PixelArtEditor.Models;
 using PixelArtEditor.Models.Canvas;
 using System;
 using System.Collections.Generic;
+using System.Reactive.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace PixelArtEditor.ViewModels;
 
@@ -28,31 +29,25 @@ public class IndexedPropertiesVM : ReactiveObject
         set
         {
             if (_quantizationName == value || !QuantizationNames.Contains(value)) return;
-            Quantization = StringToEnum<PaletteQuantization>(value);
+            Quantization = EnumHelper.StringToEnum<PaletteQuantization>(value);
             this.RaiseAndSetIfChanged(ref _quantizationName, value);
         }
     }
 
     public PaletteQuantization Quantization = PaletteQuantization.MedianCut;
 
-    public byte ColorCount = 255;
-
-    private int _maxColorCountXaml;
-    public int MaxColorCountXaml
+    private byte _colorIdx = 255;
+    public byte ColorIdx
     {
-        get => _maxColorCountXaml;
-        set => this.RaiseAndSetIfChanged(ref _maxColorCountXaml, value);
+        get => _colorIdx;
+        set => this.RaiseAndSetIfChanged(ref _colorIdx, value);
     }
 
-    private int _colorCountXaml;
-    public int ColorCountXaml
+    private byte _maxColorIdx;
+    public byte MaxColorIdx
     {
-        get => _colorCountXaml;
-        set
-        {
-            this.RaiseAndSetIfChanged(ref _colorCountXaml, value);
-            ColorCount = (byte)(_colorCountXaml - 1);
-        }
+        get => _maxColorIdx;
+        set => this.RaiseAndSetIfChanged(ref _maxColorIdx, value);
     }
 
     private bool _dither = true;
@@ -60,15 +55,6 @@ public class IndexedPropertiesVM : ReactiveObject
     {
         get => _dither;
         set => this.RaiseAndSetIfChanged(ref _dither, value);
-    }
-
-    private static T StringToEnum<T>(string value) where T : struct, Enum
-    {
-        if (Enum.TryParse<T>(value, ignoreCase: false, out var result))
-            return result;
-
-        throw new ArgumentException($"{LocalizationService.Get("UnknownValue")} '{value}' " +
-            $"{LocalizationService.Get("ForEnum")} {typeof(T).Name}");
     }
 
     private byte[] _modelData;
@@ -81,18 +67,18 @@ public class IndexedPropertiesVM : ReactiveObject
         private set => this.RaiseAndSetIfChanged(ref _renderData, value);
     }
 
+    private CancellationTokenSource? _updateCts;
+
     public ReactiveCommand<RxVoid, RxVoid> ResetCommand { get; }
     public ReactiveCommand<RxVoid, RxVoid> CancelCommand { get; }
     public ReactiveCommand<RxVoid, RxVoid> SaveCommand { get; }
 
     public IndexedPropertiesVM(Window dialog, PixelModel model)
     {
-        this.WhenAnyValue(x => x.Quantization).Subscribe(_ => UpdatePreview(model));
-        this.WhenAnyValue(x => x.ColorCount).Subscribe(_ => UpdatePreview(model));
-        this.WhenAnyValue(x => x.Dither).Subscribe(_ => UpdatePreview(model));
-
         _modelData = model.Data;
         LoadFrom(model);
+
+        this.WhenAnyValue(x => x.Quantization, x => x.ColorIdx, x => x.Dither).Subscribe(_ => UpdatePreview(model));
 
         ResetCommand = ReactiveCommand.Create(() =>
         {
@@ -119,9 +105,10 @@ public class IndexedPropertiesVM : ReactiveObject
     {
         RenderData.Width = model.Width;
         RenderData.Height = model.Height;
+        RenderData.Bitmap = BitmapService.CreateBitmap(model.Data, model.Width, model.Height);
 
-        MaxColorCountXaml = PaletteService.GetMaxPaletteColorIdx(model.BitDepth) + 1;
-        ColorCountXaml = MaxColorCountXaml;
+        MaxColorIdx = PaletteService.GetMaxPaletteColorIdx(model.BitDepth);
+        ColorIdx = MaxColorIdx;
 
         if (model.Palette is not null)
         {
@@ -133,15 +120,41 @@ public class IndexedPropertiesVM : ReactiveObject
     private void UpdatePreview(PixelModel model)
     {
         if (model.Data is null || model.Data.Length == 0) return;
-        
-        _palette = PaletteService.GetPalette(model.Data, model.Width, ColorCount, Quantization, Dither);
-        _modelData = BitmapService.QuantizeToPalette(model.Data, _palette);
-        
-        if (RenderData.Bitmap is null)
-            RenderData.Bitmap = BitmapService.CreateBitmap(_modelData, model.Width, model.Height);
-        else
-            BitmapService.UpdateBitmap(RenderData.Bitmap, _modelData, new Rect(0, 0, model.Width, model.Height));
 
-        RenderData.NotifyPropertyChanged();
+        _updateCts?.Cancel();
+        var cts = new CancellationTokenSource();
+        _updateCts = cts;
+        var token = cts.Token;
+
+        var colorCount = ColorIdx;
+        var quantization = Quantization;
+        var dither = Dither;
+        var data = model.Data;
+        var width = model.Width;
+        var height = model.Height;
+
+        Task.Run(() =>
+        {
+            if (token.IsCancellationRequested) return;
+
+            var palette = PaletteService.GetPalette(data, colorCount, quantization);
+            if (token.IsCancellationRequested) return;
+
+            var quantized = BitmapService.QuantizeToPalette(data, palette, dither);
+            if (token.IsCancellationRequested) return;
+
+            Dispatcher.UIThread.Post(() =>
+            {
+                if (token.IsCancellationRequested) return;
+
+                _palette = palette;
+                _modelData = quantized;
+
+                if (RenderData.Bitmap is not null)
+                    BitmapService.UpdateBitmap(RenderData.Bitmap, _modelData, new Rect(0, 0, width, height));
+
+                RenderData.NotifyPropertyChanged();
+            });
+        }, CancellationToken.None);
     }
 }

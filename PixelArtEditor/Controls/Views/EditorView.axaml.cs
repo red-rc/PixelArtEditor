@@ -138,8 +138,7 @@ public partial class EditorView : UserControl
 
             var (targetW, targetH) = FitToCanvas(pixelModel.Width, pixelModel.Height, vm.Model.Width, vm.Model.Height);
 
-            var rgba = PixelModelService.ToRgba32(pixelModel);
-            var data = BitmapService.SwapRB(rgba);
+            var data = pixelModel.Data;
 
             if (targetW != pixelModel.Width || targetH != pixelModel.Height)
                 data = BitmapService.ResizePixelDataScaled(data, pixelModel.Width, pixelModel.Height, targetW, targetH);
@@ -211,7 +210,7 @@ public partial class EditorView : UserControl
 
                 _subscribedModel = model;
 
-                _subscribedModel?.ModelChanged += OnModelChangedHandler;
+                _subscribedModel.ModelChanged += OnModelChangedHandler;
             });
 
             Dispatcher.UIThread.Post(() => Root.Focus());

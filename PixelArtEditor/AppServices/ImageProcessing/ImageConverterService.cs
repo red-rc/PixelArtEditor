@@ -1,68 +1,7 @@
-﻿using PixelArtEditor.Models.Canvas;
-using System;
-
-namespace PixelArtEditor.AppServices.ImageProcessing;
+﻿namespace PixelArtEditor.AppServices.ImageProcessing;
 
 public class ImageConverterService
 {
-    public static byte[] ToIndexed(byte[] bgraData, int width, Palette palette)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static byte[] PackIndices(byte[] indices, BitDepth bitDepth)
-    {
-        return bitDepth switch
-        {
-            BitDepth.Bit1 => PackBit1(indices),
-            BitDepth.Bit2 => PackBit2(indices),
-            BitDepth.Bit4 => PackBit4(indices),
-            BitDepth.Bit8 => indices,
-            _ => indices
-        };
-    }
-
-    private static byte[] PackBit1(byte[] indices)
-    {
-        var packed = new byte[(indices.Length + 7) / 8];
-        for (var i = 0; i < indices.Length; i++)
-        {
-            var byteIdx = i / 8;
-            var shift = 7 - (i % 8);
-            packed[byteIdx] |= (byte)((indices[i] & 0x01) << shift);
-        }
-
-        return packed;
-    }
-
-    private static byte[] PackBit2(byte[] indices)
-    {
-        var packed = new byte[(indices.Length + 3) / 4];
-        for (var i = 0; i < indices.Length; i++)
-        {
-            var byteIdx = i / 4;
-            var shift = 6 - (i % 4) * 2;
-            packed[byteIdx] |= (byte)((indices[i] & 0x03) << shift);
-        }
-
-        return packed;
-    }
-
-    private static byte[] PackBit4(byte[] indices)
-    {
-        var packed = new byte[(indices.Length + 1) / 2];
-        for (var i = 0; i < indices.Length; i++)
-        {
-            var byteIdx = i / 2;
-            if (i % 2 == 0)
-                packed[byteIdx] = (byte)((indices[i] & 0x0F) << 4);
-            else
-                packed[byteIdx] |= (byte)(indices[i] & 0x0F);
-        }
-
-        return packed;
-    }
-
     public static unsafe byte[] ConvertToGrayscale(byte[] bgraData)
     {
         var result = new byte[bgraData.Length];

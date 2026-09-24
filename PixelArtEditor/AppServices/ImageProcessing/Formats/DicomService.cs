@@ -116,13 +116,13 @@ public static class DicomService
         var data = new byte[checked(pixelData.Width * pixelData.Height * 4)];
         for (int src = 0, dst = 0; src < expectedLength; src += 3, dst += 4)
         {
-            data[dst] = source[src];
-            data[dst + 1] = source[src + 1];
-            data[dst + 2] = source[src + 2];
+            data[dst + 0] = source[src + 2]; // B
+            data[dst + 1] = source[src + 1]; // G
+            data[dst + 2] = source[src]; // R
             data[dst + 3] = byte.MaxValue;
         }
 
-        return CreateRgbaModel(pixelData.Width, pixelData.Height, data);
+        return CreateBgraModel(pixelData.Width, pixelData.Height, data);
     }
 
     private static PixelModel ReadMonochrome(DicomDataset dataset, DicomPixelData pixelData)
@@ -178,10 +178,10 @@ public static class DicomService
             data[offset + 3] = byte.MaxValue;
         }
 
-        return CreateRgbaModel(pixelData.Width, pixelData.Height, data);
+        return CreateBgraModel(pixelData.Width, pixelData.Height, data);
     }
 
-    private static PixelModel CreateRgbaModel(int width, int height, byte[] data) => new()
+    private static PixelModel CreateBgraModel(int width, int height, byte[] data) => new()
     {
         Width = width,
         Height = height,

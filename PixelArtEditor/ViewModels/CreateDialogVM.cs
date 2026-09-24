@@ -46,10 +46,14 @@ public class CreateDialogVM : ReactiveObject
 
         CreateCommand = ReactiveCommand.Create(() =>
         {
-            var pixelData = PixelModelService.CreateRgba32(
-                ImageProperties.Width,
-                ImageProperties.Height,
-                BackgroundColor);
+            var data = new byte[ImageProperties.Width * ImageProperties.Height * 4];
+            for (var i = 0; i < data.Length; i += 4)
+            {
+                data[i + 0] = BackgroundColor.B;
+                data[i + 1] = BackgroundColor.G;
+                data[i + 2] = BackgroundColor.R;
+                data[i + 3] = BackgroundColor.A;
+            }
 
             dialog.Close(new PixelModel
             {
@@ -61,7 +65,7 @@ public class CreateDialogVM : ReactiveObject
                 Alpha = ImageProperties.AlphaFormat,
                 DpiX = ImageProperties.DpiX,
                 DpiY = ImageProperties.DpiY,
-                Data = pixelData
+                Data = data
             });
         });
 

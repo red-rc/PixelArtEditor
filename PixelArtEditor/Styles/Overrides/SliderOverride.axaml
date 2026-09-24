@@ -13,7 +13,8 @@
                     <Ellipse Name="SliderEllipse"
                              Width="14"
                              Height="14"
-                             Fill="{DynamicResource PrimaryColor}" />
+                             Fill="{DynamicResource PrimaryColor}"
+                             Stroke="{DynamicResource ForegroundColor}" StrokeThickness="1.5" />
                   </Grid>
                 </ControlTemplate>
               </Setter>

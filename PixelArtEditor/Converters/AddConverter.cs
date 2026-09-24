@@ -9,11 +9,23 @@ public class AddConverter : IValueConverter
 {
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        if (value is double d && double.TryParse(parameter?.ToString(), out var add))
+        if (value is not null && double.TryParse(parameter?.ToString(), out var add))
+        {
+            var d = System.Convert.ToDouble(value);
             return d + add;
+        }
+
         return AvaloniaProperty.UnsetValue;
     }
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
-        => throw new NotImplementedException();
+    {
+        if (value is not null && double.TryParse(parameter?.ToString(), out var add))
+        {
+            var d = System.Convert.ToDouble(value);
+            return d - add;
+        }
+
+        return AvaloniaProperty.UnsetValue;
+    }
 }

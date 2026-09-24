@@ -31,7 +31,7 @@ public static class PdfService
             if ((long)rendered.Width * rendered.Height > MaxPixels)
                 return (null, LocalizationService.Get("InvalidPdf"));
 
-            using var converted = new SKBitmap(rendered.Width, rendered.Height, SKColorType.Rgba8888, SKAlphaType.Unpremul);
+            using var converted = new SKBitmap(rendered.Width, rendered.Height, SKColorType.Bgra8888, SKAlphaType.Unpremul);
             using (var canvas = new SKCanvas(converted))
             {
                 canvas.Clear(SKColors.Transparent);

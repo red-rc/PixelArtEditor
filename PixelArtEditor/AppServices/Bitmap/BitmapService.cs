@@ -379,10 +379,11 @@ public static class BitmapService
         return bgra;
     }
 
-    public static unsafe byte[] QuantizeToPalette(byte[] data, Palette palette)
+    public static unsafe byte[] QuantizeToPalette(byte[] data, Palette palette, bool dither)
     {
         if (palette.Colors.Count == 0) return data;
 
+        var cube = PaletteLookup.BuildLookupCube(palette);
         var result = new byte[data.Length];
 
         fixed (byte* srcPtr = data)
@@ -391,54 +392,36 @@ public static class BitmapService
             uint* src = (uint*)srcPtr;
             uint* dst = (uint*)dstPtr;
 
-            var cache = new Dictionary<uint, uint>();
-
             for (var i = 0; i < data.Length / 4; i++)
             {
-                var packed = src[i];
-                var a = (byte)((packed >> 24) & 0xFF);
+                var a = (byte)((src[i] >> 24) & 0xFF);
 
-                if (a == 0)
-                {
-                    dst[i] = 0;
-                    continue;
-                }
+                if (a == 0) { dst[i] = 0; continue; }
 
-                if (cache.TryGetValue(packed, out var cachedPacked))
-                {
-                    dst[i] = cachedPacked;
-                    continue;
-                }
+                var b = (byte)(src[i] & 0xFF);
+                var g = (byte)((src[i] >> 8) & 0xFF);
+                var r = (byte)((src[i] >> 16) & 0xFF);
 
-                var b = (byte)(packed & 0xFF);
-                var g = (byte)((packed >> 8) & 0xFF);
-                var r = (byte)((packed >> 16) & 0xFF);
-
-                var best = PaletteService.GetClosestPaletteColor(Color.FromArgb(a, r, g, b), palette);
-                var outPacked = (uint)best.B | ((uint)best.G << 8) | ((uint)best.R << 16) | ((uint)best.A << 24);
-                cache[packed] = outPacked;
-                dst[i] = outPacked;
+                var best = PaletteLookup.Lookup(cube, Color.FromArgb(a, r, g, b));
+                dst[i] = (uint)best.B | ((uint)best.G << 8) | ((uint)best.R << 16) | ((uint)best.A << 24);
             }
         }
 
         return result;
     }
 
-    public static (byte[], Palette palette) GetQuantized(byte[] data, int width, BitDepth bitDepth, Palette? palette = null)
+    public static (byte[], Palette palette) GetQuantized(byte[] data, BitDepth bitDepth, Palette? palette = null, 
+        bool? dither = null)
     {
-        var maxColors = PaletteService.GetMaxPaletteColorIdx(bitDepth);
+        var maxColorIdx = PaletteService.GetMaxPaletteColorIdx(bitDepth);
 
-        if (palette is not null && palette.Colors.Count - 1 <= maxColors)
+        if (palette is not null && palette.Colors.Count - 1 <= maxColorIdx)
             return (data, palette);
 
-        var newPalette = PaletteService.GetPalette(
-            data,
-            width,
-            maxColors,
-            palette?.QuantizationMethod ?? PaletteQuantization.MedianCut,
-            palette?.Dither ?? false);
+        var newPalette = PaletteService.GetPalette(data, maxColorIdx, 
+            palette?.QuantizationMethod ?? PaletteQuantization.MedianCut);
 
-        var newData = QuantizeToPalette(data, newPalette);
+        var newData = QuantizeToPalette(data, newPalette, dither ?? false);
         return (newData, newPalette);
     }
 }

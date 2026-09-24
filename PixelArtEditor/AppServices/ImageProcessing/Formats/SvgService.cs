@@ -8,7 +8,7 @@ namespace PixelArtEditor.AppServices.ImageProcessing.Formats;
 public static class SvgService
 {
     // Рендерить SVG у RGBA32 byte[]. targetWidth/Height — якщо 0, беремо натуральний розмір SVG.
-    public static (byte[] data, int width, int height)? RenderToRgba32(Stream stream, int targetWidth = 0, int targetHeight = 0)
+    public static (byte[] data, int width, int height)? RenderToBgra32(Stream stream, int targetWidth = 0, int targetHeight = 0)
     {
         using var svg = new SKSvg();
         var picture = svg.Load(stream);
@@ -24,7 +24,7 @@ public static class SvgService
         var scaleX = width / srcW;
         var scaleY = height / srcH;
 
-        using var bitmap = new SKBitmap(width, height, SKColorType.Rgba8888, SKAlphaType.Unpremul);
+        using var bitmap = new SKBitmap(width, height, SKColorType.Bgra8888, SKAlphaType.Unpremul);
         using (var canvas = new SKCanvas(bitmap))
         {
             canvas.Clear(SKColors.Transparent);
@@ -32,13 +32,13 @@ public static class SvgService
             canvas.DrawPicture(picture);
         }
 
-        var data = bitmap.Bytes; // вже RGBA8888, unpremul
+        var data = bitmap.Bytes;
         return (data, width, height);
     }
 
     public static (PixelModel? model, string? error) Load(Stream stream)
     {
-        var result = RenderToRgba32(stream);
+        var result = RenderToBgra32(stream);
         if (result is null) return ((PixelModel?)null, $"{LocalizationService.Get("InvalidSVG")}");
 
         var (data, width, height) = result.Value;

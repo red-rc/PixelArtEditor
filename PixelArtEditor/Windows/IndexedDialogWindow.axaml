@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="using:PixelArtEditor.UI"
     xmlns:controlsGlobal="clr-namespace:PixelArtEditor.Controls"
     xmlns:vm="clr-namespace:PixelArtEditor.ViewModels"
     xmlns:editor="clr-namespace:PixelArtEditor.Controls.Editor"
@@ -55,21 +56,24 @@
                             ItemsSource="{Binding QuantizationNames}" 
                             SelectedItem="{Binding QuantizationName, Mode=TwoWay}" />
 			        </StackPanel>
-                    <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Width="175">
+                    <StackPanel Orientation="Horizontal">
                         <StackPanel>
                             <TextBlock HorizontalAlignment="Center" Text="{DynamicResource ColorCount}" />
                             <Slider 
                                 Name="MySlider" 
                                 Width="150"
-                                Minimum="0" 
-                                Maximum="{Binding MaxColorCountXaml}" 
-                                Value="{Binding ColorCountXaml}"
+                                Minimum="1" 
+                                Maximum="{Binding MaxColorIdx, Converter={StaticResource AddConverter}, ConverterParameter=1}" 
+                                Value="{Binding ColorIdx, Converter={StaticResource AddConverter}, ConverterParameter=1}"
                                 TickFrequency="1" 
                                 IsSnapToTickEnabled="True" />
                         </StackPanel>
                     
-                        <TextBlock
-                            Text="{Binding #MySlider.Value}" 
+                        <ui:NumberBox
+                            Width="40"
+                            Minimum="1"
+                            Maximum="256"
+                            Text="{Binding #MySlider.Value, Mode=TwoWay}" 
                             HorizontalAlignment="Center" 
                             Margin="0,10,0,0"/>
 			        </StackPanel>

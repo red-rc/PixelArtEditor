@@ -28,9 +28,8 @@ public class ImagePropertiesVM : ReactiveObject
 
         ImageProps.LoadFrom(model, handleModelChanged);
 
-        ImageProps.WhenAnyValue(x => x.Width, x => x.Height).Subscribe(_ => UpdatePreview(model));
-        ImageProps.WhenAnyValue(x => x.ColorMode).Subscribe(_ => UpdatePreview(model));
-        ImageProps.WhenAnyValue(x => x.BitDepth).Subscribe(_ => UpdatePreview(model));
+        ImageProps.WhenAnyValue(x => x.Width, x => x.Height, x => x.ColorMode, x => x.BitDepth)
+            .Subscribe(_ => UpdatePreview(model));
 
         ResetCommand = ReactiveCommand.Create(() => {
             ImageProps.LoadFrom(model, handleModelChanged);
@@ -77,7 +76,7 @@ public class ImagePropertiesVM : ReactiveObject
                 else
                 {
                     var (indices, palette) = 
-                        BitmapService.GetQuantized(ImageProps.Model.Data, model.Width, ImageProps.BitDepth, model.Palette);
+                        BitmapService.GetQuantized(ImageProps.Model.Data, ImageProps.BitDepth, model.Palette);
 
                     previewData = indices;
                     model.Palette = palette;

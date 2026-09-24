@@ -37,9 +37,9 @@ public static class DdsService
                 case ImageFormat.Rgba32:
                     for (int i = 0, j = 0; i < dst.Length; i += 4, j += 4)
                     {
-                        dst[i + 0] = src[j + 2];
+                        dst[i + 0] = src[j + 0];
                         dst[i + 1] = src[j + 1];
-                        dst[i + 2] = src[j + 0];
+                        dst[i + 2] = src[j + 2];
                         dst[i + 3] = src[j + 3];
                     }
                     break;
@@ -47,9 +47,9 @@ public static class DdsService
                 case ImageFormat.Rgb24:
                     for (int i = 0, j = 0; i < dst.Length; i += 4, j += 3)
                     {
-                        dst[i + 0] = src[j + 2];
+                        dst[i + 0] = src[j + 0];
                         dst[i + 1] = src[j + 1];
-                        dst[i + 2] = src[j + 0];
+                        dst[i + 2] = src[j + 2];
                         dst[i + 3] = 255;
                     }
                     break;
@@ -73,9 +73,9 @@ public static class DdsService
                         var g5 = (packed >> 5) & 0x1F;
                         var b5 = packed & 0x1F;
 
-                        dst[i + 0] = (byte)(r5 * 255 / 31);
+                        dst[i + 0] = (byte)(b5 * 255 / 31);
                         dst[i + 1] = (byte)(g5 * 255 / 31);
-                        dst[i + 2] = (byte)(b5 * 255 / 31);
+                        dst[i + 2] = (byte)(r5 * 255 / 31);
                         dst[i + 3] = 255;
                     }
                     break;
@@ -90,9 +90,9 @@ public static class DdsService
                         var b5 = packed & 0x1F;
                         var a1 = (packed >> 15) & 0x1;
 
-                        dst[i + 0] = (byte)(r5 * 255 / 31);
+                        dst[i + 0] = (byte)(b5 * 255 / 31);
                         dst[i + 1] = (byte)(g5 * 255 / 31);
-                        dst[i + 2] = (byte)(b5 * 255 / 31);
+                        dst[i + 2] = (byte)(r5 * 255 / 31);
                         dst[i + 3] = (byte)(a1 * 255);
                     }
                     break;
@@ -106,9 +106,9 @@ public static class DdsService
                         var g6 = (packed >> 5) & 0x3F;
                         var b5 = packed & 0x1F;
 
-                        dst[i + 0] = (byte)(r5 * 255 / 31);
+                        dst[i + 0] = (byte)(b5 * 255 / 31);
                         dst[i + 1] = (byte)(g6 * 255 / 63);
-                        dst[i + 2] = (byte)(b5 * 255 / 31);
+                        dst[i + 2] = (byte)(r5 * 255 / 31);
                         dst[i + 3] = 255;
                     }
                     break;
@@ -178,7 +178,6 @@ public static class DdsService
         writer.Write(0u);        // reserved2
 
         // Pixel data: BGRA (DDS RGB mask above matches BGRA byte order little-endian)
-        var bgra = BitmapService.SwapRB(rgba); // rgba -> bgra
-        writer.Write(bgra);
+        writer.Write(rgba);
     }
 }

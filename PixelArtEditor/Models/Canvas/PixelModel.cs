@@ -58,9 +58,4 @@ public class PixelModel
     public void NotifyModelChanged() => ModelChanged?.Invoke();
 }
 
-// RGBA Bit8:    [R,G,B,A, R,G,B,A, ...]
-// RGBA Bit16:   [Rlo,Rhi,Glo,Ghi,Blo,Bhi,Alo,Ahi, ...] (little-endian) or [Rhi,Rlo,...]
-// Grayscale:    [G, G, G, ...]
-// Indexed Bit4: two pixels per byte, high nibble first: [p0p1, p2p3, ...]
-// Indexed Bit1: eight pixels per byte, MSB first: [p0p1p2p3p4p5p6p7, ...]
-// RGB565:       [lo,hi, lo,hi, ...] packed as RRRRRGGGGGGBBBBB per 2 bytes (little-endian)
+// Contains BGRA data, not RGBA

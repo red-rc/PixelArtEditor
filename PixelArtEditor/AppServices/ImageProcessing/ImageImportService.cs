@@ -203,16 +203,16 @@ public static class ImageImportService
                 using var image = SharpImage.Load(ms);
                 image.Mutate(x => x.AutoOrient());
 
-                var indexedBitDepth = ImageReader.DetectIndexedBitDepth(image);
-                if (indexedBitDepth.HasValue)
+                var indexedMeta = ImageReader.ExtractIndexedMetadata(image, ms);
+                if (indexedMeta is not null)
                 {
                     ms.Position = 0;
                     using var indexedImage = image.CloneAs<Rgba32>();
-                    var result = ImageReader.ReadIndexed(indexedImage, indexedBitDepth.Value, ms);
+                    var result = ImageReader.ReadIndexed(indexedImage, indexedMeta.Palette, indexedMeta.BitDepth);
 
                     return result is null
-                        ? ((PixelModel?)null, LocalizationService.Get("InvalidIndexed"))
-                        : (result, (string?)null);
+                       ? ((PixelModel?)null, LocalizationService.Get("InvalidIndexed"))
+                       : (result, (string?)null);
                 }
 
                 PixelModel model = image switch

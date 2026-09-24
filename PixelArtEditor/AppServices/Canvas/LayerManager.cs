@@ -16,7 +16,7 @@ public class LayerManager
         if (layerName == "")
             layerName = $"{LocalizationService.Get("Layer")} 1";
 
-        var layer = new LayerModel(width, height, BitmapService.SwapRB(pixelData), layerName, isEmpty);
+        var layer = new LayerModel(width, height, pixelData, layerName, isEmpty);
         Layers.Add(layer);
         ActiveLayer = layer;
 
@@ -41,8 +41,8 @@ public class LayerManager
     {
         foreach (var layer in Layers)
         {
-            layer.Data = BitmapService.QuantizeToPalette(layer.Data, palette);
-            layer.RenderBitmap = null!; // Force complete RenderBitmap rebuild
+            layer.Data = BitmapService.QuantizeToPalette(layer.Data, palette, palette.Dither ?? false);
+            layer.RenderBitmap = null!;
             layer.NotifyPixelDataChanged();
         }
     }

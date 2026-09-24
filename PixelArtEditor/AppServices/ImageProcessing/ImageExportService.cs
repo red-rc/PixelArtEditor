@@ -66,17 +66,15 @@ public static class ImageExportService
         var file = await dialog.StorageProvider.SaveFilePickerAsync(saveOptions);
         if (file == null) return;
 
-        var pixelData = model.Data;
-        if (pixelData == null) return;
+        if (model.Data == null) return;
 
         await Task.Run(async () =>
         {
             try
             {
-                var exportData = ConvertForExport(pixelData, model);
+                var exportData = ConvertForExport(model.Data, model);
 
-                using var baseImage = Image.LoadPixelData<Rgba32>(
-                    exportData, model.Width, model.Height);
+                using var baseImage = Image.LoadPixelData<Rgba32>(exportData, model.Width, model.Height);
                 using var image = ConvertToTargetFormat(baseImage, model);
 
                 image.Metadata.HorizontalResolution = model.DpiX;
@@ -121,22 +119,28 @@ public static class ImageExportService
         });
     }
 
-    private static byte[] ConvertForExport(byte[] bgra, PixelModel model)
+    private static unsafe byte[] ConvertForExport(byte[] bgra, PixelModel model)
     {
         var result = BitmapService.SwapRB(bgra);
 
         if (model.Alpha == AlphaFormat.Premultiplied)
         {
-            for (var i = 0; i < result.Length; i += 4)
+            fixed (byte* ptr = result)
             {
-                byte a = result[i + 3];
-                if (a == 0) continue;
-                result[i + 0] = (byte)(result[i + 0] * a / 255);
-                result[i + 1] = (byte)(result[i + 1] * a / 255);
-                result[i + 2] = (byte)(result[i + 2] * a / 255);
+                for (var i = 0; i < result.Length; i += 4)
+                {
+                    byte* pixel = ptr + i;
+        
+                    byte a = pixel[3];
+                    if (a == 0) continue;
+        
+                    pixel[0] = (byte)(pixel[0] * a / 255);
+                    pixel[1] = (byte)(pixel[1] * a / 255);
+                    pixel[2] = (byte)(pixel[2] * a / 255);
+                }
             }
         }
-
+        
         return result;
     }
 
