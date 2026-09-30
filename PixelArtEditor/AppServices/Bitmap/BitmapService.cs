@@ -251,8 +251,12 @@ public static class BitmapService
 
     private static unsafe void TryPush(Stack<int> stack, byte[] visited, uint* pPixels, int idx, uint srcPacked)
     {
-        if (visited[idx] != 0 || pPixels[idx] != srcPacked) return;
+        if (visited[idx] != 0) return;
 
+        uint pixel = pPixels[idx];
+        bool isSame = (srcPacked >> 24) == 0 ? (pixel >> 24) == 0 : pixel == srcPacked;
+
+        if (!isSame) return;
         visited[idx] = 1;
         stack.Push(idx);
     }
@@ -338,6 +342,15 @@ public static class BitmapService
 
         return dst;
     }
+
+    public static (int w, int h) FitToCanvas(int srcW, int srcH, int canvasW, int canvasH)
+    {
+        if (srcW <= canvasW && srcH <= canvasH) return (srcW, srcH);
+
+        var scale = Math.Min((double)canvasW / srcW, (double)canvasH / srcH);
+        return (Math.Max(1, (int)(srcW * scale)), Math.Max(1, (int)(srcH * scale)));
+    }
+
     public static void DownscaleNearest(byte[] src, int srcW, int srcH, byte[] dst, int dstW, int dstH, CancellationToken token)
     {
         for (var y = 0; y < dstH; y++)
@@ -383,8 +396,12 @@ public static class BitmapService
     {
         if (palette.Colors.Count == 0) return data;
 
-        var cube = PaletteLookup.BuildLookupCube(palette);
+        var hasTransparentInPalette = palette.Colors.Any(c => c.A == 0);
         var result = new byte[data.Length];
+
+        if (!palette.Colors.Any(c => c.A != 0)) return result;
+
+        var cube = PaletteLookup.BuildLookupCube(palette);
 
         fixed (byte* srcPtr = data)
         fixed (byte* dstPtr = result)
@@ -396,32 +413,35 @@ public static class BitmapService
             {
                 var a = (byte)((src[i] >> 24) & 0xFF);
 
-                if (a == 0) { dst[i] = 0; continue; }
+                if (a < 128 && hasTransparentInPalette) { dst[i] = 0; continue; }
 
                 var b = (byte)(src[i] & 0xFF);
                 var g = (byte)((src[i] >> 8) & 0xFF);
                 var r = (byte)((src[i] >> 16) & 0xFF);
 
-                var best = PaletteLookup.Lookup(cube, Color.FromArgb(a, r, g, b));
-                dst[i] = (uint)best.B | ((uint)best.G << 8) | ((uint)best.R << 16) | ((uint)best.A << 24);
+                var best = PaletteLookup.Lookup(cube, Color.FromArgb(255, r, g, b));
+                dst[i] = (uint)best.B | ((uint)best.G << 8) | ((uint)best.R << 16) | (255u << 24);
             }
         }
 
         return result;
     }
 
-    public static (byte[], Palette palette) GetQuantized(byte[] data, BitDepth bitDepth, Palette? palette = null, 
-        bool? dither = null)
+    public static (byte[], Palette palette) GetQuantized(byte[] data, BitDepth bitDepth, Palette? palette = null)
     {
-        var maxColorIdx = PaletteService.GetMaxPaletteColorIdx(bitDepth);
+        var maxColorCount = PaletteService.GetPaletteMaxColorCount(bitDepth);
 
-        if (palette is not null && palette.Colors.Count - 1 <= maxColorIdx)
-            return (data, palette);
+        byte[] newData;
+        if (palette is Palette p && palette.Colors.Count <= maxColorCount)
+        {
+            newData = QuantizeToPalette(data, palette, palette?.Dither ?? false);
+            return (newData, p);
+        }
 
-        var newPalette = PaletteService.GetPalette(data, maxColorIdx, 
+        var newPalette = PaletteService.GetPalette(data, maxColorCount, 
             palette?.QuantizationMethod ?? PaletteQuantization.MedianCut);
 
-        var newData = QuantizeToPalette(data, newPalette, dither ?? false);
+        newData = QuantizeToPalette(data, newPalette, palette?.Dither ?? false);
         return (newData, newPalette);
     }
 }

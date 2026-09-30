@@ -1,5 +1,7 @@
 ﻿using PixelArtEditor.AppServices.Bitmap;
+using PixelArtEditor.AppServices.ImageProcessing;
 using PixelArtEditor.Models.Canvas;
+using System;
 using System.Collections.ObjectModel;
 
 namespace PixelArtEditor.AppServices.Canvas;
@@ -37,11 +39,20 @@ public class LayerManager
         }
     }
 
-    public void QuantizeToPalette(Palette palette)
+    public void ToIndexed(Palette palette) =>
+        ApplyToLayers(data => BitmapService.QuantizeToPalette(data, palette, palette.Dither ?? false));
+    public void ToGrayscale() =>
+        ApplyToLayers(data => ImageConverterService.ToGrayscale(ImageConverterService.ToRgb(data)));
+    public void ToGrayscaleAlpha() => ApplyToLayers(ImageConverterService.ToGrayscale);
+    public void ToRgb() => ApplyToLayers(ImageConverterService.ToRgb);
+    public void ToRedGreen() => ApplyToLayers(ImageConverterService.ToRedGreen);
+    public void ToAlpha() => ApplyToLayers(ImageConverterService.ToAlpha);
+
+    private void ApplyToLayers(Func<byte[], byte[]> transform)
     {
         foreach (var layer in Layers)
         {
-            layer.Data = BitmapService.QuantizeToPalette(layer.Data, palette, palette.Dither ?? false);
+            layer.Data = transform(layer.Data);
             layer.RenderBitmap = null!;
             layer.NotifyPixelDataChanged();
         }

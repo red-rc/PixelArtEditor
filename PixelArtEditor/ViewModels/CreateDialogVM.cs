@@ -1,6 +1,5 @@
 using Avalonia.Controls;
 using Avalonia.Media;
-using PixelArtEditor.AppServices.ImageProcessing;
 using PixelArtEditor.Models;
 using PixelArtEditor.Models.Canvas;
 using System;
@@ -32,7 +31,6 @@ public class CreateDialogVM : ReactiveObject
         RenderData.Width = ImageProperties.Width;
         RenderData.Height = ImageProperties.Height;
         RenderData.Color = BackgroundColor;
-        RenderData.NotifyPropertyChanged();
     }
 
     public ImagePropertiesUCVM ImageProperties { get; }
@@ -59,10 +57,10 @@ public class CreateDialogVM : ReactiveObject
             {
                 Width = ImageProperties.Width,
                 Height = ImageProperties.Height,
-                Mode = ImageProperties.ColorMode,
+                ColorMode = ImageProperties.ColorMode,
                 BitDepth = ImageProperties.BitDepth,
                 ColorSpace = ImageProperties.ColorSpace,
-                Alpha = ImageProperties.AlphaFormat,
+                AlphaFormat = ImageProperties.AlphaFormat,
                 DpiX = ImageProperties.DpiX,
                 DpiY = ImageProperties.DpiY,
                 Data = data

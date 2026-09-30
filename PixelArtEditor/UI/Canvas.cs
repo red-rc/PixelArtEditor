@@ -18,6 +18,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Numerics;
+using System.Reactive.Linq;
 
 namespace PixelArtEditor.UI;
 
@@ -34,8 +35,6 @@ public class Canvas : Control, ICanvasContext
         get => GetValue(ModelProperty);
         set => SetValue(ModelProperty, value);
     }
-
-    private PixelModel? _subscribedModel;
 
     public static readonly StyledProperty<Vector2> OffsetProperty =
         AvaloniaProperty.Register<Canvas, Vector2>(nameof(Offset));
@@ -117,18 +116,12 @@ public class Canvas : Control, ICanvasContext
             }
         };
 
-        ModelProperty.Changed.AddClassHandler<Canvas>((sender, e) =>
-        {
-            _subscribedModel?.ModelChanged -= OnModelChanged;
+        this.WhenAnyValue(x => x.Model)
+            .Where(m => m is not null)
+            .Select(m => m.WhenAnyValue(x => x.Width, x => x.Height, x => x.Data))
+            .Switch()
+            .Subscribe(_ => OnModelChanged());
 
-            _subscribedModel = sender.Model;
-
-            _subscribedModel?.ModelChanged += OnModelChanged;
-
-            sender.OnModelChanged();
-        });
-
-        this.GetObservable(ModelProperty).Subscribe(_ => OnModelChanged());
         this.GetObservable(OffsetProperty).Subscribe(_ => InvalidateVisual());
         this.GetObservable(ScaleProperty).Subscribe(_ =>
         {

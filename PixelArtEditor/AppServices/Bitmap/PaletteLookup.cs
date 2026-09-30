@@ -1,5 +1,6 @@
 ﻿using Avalonia.Media;
 using PixelArtEditor.Models.Canvas;
+using System.Linq;
 
 namespace PixelArtEditor.AppServices.Bitmap;
 
@@ -11,6 +12,7 @@ public static class PaletteLookup
 
     public static Color[] BuildLookupCube(Palette palette)
     {
+        var opaqueColors = palette.Colors.Where(c => c.A != 0).ToList();
         var cube = new Color[Levels * Levels * Levels];
 
         for (var ri = 0; ri < Levels; ri++)
@@ -22,7 +24,7 @@ public static class PaletteLookup
                     var b = (byte)((bi << Shift) | (bi >> (Bits - Shift)));
 
                     var idx = (ri * Levels + gi) * Levels + bi;
-                    cube[idx] = PaletteService.GetClosestPaletteColor(Color.FromArgb(255, r, g, b), palette);
+                    cube[idx] = PaletteService.GetClosestPaletteColor(Color.FromArgb(255, r, g, b), new Palette(opaqueColors));
                 }
 
         return cube;

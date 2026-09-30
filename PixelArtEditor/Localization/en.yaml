@@ -143,3 +143,4 @@ localPairs:
   Quantization: Quantization method
   ColorCount: Color count
   Dither: Dithering
+  EncoderError: "Format encoder doesn't support this bit depth"

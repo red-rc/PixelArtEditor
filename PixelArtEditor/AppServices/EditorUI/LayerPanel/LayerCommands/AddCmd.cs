@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace PixelArtEditor.AppServices.EditorUI.LayerPanel.LayerCommands;
 
-public class AddCmd(LayerPanelVM vm, ListBox layerListBox) : LayerCmdBase(vm, layerListBox)
+public class AddCmd(LayerPanelVM vm, ListBox layerListBox, TopLevel topLevel) : LayerCmdBase(vm, layerListBox, topLevel)
 {
     public void Execute(LayerManager? layerManager)
     {

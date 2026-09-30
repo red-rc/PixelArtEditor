@@ -80,7 +80,7 @@ namespace PixelArtEditor.Controls.Editor
                 Name = layer.Name,
                 Width = layer.Width,
                 Height = layer.Height,
-                Mode = ColorMode.RGBA,
+                ColorMode = ColorMode.RGBA,
                 BitDepth = BitDepth.Bit8,
                 Data = layer.Data
             }, editorVM);

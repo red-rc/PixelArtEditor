@@ -41,13 +41,21 @@
                 ColumnDefinitions="250,Auto"
                 DockPanel.Dock="Top">
                 <editor:PreviewControl
-                     Grid.Column="0"
-                     Margin="0,0,0,10"
-                     Width="200"
-                     Height="200"
-                     VerticalAlignment="Center"
-                     RenderData="{Binding RenderData}"
-                     FixedTileSize="20" />
+                    Grid.Column="0"
+                    Margin="0,0,0,10"
+                    Width="200"
+                    Height="200"
+                    VerticalAlignment="Center"
+                    RenderData="{Binding RenderData}"
+                    IsVisible="{Binding !IsLoading}"
+                    FixedTileSize="20" />
+
+                <ProgressBar 
+                    VerticalAlignment="Center" 
+                    IsVisible="{Binding IsLoading}" 
+                    IsIndeterminate="True" 
+                    Width="190" 
+                    Height="20" />
 
                 <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="10">
                     <StackPanel>
@@ -63,17 +71,17 @@
                                 Name="MySlider" 
                                 Width="150"
                                 Minimum="1" 
-                                Maximum="{Binding MaxColorIdx, Converter={StaticResource AddConverter}, ConverterParameter=1}" 
-                                Value="{Binding ColorIdx, Converter={StaticResource AddConverter}, ConverterParameter=1}"
+                                Maximum="{Binding MaxColorCount}" 
+                                Value="{Binding ColorCount}"
                                 TickFrequency="1" 
                                 IsSnapToTickEnabled="True" />
                         </StackPanel>
                     
                         <ui:NumberBox
                             Width="40"
-                            Minimum="1"
-                            Maximum="256"
-                            Text="{Binding #MySlider.Value, Mode=TwoWay}" 
+                            Minimum="{Binding #MySlider.Minimum}"
+                            Maximum="{Binding #MySlider.Maximum}"
+                            Value="{Binding #MySlider.Value, Mode=TwoWay}"
                             HorizontalAlignment="Center" 
                             Margin="0,10,0,0"/>
 			        </StackPanel>

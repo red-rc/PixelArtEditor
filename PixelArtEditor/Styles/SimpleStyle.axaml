@@ -105,6 +105,9 @@
         <Style Selector="^:pointerover /template/ ContentPresenter#PART_ContentPresenter">
             <Setter Property="Background" Value="#f44336" />
         </Style>
+        <Style Selector="^:pressed /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="#c3352b" />
+        </Style>
         <Style Selector="^ Image">
             <Setter Property="Source" Value="{DynamicResource CloseIcon}" />
         </Style>

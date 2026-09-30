@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace PixelArtEditor.AppServices.EditorUI.LayerPanel.LayerCommands;
 
-public class MoveCmd(LayerPanelVM vm, ListBox layerListBox) : LayerCmdBase(vm, layerListBox)
+public class MoveCmd(LayerPanelVM vm, ListBox layerListBox, TopLevel topLevel) : LayerCmdBase(vm, layerListBox, topLevel)
 {
     public void Execute(LayerManager? layerManager, bool toTop)
     {

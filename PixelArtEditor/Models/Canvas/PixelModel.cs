@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FellowOakDicom;
+using System;
 
 namespace PixelArtEditor.Models.Canvas;
 
@@ -6,18 +7,27 @@ public enum ColorMode
 {
     RGB,
     RGBA,
+    BGR,
+    BGRA,
+    ARGB,
+    ABGR,
+    RG,
+    A,
     Grayscale,
+    GrayscaleAlpha,
     Indexed
 }
 
-public enum BitDepth : byte
+public enum BitDepth
 {
-    Bit1 = 1,
-    Bit2 = 2,
-    Bit4 = 4,
-    Bit8 = 8,
-    Bit16 = 16,
-    RGB565 = 55 // packed format: R5G6B5, не per-channel
+    Bit1,
+    Bit2,
+    Bit4,
+    Bit8,
+    Bit16,
+    Bit565,
+    Bit5551,
+    Bit1010102
 }
 
 public enum AlphaFormat
@@ -33,29 +43,98 @@ public enum ColorSpace
     Linear,
 }
 
-public class PixelModel
+public class PixelModel : ReactiveObject
 {
-    public string? Name;
-    public string Extension = "png";
+    private string? _name;
+    public string? Name
+    {
+        get => _name;
+        set => this.RaiseAndSetIfChanged(ref _name, value);
+    }
 
-    public int Width;
-    public int Height;
+    private string _extension = "png";
+    public string Extension
+    {
+        get => _extension;
+        set => this.RaiseAndSetIfChanged(ref _extension, value);
+    }
 
-    public float DpiX = 96f;
-    public float DpiY = 96f;
+    private int _width;
+    public int Width
+    {
+        get => _width;
+        set => this.RaiseAndSetIfChanged(ref _width, value);
+    }
 
-    public ColorMode Mode;
-    public BitDepth BitDepth;
-    public ColorSpace ColorSpace;
-    public AlphaFormat Alpha;
-    public Palette? Palette;
+    private int _height;
+    public int Height
+    {
+        get => _height;
+        set => this.RaiseAndSetIfChanged(ref _height, value);
+    }
 
-    public byte[] Data = [];
+    private float _dpiX = 96f;
+    public float DpiX
+    {
+        get => _dpiX;
+        set => this.RaiseAndSetIfChanged(ref _dpiX, value);
+    }
 
-    public FellowOakDicom.DicomDataset? DicomDataset;
+    private float _dpiY = 96f;
+    public float DpiY
+    {
+        get => _dpiY;
+        set => this.RaiseAndSetIfChanged(ref _dpiY, value);
+    }
 
-    public event Action? ModelChanged;
-    public void NotifyModelChanged() => ModelChanged?.Invoke();
+    private ColorMode _colorMode;
+    public ColorMode ColorMode
+    {
+        get => _colorMode;
+        set => this.RaiseAndSetIfChanged(ref _colorMode, value);
+    }
+
+    private BitDepth _bitDepth;
+    public BitDepth BitDepth
+    {
+        get => _bitDepth;
+        set => this.RaiseAndSetIfChanged(ref _bitDepth, value);
+    }
+
+    private ColorSpace _colorSpace;
+    public ColorSpace ColorSpace
+    {
+        get => _colorSpace;
+        set => this.RaiseAndSetIfChanged(ref _colorSpace, value);
+    }
+
+    private AlphaFormat _alphaFormat;
+    public AlphaFormat AlphaFormat
+    {
+        get => _alphaFormat;
+        set => this.RaiseAndSetIfChanged(ref _alphaFormat, value);
+    }
+
+    private Palette? _palette;
+    public Palette? Palette
+    {
+        get => _palette;
+        set => this.RaiseAndSetIfChanged(ref _palette, value);
+    }
+
+    private byte[] _data = [];
+    public byte[] Data
+    {
+        get => _data;
+        set => this.RaiseAndSetIfChanged(ref _data, value);
+    }
+
+    private DicomDataset? _dicomDataset;
+    public DicomDataset? DicomDataset
+    {
+        get => _dicomDataset;
+        set => this.RaiseAndSetIfChanged(ref _dicomDataset, value);
+    }
 }
 
 // Contains BGRA data, not RGBA

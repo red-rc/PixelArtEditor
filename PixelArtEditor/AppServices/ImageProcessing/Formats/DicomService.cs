@@ -185,9 +185,9 @@ public static class DicomService
     {
         Width = width,
         Height = height,
-        Mode = ColorMode.RGBA,
+        ColorMode = ColorMode.RGBA,
         BitDepth = Models.Canvas.BitDepth.Bit8,
-        Alpha = AlphaFormat.Straight,
+        AlphaFormat = AlphaFormat.Straight,
         ColorSpace = Models.Canvas.ColorSpace.sRGB,
         DpiX = 96f,
         DpiY = 96f,

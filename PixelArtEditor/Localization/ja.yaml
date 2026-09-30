@@ -143,3 +143,4 @@ localPairs:
   Quantization: 量子化
   ColorCount: 色数
   Dither: ディザリング
+  PngEncoderError: このビット深度は、フォーマットエンコーダーでサポートされていません

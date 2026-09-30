@@ -53,6 +53,7 @@
             <StackPanel>
                 <TextBlock HorizontalAlignment="Center" Text="{DynamicResource ColorMode}" />
                 <ComboBox
+                    Width="150"
                     ItemsSource="{Binding ColorModeNames}" 
                     SelectedItem="{Binding ColorModeName, Mode=TwoWay}" />
             </StackPanel>
@@ -75,6 +76,7 @@
                     </Button>
                 </Grid>
                 <ComboBox
+                    IsEnabled="{Binding BitDepthEnabled}"
                     ItemsSource="{Binding BitDepthNames}" 
                     SelectedItem="{Binding BitDepthName, Mode=TwoWay}" />
 			</StackPanel>

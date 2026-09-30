@@ -7,12 +7,13 @@ using System.Linq;
 
 namespace PixelArtEditor.AppServices.EditorUI.LayerPanel;
 
-public abstract class LayerCmdBase(LayerPanelVM vm, ListBox layerListBox)
+public abstract class LayerCmdBase(LayerPanelVM vm, ListBox layerListBox, TopLevel topLevel)
 {
     protected readonly LayerPanelVM Vm = vm;
     protected readonly ListBox LayerListBox = layerListBox;
+    protected readonly TopLevel TopLevel = topLevel;
 
-    protected bool CanExecute => Services.Navigation.GetViewModel() is EditorVM editorVM && !editorVM.IsTransforming;
+    protected static bool CanExecute => Services.Navigation.GetViewModel() is EditorVM editorVM && !editorVM.IsTransforming;
 
     protected List<LayerItem> GetOrdered(IEnumerable<LayerItem> items)
     {

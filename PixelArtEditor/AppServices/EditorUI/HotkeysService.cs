@@ -2,12 +2,13 @@
 using PixelArtEditor.AppServices.EditorUI.LayerPanel;
 using PixelArtEditor.ViewModels;
 using System;
+using System.Threading.Tasks;
 
 namespace PixelArtEditor.AppServices.EditorUI;
 
 public class HotkeysService(LayerCmdList commands, EditorVM? viewModel, Action onCancel, Action onConfirm)
 {
-    public bool Handle(KeyModifiers modifiers, Key key)
+    public async Task<bool> Handle(KeyModifiers modifiers, Key key)
     {
         var layerManager = viewModel?.LayerManager;
 
@@ -18,7 +19,7 @@ public class HotkeysService(LayerCmdList commands, EditorVM? viewModel, Action o
                 return true;
 
             case (KeyModifiers.Control, Key.D):
-                commands.DuplicateCmd.Execute(layerManager);
+                await commands.DuplicateCmd.Execute(layerManager);
                 return true;
 
             case (KeyModifiers.Control, Key.Up):
@@ -34,11 +35,11 @@ public class HotkeysService(LayerCmdList commands, EditorVM? viewModel, Action o
                 return true;
 
             case (KeyModifiers.Control, Key.C):
-                commands.CopyCmd.Execute(layerManager);
+                await commands.CopyCmd.Execute(layerManager);
                 return true;
 
             case (KeyModifiers.Control, Key.V):
-                commands.InsertCmd.Execute(layerManager);
+                await commands.PasteCmd.Execute(layerManager);
                 return true;
 
             case (KeyModifiers.None, Key.Delete):

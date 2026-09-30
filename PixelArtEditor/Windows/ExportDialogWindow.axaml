@@ -33,7 +33,6 @@
                 ColumnDefinitions="250,Auto">
                 <editor:PreviewControl
                     Grid.Column="0"
-                    Margin="0,0,0,20"
                     Width="200"
                     Height="200"
                     VerticalAlignment="Center"

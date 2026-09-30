@@ -1,4 +1,3 @@
-using Avalonia;
 using Avalonia.Controls;
 using PixelArtEditor.AppServices.Bitmap;
 using PixelArtEditor.AppServices.ImageProcessing;
@@ -6,6 +5,13 @@ using PixelArtEditor.Models.Canvas;
 using System;
 
 namespace PixelArtEditor.ViewModels;
+
+public enum PreviewTrigger
+{
+    Size,
+    Palette,
+    Other
+}
 
 public class ImagePropertiesVM : ReactiveObject
 {
@@ -19,26 +25,21 @@ public class ImagePropertiesVM : ReactiveObject
     {
         ImageProps = new ImagePropertiesUCVM();
 
-        void handleModelChanged()
-        {
-            model.Data = ImageProps.Model.Data;
-            model.Palette = ImageProps.Model.Palette;
-            UpdatePreview(model);
-        }
+        ImageProps.LoadFrom(model);
 
-        ImageProps.LoadFrom(model, handleModelChanged);
-
-        ImageProps.WhenAnyValue(x => x.Width, x => x.Height, x => x.ColorMode, x => x.BitDepth)
-            .Subscribe(_ => UpdatePreview(model));
+        ImageProps.WhenAnyValue(x => x.Width, x => x.Height).Subscribe(_ => UpdatePreview(model, PreviewTrigger.Size));
+        ImageProps.WhenAnyValue(x => x.ColorModeName, x => x.BitDepthName)
+            .Subscribe(_ => UpdatePreview(model, PreviewTrigger.Other));
+        ImageProps.WhenAnyValue(x => x.Model.Palette).Subscribe(_ => UpdatePreview(model, PreviewTrigger.Palette));
 
         ResetCommand = ReactiveCommand.Create(() => {
-            ImageProps.LoadFrom(model, handleModelChanged);
+            ImageProps.LoadFrom(model);
             ImageProps.RenderBitmap = BitmapService.CreateBitmap(model.Data, model.Width, model.Height);
         });
 
         CancelCommand = ReactiveCommand.Create(() =>
         {
-            ImageProps.LoadFrom(model, handleModelChanged);
+            ImageProps.LoadFrom(model);
             dialog.Close();
         });
 
@@ -48,8 +49,21 @@ public class ImagePropertiesVM : ReactiveObject
 
             if (!export)
             {
-                if (editorVM.Model.Mode == ColorMode.Indexed && editorVM.Model.Palette is not null)
-                    editorVM.LayerManager.QuantizeToPalette(editorVM.Model.Palette);
+                var mode = editorVM.Model.ColorMode;
+                var layers = editorVM.LayerManager;
+
+                if (mode == ColorMode.Indexed && editorVM.Model.Palette is not null)
+                    layers.ToIndexed(editorVM.Model.Palette);
+                else if (mode == ColorMode.Grayscale)
+                    layers.ToGrayscale();
+                else if (mode == ColorMode.GrayscaleAlpha)
+                    layers.ToGrayscaleAlpha();
+                else if (mode is ColorMode.RGB or ColorMode.BGR)
+                    layers.ToRgb();
+                else if (mode == ColorMode.RG)
+                    layers.ToRedGreen();
+                else if (mode == ColorMode.A)
+                    layers.ToAlpha();
             }
             else
             {
@@ -61,58 +75,72 @@ public class ImagePropertiesVM : ReactiveObject
         });
     }
 
-    private void UpdatePreview(PixelModel model)
+    private byte[] ResizeData(byte[] data, int width, int height)
     {
-        if (model.Data is null || model.Data.Length == 0) return;
+        var result = BitmapService.ResizePixelData(data, width, height, ImageProps.Width, ImageProps.Height);
 
-        byte[]? previewData;
+        ImageProps.Model.Width = ImageProps.Width;
+        ImageProps.Model.Height = ImageProps.Height;
 
-        if (ImageProps.Width == model.Width && ImageProps.Height == model.Height)
+        return result;
+    }
+
+    private byte[] ConvertData(PixelModel model, PreviewTrigger trigger)
+    {
+        byte[] result;
+
+        if (ImageProps.ColorMode == model.ColorMode) return model.Data;
+
+        if (ImageProps.ColorMode == ColorMode.Indexed)
         {
-            if (ImageProps.ColorMode == ColorMode.Indexed)
-            {
-                if (model.BitDepth == ImageProps.BitDepth && model.Palette is not null)
-                    previewData = model.Data;
-                else
-                {
-                    var (indices, palette) = 
-                        BitmapService.GetQuantized(ImageProps.Model.Data, ImageProps.BitDepth, model.Palette);
+            if (trigger == PreviewTrigger.Palette)
+                ImageProps.isPaletteSetByUser = true;
 
-                    previewData = indices;
-                    model.Palette = palette;
-                    model.BitDepth = ImageProps.BitDepth;
-                }
-            }
-            else if (ImageProps.ColorMode == ColorMode.Grayscale)
-                previewData = ImageConverterService.ConvertToGrayscale(ImageProps.Model.Data);
-            else if (ImageProps.ColorMode == ColorMode.RGB)
-                previewData = ImageConverterService.StripAlpha(ImageProps.Model.Data);
-            else
-                previewData = ImageProps.Model.Data;
+            var srcPalette = ImageProps.isPaletteSetByUser ? ImageProps.Model.Palette : null;
 
-            if (ImageProps.RenderBitmap is not null)
-            {
-                BitmapService.UpdateBitmap(ImageProps.RenderBitmap, previewData,
-                    new Rect(0, 0, ImageProps.Width, ImageProps.Height));
-            }
-            else
-            {
-                ImageProps.RenderBitmap?.Dispose();
-                ImageProps.RenderBitmap = BitmapService.CreateBitmap(previewData, ImageProps.Width, ImageProps.Height);
-            }
+            var (quantized, palette) = BitmapService.GetQuantized(model.Data, ImageProps.BitDepth, srcPalette);
+
+            if (palette != srcPalette)
+                ImageProps.isPaletteSetByUser = false;
+
+            result = quantized;
+            model.Palette = palette;
+            model.BitDepth = ImageProps.BitDepth;
         }
         else
         {
-            previewData = BitmapService.ResizePixelData(
-                ImageProps.Model.Data,
-                model.Width,
-                model.Height,
-                ImageProps.Width, 
-                ImageProps.Height);
-
-            ImageProps.RenderBitmap?.Dispose();
-            ImageProps.RenderBitmap = BitmapService.CreateBitmap(previewData, ImageProps.Width, ImageProps.Height);
+            result = ImageProps.ColorMode switch
+            {
+                ColorMode.Grayscale => ImageConverterService.ToGrayscale(ImageConverterService.ToRgb(model.Data)),
+                ColorMode.GrayscaleAlpha => ImageConverterService.ToGrayscale(model.Data),
+                ColorMode.RGB or ColorMode.BGR => ImageConverterService.ToRgb(model.Data),
+                ColorMode.RG => ImageConverterService.ToRedGreen(model.Data),
+                ColorMode.A => ImageConverterService.ToAlpha(model.Data),
+                _ => model.Data
+            };
         }
+
+        ImageProps.Model.BitDepth = ImageProps.BitDepth;
+
+        return result;
+    }
+
+    private void UpdatePreview(PixelModel model, PreviewTrigger trigger)
+    {
+        byte[]? previewData;
+
+        if (trigger != PreviewTrigger.Size)
+        {
+            previewData = ConvertData(model, trigger);
+
+            if (ImageProps.Width != model.Width || ImageProps.Height != model.Height)
+                previewData = ResizeData(previewData, model.Width, model.Height);
+        }
+        else
+            previewData = ResizeData(ImageProps.Model.Data, model.Width, model.Height);
+        
+        ImageProps.RenderBitmap?.Dispose();
+        ImageProps.RenderBitmap = BitmapService.CreateBitmap(previewData, ImageProps.Width, ImageProps.Height);
 
         ImageProps.PushRenderData();
     }

@@ -42,9 +42,9 @@ public static class PdfService
             {
                 Width = converted.Width,
                 Height = converted.Height,
-                Mode = ColorMode.RGBA,
+                ColorMode = ColorMode.RGBA,
                 BitDepth = BitDepth.Bit8,
-                Alpha = AlphaFormat.Straight,
+                AlphaFormat = AlphaFormat.Straight,
                 ColorSpace = ColorSpace.sRGB,
                 DpiX = renderDpi,
                 DpiY = renderDpi,

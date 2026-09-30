@@ -122,7 +122,6 @@ public class LayerItem: ReactiveObject
             RenderData.Width = Layer.Width;
             RenderData.Height = Layer.Height;
             RenderData.Bitmap = Layer.RenderBitmap;
-            RenderData.NotifyPropertyChanged();
         }
     }
 

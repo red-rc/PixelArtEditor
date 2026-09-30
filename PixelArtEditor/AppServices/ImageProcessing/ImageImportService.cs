@@ -66,185 +66,199 @@ public static class ImageImportService
         return await GetPixelModelFromFile(file);
     }
 
-    public static async Task<PixelModel?> GetPixelModelFromFile(IStorageFile? file)
+    public static async Task<PixelModel?> GetPixelModelFromFile(IStorageFile? file, bool showError = true)
     {
         if (file is null) return null;
 
-        Stream stream;
         try
         {
-            stream = await file.OpenReadAsync();
+            await using var stream = await file.OpenReadAsync();
+            return await GetPixelModelFromStream(stream, file.Name, showError);
         }
         catch (Exception ex)
         {
-            await ActionService.ShowError(ex.Message);
+            if (showError) await ActionService.ShowError(ex.Message);
             return null;
         }
+    }
 
-        await using (stream)
+    public static async Task<PixelModel?> GetPixelModelFromStream(Stream? sourceStream, string? fileName = null, bool showError = true)
+    {
+        if (sourceStream is null) return null;
+
+        var ms = new MemoryStream();
+        await sourceStream.CopyToAsync(ms);
+
+        var ext = !string.IsNullOrEmpty(fileName) ? Path.GetExtension(fileName).ToLowerInvariant() : string.Empty;
+        var name = Path.GetFileNameWithoutExtension(fileName);
+
+        if (ext == ".svg")
         {
-            var ms = new MemoryStream();
-            await stream.CopyToAsync(ms);
-
-            var ext = Path.GetExtension(file.Name).ToLowerInvariant();
-
-            if (ext == ".svg")
-            {
-                var (svgModel, svgError) = await Task.Run(() =>
-                {
-                    ms.Position = 0;
-                    return SvgService.Load(ms);
-                });
-
-                if (svgError is not null)
-                {
-                    await ActionService.ShowError(svgError);
-                    return null;
-                }
-
-                if (svgModel is not null)
-                {
-                    svgModel.Name = Path.GetFileNameWithoutExtension(file.Name);
-                    svgModel.Extension = ext.TrimStart('.');
-                }
-
-                return svgModel;
-            }
-            else if (ext is ".dcm" or ".dicom")
-            {
-                var (dicomModel, dicomError) = await Task.Run(() =>
-                {
-                    ms.Position = 0;
-                    return DicomService.Load(ms);
-                });
-
-                if (dicomError is not null)
-                {
-                    await ActionService.ShowError(dicomError);
-                    return null;
-                }
-
-                if (dicomModel is not null)
-                {
-                    dicomModel.Name = Path.GetFileNameWithoutExtension(file.Name);
-                    dicomModel.Extension = "dcm";
-                }
-
-                return dicomModel;
-            }
-            else if (ext == ".pdf")
-            {
-                var (pdfModel, pdfError) = await Task.Run(() =>
-                {
-                    ms.Position = 0;
-                    return PdfService.Load(ms);
-                });
-
-                if (pdfError is not null)
-                {
-                    await ActionService.ShowError(pdfError);
-                    return null;
-                }
-
-                if (pdfModel is not null)
-                {
-                    pdfModel.Name = Path.GetFileNameWithoutExtension(file.Name);
-                    pdfModel.Extension = "pdf";
-                }
-
-                return pdfModel;
-            }
-            else if (ext == ".dds")
-            {
-                var (ddsModel, ddsError) = await Task.Run(() =>
-                {
-                    ms.Position = 0;
-                    return DdsService.Load(ms);
-                });
-
-                if (ddsError is not null)
-                {
-                    await ActionService.ShowError(ddsError);
-                    return null;
-                }
-
-                if (ddsModel is not null)
-                {
-                    ddsModel.Name = Path.GetFileNameWithoutExtension(file.Name);
-                    ddsModel.Extension = "dds";
-                }
-
-                return ddsModel;
-            }
-
-            var (model, error) = await Task.Run(() =>
+            var (svgModel, svgError) = await Task.Run(() =>
             {
                 ms.Position = 0;
-
-                if (ext == ".ico")
-                {
-                    var extracted = IcoService.ExtractLargestImage(ms);
-                    if (extracted is null) return ((PixelModel?)null, $"{LocalizationService.Get("InvalidICO")}");
-
-                    ms.SetLength(0);
-                    ms.Write(extracted, 0, extracted.Length);
-                }
-
-                ms.Position = 0;
-
-                ImageInfo? info;
-                try { info = SharpImage.Identify(ms); }
-                catch (UnknownImageFormatException) { return (null, $"{LocalizationService.Get("UnsupportedImage")}"); }
-                catch (InvalidImageContentException) { return (null, $"{LocalizationService.Get("FileCorrupted")}"); }
-
-                if (info is null) return ((PixelModel?)null, $"{LocalizationService.Get("CantRead")}");
-
-                ms.Position = 0;
-                using var image = SharpImage.Load(ms);
-                image.Mutate(x => x.AutoOrient());
-
-                var indexedMeta = ImageReader.ExtractIndexedMetadata(image, ms);
-                if (indexedMeta is not null)
-                {
-                    ms.Position = 0;
-                    using var indexedImage = image.CloneAs<Rgba32>();
-                    var result = ImageReader.ReadIndexed(indexedImage, indexedMeta.Palette, indexedMeta.BitDepth);
-
-                    return result is null
-                       ? ((PixelModel?)null, LocalizationService.Get("InvalidIndexed"))
-                       : (result, (string?)null);
-                }
-
-                PixelModel model = image switch
-                {
-                    Image<Rgb24> img => ImageReader.ReadRgb24(img),
-                    Image<Rgb48> img => ImageReader.ReadRgb48(img),
-                    Image<Bgr565> img => ImageReader.ReadBgr565(img),
-                    Image<Rgba32> img => ImageReader.ReadRgba32(img),
-                    Image<Rgba64> img => ImageReader.ReadRgba64(img),
-                    Image<L8> img => ImageReader.ReadL8(img),
-                    Image<L16> img => ImageReader.ReadL16(img),
-                    Image<La16> img => ImageReader.ReadLa16(img),
-                    Image<La32> img => ImageReader.ReadLa32(img),
-                    _ => ImageReader.ReadFallback(image)
-                };
-
-                return (model, (string?)null);
+                return SvgService.Load(ms);
             });
 
-            if (error is not null)
+            if (svgError is not null)
             {
-                await ActionService.ShowError(error);
+                if (showError) await ActionService.ShowError(svgError);
                 return null;
             }
 
-            if (model is not null)
+            if (svgModel is not null)
             {
-                model.Name = Path.GetFileNameWithoutExtension(file.Name);
-                model.Extension = Path.GetExtension(file.Name).TrimStart('.').ToLowerInvariant();
+                svgModel.Name = name;
+                svgModel.Extension = "svg";
             }
 
-            return model;
+            return svgModel;
         }
+        else if (ext is ".dcm" or ".dicom")
+        {
+            var (dicomModel, dicomError) = await Task.Run(() =>
+            {
+                ms.Position = 0;
+                return DicomService.Load(ms);
+            });
+
+            if (dicomError is not null)
+            {
+                if (showError) await ActionService.ShowError(dicomError);
+                return null;
+            }
+
+            if (dicomModel is not null)
+            {
+                dicomModel.Name = name;
+                dicomModel.Extension = "dcm";
+            }
+
+            return dicomModel;
+        }
+        else if (ext == ".pdf")
+        {
+            var (pdfModel, pdfError) = await Task.Run(() =>
+            {
+                ms.Position = 0;
+                return PdfService.Load(ms);
+            });
+
+            if (pdfError is not null)
+            {
+                if (showError) await ActionService.ShowError(pdfError);
+                return null;
+            }
+
+            if (pdfModel is not null)
+            {
+                pdfModel.Name = name;
+                pdfModel.Extension = "pdf";
+            }
+
+            return pdfModel;
+        }
+        else if (ext == ".dds")
+        {
+            var (ddsModel, ddsError) = await Task.Run(() =>
+            {
+                ms.Position = 0;
+                return DdsService.Load(ms);
+            });
+
+            if (ddsError is not null)
+            {
+                if (showError) await ActionService.ShowError(ddsError);
+                return null;
+            }
+
+            if (ddsModel is not null)
+            {
+                ddsModel.Name = name;
+                ddsModel.Extension = "dds";
+            }
+
+            return ddsModel;
+        }
+
+        var (model, detectedExt, error) = await Task.Run(() =>
+        {
+            ms.Position = 0;
+
+            if (ext == ".ico")
+            {
+                var extracted = IcoService.ExtractLargestImage(ms);
+                if (extracted is null) return (null, null, $"{LocalizationService.Get("InvalidICO")}");
+
+                ms.SetLength(0);
+                ms.Write(extracted, 0, extracted.Length);
+            }
+
+            ms.Position = 0;
+
+            ImageInfo? info;
+            try { info = SharpImage.Identify(ms); }
+            catch (UnknownImageFormatException) { return (null, null, $"{LocalizationService.Get("UnsupportedImage")}"); }
+            catch (InvalidImageContentException) { return (null, null, $"{LocalizationService.Get("FileCorrupted")}"); }
+
+            if (info is null) return (null, null, $"{LocalizationService.Get("CantRead")}");
+
+            string? formatExt = info.Metadata.DecodedImageFormat?.FileExtensions.FirstOrDefault();
+
+            ms.Position = 0;
+            using var image = SharpImage.Load(ms);
+            image.Mutate(x => x.AutoOrient());
+
+            var indexedMeta = ImageReader.ExtractIndexedMetadata(image, ms);
+            if (indexedMeta is not null)
+            {
+                ms.Position = 0;
+                using var indexedImage = image.CloneAs<Rgba32>();
+                var result = ImageReader.ReadIndexed(indexedImage, indexedMeta.Palette, indexedMeta.BitDepth);
+
+                return result is null
+                   ? (null, null, LocalizationService.Get("InvalidIndexed"))
+                   : (result, formatExt, (string?)null);
+            }
+
+            PixelModel model = image switch
+            {
+                Image<Rgb24> img => ImageReader.ReadRgb24(img),
+                Image<Rgb48> img => ImageReader.ReadRgb48(img),
+                Image<Rgba32> img => ImageReader.ReadRgba32(img),
+                Image<Rgba64> img => ImageReader.ReadRgba64(img),
+                Image<Rgba1010102> img => ImageReader.ReadRgba1010102(img),
+                Image<Bgr24> img => ImageReader.ReadBgr24(img),
+                Image<Bgr565> img => ImageReader.ReadBgr565(img),
+                Image<Bgra32> img => ImageReader.ReadBgra32(img),
+                Image<Bgra4444> img => ImageReader.ReadBgra4444(img),
+                Image<Bgra5551> img => ImageReader.ReadBgra5551(img),
+                Image<Argb32> img => ImageReader.ReadArgb32(img),
+                Image<Abgr32> img => ImageReader.ReadAbgr32(img),
+                Image<Rg32> img => ImageReader.ReadRg32(img),
+                Image<L8> img => ImageReader.ReadL8(img),
+                Image<L16> img => ImageReader.ReadL16(img),
+                Image<La16> img => ImageReader.ReadLa16(img),
+                Image<La32> img => ImageReader.ReadLa32(img),
+                Image<A8> img => ImageReader.ReadA8(img),
+                _ => ImageReader.ReadFallback(image)
+            };
+
+            return (model, formatExt, (string?)null);
+        });
+
+        if (error is not null)
+        {
+            if (showError) await ActionService.ShowError(error);
+            return null;
+        }
+
+        if (model is not null)
+        {
+            model.Name = name;
+            model.Extension = string.IsNullOrEmpty(ext) ? (detectedExt ?? "png") : ext.TrimStart('.');
+        }
+
+        return model;
     }
 }

@@ -47,9 +47,9 @@ public static class SvgService
         {
             Width = width,
             Height = height,
-            Mode = ColorMode.RGBA,
+            ColorMode = ColorMode.RGBA,
             BitDepth = BitDepth.Bit8,
-            Alpha = AlphaFormat.Straight,
+            AlphaFormat = AlphaFormat.Straight,
             ColorSpace = ColorSpace.sRGB,
             DpiX = 96f,
             DpiY = 96f,

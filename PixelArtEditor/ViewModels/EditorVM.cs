@@ -1,13 +1,12 @@
 using Avalonia;
 using Avalonia.Media;
 using PixelArtEditor.AppServices;
-using PixelArtEditor.AppServices.Bitmap;
 using PixelArtEditor.AppServices.Canvas;
-using PixelArtEditor.AppServices.ImageProcessing;
 using PixelArtEditor.AppServices.Tools;
 using PixelArtEditor.Models.Canvas;
 using PixelArtEditor.UI;
 using System;
+using System.Collections.Generic;
 using System.Numerics;
 
 namespace PixelArtEditor.ViewModels;
@@ -57,10 +56,10 @@ public class EditorVM : ReactiveObject
             Extension = _model.Extension,
             Width = _model.Width,
             Height = _model.Height,
-            Mode = _model.Mode,
+            ColorMode = _model.ColorMode,
             BitDepth = _model.BitDepth,
             ColorSpace = _model.ColorSpace,
-            Alpha = _model.Alpha,
+            AlphaFormat = _model.AlphaFormat,
             DpiX = _model.DpiX,
             DpiY = _model.DpiY,
             Palette = _model.Palette,
@@ -75,6 +74,9 @@ public class EditorVM : ReactiveObject
         get => _layerManager;
         private set => this.RaiseAndSetIfChanged(ref _layerManager, value);
     }
+
+    public event Action<List<LayerModel>, EditorVM>? LayersPasted;
+    public void NotifyLayersPasted(List<LayerModel> layers) => LayersPasted?.Invoke(layers, this);
 
     private double _lastPanelWidth = -1;
     private double _lastPanelHeight = -1;
@@ -124,10 +126,9 @@ public class EditorVM : ReactiveObject
         get => _pickedColor;
         set
         {
-            if (_model?.Mode == ColorMode.Indexed && _model.Palette is not null)
-                value = PaletteService.ResolveColorForPalette(value, _model.Palette, _model.BitDepth);
-
-            this.RaiseAndSetIfChanged(ref _pickedColor, value);
+            if (_model?.ColorMode is not ColorMode cm) return;
+            var newValue = ColorResolver.Resolve(value, cm, _model?.Palette, _model?.BitDepth);
+            this.RaiseAndSetIfChanged(ref _pickedColor, newValue);
         }
     }
 
@@ -165,10 +166,13 @@ public class EditorVM : ReactiveObject
         _model = model;
         ConfirmPanelVisible = false;
 
+        this.WhenAnyValue(x => x.Model.ColorMode).Subscribe(_ => 
+        {
+            PickedColor = Color.FromArgb(PickedColor.A, PickedColor.R, PickedColor.G, PickedColor.B);
+        });
+
         this.WhenAnyValue(vm => vm.ConfirmPanelVisible)
             .ToProperty(this, vm => vm.IsTransforming, out _isTransforming);
-
-        AdjustCanvas(_lastPanelWidth, _lastPanelHeight);
     }
 
     public void StartDragging(Point startMousePos)

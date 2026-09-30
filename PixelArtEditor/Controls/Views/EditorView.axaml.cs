@@ -5,14 +5,15 @@ using Avalonia.Interactivity;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using PixelArtEditor.AppServices;
-using PixelArtEditor.AppServices.Bitmap;
 using PixelArtEditor.AppServices.EditorUI;
 using PixelArtEditor.AppServices.ImageProcessing;
+using PixelArtEditor.Helpers;
 using PixelArtEditor.Models.Canvas;
 using PixelArtEditor.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
 
 namespace PixelArtEditor.Controls.Views;
 
@@ -22,10 +23,9 @@ public partial class EditorView : UserControl
     private readonly TooltipManager _tooltipManager;
     private readonly ImageDropHandler _dropHandler;
     private readonly PanelDragController _dragController;
-    private HotkeysService _hotkeysService;
+    private HotkeysService? _hotkeysService;
 
     private IDisposable? _modelSubscription;
-    private PixelModel? _subscribedModel;
 
     private EditorVM? ViewModel => DataContext as EditorVM;
 
@@ -83,25 +83,28 @@ public partial class EditorView : UserControl
 
         _dragController = new PanelDragController(MainLayout, FloatingHost, RectHost, _layoutManager);
 
-        _hotkeysService = new HotkeysService(LayerPanelControl.LayerCommands, ViewModel, OnCancel, OnConfirm);
-
         AddHandler(KeyDownEvent, OnHotkeys, RoutingStrategies.Tunnel);
 
         DataContextChanged += OnDataContextChanged;
 
-        AttachedToVisualTree += (s, e) =>
+        if (Services.Navigation.GetViewModel() is not EditorVM editorVM) return;
+        editorVM.LayersPasted += OnLayersPasted;
+    }
+
+    protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        base.OnAttachedToVisualTree(e);
+
+        Services.Settings.PropertyChanged += (s, e) =>
         {
-            Services.Settings.PropertyChanged += (s, e) =>
-            {
-                if (e.PropertyName != nameof(SettingsManager.Layout)) return;
-                _layoutManager.LoadLayout();
-            };
-
-            _layoutManager.InitializeRects();
+            if (e.PropertyName != nameof(SettingsManager.Layout)) return;
             _layoutManager.LoadLayout();
-
-            MainLayout.LayoutUpdated += OnMainLayoutLayoutUpdated;
         };
+
+        _layoutManager.InitializeRects();
+        _layoutManager.LoadLayout();
+
+        MainLayout.LayoutUpdated += OnMainLayoutLayoutUpdated;
     }
 
     protected override void OnInitialized()
@@ -133,32 +136,18 @@ public partial class EditorView : UserControl
 
         foreach (var file in files)
         {
-            var pixelModel = await ImageImportService.GetPixelModelFromFile(file);
-            if (pixelModel is null) continue;
+            var model = await ImageImportService.GetPixelModelFromFile(file);
+            if (model is null) continue;
 
-            var (targetW, targetH) = FitToCanvas(pixelModel.Width, pixelModel.Height, vm.Model.Width, vm.Model.Height);
-
-            var data = pixelModel.Data;
-
-            if (targetW != pixelModel.Width || targetH != pixelModel.Height)
-                data = BitmapService.ResizePixelDataScaled(data, pixelModel.Width, pixelModel.Height, targetW, targetH);
-
-            data = BitmapService.CenterOnCanvas(data, targetW, targetH, vm.Model.Width, vm.Model.Height);
-
-            var newLayer = new LayerModel(
-                vm.Model.Width,
-                vm.Model.Height,
-                data,
-                pixelModel.Name ?? $"Layer {vm.LayerManager.Layers.Count + 1}",
-                false
-            );
-
-            vm.LayerManager.Layers.Insert(0, newLayer);
-
-            _addedLayers.Add(newLayer);
+            if (ViewModel is null) return;
+            LayerPasteHelper.InsertPasted(model, ViewModel.LayerManager, LayerPanelControl.ViewModel);
         }
+    }
 
-        if (_addedLayers.Count <= 0) return;
+    public void OnLayersPasted(List<LayerModel> layers, EditorVM vm)
+    {
+        _addedLayers.AddRange(layers);
+        if (_addedLayers.Count < 1) return;
 
         LayerPanelControl.LayerListBox.SelectedItems?.Clear();
         foreach (var layer in _addedLayers)
@@ -170,20 +159,17 @@ public partial class EditorView : UserControl
         vm.ConfirmPanelVisible = true;
     }
 
-    private static (int w, int h) FitToCanvas(int srcW, int srcH, int canvasW, int canvasH)
-    {
-        if (srcW <= canvasW && srcH <= canvasH) return (srcW, srcH);
-
-        var scale = Math.Min((double)canvasW / srcW, (double)canvasH / srcH);
-        return (Math.Max(1, (int)(srcW * scale)), Math.Max(1, (int)(srcH * scale)));
-    }
-
     private async void OnHotkeys(object? sender, KeyEventArgs e)
     {
+        if (e.Key is Key.LeftCtrl) return;
+
         var focused = TopLevel.GetTopLevel(this)?.FocusManager?.GetFocusedElement();
         if (focused is TextBox or NumericUpDown) return;
 
-        if (!_hotkeysService.Handle(e.KeyModifiers, e.Key)) return;
+        _hotkeysService ??= new HotkeysService(LayerPanelControl.LayerCommands, ViewModel, OnCancel, OnConfirm);
+
+        var handled = await _hotkeysService.Handle(e.KeyModifiers, e.Key);
+        if (!handled) return;
 
         e.Handled = true;
         Dispatcher.UIThread.Post(() => Root.Focus());
@@ -192,37 +178,29 @@ public partial class EditorView : UserControl
     private void OnDataContextChanged(object? sender, EventArgs e)
     {
         _modelSubscription?.Dispose();
-        _subscribedModel?.ModelChanged -= OnModelChangedHandler;
-        _subscribedModel = null;
 
         if (ViewModel is not null)
         {
             ViewModel.SetCanvas(CanvasControl);
             LayerPanelControl.LayerManager = ViewModel.LayerManager;
 
-            _hotkeysService = new HotkeysService(LayerPanelControl.LayerCommands, ViewModel, OnCancel, OnConfirm);
+            _hotkeysService = null;
 
             ViewModel.AdjustCanvas(CanvasPanel.Bounds.Width, CanvasPanel.Bounds.Height);
 
-            _modelSubscription = ViewModel.WhenAnyValue(x => x.Model).Subscribe(model =>
+            _modelSubscription = ViewModel.WhenAnyValue(x => x.Model)
+                .Select(model => model.WhenAnyValue(m => m.Width, m => m.Height))
+                .Switch()
+                .Subscribe(_ =>
             {
-                _subscribedModel?.ModelChanged -= OnModelChangedHandler;
-
-                _subscribedModel = model;
-
-                _subscribedModel.ModelChanged += OnModelChangedHandler;
+                Dispatcher.UIThread.Post(() =>
+                {
+                    if (CanvasPanel.Bounds is not { Width: > 0, Height: > 0 }) return;
+                    ViewModel.AdjustCanvas(CanvasPanel.Bounds.Width, CanvasPanel.Bounds.Height);
+                });
             });
 
             Dispatcher.UIThread.Post(() => Root.Focus());
-        }
-
-        void OnModelChangedHandler()
-        {
-            Dispatcher.UIThread.Post(() =>
-            {
-                if (ViewModel is null || CanvasPanel.Bounds is not { Width: > 0, Height: > 0 }) return;
-                ViewModel.AdjustCanvas(CanvasPanel.Bounds.Width, CanvasPanel.Bounds.Height);
-            });
         }
     }
 

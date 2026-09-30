@@ -142,3 +142,4 @@ localPairs:
   Quantization: Метод квантування
   ColorCount: Кількість кольорів
   Dither: Дизеринг
+  PngEncoderError: Кодер формату не підтримує цю глибину кольору

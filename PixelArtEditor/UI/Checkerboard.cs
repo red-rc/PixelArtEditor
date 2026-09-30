@@ -8,6 +8,7 @@ using PixelArtEditor.Helpers;
 using PixelArtEditor.Models.Canvas;
 using System;
 using System.Numerics;
+using System.Reactive.Linq;
 
 namespace PixelArtEditor.UI;
 
@@ -23,8 +24,6 @@ public class Checkerboard : Control
         get => GetValue(ModelProperty); 
         set => SetValue(ModelProperty, value); 
     }
-
-    private PixelModel? _subscribedModel;
 
     public static readonly StyledProperty<int> DataWidthProperty =
         AvaloniaProperty.Register<Checkerboard, int>(nameof(DataWidth));
@@ -101,16 +100,10 @@ public class Checkerboard : Control
                 InvalidateVisual();
         };
 
-        ModelProperty.Changed.AddClassHandler<Checkerboard>((sender, e) =>
-        {
-            sender._subscribedModel?.ModelChanged -= sender.OnModelChanged;
-
-            sender._subscribedModel = sender.Model;
-
-            sender._subscribedModel?.ModelChanged += sender.OnModelChanged;
-
-            sender.InvalidateVisual();
-        });
+        this.WhenAnyValue(x => x.Model)
+            .Select(model => model.WhenAnyValue(m => m.Width, m => m.Height, m => m.Data))
+            .Switch()
+            .Subscribe(_ => OnModelChanged());
 
         this.GetObservable(OffsetProperty).Subscribe(_ => InvalidateVisual());
         this.GetObservable(ScaleProperty).Subscribe(_ => InvalidateVisual());

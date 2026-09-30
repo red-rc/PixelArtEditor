@@ -38,16 +38,16 @@ public partial class LayerPanel : UserControl, ILayerPanelContext
     private Point _mousePressPos;
     private bool _dragging;
 
-    public readonly LayerCmdList LayerCommands;
-    private readonly LayerDnDManager _dndManager;
+    public LayerCmdList LayerCommands { get; private set; } = null!;
+    private LayerDnDManager DndManager { get; set; } = null!;
 
-    private void AddClick(object? sender, RoutedEventArgs e) => LayerCommands.AddCmd.Execute(LayerManager);
-    public void DeleteClick(object? sender, RoutedEventArgs e) => LayerCommands.DeleteCmd.Execute(LayerManager);
-    public void DuplicateClick(object? sender, RoutedEventArgs e) => LayerCommands.DuplicateCmd.Execute(LayerManager);
-    public void GroupClick(object? sender, RoutedEventArgs e) => LayerCommands.GroupCmd.Execute(LayerManager);
+    private void AddClick(object? sender, RoutedEventArgs e) => LayerCommands?.AddCmd.Execute(LayerManager);
+    public void DeleteClick(object? sender, RoutedEventArgs e) => LayerCommands?.DeleteCmd.Execute(LayerManager);
+    public void DuplicateClick(object? sender, RoutedEventArgs e) => LayerCommands?.DuplicateCmd.Execute(LayerManager);
+    public void GroupClick(object? sender, RoutedEventArgs e) => LayerCommands?.GroupCmd.Execute(LayerManager);
 
-    private void ToTheTopClick(object? sender, RoutedEventArgs e) => LayerCommands.MoveCmd.Execute(LayerManager, true);
-    private void ToTheBottomClick(object? sender, RoutedEventArgs e) => LayerCommands.MoveCmd.Execute(LayerManager, false);
+    private void ToTheTopClick(object? sender, RoutedEventArgs e) => LayerCommands?.MoveCmd.Execute(LayerManager, true);
+    private void ToTheBottomClick(object? sender, RoutedEventArgs e) => LayerCommands?.MoveCmd.Execute(LayerManager, false);
 
     public void RenameClick(object? sender, RoutedEventArgs e) => ShowAndFocusTextBox();
 
@@ -69,9 +69,6 @@ public partial class LayerPanel : UserControl, ILayerPanelContext
         DataContext = _vm;
         InitializeComponent();
 
-        LayerCommands = new LayerCmdList(_vm, LayerListBox);
-        _dndManager = new LayerDnDManager(LayerListBox, FloatingHost, CountBadge, CountBadgeText);
-
         if (Services.Navigation.GetViewModel() is not EditorVM editorVM) return;
         editorVM.WhenAnyValue(e => e.IsTransforming).Subscribe(isTransforming =>
         {
@@ -88,6 +85,20 @@ public partial class LayerPanel : UserControl, ILayerPanelContext
         LayerListBox.AddHandler(PointerPressedEvent, OnLockButtonPointerPressed, RoutingStrategies.Tunnel);
     }
 
+    protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        base.OnAttachedToVisualTree(e);
+
+        var topLevel = TopLevel.GetTopLevel(this)!;
+
+        if (_vm is null) return;
+        LayerCommands = new LayerCmdList(_vm, LayerListBox, topLevel);
+        DndManager = new LayerDnDManager(LayerListBox, FloatingHost, CountBadge, CountBadgeText)
+        {
+            LayerManager = LayerManager
+        };
+    }
+
     private void LayerListBox_PointerPressed(object? sender, PointerPressedEventArgs e) => LayerListBox.SelectedItems?.Clear();
 
     private void LayerListBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
@@ -100,7 +111,7 @@ public partial class LayerPanel : UserControl, ILayerPanelContext
         if (change.Property == LayerManagerProperty)
         {
             _vm?.SetLayerManager(LayerManager);
-            _dndManager.LayerManager = LayerManager;
+            DndManager?.LayerManager = LayerManager;
         }
     }
 
@@ -151,12 +162,12 @@ public partial class LayerPanel : UserControl, ILayerPanelContext
             .ToList() ?? [];
 
         if (pressedListBoxItem is not null && !selected.Contains(pressedListBoxItem))
-            _dndManager.DraggedItems = [pressedListBoxItem];
+            DndManager.DraggedItems = [pressedListBoxItem];
         else
-            _dndManager.DraggedItems = selected;
+            DndManager.DraggedItems = selected;
 
         _mousePressPos = e.GetPosition(this);
-        _dndManager.ItemHeight = (int)(_dndManager.DraggedItems.FirstOrDefault()?.Bounds.Height ?? 0);
+        DndManager.ItemHeight = (int)(DndManager.DraggedItems.FirstOrDefault()?.Bounds.Height ?? 0);
     }
 
     private void OnItemPointerMoved(object? sender, PointerEventArgs e)
@@ -169,26 +180,26 @@ public partial class LayerPanel : UserControl, ILayerPanelContext
         if (!_dragging)
         {
             if (dx * dx + dy * dy < 100) return;
-            _dndManager.StartDragVisual();
+            DndManager.StartDragVisual();
         }
 
         _dragging = true;
 
-        if (_dndManager.DraggedItems.Count > 3)
+        if (DndManager.DraggedItems.Count > 3)
         {
             CountBadge.IsVisible = true;
-            CountBadgeText.Text = $"{_dndManager.DraggedItems.Count} layers";
+            CountBadgeText.Text = $"{DndManager.DraggedItems.Count} layers";
             Avalonia.Controls.Canvas.SetLeft(CountBadge, e.GetPosition(this).X + 5);
             Avalonia.Controls.Canvas.SetTop(CountBadge, e.GetPosition(this).Y + 5);
         }
 
-        _dndManager.AutoScrollIfNeeded(e);
-        var target = _dndManager.GetTargetIndex(e);
+        DndManager.AutoScrollIfNeeded(e);
+        var target = DndManager.GetTargetIndex(e);
 
-        if (target != _dndManager.TargetIndex)
+        if (target != DndManager.TargetIndex)
         {
-            _dndManager.TargetIndex = target;
-            _dndManager.AnimateItems();
+            DndManager.TargetIndex = target;
+            DndManager.AnimateItems();
         }
 
         if (FloatingHost.Children.Count > 0)
@@ -196,9 +207,9 @@ public partial class LayerPanel : UserControl, ILayerPanelContext
             for (var i = 0; i < FloatingHost.Children.Count; i++)
             {
                 var top = Math.Clamp(
-                    e.GetPosition(FloatingHost).Y + i * _dndManager.ItemHeight,
-                    i * _dndManager.ItemHeight,
-                    LayerListBox.Bounds.Height + i * _dndManager.ItemHeight);
+                    e.GetPosition(FloatingHost).Y + i * DndManager.ItemHeight,
+                    i * DndManager.ItemHeight,
+                    LayerListBox.Bounds.Height + i * DndManager.ItemHeight);
                 Avalonia.Controls.Canvas.SetTop(FloatingHost.Children[i], top);
             }
         }
@@ -207,12 +218,12 @@ public partial class LayerPanel : UserControl, ILayerPanelContext
     private void OnItemPointerReleased(object? sender, PointerReleasedEventArgs e)
     {
         _dragging = false;
-        _dndManager.ResetItemsTransform();
+        DndManager.ResetItemsTransform();
 
-        if (_dndManager.TargetIndex.HasValue && _dndManager.DraggedItems.Count > 0 && LayerManager is not null)
-            _dndManager.MoveGroupTo(_dndManager.TargetIndex.Value);
+        if (DndManager.TargetIndex.HasValue && DndManager.DraggedItems.Count > 0 && LayerManager is not null)
+            DndManager.MoveGroupTo(DndManager.TargetIndex.Value);
 
-        _dndManager.CleanupDrag();
+        DndManager.CleanupDrag();
     }
 
     private void OnLockButtonPointerPressed(object? sender, PointerPressedEventArgs e)
@@ -334,7 +345,7 @@ public partial class LayerPanel : UserControl, ILayerPanelContext
     {
         if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed
             || LayerManager is null || LayerManager.Layers.Count <= 1
-            || _dndManager.DraggedItems.Count == 0
+            || DndManager.DraggedItems.Count == 0
             || Services.Navigation.GetViewModel() is not EditorVM editorVM || editorVM.IsTransforming
             || AncestorElementNotNull<ScrollBar>(e.Source as Control)) return false;
 

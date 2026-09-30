@@ -1,20 +1,17 @@
 ﻿using Avalonia.Controls;
 using PixelArtEditor.AppServices.Canvas;
 using PixelArtEditor.ViewModels;
+using System.Threading.Tasks;
 
 namespace PixelArtEditor.AppServices.EditorUI.LayerPanel.LayerCommands;
 
-public class DuplicateCmd(LayerPanelVM vm, ListBox layerListBox) : LayerCmdBase(vm, layerListBox)
+public class DuplicateCmd(LayerPanelVM vm, ListBox layerListBox, TopLevel topLevel) : LayerCmdBase(vm, layerListBox, topLevel)
 {
-    public void Execute(LayerManager? layerManager)
+    public async Task Execute(LayerManager? layerManager)
     {
         if (layerManager is null || !CanExecute) return;
 
-        var copiedLayers = Vm.CopiedLayers;
-
-        new CopyCmd(Vm, LayerListBox).Execute(layerManager);
-        new InsertCmd(Vm, LayerListBox).Execute(layerManager);
-
-        Vm.CopiedLayers = copiedLayers;
+        await new CopyCmd(Vm, LayerListBox, TopLevel).Execute(layerManager);
+        await new PasteCmd(Vm, LayerListBox, TopLevel).Execute(layerManager);
     }
 }

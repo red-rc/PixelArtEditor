@@ -32,5 +32,6 @@
         <StyleInclude Source="avares://PixelArtEditor/Styles/Overrides/ComboBoxOverride.axaml" />
         <StyleInclude Source="avares://PixelArtEditor/Styles/Overrides/WindowDrawnDecorationsOverride.axaml" />
         <StyleInclude Source="avares://PixelArtEditor/Styles/Overrides/SliderOverride.axaml" />
+        <StyleInclude Source="avares://PixelArtEditor/Styles/Overrides/ProgressBarOverride.axaml" />
     </Application.Styles>
 </Application>

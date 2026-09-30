@@ -17,12 +17,12 @@ using SixLabors.ImageSharp.Formats.Tga;
 using SixLabors.ImageSharp.Formats.Tiff;
 using SixLabors.ImageSharp.Formats.Webp;
 using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing.Processors.Quantization;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using AlphaFormat = PixelArtEditor.Models.Canvas.AlphaFormat;
 using Image = SixLabors.ImageSharp.Image;
 
 namespace PixelArtEditor.AppServices.ImageProcessing;
@@ -50,7 +50,14 @@ public static class ImageExportService
     ];
     public static async Task ExportImageAsync(Window dialog, PixelModel model)
     {
-        var defaultType = ExportFileTypes.FirstOrDefault(t =>
+        var validFileTypes = model.ColorMode is ColorMode.Indexed
+            ? [.. ExportFileTypes.Where(t => t.Patterns is not null && t.Patterns.Any(p =>
+                p.Equals("*.png", StringComparison.OrdinalIgnoreCase) ||
+                p.Equals("*.bmp", StringComparison.OrdinalIgnoreCase) ||
+                p.Equals("*.gif", StringComparison.OrdinalIgnoreCase)))]
+            : ExportFileTypes;
+
+        var defaultType = validFileTypes.FirstOrDefault(t =>
             t.Patterns is not null && t.Patterns.Any(p => p.TrimStart('*', '.').Equals(model.Extension, StringComparison.OrdinalIgnoreCase)));
 
         var saveOptions = new FilePickerSaveOptions
@@ -59,29 +66,29 @@ public static class ImageExportService
             SuggestedFileName = model.Name ?? $"{LocalizationService.Get("Untitled")}",
             DefaultExtension = model.Extension,
             FileTypeChoices = defaultType is not null
-                ? [defaultType, .. ExportFileTypes.Where(t => t != defaultType)]
-                : ExportFileTypes
+                ? [defaultType, .. validFileTypes.Where(t => t != defaultType)]
+                : validFileTypes
         };
 
         var file = await dialog.StorageProvider.SaveFilePickerAsync(saveOptions);
-        if (file == null) return;
-
-        if (model.Data == null) return;
-
+        if (file is null) return;
+        
+        if (model.Data is null) return;
+        
         await Task.Run(async () =>
         {
             try
             {
                 var exportData = ConvertForExport(model.Data, model);
-
+        
                 using var baseImage = Image.LoadPixelData<Rgba32>(exportData, model.Width, model.Height);
                 using var image = ConvertToTargetFormat(baseImage, model);
-
+        
                 image.Metadata.HorizontalResolution = model.DpiX;
                 image.Metadata.VerticalResolution = model.DpiY;
-
+        
                 await using var stream = await file.OpenWriteAsync();
-
+        
                 if (Path.GetExtension(file.Name).Equals(".dcm", StringComparison.InvariantCultureIgnoreCase))
                     DicomService.Save(stream, exportData, model.Width, model.Height, model.DicomDataset);
                 else if (Path.GetExtension(file.Name).Equals(".pdf", StringComparison.InvariantCultureIgnoreCase))
@@ -123,7 +130,7 @@ public static class ImageExportService
     {
         var result = BitmapService.SwapRB(bgra);
 
-        if (model.Alpha == AlphaFormat.Premultiplied)
+        if (model.AlphaFormat == AlphaFormat.Premultiplied)
         {
             fixed (byte* ptr = result)
             {
@@ -162,15 +169,26 @@ public static class ImageExportService
 
     private static Image ConvertToTargetFormat(Image<Rgba32> baseImage, PixelModel model)
     {
-        return (model.Mode, model.BitDepth) switch
+        return (model.ColorMode, model.BitDepth) switch
         {
-            (ColorMode.RGBA, BitDepth.Bit8) => baseImage.CloneAs<Rgba32>(),
-            (ColorMode.RGBA, BitDepth.Bit16) => baseImage.CloneAs<Rgba64>(),
             (ColorMode.RGB, BitDepth.Bit8) => baseImage.CloneAs<Rgb24>(),
             (ColorMode.RGB, BitDepth.Bit16) => baseImage.CloneAs<Rgb48>(),
-            (ColorMode.RGB, BitDepth.RGB565) => baseImage.CloneAs<Bgr565>(),
+            (ColorMode.RGBA, BitDepth.Bit8) => baseImage.CloneAs<Rgba32>(),
+            (ColorMode.RGBA, BitDepth.Bit16) => baseImage.CloneAs<Rgba64>(),
+            (ColorMode.RGBA, BitDepth.Bit1010102) => baseImage.CloneAs<Rgba1010102>(),
+            (ColorMode.BGR, BitDepth.Bit8) => baseImage.CloneAs<Bgr24>(),
+            (ColorMode.BGR, BitDepth.Bit565) => baseImage.CloneAs<Bgr565>(),
+            (ColorMode.BGRA, BitDepth.Bit8) => baseImage.CloneAs<Bgra32>(),
+            (ColorMode.BGRA, BitDepth.Bit4) => baseImage.CloneAs<Bgra4444>(),
+            (ColorMode.BGRA, BitDepth.Bit5551) => baseImage.CloneAs<Bgra5551>(),
+            (ColorMode.ARGB, BitDepth.Bit8) => baseImage.CloneAs<Argb32>(),
+            (ColorMode.ABGR, BitDepth.Bit8) => baseImage.CloneAs<Abgr32>(),
+            (ColorMode.RG, BitDepth.Bit16) => baseImage.CloneAs<Rg32>(),
             (ColorMode.Grayscale, BitDepth.Bit8) => baseImage.CloneAs<L8>(),
             (ColorMode.Grayscale, BitDepth.Bit16) => baseImage.CloneAs<L16>(),
+            (ColorMode.GrayscaleAlpha, BitDepth.Bit8) => baseImage.CloneAs<La16>(),
+            (ColorMode.GrayscaleAlpha, BitDepth.Bit16) => baseImage.CloneAs<La32>(),
+            (ColorMode.A, BitDepth.Bit8) => baseImage.CloneAs<A8>(),
             _ => baseImage.CloneAs<Rgba32>()
         };
     }
@@ -184,10 +202,12 @@ public static class ImageExportService
             BitDepth.Bit4 => PngBitDepth.Bit4,
             BitDepth.Bit8 => PngBitDepth.Bit8,
             BitDepth.Bit16 => PngBitDepth.Bit16,
-            _ => PngBitDepth.Bit8
+            BitDepth.Bit565 => PngBitDepth.Bit16,
+            BitDepth.Bit5551 => PngBitDepth.Bit16,
+            _ => throw new Exception($"{LocalizationService.Get("EncoderError")}")
         };
 
-        if (model.Mode == ColorMode.Indexed && model.Palette is not null)
+        if (model.ColorMode == ColorMode.Indexed && model.Palette is not null)
         {
             var sharpColors = model.Palette.Colors
                 .Select(c => new Color(new Rgba32(c.R, c.G, c.B, c.A)))
@@ -197,7 +217,7 @@ public static class ImageExportService
             {
                 BitDepth = bitDepth,
                 ColorType = PngColorType.Palette,
-                Quantizer = new SixLabors.ImageSharp.Processing.Processors.Quantization.PaletteQuantizer(sharpColors)
+                Quantizer = new PaletteQuantizer(sharpColors)
             };
         }
 
@@ -212,10 +232,14 @@ public static class ImageExportService
             BitDepth.Bit2 => BmpBitsPerPixel.Pixel2,
             BitDepth.Bit4 => BmpBitsPerPixel.Pixel4,
             BitDepth.Bit8 => BmpBitsPerPixel.Pixel8,
-            _ => BmpBitsPerPixel.Pixel8
+            BitDepth.Bit16 => BmpBitsPerPixel.Pixel16,
+            BitDepth.Bit565 => BmpBitsPerPixel.Pixel16,
+            BitDepth.Bit5551 => BmpBitsPerPixel.Pixel16,
+            BitDepth.Bit1010102 => BmpBitsPerPixel.Pixel32,
+            _ => throw new Exception($"{LocalizationService.Get("EncoderError")}")
         };
 
-        if (model.Mode == ColorMode.Indexed && model.Palette is not null)
+        if (model.ColorMode == ColorMode.Indexed && model.Palette is not null)
         {
             var sharpColors = model.Palette.Colors
                 .Select(c => new Color(new Rgba32(c.R, c.G, c.B, c.A)))
@@ -224,7 +248,7 @@ public static class ImageExportService
             return new BmpEncoder
             {
                 BitsPerPixel = bitsPerPixel,
-                Quantizer = new SixLabors.ImageSharp.Processing.Processors.Quantization.PaletteQuantizer(sharpColors)
+                Quantizer = new PaletteQuantizer(sharpColors)
             };
         }
 
@@ -233,7 +257,7 @@ public static class ImageExportService
 
     private static GifEncoder BuildGifEncoder(PixelModel model)
     {
-        if (model.Mode == ColorMode.Indexed && model.Palette is not null)
+        if (model.ColorMode == ColorMode.Indexed && model.Palette is not null)
         {
             var sharpColors = model.Palette.Colors
                 .Select(c => new Color(new Rgba32(c.R, c.G, c.B, c.A)))
@@ -241,7 +265,7 @@ public static class ImageExportService
 
             return new GifEncoder
             {
-                Quantizer = new SixLabors.ImageSharp.Processing.Processors.Quantization.PaletteQuantizer(sharpColors)
+                Quantizer = new PaletteQuantizer(sharpColors)
             };
         }
 

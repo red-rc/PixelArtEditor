@@ -1,6 +1,5 @@
 ﻿using Avalonia.Media.Imaging;
 using FellowOakDicom;
-using PixelArtEditor.AppServices;
 using PixelArtEditor.AppServices.Shell;
 using PixelArtEditor.Helpers;
 using PixelArtEditor.Models;
@@ -108,7 +107,7 @@ public class ImagePropertiesUCVM : ReactiveObject
             this.RaiseAndSetIfChanged(ref _colorModeName, value);
 
             AlphaFormatEnabled = ColorMode == ColorMode.RGBA || ColorMode == ColorMode.Grayscale;
-            UpdateAvailableBitDepths();
+            UpdateAvailableProperties();
         }
     }
 
@@ -117,11 +116,19 @@ public class ImagePropertiesUCVM : ReactiveObject
     public bool IsIndexed => ColorMode == ColorMode.Indexed;
 
     // --- BitDepth ---
+
     private static readonly Dictionary<ColorMode, BitDepth[]> ValidBitDepths = new()
     {
-        [ColorMode.RGBA] = [BitDepth.Bit8, BitDepth.Bit16],
-        [ColorMode.RGB] = [BitDepth.Bit8, BitDepth.Bit16, BitDepth.RGB565],
+        [ColorMode.RGBA] = [BitDepth.Bit8, BitDepth.Bit16, BitDepth.Bit1010102],
+        [ColorMode.RGB] = [BitDepth.Bit8, BitDepth.Bit16],
+        [ColorMode.BGRA] = [BitDepth.Bit4, BitDepth.Bit8, BitDepth.Bit5551],
+        [ColorMode.BGR] = [BitDepth.Bit8, BitDepth.Bit565],
+        [ColorMode.ARGB] = [BitDepth.Bit8],
+        [ColorMode.ABGR] = [BitDepth.Bit8],
+        [ColorMode.RG] = [BitDepth.Bit16],
+        [ColorMode.A] = [BitDepth.Bit8],
         [ColorMode.Grayscale] = [BitDepth.Bit8, BitDepth.Bit16],
+        [ColorMode.GrayscaleAlpha] = [BitDepth.Bit8, BitDepth.Bit16],
         [ColorMode.Indexed] = [BitDepth.Bit1, BitDepth.Bit2, BitDepth.Bit4, BitDepth.Bit8],
     };
 
@@ -144,16 +151,14 @@ public class ImagePropertiesUCVM : ReactiveObject
         }
     }
 
-    public BitDepth BitDepth = BitDepth.Bit8;
-
-    private void UpdateAvailableBitDepths()
+    private bool _bitDepthEnabled = true;
+    public bool BitDepthEnabled
     {
-        var valid = ValidBitDepths[ColorMode];
-        BitDepthNames = [.. valid.Select(b => b.ToString())];
-
-        if (!valid.Contains(BitDepth))
-            BitDepthName = valid[0].ToString();
+        get => _bitDepthEnabled;
+        set => this.RaiseAndSetIfChanged(ref _bitDepthEnabled, value);
     }
+
+    public BitDepth BitDepth = BitDepth.Bit8;
 
     // --- ColorSpace ---
     public List<string> ColorSpaceNames { get; } = [..Enum.GetValues<ColorSpace>().Select(cm => cm.ToString())];
@@ -173,14 +178,28 @@ public class ImagePropertiesUCVM : ReactiveObject
     public ColorSpace ColorSpace = ColorSpace.sRGB;
 
     // --- AlphaFormat ---
-    private bool _alphaFormatEnabled = true;
-    public bool AlphaFormatEnabled
-    {
-        get => _alphaFormatEnabled;
-        set => this.RaiseAndSetIfChanged(ref _alphaFormatEnabled, value);
-    }
 
-    public List<string> AlphaFormatNames { get; } = [.. Enum.GetValues<AlphaFormat>().Select(cm => cm.ToString())];
+    private static readonly Dictionary<ColorMode, AlphaFormat[]> ValidAlphaFormats = new()
+    {
+        [ColorMode.RGBA] = [AlphaFormat.Straight, AlphaFormat.Premultiplied],
+        [ColorMode.RGB] = [AlphaFormat.None, AlphaFormat.Premultiplied],
+        [ColorMode.BGRA] = [AlphaFormat.Straight, AlphaFormat.Premultiplied],
+        [ColorMode.BGR] = [AlphaFormat.None, AlphaFormat.Premultiplied],
+        [ColorMode.ARGB] = [AlphaFormat.Straight, AlphaFormat.Premultiplied],
+        [ColorMode.ABGR] = [AlphaFormat.Straight, AlphaFormat.Premultiplied],
+        [ColorMode.RG] = [AlphaFormat.None, AlphaFormat.Premultiplied],
+        [ColorMode.A] = [AlphaFormat.None],
+        [ColorMode.Grayscale] = [AlphaFormat.None, AlphaFormat.Premultiplied],
+        [ColorMode.GrayscaleAlpha] = [AlphaFormat.Straight, AlphaFormat.Premultiplied],
+        [ColorMode.Indexed] = [AlphaFormat.Straight, AlphaFormat.Premultiplied]
+    };
+
+    private List<string> _alphaFormatNames = [.. ValidAlphaFormats[ColorMode.RGBA].Select(a => a.ToString())];
+    public List<string> AlphaFormatNames
+    {
+        get => _alphaFormatNames;
+        private set => this.RaiseAndSetIfChanged(ref _alphaFormatNames, value);
+    }
 
     private string _alphaFormatName = "Straight";
     public string AlphaFormatName
@@ -188,15 +207,42 @@ public class ImagePropertiesUCVM : ReactiveObject
         get => _alphaFormatName;
         set
         {
-            if (_alphaFormatName == value) return;
+            if (_alphaFormatName == value || !AlphaFormatNames.Contains(value)) return;
             AlphaFormat = EnumHelper.StringToEnum<AlphaFormat>(value);
             this.RaiseAndSetIfChanged(ref _alphaFormatName, value);
         }
     }
 
+    private bool _alphaFormatEnabled = true;
+    public bool AlphaFormatEnabled
+    {
+        get => _alphaFormatEnabled;
+        set => this.RaiseAndSetIfChanged(ref _alphaFormatEnabled, value);
+    }
+
     public AlphaFormat AlphaFormat = AlphaFormat.Straight;
 
-    public PixelModel Model = null!;
+    private void UpdateAvailableProperties()
+    {
+        var validBitDepths = ValidBitDepths[ColorMode];
+        BitDepthNames = [.. validBitDepths.Select(b => b.ToString())];
+
+        if (!validBitDepths.Contains(BitDepth))
+            BitDepthName = validBitDepths[0].ToString();
+
+        BitDepthEnabled = validBitDepths.Length > 1;
+
+        var validAlphaFormats = ValidAlphaFormats[ColorMode];
+        AlphaFormatNames = [.. validAlphaFormats.Select(a => a.ToString())];
+
+        if (!validAlphaFormats.Contains(AlphaFormat))
+            AlphaFormatName = validAlphaFormats[0].ToString();
+
+        AlphaFormatEnabled = validAlphaFormats.Length > 1;
+    }
+
+    public PixelModel Model { get; set; } = null!;
+    public bool isPaletteSetByUser = false;
 
     public ReactiveCommand<RxVoid, RxVoid> ConfigureCommand
         => ReactiveCommand.CreateFromTask(async () => await ActionService.ShowIndexedPropertiesWindow(Model));
@@ -220,7 +266,6 @@ public class ImagePropertiesUCVM : ReactiveObject
         RenderData.Width = Width;
         RenderData.Height = Height;
         RenderData.Bitmap = RenderBitmap;
-        RenderData.NotifyPropertyChanged();
     }
 
     public PixelModel GetFinalPixelModel(byte[] data, string? name, string extension, Palette? palette, DicomDataset? dicomDataset)
@@ -232,10 +277,10 @@ public class ImagePropertiesUCVM : ReactiveObject
             Palette = palette,
             Width = Width,
             Height = Height,
-            Mode = ColorMode,
+            ColorMode = ColorMode,
             BitDepth = BitDepth,
             ColorSpace = ColorSpace,
-            Alpha = AlphaFormat,
+            AlphaFormat = AlphaFormat,
             DpiX = DpiX,
             DpiY = DpiY,
             Data = data,

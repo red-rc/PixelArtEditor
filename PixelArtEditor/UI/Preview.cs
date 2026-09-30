@@ -6,7 +6,7 @@ using PixelArtEditor.AppServices;
 using PixelArtEditor.Helpers;
 using PixelArtEditor.Models;
 using System;
-using System.ComponentModel;
+using System.Reactive.Linq;
 
 namespace PixelArtEditor.UI;
 
@@ -24,17 +24,11 @@ public class Preview : Control
     public Preview()
     {
         RenderOptions.SetBitmapInterpolationMode(this, BitmapInterpolationMode.None);
-        RenderDataProperty.Changed.AddClassHandler<Preview>((sender, e) => OnRenderDataChanged(e));
+        this.WhenAnyValue(x => x.RenderData)
+            .Select(model => model.WhenAnyValue(rd => rd.Width, rd => rd.Height, rd => rd.Bitmap, rd => rd.Color))
+            .Switch()
+            .Subscribe(_ => InvalidateVisual());
     }
-
-    private void OnRenderDataChanged(AvaloniaPropertyChangedEventArgs e)
-    {
-        if (e.OldValue is PreviewData old) old.PropertyChanged -= OnRenderDataPropertyChanged;
-        if (e.NewValue is PreviewData @new) @new.PropertyChanged += OnRenderDataPropertyChanged;
-        InvalidateVisual();
-    }
-
-    private void OnRenderDataPropertyChanged(object? sender, PropertyChangedEventArgs e) => InvalidateVisual();
 
     public override void Render(DrawingContext context)
     {
