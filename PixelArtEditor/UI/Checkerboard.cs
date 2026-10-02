@@ -4,6 +4,7 @@ using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using PixelArtEditor.AppServices;
 using PixelArtEditor.AppServices.Bitmap;
+using PixelArtEditor.AppServices.Settings;
 using PixelArtEditor.Helpers;
 using PixelArtEditor.Models.Canvas;
 using System;
@@ -94,11 +95,7 @@ public class Checkerboard : Control
     {
         RenderOptions.SetBitmapInterpolationMode(this, BitmapInterpolationMode.None);
 
-        Settings.PropertyChanged += (_, e) =>
-        {
-            if (e.PropertyName is nameof(Settings.ScaleCheckerboardWithCanvas) or nameof(Settings.CheckerboardScale))
-                InvalidateVisual();
-        };
+        Settings.WhenAnyValue(x => x.ScaleCheckerboardWithCanvas, x => x.CheckerboardScale).Subscribe(_ => InvalidateVisual());
 
         this.WhenAnyValue(x => x.Model)
             .Select(model => model.WhenAnyValue(m => m.Width, m => m.Height, m => m.Data))

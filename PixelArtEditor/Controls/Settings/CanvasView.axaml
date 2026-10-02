@@ -51,7 +51,7 @@
             </StackPanel>
             <StackPanel Orientation="Horizontal" Spacing="10">
                 <TextBlock Classes="Label" Text="{DynamicResource PixelGridColor}" />
-                <ColorPicker Width="100" Color="{Binding GridColor, Mode=TwoWay}" />
+                <ColorPicker Theme="{StaticResource ColorPickerNoAlpha}" Width="100" Color="{Binding GridColor, Mode=TwoWay}" />
             </StackPanel>
             <StackPanel Orientation="Horizontal" Spacing="10">
                 <TextBlock Classes="Label" Text="{DynamicResource EnablePixelGrid}" />

@@ -107,6 +107,7 @@ public class IndexedPropertiesVM : ReactiveObject
     {
         RenderData.Width = model.Width;
         RenderData.Height = model.Height;
+        RenderData.Bitmap = BitmapService.CreateBitmap(model.Data, model.Width, model.Height);
 
         MaxColorCount = PaletteService.GetPaletteMaxColorCount(model.BitDepth);
         ColorCount = MaxColorCount;
@@ -120,7 +121,7 @@ public class IndexedPropertiesVM : ReactiveObject
 
     private void UpdatePreview(PixelModel model)
     {
-        if (RenderData.Bitmap is null) IsLoading = true;
+        IsLoading = true;
 
         _updateCts?.Cancel();
         var cts = new CancellationTokenSource();

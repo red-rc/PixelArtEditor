@@ -1,3 +1,4 @@
+using PixelArtEditor.AppServices.Settings;
 using PixelArtEditor.AppServices.Shell;
 
 namespace PixelArtEditor.AppServices;

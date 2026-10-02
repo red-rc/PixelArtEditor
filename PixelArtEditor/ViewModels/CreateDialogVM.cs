@@ -69,9 +69,6 @@ public class CreateDialogVM : ReactiveObject
 
         CancelCommand = ReactiveCommand.Create(dialog.Close);
 
-        ImageProperties.WhenAnyValue(x => x.Width, x => x.Height).Subscribe(_ =>
-        {
-            PushRenderData();
-        });
+        ImageProperties.WhenAnyValue(x => x.Width, x => x.Height).Subscribe(_ => PushRenderData());
     }
 }

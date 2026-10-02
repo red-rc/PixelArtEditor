@@ -108,18 +108,20 @@
                            RenderData="{Binding RenderData}"
                            FixedTileSize="12" />
 
-                       <Grid Grid.Column="1">
+                       <Grid Grid.Column="1" VerticalAlignment="Center">
                             <TextBlock 
                                 Classes="LayerItemText" 
                                 Text="{Binding Name}" 
                                 HorizontalAlignment="Left"
-                                Width="150"
+                                VerticalAlignment="Center"
+                                TextTrimming="CharacterEllipsis"
                                 IsVisible="{Binding !IsEditing}"
                                 DoubleTapped="TextBlock_DoubleTapped"/>
                             <TextBox 
                                 Classes="RenameTextBox" 
                                 Text="{Binding Name}" 
-                                HorizontalAlignment="Left"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Center"
                                 Height="30" 
                                 FontSize="14"
                                 Name="RenameTextBox"

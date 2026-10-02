@@ -1,8 +1,9 @@
 using Avalonia.Controls;
 using PixelArtEditor.AppServices;
+using PixelArtEditor.AppServices.Settings;
 using PixelArtEditor.AppServices.Shell;
+using ReactiveUI.Primitives.Extensions;
 using System;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Numerics;
 using System.Reactive.Linq;
@@ -48,18 +49,25 @@ public class MenuCommandsVM : ReactiveObject
 
     public MenuCommandsVM()
     {
-        var isDocumentOpen = Services
-            .Navigation
+        var isDocumentOpen = Services.Navigation
             .WhenCurrentViewChanges()
             .Select(view => view is EditorVM)
             .DistinctUntilChanged();
 
-        var isFullScreen = Services.WindowState
-            .WhenAnyValue(x => x.Current)
-            .Select(state => state == WindowState.FullScreen)
-            .DistinctUntilChanged();
+        Settings.WhenAnyValue(x => x.Language).Subscribe(_ =>
+        {
+            WindowStateHeader = LocalizationService.Get(Services.WindowState.Current == WindowState.FullScreen
+                ? "Windowed"
+                : "FullScreen");
+        });
 
-        Services.Settings.PropertyChanged += OnSettingsPropertyChanged;
+        Services.WindowState.WhenAnyValue(x => x.Current).Subscribe(state =>
+        { 
+            if (state == WindowState.FullScreen)
+                WindowStateHeader = LocalizationService.Get("Windowed");
+            else
+                WindowStateHeader = LocalizationService.Get("FullScreen");
+        });
 
         CreateCommand = ReactiveCommand.CreateFromTask(ActionService.ShowCreateWindow);
         OpenCommand = ReactiveCommand.Create(OnOpen);
@@ -79,11 +87,7 @@ public class MenuCommandsVM : ReactiveObject
         ZoomOutCommand = ReactiveCommand.Create(OnZoomOut, isDocumentOpen);
         ResetZoomCommand = ReactiveCommand.Create(OnResetZoom, isDocumentOpen);
         ResetLayout = ReactiveCommand.Create(OnResetLayout, isDocumentOpen);
-        WindowStateCommand = ReactiveCommand.CreateFromTask(async () =>
-        {
-            var isFullscreen = await isFullScreen.FirstAsync();
-            OnWindowState(isFullscreen);
-        });
+        WindowStateCommand = ReactiveCommand.Create(() => OnWindowState(Services.WindowState.Current == WindowState.FullScreen));
         LightThemeCommand = ReactiveCommand.Create(OnLightTheme);
         DarkThemeCommand = ReactiveCommand.Create(OnDarkTheme);
         
@@ -91,17 +95,6 @@ public class MenuCommandsVM : ReactiveObject
         ReportCommand = ReactiveCommand.Create(() => OpenUrl("https://github.com/red-rc/PixelArtEditor/issues"));
         ContactUsCommand = ReactiveCommand.Create(() => OpenUrl("https://mail.google.com/mail/u/0/?to=redthar7@gmail.com&fs=1&tf=cm"));
         AboutCommand = ReactiveCommand.Create(() => OpenUrl("https://github.com/red-rc/PixelArtEditor"));
-    }
-
-    private void OnSettingsPropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        if (e.PropertyName == nameof(SettingsManager.Language))
-        {
-            WindowStateHeader = LocalizationService.Get(
-                Services.WindowState.Current == WindowState.FullScreen
-                    ? "Windowed"
-                    : "FullScreen");
-        }
     }
 
     private void OnOpen()
@@ -167,18 +160,12 @@ public class MenuCommandsVM : ReactiveObject
         Settings.Save();
     }
 
-    private void OnWindowState(bool isFullscreen) 
+    private static void OnWindowState(bool isFullscreen) 
     {
         if (isFullscreen)
-        {
             Services.WindowState.Current = Services.WindowState.PrevWindowState;
-            WindowStateHeader = LocalizationService.Get("FullScreen");
-        }
         else
-        {
             Services.WindowState.Current = WindowState.FullScreen;
-            WindowStateHeader = LocalizationService.Get("Windowed");
-        }
     }
 
     private static void OnLightTheme()

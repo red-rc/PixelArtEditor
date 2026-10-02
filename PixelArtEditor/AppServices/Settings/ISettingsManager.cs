@@ -2,9 +2,8 @@ using Avalonia.Media.Imaging;
 using PixelArtEditor.Models.Canvas;
 using PixelArtEditor.Models.Dock;
 using System.Collections.Generic;
-using System.ComponentModel;
 
-namespace PixelArtEditor.AppServices;
+namespace PixelArtEditor.AppServices.Settings;
 
 public interface ISettingsManager
 {
@@ -23,8 +22,7 @@ public interface ISettingsManager
     string Theme { get; set; }
     List<PanelLayout> Layout { get; set; }
 
-    event PropertyChangedEventHandler? PropertyChanged;
-
+    SettingsData GetSnapshot();
     void Load();
     void Save();
     void Reset();

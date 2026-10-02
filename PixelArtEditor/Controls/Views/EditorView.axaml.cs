@@ -95,14 +95,10 @@ public partial class EditorView : UserControl
     {
         base.OnAttachedToVisualTree(e);
 
-        Services.Settings.PropertyChanged += (s, e) =>
-        {
-            if (e.PropertyName != nameof(SettingsManager.Layout)) return;
-            _layoutManager.LoadLayout();
-        };
-
         _layoutManager.InitializeRects();
         _layoutManager.LoadLayout();
+
+        Services.Settings.WhenAnyValue(x => x.Layout).Subscribe(_ => _layoutManager.LoadLayout());
 
         MainLayout.LayoutUpdated += OnMainLayoutLayoutUpdated;
     }

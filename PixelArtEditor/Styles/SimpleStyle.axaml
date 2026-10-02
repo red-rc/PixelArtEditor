@@ -3,7 +3,8 @@
     <!-- ================= Namespace declaration is NECESSARY. Compiler is crazy ================= -->
 
     <!-- ================= Transitions ================= -->
-    <Style Selector="Border:not(primitives|ColorPreviewer Border):not(ColorPicker#BackgroundColorPicker /template/ Border)">
+
+    <Style Selector="Border:not(primitives|ColorPreviewer Border):not(ColorPicker /template/ Border)">
         <Setter Property="Transitions">
             <Transitions>
                 <BrushTransition Property="Background" Duration="0:0:0.05" />
@@ -21,6 +22,7 @@
     </Style>
 
     <!-- ================= Button base ================= -->
+
     <Style Selector="Button">
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />
@@ -30,6 +32,7 @@
     </Style>
 
     <!-- ================= Button variants ================= -->
+
     <Style Selector="Button.ConfirmBtn">
         <Setter Property="Background" Value="{DynamicResource PrimaryColor}" />
         <Setter Property="ClipToBounds" Value="False" />
@@ -167,6 +170,7 @@
     </Style>
 
     <!-- ================= NumericUpDown ================= -->
+
     <Style Selector="NumericUpDown">
         <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />
         <Setter Property="Background" Value="{DynamicResource BackgroundColor}" />
@@ -231,6 +235,7 @@
     </Style>
 
     <!-- ================= TextBox ================= -->
+
     <Style Selector="TextBox">
         <Setter Property="SelectionBrush" Value="{DynamicResource PrimaryColor}" />
         <Setter Property="FontFamily" Value="{DynamicResource AppFont}" />
@@ -268,6 +273,7 @@
     </Style>
 
     <!-- ================= ComboBox ================= -->
+
     <Style Selector="ComboBox">
         <Setter Property="Background" Value="{DynamicResource BackgroundColor}" />
         <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}" />
@@ -313,6 +319,7 @@
     </Style>
 
     <!-- ================= CheckBox ================= -->
+
     <Style Selector="CheckBox">
         <Setter Property="Background" Value="{DynamicResource BackgroundColor}" />
         <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}" />
@@ -335,6 +342,7 @@
     </Style>
 
     <!-- ================= TextBlock ================= -->
+
     <Style Selector="TextBlock">
         <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />
         <Setter Property="FontFamily" Value="{DynamicResource AppFont}" />
@@ -346,9 +354,10 @@
     </Style>
 
     <Style Selector="TextBlock.LayerItemText">
-        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="FontSize" Value="14" />
+        <Setter Property="TextTrimming" Value="CharacterEllipsis" />
     </Style>
 
     <Style Selector="ListBoxItem.Heading TextBlock">
@@ -357,6 +366,7 @@
     </Style>
 
     <!-- ================= InstantToggleButton ================= -->
+
     <Style Selector="ui|InstantToggleButton.ToolBtn">
         <Setter Property="Background" Value="{DynamicResource UiColor}" />
         <Setter Property="BorderBrush" Value="{DynamicResource BackgroundPreesColor}" />
@@ -398,6 +408,7 @@
     </Style>
 
     <!-- ================= ListBox ================= -->
+
     <Style Selector="ListBox">
         <Setter Property="BorderThickness" Value="0" />
 

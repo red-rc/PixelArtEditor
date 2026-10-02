@@ -319,8 +319,7 @@
                             Margin="12">
                         <Grid.ColumnDefinitions>
                           <ColumnDefinition Width="*" />
-                          <ColumnDefinition Width="Auto"
-                                            MinWidth="30" />
+                          <ColumnDefinition Width="Auto" MinWidth="30" />
                         </Grid.ColumnDefinitions>
                         <primitives:ColorSpectrum 
                             x:Name="ColorSpectrum"

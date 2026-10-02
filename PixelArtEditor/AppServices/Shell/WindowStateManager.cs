@@ -44,7 +44,7 @@ public sealed class WindowStateManager : ReactiveObject
 
         window.GetObservable(Window.WindowStateProperty).Subscribe(state =>
         {
-            _current = state;
+            Current = state;
         });
     }
 }

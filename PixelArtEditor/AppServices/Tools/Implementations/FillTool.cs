@@ -35,7 +35,7 @@ public class FillTool : ITool
             ctx.HoverPixel.Value, 
             ctx.PickedColor);
 
-        if (dirtyRect is Rect rect)
+        if (dirtyRect is PixelRect rect)
             ToolManager.InvalidatePixelData(ctx, layer, rect);
     }
 }

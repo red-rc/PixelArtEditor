@@ -1,6 +1,7 @@
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using PixelArtEditor.AppServices;
+using PixelArtEditor.AppServices.Settings;
 using PixelArtEditor.Helpers;
 using PixelArtEditor.Models.Canvas;
 using PixelArtEditor.Windows;
@@ -181,12 +182,16 @@ public class SettingsDialogVM : ReactiveObject
     public ReactiveCommand<RxVoid, RxVoid> CancelCommand { get; }
     public ReactiveCommand<RxVoid, RxVoid> SaveCommand { get; }
 
-    private bool _savePress = false;
+    private readonly SettingsData _initSettings;
+    private bool _updatingProps = false;
 
     public SettingsDialogVM(SettingsDialogWindow dialog)
     {
+        _initSettings = Settings.GetSnapshot();
+
         ResetCommand = ReactiveCommand.Create(() => {
             Settings.Reset();
+            _updatingProps = true;
             OnClosing();
         });
 
@@ -195,7 +200,7 @@ public class SettingsDialogVM : ReactiveObject
         SaveCommand = ReactiveCommand.Create(() =>
         {
             Settings.Save();
-            _savePress = true;
+            _updatingProps = true;
             dialog.Close();
         });
 
@@ -204,12 +209,9 @@ public class SettingsDialogVM : ReactiveObject
 
     public void OnClosing()
     {
-        foreach (var prop in typeof(ISettingsManager).GetProperties())
-            this.RaisePropertyChanged(prop.Name);
+        if (!_updatingProps)
+            SettingsMapper.ApplySnapshot(_initSettings);
 
-        if (!_savePress)
-            Settings.Load();
-
-        _savePress = false;
+        _updatingProps = false;
     }
 }

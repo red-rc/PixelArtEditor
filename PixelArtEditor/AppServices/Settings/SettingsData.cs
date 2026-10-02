@@ -3,7 +3,7 @@ using PixelArtEditor.Models.Canvas;
 using PixelArtEditor.Models.Dock;
 using System.Collections.Generic;
 
-namespace PixelArtEditor.AppServices;
+namespace PixelArtEditor.AppServices.Settings;
 
 /// <summary>
 /// DTO для серіалізації налаштувань у JSON.

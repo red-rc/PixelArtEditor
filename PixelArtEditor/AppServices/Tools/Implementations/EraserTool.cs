@@ -28,7 +28,7 @@ public class EraserTool : ITool
         if (ctx.HoverPixel is null || layer is null || layer.Data is null) return;
 
         // Do not forget to change it to tool width and height
-        var dirtyRect = new Rect(ctx.HoverPixel.Value.X, ctx.HoverPixel.Value.Y, 1, 1);
+        var dirtyRect = new PixelRect(ctx.HoverPixel.Value.X, ctx.HoverPixel.Value.Y, 1, 1);
 
         BitmapService.BrushSquare(layer.Data, layer.Width, dirtyRect, Colors.Transparent);
         ToolManager.InvalidatePixelData(ctx, layer, dirtyRect);

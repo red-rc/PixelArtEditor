@@ -1,3 +1,4 @@
+using PixelArtEditor.AppServices.Settings;
 using PixelArtEditor.Styles;
 using System.IO;
 using System.Text.Json;

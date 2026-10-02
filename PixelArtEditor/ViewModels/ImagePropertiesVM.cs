@@ -28,8 +28,7 @@ public class ImagePropertiesVM : ReactiveObject
         ImageProps.LoadFrom(model);
 
         ImageProps.WhenAnyValue(x => x.Width, x => x.Height).Subscribe(_ => UpdatePreview(model, PreviewTrigger.Size));
-        ImageProps.WhenAnyValue(x => x.ColorModeName, x => x.BitDepthName)
-            .Subscribe(_ => UpdatePreview(model, PreviewTrigger.Other));
+        ImageProps.WhenAnyValue(x => x.ColorModeName, x => x.BitDepthName).Subscribe(_ => UpdatePreview(model, PreviewTrigger.Other));
         ImageProps.WhenAnyValue(x => x.Model.Palette).Subscribe(_ => UpdatePreview(model, PreviewTrigger.Palette));
 
         ResetCommand = ReactiveCommand.Create(() => {

@@ -5,6 +5,7 @@ using PixelArtEditor.Models.LayerPanel;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
+using System;
 
 namespace PixelArtEditor.ViewModels;
 
@@ -57,21 +58,16 @@ public class LayerPanelVM : ReactiveObject
 
     public LayerPanelVM()
     {
-        Services.Settings.PropertyChanged += (_, e) =>
+        Services.Settings.WhenAnyValue(x => x.Theme).Subscribe(_ =>
         {
-            if (e.PropertyName == nameof(ISettingsManager.Theme))
-            {
-                foreach (var item in LayerItems)
-                    item.RefreshIcons();
-
-            }
-
-            if (e.PropertyName == nameof(ISettingsManager.Language))
-            {
-                foreach (var item in LayerItems)
-                    item.RefreshTags();
-            }
-        };
+            foreach (var item in LayerItems)
+                item.RefreshIcons();
+        });
+        Services.Settings.WhenAnyValue(x => x.Language).Subscribe(_ =>
+        {
+            foreach (var item in LayerItems)
+                item.RefreshTags();
+        });
     }
 
     public void SetLayerManager(LayerManager? layerManager)

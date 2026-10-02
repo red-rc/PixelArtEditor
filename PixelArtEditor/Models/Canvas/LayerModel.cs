@@ -30,8 +30,6 @@ public class LayerModel(int width, int height, byte[] pixelData, string name, bo
         set => _renderBitmap = value;
     }
 
-    public WriteableBitmap? PreviewBitmap { get; set; }
-
     public string Name { get; set; } = name;
 
     private bool _isVisible = true;

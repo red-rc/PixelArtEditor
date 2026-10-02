@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using PixelArtEditor.AppServices;
+using PixelArtEditor.AppServices.Settings;
 using PixelArtEditor.AppServices.Shell;
 using PixelArtEditor.ViewModels;
 using PixelArtEditor.Windows;

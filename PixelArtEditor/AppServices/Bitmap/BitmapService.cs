@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading;
 using AlphaFormat = Avalonia.Platform.AlphaFormat;
 
 namespace PixelArtEditor.AppServices.Bitmap;
@@ -36,30 +35,22 @@ public static class BitmapService
         return pixelData;
     }
 
-    public static unsafe void UpdateBitmap(WriteableBitmap wb, byte[] data, Rect dirtyRect)
+    public static unsafe void UpdateBitmap(WriteableBitmap wb, byte[] data, PixelRect rect)
     {
-        if (wb.Format != PixelFormat.Bgra8888)
-            throw new InvalidOperationException(LocalizationService.Get("InvalidBitmap"));
-
         if (data.Length < wb.PixelSize.Width * wb.PixelSize.Height * 4)
             throw new ArgumentException(LocalizationService.Get("InvalidPixelData"));
 
         using var fb = wb.Lock();
-
-        var rowBytes = fb.RowBytes;
-        var x = (int)dirtyRect.X;
-        var startY = (int)dirtyRect.Y;
-        var endY = startY + (int)dirtyRect.Height;
-        var copyBytes = (int)dirtyRect.Width * 4;
+        var bytes = rect.Width * 4;
 
         fixed (byte* srcPtr = data)
         {
-            for (var y = startY; y < endY; y++)
+            for (var y = rect.Y; y < rect.Y + rect.Height; y++)
             {
-                byte* src = srcPtr + (y * wb.PixelSize.Width + x) * 4;
-                byte* dst = (byte*)fb.Address + y * rowBytes + x * 4;
+                byte* src = srcPtr + (y * wb.PixelSize.Width + rect.X) * 4;
+                byte* dst = (byte*)fb.Address + y * fb.RowBytes + rect.X * 4;
 
-                Buffer.MemoryCopy(src, dst, copyBytes, copyBytes);
+                Buffer.MemoryCopy(src, dst, bytes, bytes);
             }
         }
     }
@@ -67,7 +58,7 @@ public static class BitmapService
     public static WriteableBitmap CreateBitmap(byte[] data, int width, int height)
     {
         var wb = new WriteableBitmap(new PixelSize(width, height), new Vector(96, 96), PixelFormat.Bgra8888, AlphaFormat.Unpremul);
-        UpdateBitmap(wb, data, new Rect(0, 0, width, height));
+        UpdateBitmap(wb, data, new PixelRect(0, 0, width, height));
 
         return wb;
     }
@@ -77,12 +68,12 @@ public static class BitmapService
         var wb = new WriteableBitmap(new PixelSize(width, height), new Vector(96, 96), PixelFormat.Bgra8888, AlphaFormat.Unpremul);
         var pixelData = Enumerable.Repeat(color, width * height).SelectMany(c => new[] { c.B, c.G, c.R, c.A }).ToArray();
 
-        UpdateBitmap(wb, pixelData, new Rect(0, 0, width, height));
+        UpdateBitmap(wb, pixelData, new PixelRect(0, 0, width, height));
 
         return wb;
     }
 
-    public static unsafe void BrushSquare(byte[] data, int width, Rect rect, Color dstColor)
+    public static unsafe void BrushSquare(byte[] data, int width, PixelRect rect, Color dstColor)
     {
         fixed (byte* ptr = data)
         {
@@ -192,7 +183,7 @@ public static class BitmapService
         return result;
     }
 
-    public static unsafe Rect? FillSimilarPixels(byte[] data, int width, PixelPoint startPixel, Color dstColor)
+    public static unsafe PixelRect? FillSimilarPixels(byte[] data, int width, PixelPoint startPixel, Color dstColor)
     {
         var srcColor = GetPixelColor(data, width, startPixel);
         if (srcColor == dstColor) return null;
@@ -246,7 +237,7 @@ public static class BitmapService
             }
         }
 
-        return new Rect(minX, minY, maxX - minX + 1, maxY - minY + 1);
+        return new PixelRect(minX, minY, maxX - minX + 1, maxY - minY + 1);
     }
 
     private static unsafe void TryPush(Stack<int> stack, byte[] visited, uint* pPixels, int idx, uint srcPacked)
@@ -349,28 +340,6 @@ public static class BitmapService
 
         var scale = Math.Min((double)canvasW / srcW, (double)canvasH / srcH);
         return (Math.Max(1, (int)(srcW * scale)), Math.Max(1, (int)(srcH * scale)));
-    }
-
-    public static void DownscaleNearest(byte[] src, int srcW, int srcH, byte[] dst, int dstW, int dstH, CancellationToken token)
-    {
-        for (var y = 0; y < dstH; y++)
-        {
-            if ((y & 7) == 0 && token.IsCancellationRequested) return;
-
-            var srcY = (int)((uint)y * srcH / dstH);
-            if (srcY >= srcH) srcY = srcH - 1;
-
-            var dstRow = y * dstW * 4;
-            var srcRow = srcY * srcW * 4;
-
-            for (var x = 0; x < dstW; x++)
-            {
-                var srcX = (int)((uint)x * srcW / dstW);
-                if (srcX >= srcW) srcX = srcW - 1;
-
-                Buffer.BlockCopy(src, srcRow + srcX * 4, dst, dstRow + x * 4, 4);
-            }
-        }
     }
 
     public static unsafe byte[] SwapRB(byte[] data)

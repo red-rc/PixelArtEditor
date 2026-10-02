@@ -47,13 +47,13 @@
                     Height="200"
                     VerticalAlignment="Center"
                     RenderData="{Binding RenderData}"
-                    IsVisible="{Binding !IsLoading}"
                     FixedTileSize="20" />
 
                 <ProgressBar 
                     VerticalAlignment="Center" 
                     IsVisible="{Binding IsLoading}" 
                     IsIndeterminate="True" 
+                    Margin="0,170,0,0"
                     Width="190" 
                     Height="20" />
 

@@ -171,8 +171,7 @@ public class EditorVM : ReactiveObject
             PickedColor = Color.FromArgb(PickedColor.A, PickedColor.R, PickedColor.G, PickedColor.B);
         });
 
-        this.WhenAnyValue(vm => vm.ConfirmPanelVisible)
-            .ToProperty(this, vm => vm.IsTransforming, out _isTransforming);
+        this.WhenAnyValue(vm => vm.ConfirmPanelVisible).ToProperty(this, vm => vm.IsTransforming, out _isTransforming);
     }
 
     public void StartDragging(Point startMousePos)

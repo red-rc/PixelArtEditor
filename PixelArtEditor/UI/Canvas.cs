@@ -6,6 +6,7 @@ using Avalonia.Media.Imaging;
 using PixelArtEditor.AppServices;
 using PixelArtEditor.AppServices.Bitmap;
 using PixelArtEditor.AppServices.Canvas;
+using PixelArtEditor.AppServices.Settings;
 using PixelArtEditor.AppServices.Tools;
 using PixelArtEditor.AppServices.Tools.Implementations;
 using PixelArtEditor.Helpers;
@@ -25,7 +26,7 @@ namespace PixelArtEditor.UI;
 public class Canvas : Control, ICanvasContext
 {
     private static ISettingsManager Settings => Services.Settings;
-    private readonly Pen _gridPen = new(new SolidColorBrush(ColorHelper.HexToColor(Settings.GridColor)));
+    private Pen _gridPen = new(new SolidColorBrush(ColorHelper.HexToColor(Settings.GridColor)));
 
     public static readonly StyledProperty<PixelModel> ModelProperty =
         AvaloniaProperty.Register<Canvas, PixelModel>(nameof(Model));
@@ -107,14 +108,17 @@ public class Canvas : Control, ICanvasContext
 
     public Canvas()
     {
-        Settings.PropertyChanged += (_, e) =>
+        Settings.WhenAnyValue(x => x.InterpolationMode, x => x.InterpolateOnlyWhenScalingDown).Subscribe(_ =>
         {
-            if (e.PropertyName is nameof(Settings.InterpolationMode) or nameof(Settings.InterpolateOnlyWhenScalingDown))
-            {
-                UpdateInterpolationMode();
-                InvalidateVisual();
-            }
-        };
+            UpdateInterpolationMode();
+            InvalidateVisual();
+        });
+
+        Settings.WhenAnyValue(x => x.GridColor).Subscribe(_ =>
+        {
+            _gridPen = new(new SolidColorBrush(ColorHelper.HexToColor(Settings.GridColor)));
+            InvalidateVisual();
+        });
 
         this.WhenAnyValue(x => x.Model)
             .Where(m => m is not null)
@@ -169,8 +173,7 @@ public class Canvas : Control, ICanvasContext
             RenderCache[layer] = new LayerRenderCache
             {
                 RenderBitmapDirty = false,
-                PreviewDirty = true,
-                RenderRect = layer.IsEmpty ? null : new Rect(0, 0, layer.Width, layer.Height)
+                RenderRect = layer.IsEmpty ? null : new PixelRect(0, 0, layer.Width, layer.Height)
             };
 
             layer.PropertyChanged += OnLayerPropertyChanged;
@@ -192,7 +195,7 @@ public class Canvas : Control, ICanvasContext
             {
                 RenderCache[layer] = new LayerRenderCache()
                 {
-                    RenderRect = layer.IsEmpty ? null : new Rect(0, 0, layer.Width, layer.Height)
+                    RenderRect = layer.IsEmpty ? null : new PixelRect(0, 0, layer.Width, layer.Height)
                 };
 
                 layer.PropertyChanged += OnLayerPropertyChanged;
@@ -201,9 +204,7 @@ public class Canvas : Control, ICanvasContext
         if (e.OldItems is not null)
             foreach (LayerModel layer in e.OldItems)
             {
-                RenderCache[layer].PreviewCts?.Cancel();
                 RenderCache.Remove(layer);
-
                 layer.PropertyChanged -= OnLayerPropertyChanged;
             }
 
@@ -214,21 +215,12 @@ public class Canvas : Control, ICanvasContext
     {
         var layer = (LayerModel)sender!;
 
-        if (e.PropertyName == nameof(LayerModel.Opacity))
+        if (e.PropertyName is nameof(LayerModel.Data))
         {
             RenderCache[layer].RenderBitmapDirty = true;
-            RenderCache[layer].PreviewDirty = true;
-        }
-
-        if (e.PropertyName == nameof(LayerModel.Data))
-        {
-            RenderCache[layer].RenderBitmapDirty = true;
-            RenderCache[layer].DirtyRect = new Rect(0, 0, layer.Width, layer.Height);
-            RenderCache[layer].PreviewDirty = true;
-        }
-
-        if (e.PropertyName is nameof(LayerModel.Data) or nameof(LayerModel.Opacity))
+            RenderCache[layer].DirtyRect ??= new PixelRect(0, 0, layer.Width, layer.Height);
             _hoverPixelColor = null;
+        } 
 
         InvalidateVisual();
     }
@@ -269,39 +261,16 @@ public class Canvas : Control, ICanvasContext
 
     private void DrawBitmap(DrawingContext context, LayerModel layer, double offsetX, double offsetY)
     {
-        if (layer.RenderBitmap is null || !RenderCache.TryGetValue(layer, out var cache) || cache.RenderRect is null) return;
+        if (!RenderCache.TryGetValue(layer, out var cache) || cache.RenderRect is not PixelRect rect) return;
 
-        var srcRect = new Rect(
-            cache.RenderRect.Value.X, 
-            cache.RenderRect.Value.Y, 
-            cache.RenderRect.Value.Width, 
-            cache.RenderRect.Value.Height);
+        var srcX = (double)layer.RenderBitmap.PixelSize.Width / layer.Width;
+        var srcY = (double)layer.RenderBitmap.PixelSize.Height / layer.Height;
 
-        var dstRect = new Rect(
-            offsetX + cache.RenderRect.Value.X * Scale, 
-            offsetY + cache.RenderRect.Value.Y * Scale,
-            cache.RenderRect.Value.Width * Scale, 
-            cache.RenderRect.Value.Height * Scale);
+        var srcRect = new Rect(rect.X * srcX, rect.Y * srcY, rect.Right * srcX - rect.X * srcX, rect.Bottom * srcY - rect.Y * srcY);
+        var dstRect = new Rect(offsetX + rect.X * Scale, offsetY + rect.Y * Scale, rect.Width * Scale, rect.Height * Scale);
 
-        if (Scale < 1 && layer.PreviewBitmap is not null && cache.PreviewDirty == false)
-        {
-            var scaleX = (double)layer.PreviewBitmap.PixelSize.Width / layer.Width;
-            var scaleY = (double)layer.PreviewBitmap.PixelSize.Height / layer.Height;
-
-            srcRect = new Rect(
-                srcRect.X * scaleX,
-                srcRect.Y * scaleY,
-                srcRect.Width * scaleX,
-                srcRect.Height * scaleY);
-
-            using (context.PushOpacity(layer.Opacity))
-                context.DrawImage(layer.PreviewBitmap, srcRect, dstRect);
-        }
-        else
-        {
-            using (context.PushOpacity(layer.Opacity))
-                context.DrawImage(layer.RenderBitmap, srcRect, dstRect);
-        }
+        using (context.PushOpacity(layer.Opacity))
+            context.DrawImage(layer.RenderBitmap, srcRect, dstRect);
     }
 
     private void DrawHoverPixel(DrawingContext context, double offsetX, double offsetY)
@@ -313,7 +282,8 @@ public class Canvas : Control, ICanvasContext
             offsetY + HoverPixel.Value.Y * Scale,
             Scale, Scale);
 
-        _hoverPixelColor ??= CanvasHelper.GetHighlightColor(BitmapService.GetCompositePixelColor(LayerManager.Layers, HoverPixel.Value));
+        _hoverPixelColor
+            ??= CanvasHelper.GetHighlightColor(BitmapService.GetCompositePixelColor(LayerManager.Layers, HoverPixel.Value));
 
         if (_hoverPixelColor is Color color)
             context.DrawRectangle(new SolidColorBrush(color), null, rect);
@@ -355,19 +325,13 @@ public class Canvas : Control, ICanvasContext
         {
             if (!RenderCache.TryGetValue(layer, out var cache) || !layer.IsVisible || layer.IsEmpty) continue;
 
-            if (cache.RenderBitmapDirty && cache.DirtyRect is Rect rect)
+            if (cache.RenderBitmapDirty && cache.DirtyRect is PixelRect dirtyRect)
             {
-                BitmapService.UpdateBitmap(layer.RenderBitmap, layer.Data, rect);
+                BitmapService.UpdateBitmap(layer.RenderBitmap, layer.Data, dirtyRect);
 
                 cache.RenderBitmapDirty = false;
-                cache.PreviewDirty = true;
                 cache.DirtyRect = null;
             }
-
-            if (Scale < 1)
-                PreviewService.EnsurePreviewBitmap(this, layer, InvalidateVisual, bmpW, bmpH);
-            else if (layer.PreviewBitmap != null)
-                layer.PreviewBitmap = null;
         }
 
         context.DrawRectangle(new SolidColorBrush(Colors.Transparent), null, 

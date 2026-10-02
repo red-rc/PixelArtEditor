@@ -1,4 +1,3 @@
-using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using PixelArtEditor.AppServices.Serialization;
@@ -7,22 +6,50 @@ using PixelArtEditor.Models.Canvas;
 using PixelArtEditor.Models.Dock;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 
-namespace PixelArtEditor.AppServices;
+namespace PixelArtEditor.AppServices.Settings;
 
-public sealed class SettingsManager : ISettingsManager
+public sealed class SettingsManager : ReactiveObject, ISettingsManager
 {
     public static SettingsManager GetInstance { get; } = new();
 
     private SettingsManager() => SetDefaults();
 
-    public int GridMaxSize { get; set; }
-    public string GridColor { get; set; } = null!;
-    public bool EnableGrid { get; set; }
-    public bool EnableAutosave { get; set; }
-    public int AutosaveFrequency { get; set; }
+    private int _gridMaxSize;
+    public int GridMaxSize
+    {
+        get => _gridMaxSize;
+        set => this.RaiseAndSetIfChanged(ref _gridMaxSize, value);
+    }
+
+    private string _gridColor = null!;
+    public string GridColor
+    {
+        get => _gridColor;
+        set => this.RaiseAndSetIfChanged(ref _gridColor, value);
+    }
+
+    private bool _enableGrid;
+    public bool EnableGrid
+    {
+        get => _enableGrid;
+        set => this.RaiseAndSetIfChanged(ref _enableGrid, value);
+    }
+
+    private bool _enableAutosave;
+    public bool EnableAutosave
+    {
+        get => _enableAutosave;
+        set => this.RaiseAndSetIfChanged(ref _enableAutosave, value);
+    }
+
+    private int _autosaveFrequency;
+    public int AutosaveFrequency
+    {
+        get => _autosaveFrequency;
+        set => this.RaiseAndSetIfChanged(ref _autosaveFrequency, value);
+    }
 
     private string _language = null!;
     public string Language
@@ -31,10 +58,8 @@ public sealed class SettingsManager : ISettingsManager
         set
         {
             if (_language == value) return;
-            _language = value;
             LocalizationService.SetLanguage(value);
-
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Language)));
+            this.RaiseAndSetIfChanged(ref _language, value);
         }
     }
 
@@ -42,48 +67,28 @@ public sealed class SettingsManager : ISettingsManager
     public bool ScaleCheckerboardWithCanvas
     {
         get => _scaleCheckerboardWithCanvas;
-        set
-        {
-            if (_scaleCheckerboardWithCanvas == value) return;
-            _scaleCheckerboardWithCanvas = value;
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ScaleCheckerboardWithCanvas)));
-        }
+        set => this.RaiseAndSetIfChanged(ref _scaleCheckerboardWithCanvas, value);
     }
 
     private CheckerboardScale _checkerboardScale;
     public CheckerboardScale CheckerboardScale
     {
         get => _checkerboardScale;
-        set
-        {
-            if (_checkerboardScale == value) return;
-            _checkerboardScale = value;
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CheckerboardScale)));
-        }
+        set => this.RaiseAndSetIfChanged(ref _checkerboardScale, value);
     }
 
     private BitmapInterpolationMode _interpolationMode;
     public BitmapInterpolationMode InterpolationMode
     {
         get => _interpolationMode;
-        set
-        {
-            if (_interpolationMode == value) return;
-            _interpolationMode = value;
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(InterpolationMode)));
-        }
+        set => this.RaiseAndSetIfChanged(ref _interpolationMode, value);
     }
 
     private bool _interpolateOnlyWhenScalingDown;
     public bool InterpolateOnlyWhenScalingDown
     {
         get => _interpolateOnlyWhenScalingDown;
-        set
-        {
-            if (_interpolateOnlyWhenScalingDown == value) return;
-            _interpolateOnlyWhenScalingDown = value;
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(InterpolateOnlyWhenScalingDown)));
-        }
+        set => this.RaiseAndSetIfChanged(ref _interpolateOnlyWhenScalingDown, value);
     }
 
     private string _accentColor = null!;
@@ -93,11 +98,11 @@ public sealed class SettingsManager : ISettingsManager
         set
         {
             if (_accentColor == value) return;
-            _accentColor = value;
+
             foreach (var theme in ResourceManager.ThemeOptions)
                 theme.ChangeAccentColor(value);
-                
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AccentColor)));
+
+            this.RaiseAndSetIfChanged(ref _accentColor, value);
         }
     }
 
@@ -108,10 +113,8 @@ public sealed class SettingsManager : ISettingsManager
         set
         {
             if (_theme == value) return;
-            _theme = value;
             Array.Find(ResourceManager.ThemeOptions, x => x.Name == value)?.Apply();
-
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Theme)));
+            this.RaiseAndSetIfChanged(ref _theme, value);
         }
     }
 
@@ -119,15 +122,28 @@ public sealed class SettingsManager : ISettingsManager
     public List<PanelLayout> Layout
     {
         get => _layout;
-        set
-        {
-            if (_layout == value) return;
-            _layout = value;
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Layout)));
-        }
+        set => this.RaiseAndSetIfChanged(ref _layout, value);
     }
 
-    public event PropertyChangedEventHandler? PropertyChanged;
+    public SettingsData GetSnapshot()
+    {
+        return new SettingsData
+        {
+            GridMaxSize = GridMaxSize,
+            GridColor = GridColor,
+            EnableGrid = EnableGrid,
+            EnableAutosave = EnableAutosave,
+            AutosaveFrequency = AutosaveFrequency,
+            Language = Language,
+            ScaleCheckerboardWithCanvas = ScaleCheckerboardWithCanvas,
+            CheckerboardScale = CheckerboardScale,
+            InterpolateOnlyWhenScalingDown = InterpolateOnlyWhenScalingDown,
+            InterpolationMode = InterpolationMode,
+            AccentColor = AccentColor,
+            Theme = Theme,
+            Layout = Layout
+        };
+    }
 
     public void Load()
     {
@@ -174,22 +190,9 @@ public sealed class SettingsManager : ISettingsManager
         Layout = ResourceManager.DefaultLayout;
     }
 
-    public void Save() => JsonService.Save(new SettingsData
-    {
-        GridMaxSize = GridMaxSize,
-        GridColor = GridColor,
-        EnableGrid = EnableGrid,
-        EnableAutosave = EnableAutosave,
-        AutosaveFrequency = AutosaveFrequency,
-        Language = Language,
-        ScaleCheckerboardWithCanvas = ScaleCheckerboardWithCanvas,
-        CheckerboardScale = CheckerboardScale,
-        InterpolateOnlyWhenScalingDown = InterpolateOnlyWhenScalingDown,
-        InterpolationMode = InterpolationMode,
-        AccentColor = AccentColor,
-        Theme = Theme,
-        Layout = Layout
-    }, ResourceManager.SettingsPath, AppJsonContext.Default.SettingsData);
+    public void Save()
+        => JsonService.Save(GetSnapshot(), ResourceManager.SettingsPath, AppJsonContext.Default.SettingsData);
+
     public void Reset()
     {
         SetDefaults();

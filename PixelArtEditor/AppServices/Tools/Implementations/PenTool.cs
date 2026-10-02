@@ -32,12 +32,12 @@ public class PenTool : ITool
 
         var pixels = LineHelper.GetLine(from, current);
 
-        var dirtyRect = new Rect(ctx.HoverPixel.Value.X, ctx.HoverPixel.Value.Y, 1, 1);
+        var dirtyRect = new PixelRect(ctx.HoverPixel.Value.X, ctx.HoverPixel.Value.Y, 1, 1);
 
         foreach (var pixel in pixels)
         {
-            BitmapService.BrushSquare(layer.Data, layer.Width, new Rect(pixel.X, pixel.Y, 1, 1), ctx.PickedColor);
-            dirtyRect = dirtyRect.Union(new Rect(pixel.X, pixel.Y, 1, 1));
+            BitmapService.BrushSquare(layer.Data, layer.Width, new PixelRect(pixel.X, pixel.Y, 1, 1), ctx.PickedColor);
+            dirtyRect = dirtyRect.Union(new PixelRect(pixel.X, pixel.Y, 1, 1));
         }
 
         _lastPixel = current;
