@@ -1,24 +1,29 @@
-﻿using Avalonia;
+using Avalonia;
 using PixelArtEditor.AppServices.Bitmap;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 
 namespace PixelArtEditor.Models.Canvas;
 
-public class LayerModel(int width, int height, byte[] pixelData, string name, bool isEmpty = false) : INotifyPropertyChanged
+public class LayerModel(int width, int height, byte[] data, string name, bool isEmpty = false) : ReactiveObject
 {
-    public int Width { get; set; } = width;
-    public int Height { get; set; } = height;
+    private int _width = width;
+    public int Width
+    {
+        get => _width;
+        set => this.RaiseAndSetIfChanged(ref _width, value);
+    }
 
-    private byte[] _Data = pixelData;
+    private int _height = height;
+    public int Height
+    {
+        get => _height;
+        set => this.RaiseAndSetIfChanged(ref _height, value);
+    }
+
+    private byte[] _data = data;
     public byte[] Data
     {
-        get => _Data;
-        set
-        {
-            _Data = value;
-            OnPropertyChanged();
-        }
+        get => _data;
+        set => this.RaiseAndSetIfChanged(ref _data, value);
     }
 
     private TiledBitmap? _tiles;
@@ -35,40 +40,64 @@ public class LayerModel(int width, int height, byte[] pixelData, string name, bo
             IsEmpty = false;
             return _tiles;
         }
-        set => _tiles = value;
+        set => this.RaiseAndSetIfChanged(ref _tiles, value);
     }
 
-    public string Name { get; set; } = name;
-    public PixelRect? ThumbDirtyRect { get; set; }
-    public bool IsEmpty = isEmpty;
+    private string _name = name;
+    public string Name
+    {
+        get => _name;
+        set => this.RaiseAndSetIfChanged(ref _name, value);
+    }
+
+    private PixelRect? _thumbDirtyRect;
+    public PixelRect? ThumbDirtyRect
+    {
+        get => _thumbDirtyRect;
+        set => this.RaiseAndSetIfChanged(ref _thumbDirtyRect, value);
+    }
+
+    private bool _isEmpty = isEmpty;
+    public bool IsEmpty
+    {
+        get => _isEmpty;
+        set => this.RaiseAndSetIfChanged(ref _isEmpty, value);
+    }
 
     private bool _isVisible = true;
     public bool IsVisible
     {
         get => _isVisible;
-        set 
-        { 
-            _isVisible = value; 
-            OnPropertyChanged(); 
-        }
+        set => this.RaiseAndSetIfChanged(ref _isVisible, value);
     }
 
     private float _opacity = 1.0f;
     public float Opacity
     {
         get => _opacity;
-        set 
-        { 
-            _opacity = value;
-            OnPropertyChanged(); 
-        }
+        set => this.RaiseAndSetIfChanged(ref _opacity, value);
     }
 
-    public bool IsLocked { get; set; } = false;
+    private bool _isLocked = false;
+    public bool IsLocked 
+    {
+        get => _isLocked;
+        set => this.RaiseAndSetIfChanged(ref _isLocked, value);
+    }
 
-    public event PropertyChangedEventHandler? PropertyChanged;
-    private void OnPropertyChanged([CallerMemberName] string? name = null)
-        => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+    public void Resize(int newWidth, int newHeight, byte[] newData)
+    {
+        _width = newWidth;
+        _height = newHeight;
+        _data = newData;
+        _thumbDirtyRect = null;
 
-    public void NotifyPixelDataChanged() => OnPropertyChanged(nameof(Data));
+        _tiles?.Dispose();
+        _tiles = new TiledBitmap(newWidth, newHeight);
+
+        this.RaisePropertyChanged(nameof(Width));
+        this.RaisePropertyChanged(nameof(Height));
+        this.RaisePropertyChanged(nameof(Tiles));
+        this.RaisePropertyChanged(nameof(Data));
+    }
 }

@@ -52,14 +52,10 @@ namespace PixelArtEditor.Controls.Editor
 
             if (canvasCtx is not null && activeLayer is not null)
             {
-                ToolManager.InvalidatePixelData(
-                    canvasCtx, 
-                    activeLayer, 
-                    new PixelRect(0, 0, activeLayer.Width, activeLayer.Height), 
-                    false);
+                activeLayer.Data = BitmapService.GetCompositePixelData(selLayers, activeLayer.Width, activeLayer.Height);
 
-                activeLayer.Data =
-                    BitmapService.GetCompositePixelData(selLayers, activeLayer.Width, activeLayer.Height);
+                ToolManager.InvalidatePixelData(canvasCtx, activeLayer, 
+                    new PixelRect(0, 0, activeLayer.Width, activeLayer.Height));
 
                 foreach (var item in selLayers)
                     if (item != activeLayer)

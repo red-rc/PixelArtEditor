@@ -3,6 +3,8 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
+using DynamicData;
+using DynamicData.Binding;
 using PixelArtEditor.AppServices;
 using PixelArtEditor.AppServices.Bitmap;
 using PixelArtEditor.AppServices.Canvas;
@@ -15,10 +17,9 @@ using PixelArtEditor.Models.Tools;
 using PixelArtEditor.ViewModels;
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.ComponentModel;
 using System.Linq;
 using System.Numerics;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 
 namespace PixelArtEditor.UI;
@@ -103,8 +104,13 @@ public class Canvas : Control, ICanvasContext
         set => SetValue(PickedColorProperty, value);
     }
 
+    public Color DrawColor => Model is null
+        ? PickedColor
+        : ColorResolver.Resolve(PickedColor, Model.ColorMode, Model.Palette, Model.BitDepth);
+
     public LayerManager LayerManager { get; private set; } = null!;
     public Dictionary<LayerModel, LayerRenderCache> RenderCache { get; } = [];
+    private CompositeDisposable? _layersSubscription;
 
     public Canvas()
     {
@@ -121,11 +127,15 @@ public class Canvas : Control, ICanvasContext
         });
 
         this.WhenAnyValue(x => x.Model)
-            .Where(m => m is not null)
-            .Select(m => m.WhenAnyValue(x => x.Width, x => x.Height, x => x.Data))
+            .Where(model => model is not null)
+            .Select(model => model.WhenAnyValue(x => x.Width, x => x.Height))
             .Switch()
-            .Subscribe(_ => OnModelChanged());
+            .Subscribe(_ => {
+                LayerManager.ResizeLayers(Model.Width, Model.Height);
+                InvalidateVisual();
+            });
 
+        this.GetObservable(SelectedToolProperty).Subscribe(newTool => _currentTool = ToolManager.Get(newTool));
         this.GetObservable(OffsetProperty).Subscribe(_ => InvalidateVisual());
         this.GetObservable(ScaleProperty).Subscribe(_ =>
         {
@@ -144,83 +154,30 @@ public class Canvas : Control, ICanvasContext
             RenderOptions.SetBitmapInterpolationMode(this, mode);
     }
 
-    protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
-    {
-        base.OnPropertyChanged(change);
-
-        if (change.Property == SelectedToolProperty)
-            _currentTool = ToolManager.Get((ToolType)change.NewValue!);
-    }
-
-    private void OnModelChanged()
-    {
-        if (Model is null || LayerManager.Layers.Count == 0) return;
-        LayerManager.ResizeLayers(Model.Width, Model.Height);
-        InvalidateVisual();
-    }
-
     public void AttachLayerManager(LayerManager layerManager)
     {
-        LayerManager?.Layers.CollectionChanged -= OnLayersChanged;
-
+        _layersSubscription?.Dispose();
         RenderCache.Clear();
-
         LayerManager = layerManager;
-        LayerManager.Layers.CollectionChanged += OnLayersChanged;
 
-        foreach (var layer in LayerManager.Layers)
-        {
-            RenderCache[layer] = new LayerRenderCache
-            {
-                RenderBitmapDirty = false
-            };
+        var changeSet = LayerManager.Layers.ToObservableChangeSet();
 
-            layer.PropertyChanged += OnLayerPropertyChanged;
-        }
-
-        InvalidateVisual();
-    }
-
-    public void OnLayersChanged(object? sender, NotifyCollectionChangedEventArgs e)
-    {
-        if (e.Action == NotifyCollectionChangedAction.Move)
-        {
-            InvalidateVisual();
-            return;
-        }
-
-        if (e.NewItems is not null)
-            foreach (LayerModel layer in e.NewItems)
-            {
-                RenderCache[layer] = new LayerRenderCache
+        _layersSubscription = new CompositeDisposable(
+            changeSet
+                .OnItemAdded(layer => RenderCache[layer] = new LayerRenderCache { RenderBitmapDirty = false })
+                .OnItemRemoved(layer => RenderCache.Remove(layer))
+                .Subscribe(_ => InvalidateVisual()),
+            changeSet
+                .MergeMany(layer => layer.WhenAnyValue(x => x.ThumbDirtyRect).Where(rect => rect is not null))
+                .Subscribe(_ =>
                 {
-                    RenderBitmapDirty = false
-                };
-                layer.PropertyChanged += OnLayerPropertyChanged;
-            }
-
-        if (e.OldItems is not null)
-            foreach (LayerModel layer in e.OldItems)
-            {
-                RenderCache.Remove(layer);
-                layer.PropertyChanged -= OnLayerPropertyChanged;
-            }
-
-        InvalidateVisual();
-    }
-
-    private void OnLayerPropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        var layer = (LayerModel)sender!;
-
-        if (e.PropertyName is nameof(LayerModel.Data))
-        {
-            RenderCache[layer].RenderBitmapDirty = true;
-            RenderCache[layer].DirtyRect ??= new PixelRect(0, 0, layer.Width, layer.Height);
-            _hoverPixelColor = null;
-        } 
-
-        InvalidateVisual();
+                    _hoverPixelColor = null;
+                    InvalidateVisual();
+                }),
+            changeSet
+                .MergeMany(layer => layer.WhenAnyValue(x => x.IsVisible, x => x.Opacity))
+                .Subscribe(_ => InvalidateVisual())
+        );
     }
 
     protected override void OnPointerPressed(PointerPressedEventArgs e)

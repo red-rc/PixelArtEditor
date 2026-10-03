@@ -124,12 +124,7 @@ public class EditorVM : ReactiveObject
     public Color PickedColor
     {
         get => _pickedColor;
-        set
-        {
-            if (_model?.ColorMode is not ColorMode cm) return;
-            var newValue = ColorResolver.Resolve(value, cm, _model?.Palette, _model?.BitDepth);
-            this.RaiseAndSetIfChanged(ref _pickedColor, newValue);
-        }
+        set => this.RaiseAndSetIfChanged(ref _pickedColor, value);
     }
 
     public string? CoordinatesText { get; set; }
@@ -164,11 +159,6 @@ public class EditorVM : ReactiveObject
     {
         _model = model;
         ConfirmPanelVisible = false;
-
-        this.WhenAnyValue(x => x.Model.ColorMode).Subscribe(_ => 
-        {
-            PickedColor = Color.FromArgb(PickedColor.A, PickedColor.R, PickedColor.G, PickedColor.B);
-        });
 
         this.WhenAnyValue(vm => vm.ConfirmPanelVisible).ToProperty(this, vm => vm.IsTransforming, out _isTransforming);
     }

@@ -12,9 +12,10 @@ using System.Linq;
 
 namespace PixelArtEditor.AppServices.EditorUI.LayerPanel;
 
-public class LayerDnDManager(ListBox layerListBox, Avalonia.Controls.Canvas floatingHost, Border countBadge, TextBlock countBadgeText)
+public class LayerDnDManager(ListBox layerListBox, Avalonia.Controls.Canvas floatingHost, 
+    Border countBadge, TextBlock countBadgeText, LayerManager? layerManager)
 {
-    public LayerManager? LayerManager { get; set; }
+    public LayerManager? LayerManager = layerManager;
 
     private readonly ListBox LayerListBox = layerListBox;
     private readonly Avalonia.Controls.Canvas FloatingHost = floatingHost;

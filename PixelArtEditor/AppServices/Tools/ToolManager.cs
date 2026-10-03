@@ -20,16 +20,12 @@ public static class ToolManager
 
     public static ITool Get(ToolType type) => _tools[type];
 
-    public static void InvalidatePixelData(ICanvasContext ctx, LayerModel layer, PixelRect dirtyRect, bool notify = true)
+    public static void InvalidatePixelData(ICanvasContext ctx, LayerModel layer, PixelRect dirtyRect)
     {
         var cache = ctx.RenderCache[layer];
 
         cache.RenderBitmapDirty = true;
         cache.DirtyRect = cache.DirtyRect is PixelRect existing ? existing.Union(dirtyRect) : dirtyRect;
-
         layer.ThumbDirtyRect = layer.ThumbDirtyRect is PixelRect rect ? rect.Union(dirtyRect) : dirtyRect;
-
-        if (notify)
-            layer.NotifyPixelDataChanged();
     }
 }

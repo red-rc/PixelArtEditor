@@ -36,7 +36,7 @@ public class PenTool : ITool
 
         foreach (var pixel in pixels)
         {
-            BitmapService.BrushSquare(layer.Data, layer.Width, new PixelRect(pixel.X, pixel.Y, 1, 1), ctx.PickedColor);
+            BitmapService.BrushSquare(layer.Data, layer.Width, new PixelRect(pixel.X, pixel.Y, 1, 1), ctx.DrawColor);
             dirtyRect = dirtyRect.Union(new PixelRect(pixel.X, pixel.Y, 1, 1));
         }
 

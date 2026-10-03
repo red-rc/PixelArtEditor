@@ -1,15 +1,16 @@
-﻿using Avalonia;
+using Avalonia;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using PixelArtEditor.AppServices;
 using PixelArtEditor.AppServices.Bitmap;
 using PixelArtEditor.Models.Canvas;
 using System;
-using System.ComponentModel;
+using System.Reactive;
+using System.Reactive.Linq;
 
 namespace PixelArtEditor.Models.LayerPanel;
 
-public class LayerItem: ReactiveObject
+public class LayerItem: ReactiveObject, IDisposable
 {
     public LayerModel Layer { get; }
 
@@ -118,7 +119,14 @@ public class LayerItem: ReactiveObject
         _hideShowTag = GetHideShowTag();
         _lockUnlockTag = GetLockUnlockTag();
 
-        Layer.PropertyChanged += OnLayerPropertyChanged;
+        Observable.Merge(
+            Layer.WhenAnyValue(x => x.ThumbDirtyRect).Where(rect => rect is not null).Select(_ => Unit.Default),
+            Layer.WhenAnyValue(x => x.Data).Skip(1).Select(_ => Unit.Default))
+            .Subscribe(_ =>
+        {
+            UpdateThumb();
+            RenderData.RaisePropertyChanged(nameof(PreviewData.Bitmap));
+        });
     }
 
     private WriteableBitmap CreateThumb()
@@ -154,15 +162,10 @@ public class LayerItem: ReactiveObject
         RenderData.Bitmap = bitmap;
     }
 
-    private void OnLayerPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    public void Dispose()
     {
-        if (e.PropertyName == nameof(LayerModel.Data))
-        {
-            UpdateThumb();
-            RenderData.RaisePropertyChanged(nameof(PreviewData.Bitmap));
-        }
+        RenderData.Bitmap?.Dispose();
+        RenderData.Bitmap = null;
+        GC.SuppressFinalize(this);
     }
-
-    public void Unsubscribe()
-        => Layer.PropertyChanged -= OnLayerPropertyChanged;
 }

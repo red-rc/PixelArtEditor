@@ -21,6 +21,7 @@
     <PackageReference Include="Avalonia.Themes.Simple" />
     <PackageReference Include="Avalonia.Markup.Xaml.Loader" />
     <PackageReference Include="AvaloniaUI.DiagnosticsSupport" />
+    <PackageReference Include="DynamicData" />
     <PackageReference Include="HeyRed.ImageSharp.Heif" />
     <PackageReference Include="fo-dicom" />
     <PackageReference Include="PDFtoImage" />

@@ -238,6 +238,9 @@ public static class BitmapService
     {
         var result = new WriteableBitmap(new PixelSize(dstW, dstH), new Vector(96, 96), PixelFormat.Bgra8888, AlphaFormat.Unpremul);
 
+        if (src == null || src.Length < (long)srcW * srcH * 4 || srcW <= 0 || srcH <= 0 || dstW <= 0 || dstH <= 0)
+            return result;
+
         var columnBounds = new int[dstW + 1];
         for (var column = 0; column <= dstW; column++)
             columnBounds[column] = (int)((long)column * srcW / dstW);
@@ -304,6 +307,9 @@ public static class BitmapService
 
     public static unsafe void DownscaleBoxRegion(byte[] src, int srcW, int srcH, WriteableBitmap dst, PixelRect dstRegion)
     {
+        if (src == null || src.Length < (long)srcW * srcH * 4 || srcW <= 0 || srcH <= 0)
+            return;
+
         var dstW = dst.PixelSize.Width;
         var dstH = dst.PixelSize.Height;
 

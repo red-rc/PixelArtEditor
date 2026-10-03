@@ -83,6 +83,12 @@ public partial class LayerPanel : UserControl, ILayerPanelContext
         LayerListBox.AddHandler(PointerMovedEvent, OnItemPointerMoved, RoutingStrategies.Tunnel);
         LayerListBox.AddHandler(PointerReleasedEvent, OnItemPointerReleased, RoutingStrategies.Tunnel);
         LayerListBox.AddHandler(PointerPressedEvent, OnLockButtonPointerPressed, RoutingStrategies.Tunnel);
+
+        this.GetObservable(LayerManagerProperty).Subscribe(_ =>
+        {
+            _vm?.SetLayerManager(LayerManager);
+            DndManager?.LayerManager = LayerManager;
+        });
     }
 
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
@@ -93,27 +99,13 @@ public partial class LayerPanel : UserControl, ILayerPanelContext
 
         if (_vm is null) return;
         LayerCommands = new LayerCmdList(_vm, LayerListBox, topLevel);
-        DndManager = new LayerDnDManager(LayerListBox, FloatingHost, CountBadge, CountBadgeText)
-        {
-            LayerManager = LayerManager
-        };
+        DndManager = new LayerDnDManager(LayerListBox, FloatingHost, CountBadge, CountBadgeText, LayerManager);
     }
 
     private void LayerListBox_PointerPressed(object? sender, PointerPressedEventArgs e) => LayerListBox.SelectedItems?.Clear();
 
     private void LayerListBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
         => _vm?.SelLayerItems = new ObservableCollection<LayerItem>(LayerListBox.SelectedItems?.OfType<LayerItem>() ?? []);
-
-    protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
-    {
-        base.OnPropertyChanged(change);
-
-        if (change.Property == LayerManagerProperty)
-        {
-            _vm?.SetLayerManager(LayerManager);
-            DndManager?.LayerManager = LayerManager;
-        }
-    }
 
     private void OnItemPointerPressed(object? sender, PointerPressedEventArgs e)
     {

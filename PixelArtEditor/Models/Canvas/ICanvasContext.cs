@@ -11,6 +11,7 @@ public interface ICanvasContext
     PixelModel Model { get; }
     PixelPoint? HoverPixel { get; set; }
     Color PickedColor { get; set; }
+    Color DrawColor { get; }
 
     LayerManager LayerManager { get; }
     Dictionary<LayerModel, LayerRenderCache> RenderCache { get; }
