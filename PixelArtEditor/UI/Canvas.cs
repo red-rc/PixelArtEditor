@@ -172,8 +172,7 @@ public class Canvas : Control, ICanvasContext
         {
             RenderCache[layer] = new LayerRenderCache
             {
-                RenderBitmapDirty = false,
-                RenderRect = layer.IsEmpty ? null : new PixelRect(0, 0, layer.Width, layer.Height)
+                RenderBitmapDirty = false
             };
 
             layer.PropertyChanged += OnLayerPropertyChanged;
@@ -193,11 +192,10 @@ public class Canvas : Control, ICanvasContext
         if (e.NewItems is not null)
             foreach (LayerModel layer in e.NewItems)
             {
-                RenderCache[layer] = new LayerRenderCache()
+                RenderCache[layer] = new LayerRenderCache
                 {
-                    RenderRect = layer.IsEmpty ? null : new PixelRect(0, 0, layer.Width, layer.Height)
+                    RenderBitmapDirty = false
                 };
-
                 layer.PropertyChanged += OnLayerPropertyChanged;
             }
 
@@ -259,20 +257,6 @@ public class Canvas : Control, ICanvasContext
         _currentTool.OnPointerReleased(this);
     }
 
-    private void DrawBitmap(DrawingContext context, LayerModel layer, double offsetX, double offsetY)
-    {
-        if (!RenderCache.TryGetValue(layer, out var cache) || cache.RenderRect is not PixelRect rect) return;
-
-        var srcX = (double)layer.RenderBitmap.PixelSize.Width / layer.Width;
-        var srcY = (double)layer.RenderBitmap.PixelSize.Height / layer.Height;
-
-        var srcRect = new Rect(rect.X * srcX, rect.Y * srcY, rect.Right * srcX - rect.X * srcX, rect.Bottom * srcY - rect.Y * srcY);
-        var dstRect = new Rect(offsetX + rect.X * Scale, offsetY + rect.Y * Scale, rect.Width * Scale, rect.Height * Scale);
-
-        using (context.PushOpacity(layer.Opacity))
-            context.DrawImage(layer.RenderBitmap, srcRect, dstRect);
-    }
-
     private void DrawHoverPixel(DrawingContext context, double offsetX, double offsetY)
     {
         if (HoverPixel is null) return;
@@ -302,14 +286,14 @@ public class Canvas : Control, ICanvasContext
         {
             for (var x = startX; x <= endX; x++)
             {
-                var xPos = offsetX + x * Scale;
-                context.DrawLine(_gridPen, new Point(xPos, offsetY), new Point(xPos, offsetY + bmpH));
+                var posX = offsetX + x * Scale;
+                context.DrawLine(_gridPen, new Point(posX, offsetY), new Point(posX, offsetY + bmpH));
             }
 
             for (var y = startY; y <= endY; y++)
             {
-                var yPos = offsetY + y * Scale;
-                context.DrawLine(_gridPen, new Point(offsetX, yPos), new Point(offsetX + bmpW, yPos));
+                var posY = offsetY + y * Scale;
+                context.DrawLine(_gridPen, new Point(offsetX, posY), new Point(offsetX + bmpW, posY));
             }
         }
     }
@@ -323,11 +307,11 @@ public class Canvas : Control, ICanvasContext
 
         foreach (var layer in LayerManager.Layers.Reverse())
         {
-            if (!RenderCache.TryGetValue(layer, out var cache) || !layer.IsVisible || layer.IsEmpty) continue;
+            if (!RenderCache.TryGetValue(layer, out var cache) || !layer.IsVisible) continue;
 
             if (cache.RenderBitmapDirty && cache.DirtyRect is PixelRect dirtyRect)
             {
-                BitmapService.UpdateBitmap(layer.RenderBitmap, layer.Data, dirtyRect);
+                layer.Tiles.Update(layer.Data, dirtyRect);
 
                 cache.RenderBitmapDirty = false;
                 cache.DirtyRect = null;
@@ -338,8 +322,8 @@ public class Canvas : Control, ICanvasContext
             new Rect(offsetX, offsetY, Model.Width * Scale, Model.Height * Scale));
 
         foreach (var layer in LayerManager.Layers.Reverse())
-            if (layer.IsVisible && !layer.IsEmpty)
-                DrawBitmap(context, layer, offsetX, offsetY);
+            if (layer.IsVisible)
+                layer.Tiles.Draw(context, offsetX, offsetY, Scale, new Rect(Bounds.Size), layer.Opacity);
 
         if (Scale >= 1)
         {

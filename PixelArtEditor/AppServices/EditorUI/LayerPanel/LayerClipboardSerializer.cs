@@ -1,5 +1,6 @@
-﻿using Avalonia.Input;
+using Avalonia.Input;
 using PixelArtEditor.Models.Canvas;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -11,7 +12,11 @@ public static class LayerClipboardSerializer
 
     public static byte[] Serialize(List<LayerModel> layers)
     {
-        using var ms = new MemoryStream();
+        var capacity = 4;
+        foreach (var layer in layers)
+            capacity += 4 + 4 + 1 + System.Text.Encoding.UTF8.GetByteCount(layer.Name) + 4 + 3 + 4 + layer.Data.Length;
+
+        using var ms = new MemoryStream(capacity);
         using var w = new BinaryWriter(ms);
 
         w.Write(layers.Count);
@@ -52,7 +57,8 @@ public static class LayerClipboardSerializer
                 var isLocked = r.ReadBoolean();
                 var isEmpty = r.ReadBoolean();
                 var dataLen = r.ReadInt32();
-                var pixelData = r.ReadBytes(dataLen);
+                var pixelData = new byte[dataLen];
+                r.Read(pixelData.AsSpan());
 
                 result.Add(new LayerModel(width, height, pixelData, name, isEmpty)
                 {

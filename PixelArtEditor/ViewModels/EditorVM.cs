@@ -146,8 +146,7 @@ public class EditorVM : ReactiveObject
             _model.Width,
             _model.Height,
             _model.Data,
-            _model.Name ?? $"{LocalizationService.Get("Layer")} {LayerManager.Layers.Count + 1}",
-            false);
+            _model.Name ?? $"{LocalizationService.Get("Layer")} {LayerManager.Layers.Count + 1}");
 
         canvas.AttachLayerManager(LayerManager);
 

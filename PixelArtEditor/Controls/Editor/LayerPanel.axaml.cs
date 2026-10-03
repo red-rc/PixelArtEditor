@@ -196,9 +196,9 @@ public partial class LayerPanel : UserControl, ILayerPanelContext
         DndManager.AutoScrollIfNeeded(e);
         var target = DndManager.GetTargetIndex(e);
 
-        if (target != DndManager.TargetIndex)
+        if (target != DndManager.TargetIdx)
         {
-            DndManager.TargetIndex = target;
+            DndManager.TargetIdx = target;
             DndManager.AnimateItems();
         }
 
@@ -220,8 +220,8 @@ public partial class LayerPanel : UserControl, ILayerPanelContext
         _dragging = false;
         DndManager.ResetItemsTransform();
 
-        if (DndManager.TargetIndex.HasValue && DndManager.DraggedItems.Count > 0 && LayerManager is not null)
-            DndManager.MoveGroupTo(DndManager.TargetIndex.Value);
+        if (DndManager.TargetIdx.HasValue && DndManager.DraggedItems.Count > 0 && LayerManager is not null)
+            DndManager.MoveGroupTo(DndManager.TargetIdx.Value);
 
         DndManager.CleanupDrag();
     }

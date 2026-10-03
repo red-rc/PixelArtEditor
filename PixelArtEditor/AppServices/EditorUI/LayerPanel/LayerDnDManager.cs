@@ -22,7 +22,7 @@ public class LayerDnDManager(ListBox layerListBox, Avalonia.Controls.Canvas floa
     private readonly TextBlock CountBadgeText = countBadgeText;
 
     public int ItemHeight { get; set; }
-    public int? TargetIndex { get; set; }
+    public int? TargetIdx { get; set; }
 
     public List<ListBoxItem> DraggedItems { get; set; } = [];
     private ScrollViewer? _scrollViewer;
@@ -61,9 +61,9 @@ public class LayerDnDManager(ListBox layerListBox, Avalonia.Controls.Canvas floa
     {
         if (DraggedItems.Count <= 3) return;
 
-        var firstDraggedIndex = LayerListBox.Items.IndexOf(DraggedLayerItems.FirstOrDefault());
+        var firstDraggedIdx = LayerListBox.Items.IndexOf(DraggedLayerItems.FirstOrDefault());
 
-        for (var i = firstDraggedIndex + 1; i < LayerListBox.ItemCount; i++)
+        for (var i = firstDraggedIdx + 1; i < LayerListBox.ItemCount; i++)
         {
             if (LayerListBox.Items[i] is not LayerItem item || DraggedLayerItems.Any(li => li.Layer == item.Layer)) continue;
 
@@ -99,46 +99,46 @@ public class LayerDnDManager(ListBox layerListBox, Avalonia.Controls.Canvas floa
 
         var baseGap = DraggedItems.Count > 3 ? (DraggedItems.Count - 1) * ItemHeight : 0;
 
-        var sourceNonSelectedIndex = 0;
+        var srcNonSelectedIdx = 0;
         foreach (var layer in LayerManager!.Layers)
         {
             if (DraggedLayerItems.Any(li => li.Layer == layer)) break;
-            sourceNonSelectedIndex++;
+            srcNonSelectedIdx++;
         }
 
-        var nonSelectedIndex = 0;
+        var nonSelectedIdx = 0;
         for (var i = 0; i < LayerListBox.ItemCount; i++)
         {
             if (LayerListBox.Items[i] is not LayerItem item || DraggedItems.Any(d => d.DataContext == item)) continue;
 
             var itemTop = i * ItemHeight;
-            if (nonSelectedIndex >= sourceNonSelectedIndex)
+            if (nonSelectedIdx >= srcNonSelectedIdx)
                 itemTop -= baseGap;
 
             if (y < itemTop + ItemHeight / 2.0)
-                return nonSelectedIndex;
+                return nonSelectedIdx;
 
-            nonSelectedIndex++;
+            nonSelectedIdx++;
         }
 
-        return nonSelectedIndex;
+        return nonSelectedIdx;
     }
 
     public void AnimateItems()
     {
-        if (TargetIndex is null) return;
+        if (TargetIdx is null) return;
 
         var stackCount = DraggedItems.Count > 3 ? 1 : DraggedItems.Count;
         var baseGap = DraggedItems.Count > 3 ? (DraggedItems.Count - 1) * ItemHeight : 0;
 
-        var sourceNonSelectedIndex = 0;
+        var srcNonSelectedIdx = 0;
         foreach (var layer in LayerManager!.Layers)
         {
             if (DraggedLayerItems.Any(li => li.Layer == layer)) break;
-            sourceNonSelectedIndex++;
+            srcNonSelectedIdx++;
         }
 
-        var nonSelectedIndex = 0;
+        var nonSelectedIdx = 0;
 
         for (var i = 0; i < LayerListBox.ItemCount; i++)
         {
@@ -146,35 +146,35 @@ public class LayerDnDManager(ListBox layerListBox, Avalonia.Controls.Canvas floa
 
             if (LayerListBox.ContainerFromIndex(i) is ListBoxItem listBoxItem)
             {
-                double targetY = nonSelectedIndex >= sourceNonSelectedIndex ? -baseGap : 0;
+                double targetY = nonSelectedIdx >= srcNonSelectedIdx ? -baseGap : 0;
 
-                if (TargetIndex > sourceNonSelectedIndex && nonSelectedIndex >= sourceNonSelectedIndex
-                    && nonSelectedIndex < TargetIndex)
+                if (TargetIdx > srcNonSelectedIdx && nonSelectedIdx >= srcNonSelectedIdx
+                    && nonSelectedIdx < TargetIdx)
                     targetY = -baseGap - stackCount * ItemHeight;
-                else if (TargetIndex < sourceNonSelectedIndex && nonSelectedIndex < sourceNonSelectedIndex
-                    && nonSelectedIndex >= TargetIndex)
+                else if (TargetIdx < srcNonSelectedIdx && nonSelectedIdx < srcNonSelectedIdx
+                    && nonSelectedIdx >= TargetIdx)
                     targetY = stackCount * ItemHeight;
 
                 listBoxItem.RenderTransform = TransformOperations.Parse($"translateY({targetY}px)");
             }
 
-            nonSelectedIndex++;
+            nonSelectedIdx++;
         }
     }
 
-    public void MoveGroupTo(int targetIndex)
+    public void MoveGroupTo(int targetIdx)
     {
         var group = DraggedLayerItems.ToList();
         var layers = LayerManager!.Layers;
 
         var withoutGroup = layers.Where(l => !group.Any(g => g.Layer == l)).ToList();
-        withoutGroup.InsertRange(Math.Clamp(targetIndex, 0, withoutGroup.Count), group.Select(g => g.Layer));
+        withoutGroup.InsertRange(Math.Clamp(targetIdx, 0, withoutGroup.Count), group.Select(g => g.Layer));
 
         for (var i = 0; i < withoutGroup.Count; i++)
         {
-            var currentIndex = layers.IndexOf(withoutGroup[i]);
-            if (currentIndex != i)
-                layers.Move(currentIndex, i);
+            var currentIdx = layers.IndexOf(withoutGroup[i]);
+            if (currentIdx != i)
+                layers.Move(currentIdx, i);
         }
 
         RestoreSelectionFor();
@@ -196,7 +196,7 @@ public class LayerDnDManager(ListBox layerListBox, Avalonia.Controls.Canvas floa
             item.Opacity = 1;
 
         DraggedItems.Clear();
-        TargetIndex = null;
+        TargetIdx = null;
 
         if (CountBadge.IsVisible)
         {

@@ -3,6 +3,7 @@ using Avalonia.Media;
 using PixelArtEditor.Models;
 using PixelArtEditor.Models.Canvas;
 using System;
+using System.Runtime.InteropServices;
 
 namespace PixelArtEditor.ViewModels;
 
@@ -45,12 +46,15 @@ public class CreateDialogVM : ReactiveObject
         CreateCommand = ReactiveCommand.Create(() =>
         {
             var data = new byte[ImageProperties.Width * ImageProperties.Height * 4];
-            for (var i = 0; i < data.Length; i += 4)
+            if (BackgroundColor != Colors.Transparent)
             {
-                data[i + 0] = BackgroundColor.B;
-                data[i + 1] = BackgroundColor.G;
-                data[i + 2] = BackgroundColor.R;
-                data[i + 3] = BackgroundColor.A;
+                var packed = (uint)(
+                    BackgroundColor.B | 
+                    BackgroundColor.G << 8 | 
+                    BackgroundColor.R << 16 | 
+                    BackgroundColor.A << 24);
+
+                MemoryMarshal.Cast<byte, uint>(data.AsSpan()).Fill(packed);
             }
 
             dialog.Close(new PixelModel

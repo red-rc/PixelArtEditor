@@ -21,7 +21,7 @@
         <Style Selector="NumericUpDown.NumberBox">
             <Setter Property="FontSize" Value="14" />
             <Setter Property="Minimum" Value="1" />
-            <Setter Property="Maximum" Value="8192" />
+            <Setter Property="Maximum" Value="300000" />
             <Setter Property="Height" Value="30" />
         </Style>
     </UserControl.Styles>

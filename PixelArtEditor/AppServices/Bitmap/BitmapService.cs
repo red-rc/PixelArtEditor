@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using AlphaFormat = Avalonia.Platform.AlphaFormat;
 
 namespace PixelArtEditor.AppServices.Bitmap;
@@ -35,40 +36,21 @@ public static class BitmapService
         return pixelData;
     }
 
-    public static unsafe void UpdateBitmap(WriteableBitmap wb, byte[] data, PixelRect rect)
+    public static unsafe WriteableBitmap CreateBitmap(byte[] data, int width, int height)
     {
+        var wb = new WriteableBitmap(new PixelSize(width, height), new Vector(96, 96), PixelFormat.Bgra8888, AlphaFormat.Unpremul);
+
         if (data.Length < wb.PixelSize.Width * wb.PixelSize.Height * 4)
             throw new ArgumentException(LocalizationService.Get("InvalidPixelData"));
 
         using var fb = wb.Lock();
-        var bytes = rect.Width * 4;
+        var bytes = width * 4;
 
         fixed (byte* srcPtr = data)
         {
-            for (var y = rect.Y; y < rect.Y + rect.Height; y++)
-            {
-                byte* src = srcPtr + (y * wb.PixelSize.Width + rect.X) * 4;
-                byte* dst = (byte*)fb.Address + y * fb.RowBytes + rect.X * 4;
-
-                Buffer.MemoryCopy(src, dst, bytes, bytes);
-            }
+            for (var y = 0; y < height; y++)
+                Buffer.MemoryCopy(srcPtr + (y * wb.PixelSize.Width) * 4, (byte*)fb.Address + y * fb.RowBytes, bytes, bytes);
         }
-    }
-
-    public static WriteableBitmap CreateBitmap(byte[] data, int width, int height)
-    {
-        var wb = new WriteableBitmap(new PixelSize(width, height), new Vector(96, 96), PixelFormat.Bgra8888, AlphaFormat.Unpremul);
-        UpdateBitmap(wb, data, new PixelRect(0, 0, width, height));
-
-        return wb;
-    }
-
-    public static WriteableBitmap CreateBitmap(Color color, int width, int height)
-    {
-        var wb = new WriteableBitmap(new PixelSize(width, height), new Vector(96, 96), PixelFormat.Bgra8888, AlphaFormat.Unpremul);
-        var pixelData = Enumerable.Repeat(color, width * height).SelectMany(c => new[] { c.B, c.G, c.R, c.A }).ToArray();
-
-        UpdateBitmap(wb, pixelData, new PixelRect(0, 0, width, height));
 
         return wb;
     }
@@ -252,10 +234,139 @@ public static class BitmapService
         stack.Push(idx);
     }
 
-    public static WriteableBitmap GetResizedBitmap(byte[] src, int srcW, int srcH, int dstW, int dstH)
+    public static unsafe WriteableBitmap DownscaleBox(byte[] src, int srcW, int srcH, int dstW, int dstH)
     {
-        var resized = ResizePixelData(src, srcW, srcH, dstW, dstH);
-        return CreateBitmap(resized, dstW, dstH);
+        var result = new WriteableBitmap(new PixelSize(dstW, dstH), new Vector(96, 96), PixelFormat.Bgra8888, AlphaFormat.Unpremul);
+
+        var columnBounds = new int[dstW + 1];
+        for (var column = 0; column <= dstW; column++)
+            columnBounds[column] = (int)((long)column * srcW / dstW);
+
+        var rowBounds = new int[dstH + 1];
+        for (var row = 0; row <= dstH; row++)
+            rowBounds[row] = (int)((long)row * srcH / dstH);
+
+        using var dstBuffer = result.Lock();
+        var dstAddress = dstBuffer.Address;
+        var dstRowBytes = dstBuffer.RowBytes;
+
+        fixed (byte* srcPtr = src)
+        {
+            var srcBase = srcPtr;
+
+            Parallel.For(0, dstH, dstY =>
+            {
+                var dstRow = (byte*)dstAddress + (long)dstY * dstRowBytes;
+                var srcStartY = rowBounds[dstY];
+                var srcEndY = Math.Max(rowBounds[dstY + 1], srcStartY + 1);
+
+                for (var dstX = 0; dstX < dstW; dstX++)
+                {
+                    var srcStartX = columnBounds[dstX];
+                    var srcEndX = Math.Max(columnBounds[dstX + 1], srcStartX + 1);
+
+                    ulong sumB = 0, sumG = 0, sumR = 0, sumA = 0;
+
+                    for (var srcY = srcStartY; srcY < srcEndY; srcY++)
+                    {
+                        var pixel = srcBase + ((long)srcY * srcW + srcStartX) * 4;
+
+                        for (var srcX = srcStartX; srcX < srcEndX; srcX++, pixel += 4)
+                        {
+                            ulong a = pixel[3];
+                            sumB += pixel[0] * a;
+                            sumG += pixel[1] * a;
+                            sumR += pixel[2] * a;
+                            sumA += a;
+                        }
+                    }
+
+                    var dstPixel = dstRow + dstX * 4;
+
+                    if (sumA == 0)
+                    {
+                        *(uint*)dstPixel = 0;
+                        continue;
+                    }
+
+                    var pxCount = (ulong)((srcEndX - srcStartX) * (srcEndY - srcStartY));
+
+                    dstPixel[0] = (byte)(sumB / sumA);
+                    dstPixel[1] = (byte)(sumG / sumA);
+                    dstPixel[2] = (byte)(sumR / sumA);
+                    dstPixel[3] = (byte)(sumA / pxCount);
+                }
+            });
+        }
+
+        return result;
+    }
+
+    public static unsafe void DownscaleBoxRegion(byte[] src, int srcW, int srcH, WriteableBitmap dst, PixelRect dstRegion)
+    {
+        var dstW = dst.PixelSize.Width;
+        var dstH = dst.PixelSize.Height;
+
+        using var buffer = dst.Lock();
+        var dstAddress = buffer.Address;
+        var dstRowBytes = buffer.RowBytes;
+
+        fixed (byte* srcPtr = src)
+        {
+            var srcBase = srcPtr;
+
+            for (var dstY = dstRegion.Y; dstY < dstRegion.Bottom; dstY++)
+            {
+                var srcStartY = (int)((long)dstY * srcH / dstH);
+                var srcEndY = Math.Max((int)((long)(dstY + 1) * srcH / dstH), srcStartY + 1);
+                var dstRow = (byte*)dstAddress + (long)dstY * dstRowBytes;
+
+                for (var dstX = dstRegion.X; dstX < dstRegion.Right; dstX++)
+                {
+                    var srcStartX = (int)((long)dstX * srcW / dstW);
+                    var srcEndX = Math.Max((int)((long)(dstX + 1) * srcW / dstW), srcStartX + 1);
+
+                    ulong sumB = 0, sumG = 0, sumR = 0, sumA = 0;
+
+                    for (var srcY = srcStartY; srcY < srcEndY; srcY++)
+                    {
+                        var pixel = srcBase + ((long)srcY * srcW + srcStartX) * 4;
+                        for (var srcX = srcStartX; srcX < srcEndX; srcX++, pixel += 4)
+                        {
+                            ulong a = pixel[3];
+                            sumB += pixel[0] * a;
+                            sumG += pixel[1] * a;
+                            sumR += pixel[2] * a;
+                            sumA += a;
+                        }
+                    }
+
+                    var dstPixel = dstRow + dstX * 4;
+
+                    if (sumA == 0)
+                    {
+                        *(uint*)dstPixel = 0;
+                        continue;
+                    }
+
+                    var pxCount = (ulong)((srcEndX - srcStartX) * (srcEndY - srcStartY));
+                    dstPixel[0] = (byte)(sumB / sumA);
+                    dstPixel[1] = (byte)(sumG / sumA);
+                    dstPixel[2] = (byte)(sumR / sumA);
+                    dstPixel[3] = (byte)(sumA / pxCount);
+                }
+            }
+        }
+    }
+
+    public static PixelRect ToThumbRegion(PixelRect rect, int srcW, int srcH, int thumbW, int thumbH)
+    {
+        var x0 = Math.Max(0, (int)((long)rect.X * thumbW / srcW) - 1);
+        var y0 = Math.Max(0, (int)((long)rect.Y * thumbH / srcH) - 1);
+        var x1 = Math.Min(thumbW, (int)(((long)rect.Right * thumbW + srcW - 1) / srcW) + 1);
+        var y1 = Math.Min(thumbH, (int)(((long)rect.Bottom * thumbH + srcH - 1) / srcH) + 1);
+
+        return new PixelRect(x0, y0, Math.Max(1, x1 - x0), Math.Max(1, y1 - y0));
     }
 
     public static byte[] ResizePixelData(byte[] src, int srcW, int srcH, int dstW, int dstH)

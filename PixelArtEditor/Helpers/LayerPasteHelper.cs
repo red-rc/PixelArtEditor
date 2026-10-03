@@ -22,8 +22,7 @@ public static class LayerPasteHelper
             vm.OriginalWidth,
             vm.OriginalHeight,
             model.Data,
-            model.Name ?? $"{LocalizationService.Get("Layer")} {layerManager.Layers.Count + 1}",
-            false);
+            model.Name ?? $"{LocalizationService.Get("Layer")} {layerManager.Layers.Count + 1}");
 
         var activeLayerItem = vm.LayerItems.FirstOrDefault(x => x.Layer == layerManager.ActiveLayer);
         var index = activeLayerItem is not null ? vm.LayerItems.IndexOf(activeLayerItem) : 0;

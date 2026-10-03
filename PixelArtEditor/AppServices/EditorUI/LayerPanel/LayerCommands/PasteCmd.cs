@@ -1,6 +1,5 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Input;
-using PixelArtEditor.AppServices.Bitmap;
 using PixelArtEditor.AppServices.Canvas;
 using PixelArtEditor.Helpers;
 using PixelArtEditor.Models.Canvas;
@@ -33,17 +32,17 @@ public class PasteCmd(LayerPanelVM vm, ListBox layerListBox, TopLevel topLevel) 
 
         if (await item.TryGetRawAsync(LayerClipboardSerializer.FormatId) is not byte[] bytes) return;
 
-        var layers = LayerClipboardSerializer.Deserialize(bytes);
+        var layers = await Task.Run(() => LayerClipboardSerializer.Deserialize(bytes));
         if (layers is null || layers.Count == 0) return;
 
         InsertLayers(layers, layerManager);
     }
 
-    private void InsertLayers(List<LayerModel> layers, LayerManager layerManager)
+    public void InsertLayers(List<LayerModel> layers, LayerManager layerManager)
     {
         var activeLayerItem = Vm.LayerItems.FirstOrDefault(x => x.Layer == layerManager.ActiveLayer);
-        var index = activeLayerItem is not null ? Vm.LayerItems.IndexOf(activeLayerItem) : -1;
-        index = Math.Max(index, 0);
+        var idx = activeLayerItem is not null ? Vm.LayerItems.IndexOf(activeLayerItem) : -1;
+        idx = Math.Max(idx, 0);
 
         List<LayerModel> newLayers = [];
         for (var i = 0; i < layers.Count; i++)
@@ -52,7 +51,7 @@ public class PasteCmd(LayerPanelVM vm, ListBox layerListBox, TopLevel topLevel) 
                 layers[i].Width,
                 layers[i].Height,
                 (byte[])layers[i].Data.Clone(),
-                Helpers.LayerNameHelper.GetLayerName(layerManager, layers[i].Name),
+                LayerNameHelper.GetLayerName(layerManager, layers[i].Name),
                 layers[i].IsEmpty)
             {
                 Opacity = layers[i].Opacity,
@@ -60,7 +59,7 @@ public class PasteCmd(LayerPanelVM vm, ListBox layerListBox, TopLevel topLevel) 
                 IsLocked = layers[i].IsLocked
             };
 
-            layerManager.Layers.Insert(index + i, layer);
+            layerManager.Layers.Insert(idx + i, layer);
             newLayers.Add(layer);
         }
 

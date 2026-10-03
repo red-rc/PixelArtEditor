@@ -6,5 +6,4 @@ public class LayerRenderCache
 {
     public bool RenderBitmapDirty;
     public PixelRect? DirtyRect;
-    public PixelRect? RenderRect;
 }

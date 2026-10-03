@@ -1,7 +1,10 @@
 ﻿using Avalonia;
 using Avalonia.Media;
+using Avalonia.Media.Imaging;
 using PixelArtEditor.AppServices;
+using PixelArtEditor.AppServices.Bitmap;
 using PixelArtEditor.Models.Canvas;
+using System;
 using System.ComponentModel;
 
 namespace PixelArtEditor.Models.LayerPanel;
@@ -94,17 +97,20 @@ public class LayerItem: ReactiveObject
     private string GetLockUnlockTag()
        => IsLocked ? LocalizationService.Get("Unlock") : LocalizationService.Get("Lock");
 
-
     public void RefreshTags()
     {
         HideShowTag = GetHideShowTag();
         LockUnlockTag = GetLockUnlockTag();
     }
 
+    private const int ThumbSize = 36;
+
     public LayerItem(LayerModel layer)
     {
         Layer = layer;
-        _renderData = new PreviewData(layer.Width, layer.Height, layer.RenderBitmap, null);
+
+        _renderData = new PreviewData(layer.Width, layer.Height, CreateThumb(), null);
+
         _name = layer.Name;
         _isVisible = layer.IsVisible;
         _isLocked = layer.IsLocked;
@@ -115,15 +121,48 @@ public class LayerItem: ReactiveObject
         Layer.PropertyChanged += OnLayerPropertyChanged;
     }
 
+    private WriteableBitmap CreateThumb()
+    {
+        var scale = Math.Min(1.0, (double)ThumbSize / Math.Max(Layer.Width, Layer.Height));
+        var thumbW = Math.Max(1, (int)(Layer.Width * scale));
+        var thumbH = Math.Max(1, (int)(Layer.Height * scale));
+
+        return BitmapService.DownscaleBox(Layer.Data, Layer.Width, Layer.Height, thumbW, thumbH);
+    }
+
+    private void UpdateThumb()
+    {
+        var bitmap = RenderData.Bitmap;
+        var dirty = Layer.ThumbDirtyRect;
+        Layer.ThumbDirtyRect = null;
+
+        if (bitmap is null || dirty is null || RenderData.Width != Layer.Width || RenderData.Height != Layer.Height)
+        {
+            RenderData.Width = Layer.Width;
+            RenderData.Height = Layer.Height;
+
+            RenderData.Bitmap = CreateThumb();
+            bitmap?.Dispose();
+
+            return;
+        }
+
+        var region = BitmapService.ToThumbRegion(dirty.Value, Layer.Width, Layer.Height,
+            bitmap.PixelSize.Width, bitmap.PixelSize.Height);
+
+        BitmapService.DownscaleBoxRegion(Layer.Data, Layer.Width, Layer.Height, bitmap, region);
+        RenderData.Bitmap = bitmap;
+    }
+
     private void OnLayerPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(LayerModel.Data))
         {
-            RenderData.Width = Layer.Width;
-            RenderData.Height = Layer.Height;
-            RenderData.Bitmap = Layer.RenderBitmap;
+            UpdateThumb();
+            RenderData.RaisePropertyChanged(nameof(PreviewData.Bitmap));
         }
     }
 
-    public void Unsubscribe() => Layer.PropertyChanged -= OnLayerPropertyChanged;
+    public void Unsubscribe()
+        => Layer.PropertyChanged -= OnLayerPropertyChanged;
 }

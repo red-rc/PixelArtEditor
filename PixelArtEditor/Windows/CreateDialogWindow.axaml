@@ -31,17 +31,6 @@
             <Setter Property="FontFamily" Value="{DynamicResource HeadingFont}" />
             <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />
         </Style>
-        <Style Selector="NumericUpDown">
-            <Setter Property="FontSize" Value="14" />
-            <Setter Property="ShowButtonSpinner" Value="False" />
-            <Setter Property="Minimum" Value="1" />
-            <Setter Property="Maximum" Value="300000" />
-            <Setter Property="Height" Value="30" />
-        </Style>
-        <Style Selector="ComboBox">
-            <Setter Property="Height" Value="30" />
-            <Setter Property="Padding" Value="10,0,10,0" />
-        </Style>
     </Window.Styles>
 
     <Grid RowDefinitions="Auto,*" Background="{DynamicResource SecondaryBackgroundColor}">

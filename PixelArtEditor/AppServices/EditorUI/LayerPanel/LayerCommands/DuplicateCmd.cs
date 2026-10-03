@@ -11,7 +11,9 @@ public class DuplicateCmd(LayerPanelVM vm, ListBox layerListBox, TopLevel topLev
     {
         if (layerManager is null || !CanExecute) return;
 
-        await new CopyCmd(Vm, LayerListBox, TopLevel).Execute(layerManager);
-        await new PasteCmd(Vm, LayerListBox, TopLevel).Execute(layerManager);
+        var layers = new CopyCmd(Vm, LayerListBox, TopLevel).GetLayers(layerManager);
+        if (layers is null || layers.Count == 0) return;
+
+        new PasteCmd(Vm, LayerListBox, TopLevel).InsertLayers(layers, layerManager);
     }
 }

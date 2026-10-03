@@ -1,9 +1,7 @@
-﻿using Avalonia.Controls;
-using Avalonia.Input;
+﻿using Avalonia.Input;
 using Avalonia.Input.Platform;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform.Storage;
-using Avalonia.Threading;
 using PixelArtEditor.AppServices.ImageProcessing;
 using PixelArtEditor.Models.Canvas;
 using System.IO;

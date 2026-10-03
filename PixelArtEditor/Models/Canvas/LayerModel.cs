@@ -1,16 +1,14 @@
-﻿using Avalonia.Media.Imaging;
+﻿using Avalonia;
 using PixelArtEditor.AppServices.Bitmap;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
 namespace PixelArtEditor.Models.Canvas;
 
-public class LayerModel(int width, int height, byte[] pixelData, string name, bool isEmpty) : INotifyPropertyChanged
+public class LayerModel(int width, int height, byte[] pixelData, string name, bool isEmpty = false) : INotifyPropertyChanged
 {
     public int Width { get; set; } = width;
     public int Height { get; set; } = height;
-
-    public bool IsEmpty { get; set; } = isEmpty;
 
     private byte[] _Data = pixelData;
     public byte[] Data
@@ -23,14 +21,26 @@ public class LayerModel(int width, int height, byte[] pixelData, string name, bo
         }
     }
 
-    private WriteableBitmap? _renderBitmap;
-    public WriteableBitmap RenderBitmap
+    private TiledBitmap? _tiles;
+    public TiledBitmap Tiles
     {
-        get => _renderBitmap ??= BitmapService.CreateBitmap(Data, Width, Height);
-        set => _renderBitmap = value;
+        get
+        {
+            if (_tiles is null)
+            {
+                _tiles = new TiledBitmap(Width, Height);
+                _tiles.Update(Data, new PixelRect(0, 0, Width, Height), IsEmpty);
+            }
+
+            IsEmpty = false;
+            return _tiles;
+        }
+        set => _tiles = value;
     }
 
     public string Name { get; set; } = name;
+    public PixelRect? ThumbDirtyRect { get; set; }
+    public bool IsEmpty = isEmpty;
 
     private bool _isVisible = true;
     public bool IsVisible

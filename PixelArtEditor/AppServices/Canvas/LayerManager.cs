@@ -11,14 +11,14 @@ public class LayerManager
     public ObservableCollection<LayerModel> Layers { get; } = [];
     public LayerModel? ActiveLayer { get; set; }
 
-    public LayerModel InitializeFirstLayer(int width, int height, byte[] pixelData, string layerName, bool isEmpty)
+    public LayerModel InitializeFirstLayer(int width, int height, byte[] pixelData, string layerName)
     {
         Layers.Clear();
 
         if (layerName == "")
             layerName = $"{LocalizationService.Get("Layer")} 1";
 
-        var layer = new LayerModel(width, height, pixelData, layerName, isEmpty);
+        var layer = new LayerModel(width, height, pixelData, layerName);
         Layers.Add(layer);
         ActiveLayer = layer;
 
@@ -29,13 +29,18 @@ public class LayerManager
     {
         foreach (var layer in Layers)
         {
-            var resized = BitmapService.ResizePixelData(layer.Data, layer.Width, layer.Height, newWidth, newHeight);
+            layer.NotifyPixelDataChanged();
+
+            if (newWidth == layer.Width && newHeight == layer.Height) 
+                continue;
+
+            layer.Data = BitmapService.ResizePixelData(layer.Data, layer.Width, layer.Height, newWidth, newHeight);
             layer.Width = newWidth;
             layer.Height = newHeight;
-            layer.RenderBitmap?.Dispose();
-            layer.RenderBitmap = BitmapService.CreateBitmap(resized, newWidth, newHeight);
-            layer.Data = resized;
-            layer.NotifyPixelDataChanged();
+
+            layer.Tiles?.Dispose();
+            layer.Tiles = new TiledBitmap(newWidth, newHeight);
+            layer.ThumbDirtyRect = null;
         }
     }
 
@@ -46,14 +51,17 @@ public class LayerManager
     public void ToGrayscaleAlpha() => ApplyToLayers(ImageConverterService.ToGrayscale);
     public void ToRgb() => ApplyToLayers(ImageConverterService.ToRgb);
     public void ToRedGreen() => ApplyToLayers(ImageConverterService.ToRedGreen);
-    public void ToAlpha() => ApplyToLayers(ImageConverterService.ToAlpha);
+    public void ToAlpha() => ApplyToLayers(ImageConverterService.ToAlpha);  
 
     private void ApplyToLayers(Func<byte[], byte[]> transform)
     {
         foreach (var layer in Layers)
         {
             layer.Data = transform(layer.Data);
-            layer.RenderBitmap = null!;
+
+            layer.Tiles?.Dispose();
+            layer.Tiles = null!;
+            layer.ThumbDirtyRect = null;
             layer.NotifyPixelDataChanged();
         }
     }
