@@ -1,9 +1,13 @@
 using Avalonia.Controls;
 using Avalonia.Media;
+using FellowOakDicom;
 using PixelArtEditor.Models;
 using PixelArtEditor.Models.Canvas;
+using Splat.ModeDetection;
 using System;
 using System.Runtime.InteropServices;
+using System.Xml.Linq;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace PixelArtEditor.ViewModels;
 
@@ -41,7 +45,18 @@ public class CreateDialogVM : ReactiveObject
 
     public CreateDialogVM(Window dialog)
     {
-        ImageProperties = new ImagePropertiesUCVM();
+        ImageProperties = new ImagePropertiesUCVM(new PixelModel
+        {
+            Width = 32,
+            Height = 32,
+            ColorMode = ColorMode.RGBA,
+            BitDepth = BitDepth.Bit8,
+            ColorSpace = ColorSpace.SRgb,
+            SrcColorSpace = ColorSpace.SRgb,
+            AlphaFormat = AlphaFormat.Straight,
+            DpiX = 96,
+            DpiY = 96
+        });
 
         CreateCommand = ReactiveCommand.Create(() =>
         {

@@ -5,6 +5,7 @@ using PixelArtEditor.AppServices.ImageProcessing.Formats;
 using PixelArtEditor.AppServices.Shell;
 using PixelArtEditor.Models.Canvas;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.ColorSpaces;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using System;

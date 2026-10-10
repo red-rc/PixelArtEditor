@@ -1,5 +1,4 @@
 ﻿using Pfim;
-using PixelArtEditor.AppServices.Bitmap;
 using PixelArtEditor.Models.Canvas;
 using System;
 using System.IO;
@@ -138,7 +137,7 @@ public static class DdsService
             ColorMode = ColorMode.RGBA,
             BitDepth = BitDepth.Bit8,
             AlphaFormat = AlphaFormat.Straight,
-            ColorSpace = ColorSpace.sRGB,
+            ColorSpace = ColorSpace.SRgb,
             DpiX = 96f,
             DpiY = 96f,
             Data = data

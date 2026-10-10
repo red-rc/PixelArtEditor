@@ -45,7 +45,7 @@ public static class PdfService
                 ColorMode = ColorMode.RGBA,
                 BitDepth = BitDepth.Bit8,
                 AlphaFormat = AlphaFormat.Straight,
-                ColorSpace = ColorSpace.sRGB,
+                ColorSpace = ColorSpace.SRgb,
                 DpiX = renderDpi,
                 DpiY = renderDpi,
                 Data = converted.Bytes

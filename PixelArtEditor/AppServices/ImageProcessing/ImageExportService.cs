@@ -16,12 +16,14 @@ using SixLabors.ImageSharp.Formats.Qoi;
 using SixLabors.ImageSharp.Formats.Tga;
 using SixLabors.ImageSharp.Formats.Tiff;
 using SixLabors.ImageSharp.Formats.Webp;
+using SixLabors.ImageSharp.Metadata.Profiles.Icc;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing.Processors.Quantization;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Image = SixLabors.ImageSharp.Image;
 
@@ -44,18 +46,43 @@ public static class ImageExportService
         new($"TGA {LocalizationService.Get("Image")}")             { Patterns = ["*.tga"] },
         new($"Portable {LocalizationService.Get("Image")}")        { Patterns = ["*.pbm"] },
         new($"QOI {LocalizationService.Get("Image")}")             { Patterns = ["*.qoi"] },
-        new($"DICOM {LocalizationService.Get("Image")}")           { Patterns = ["*.dcm"] },
+        new($"DICOM {LocalizationService.Get("Image")}")           { Patterns = ["*.dcm", "*.dicom"] },
         new($"PDF {LocalizationService.Get("Document")}")          { Patterns = ["*.pdf"] },
         new($"Icon")                                               { Patterns = ["*.ico"] }
     ];
+
     public static async Task ExportImageAsync(Window dialog, PixelModel model)
     {
-        var validFileTypes = model.ColorMode is ColorMode.Indexed
-            ? [.. ExportFileTypes.Where(t => t.Patterns is not null && t.Patterns.Any(p =>
+        List<FilePickerFileType>? validFileTypes;
+        if (model.ColorMode is ColorMode.Indexed)
+        {
+            validFileTypes = [.. ExportFileTypes.Where(t => t.Patterns is not null && t.Patterns.Any(p =>
                 p.Equals("*.png", StringComparison.OrdinalIgnoreCase) ||
                 p.Equals("*.bmp", StringComparison.OrdinalIgnoreCase) ||
-                p.Equals("*.gif", StringComparison.OrdinalIgnoreCase)))]
-            : ExportFileTypes;
+                p.Equals("*.gif", StringComparison.OrdinalIgnoreCase)))];
+        }
+        else if (model.ColorMode is ColorMode.GrayscaleAlpha)
+        {
+            validFileTypes = [.. ExportFileTypes.Where(t => t.Patterns is not null && t.Patterns.Any(p =>
+                !p.Equals("*.jpg", StringComparison.OrdinalIgnoreCase) &&
+                !p.Equals("*.jpeg", StringComparison.OrdinalIgnoreCase) &&
+                !p.Equals("*.dcm", StringComparison.OrdinalIgnoreCase) &&
+                !p.Equals("*.dicom", StringComparison.OrdinalIgnoreCase) &&
+                !p.Equals("*.pbm", StringComparison.OrdinalIgnoreCase)))];
+        }
+        else if (model.ColorMode is ColorMode.CMYK)
+        {
+            validFileTypes = [.. ExportFileTypes.Where(t => t.Patterns is not null && t.Patterns.Any(p =>
+                p.Equals("*.jpg", StringComparison.OrdinalIgnoreCase) ||
+                p.Equals("*.jpeg", StringComparison.OrdinalIgnoreCase) ||
+                p.Equals("*.pdf", StringComparison.OrdinalIgnoreCase) ||
+                p.Equals("*.tif", StringComparison.OrdinalIgnoreCase) ||
+                p.Equals("*.ico", StringComparison.OrdinalIgnoreCase) ||
+                p.Equals("*.svg", StringComparison.OrdinalIgnoreCase) ||
+                p.Equals("*.tiff", StringComparison.OrdinalIgnoreCase)))];
+        }
+        else
+            validFileTypes = ExportFileTypes;
 
         var defaultType = validFileTypes.FirstOrDefault(t =>
             t.Patterns is not null && t.Patterns.Any(p => p.TrimStart('*', '.').Equals(model.Extension, StringComparison.OrdinalIgnoreCase)));
@@ -79,14 +106,29 @@ public static class ImageExportService
         {
             try
             {
-                var exportData = ConvertForExport(model.Data, model);
-        
+                Palette? exportPalette = null;
+                byte[] bgraData;
+
+                if (model.ColorMode == ColorMode.Indexed && model.Palette is not null)
+                {
+                    var colors = ColorSpaceConverter.ConvertPalette(model.Palette.Colors, model.SrcColorSpace, model.ColorSpace);
+                    bgraData = ConvertIndexedForExport(model.Data, model.Palette, colors);
+                    exportPalette = new Palette(colors, model.Palette.QuantizationMethod, model.Palette.Dither);
+                }
+                else
+                    bgraData = ColorSpaceConverter.ConvertData(model.Data, model.SrcColorSpace, model.ColorSpace);
+
+                var exportData = ConvertDataForExport(bgraData, model);
+
                 using var baseImage = Image.LoadPixelData<Rgba32>(exportData, model.Width, model.Height);
                 using var image = ConvertToTargetFormat(baseImage, model);
         
                 image.Metadata.HorizontalResolution = model.DpiX;
                 image.Metadata.VerticalResolution = model.DpiY;
-        
+
+                var icc = model.ColorSpace == ColorSpace.Custom ? model.IccProfile : IccProfiles.Load(model.ColorSpace);
+                if (icc is not null) image.Metadata.IccProfile = new IccProfile(icc);
+
                 await using var stream = await file.OpenWriteAsync();
         
                 if (Path.GetExtension(file.Name).Equals(".dcm", StringComparison.InvariantCultureIgnoreCase))
@@ -126,7 +168,28 @@ public static class ImageExportService
         });
     }
 
-    private static unsafe byte[] ConvertForExport(byte[] bgra, PixelModel model)
+    private static byte[] ConvertIndexedForExport(byte[] bgra, Palette src, List<Avalonia.Media.Color> dst)
+    {
+        var map = new Dictionary<uint, uint>(src.Colors.Count);
+        for (var i = 0; i < src.Colors.Count; i++)
+        {
+            var s = src.Colors[i]; var d = dst[i];
+            map[Pack(s)] = Pack(d);
+        }
+
+        var res = new byte[bgra.Length];
+        var p = MemoryMarshal.Cast<byte, uint>(bgra.AsSpan());
+        var o = MemoryMarshal.Cast<byte, uint>(res.AsSpan());
+
+        for (var i = 0; i < p.Length; i++)
+            o[i] = map.TryGetValue(p[i], out var v) ? v : p[i];
+
+        return res;
+    }
+
+    private static uint Pack(Avalonia.Media.Color c) => c.B | ((uint)c.G << 8) | ((uint)c.R << 16) | ((uint)c.A << 24);
+
+    private static unsafe byte[] ConvertDataForExport(byte[] bgra, PixelModel model)
     {
         var result = BitmapService.SwapRB(bgra);
 

@@ -92,6 +92,7 @@
             <StackPanel>
                 <TextBlock HorizontalAlignment="Center" Text="{DynamicResource ColorSpaces}" />
                 <ComboBox
+                    IsEnabled="{Binding ColorSpaceEnabled}"
                     ItemsSource="{Binding ColorSpaceNames}" 
                     SelectedItem="{Binding ColorSpaceName, Mode=TwoWay}" />
             </StackPanel>

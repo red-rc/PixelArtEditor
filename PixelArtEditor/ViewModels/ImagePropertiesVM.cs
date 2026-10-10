@@ -24,11 +24,9 @@ public class ImagePropertiesVM : ReactiveObject
 
     private Dictionary<uint, int>? _histogram;
 
-    public ImagePropertiesVM(Window dialog, PixelModel model, EditorVM editorVM, bool export = false)
+    public ImagePropertiesVM(Window dialog, PixelModel model, EditorVM editorVM, bool isExport = false)
     {
-        ImageProps = new ImagePropertiesUCVM();
-
-        ImageProps.LoadFrom(model);
+        ImageProps = new ImagePropertiesUCVM(model);
 
         ImageProps.WhenAnyValue(x => x.Width, x => x.Height).Subscribe(_ => UpdatePreview(model, PreviewTrigger.Size));
         ImageProps.WhenAnyValue(x => x.ColorModeName, x => x.BitDepthName).Subscribe(_ => UpdatePreview(model, PreviewTrigger.Other));
@@ -47,10 +45,10 @@ public class ImagePropertiesVM : ReactiveObject
 
         SaveCommand = ReactiveCommand.CreateFromTask(async () =>
         {
-            ImageProps.SaveTo(editorVM, model);
-
-            if (!export)
+            if (!isExport)
             {
+                ImageProps.SaveTo(editorVM, model);
+
                 var mode = editorVM.Model.ColorMode;
                 var layers = editorVM.LayerManager;
 
@@ -69,8 +67,8 @@ public class ImagePropertiesVM : ReactiveObject
             }
             else
             {
-                await ImageExportService.ExportImageAsync(dialog, 
-                    ImageProps.GetFinalPixelModel(model.Data, model.Name, model.Extension, model.Palette, model.DicomDataset));
+                await ImageExportService.ExportImageAsync(dialog, ImageProps.GetFinalPixelModel(
+                    model.Data, model.Name, model.Extension, model.Palette, model.DicomDataset));
             }
 
             dialog.Close();

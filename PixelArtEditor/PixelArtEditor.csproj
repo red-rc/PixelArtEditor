@@ -42,4 +42,8 @@
     <AvaloniaResource Include="Styles\Fonts\**\*.ttf" />
     <Content Include="Styles\Fonts\**\*.ttf" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Assets\Icc\" />
+  </ItemGroup>
 </Project>

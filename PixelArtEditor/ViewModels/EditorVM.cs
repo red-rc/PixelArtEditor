@@ -59,12 +59,14 @@ public class EditorVM : ReactiveObject
             ColorMode = _model.ColorMode,
             BitDepth = _model.BitDepth,
             ColorSpace = _model.ColorSpace,
+            SrcColorSpace = _model.SrcColorSpace,
             AlphaFormat = _model.AlphaFormat,
             DpiX = _model.DpiX,
             DpiY = _model.DpiY,
             Palette = _model.Palette,
             Data = LayerManager.GetCompositePixelData(Model.Width, Model.Height),
-            DicomDataset = _model.DicomDataset
+            DicomDataset = _model.DicomDataset,
+            IccProfile = _model.IccProfile
         };
     }
 

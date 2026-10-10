@@ -50,7 +50,7 @@ public static class SvgService
             ColorMode = ColorMode.RGBA,
             BitDepth = BitDepth.Bit8,
             AlphaFormat = AlphaFormat.Straight,
-            ColorSpace = ColorSpace.sRGB,
+            ColorSpace = ColorSpace.SRgb,
             DpiX = 96f,
             DpiY = 96f,
             Data = data
