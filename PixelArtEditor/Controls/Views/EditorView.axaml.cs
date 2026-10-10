@@ -184,17 +184,16 @@ public partial class EditorView : UserControl
 
             ViewModel.AdjustCanvas(CanvasPanel.Bounds.Width, CanvasPanel.Bounds.Height);
 
-            _modelSubscription = ViewModel.WhenAnyValue(x => x.Model)
-                .Select(model => model.WhenAnyValue(m => m.Width, m => m.Height))
-                .Switch()
+            _modelSubscription = Observable.Switch(ViewModel.WhenAnyValue(x => x.Model)
+                .Select(model => model.WhenAnyValue(m => m.Width, m => m.Height)))
                 .Subscribe(_ =>
-            {
-                Dispatcher.UIThread.Post(() =>
                 {
-                    if (CanvasPanel.Bounds is not { Width: > 0, Height: > 0 }) return;
-                    ViewModel.AdjustCanvas(CanvasPanel.Bounds.Width, CanvasPanel.Bounds.Height);
+                    Dispatcher.UIThread.Post(() =>
+                    {
+                        if (CanvasPanel.Bounds is not { Width: > 0, Height: > 0 }) return;
+                        ViewModel.AdjustCanvas(CanvasPanel.Bounds.Width, CanvasPanel.Bounds.Height);
+                    });
                 });
-            });
 
             Dispatcher.UIThread.Post(() => Root.Focus());
         }

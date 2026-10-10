@@ -9,6 +9,10 @@
    <RunAOTCompilation>true</RunAOTCompilation>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <NuGetAudit>false</NuGetAudit>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Avalonia.Browser" />
     <PackageReference Include="Avalonia.Desktop" />

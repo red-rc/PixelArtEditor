@@ -2,7 +2,6 @@ using Avalonia.Controls;
 using PixelArtEditor.AppServices;
 using PixelArtEditor.AppServices.Settings;
 using PixelArtEditor.AppServices.Shell;
-using ReactiveUI.Primitives.Extensions;
 using System;
 using System.Diagnostics;
 using System.Numerics;

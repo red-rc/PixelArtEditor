@@ -18,4 +18,3 @@ public class InstantToggleButton : ToggleButton
         e.Handled = true;
     }
 }
-

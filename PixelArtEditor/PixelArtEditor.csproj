@@ -14,6 +14,10 @@
     <AvaloniaResource Include="Assets\**" />
   </ItemGroup>
 
+  <PropertyGroup>
+    <NuGetAudit>false</NuGetAudit>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Avalonia" />
     <PackageReference Include="Avalonia.Controls.ColorPicker" />

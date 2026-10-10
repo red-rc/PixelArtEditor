@@ -1,30 +1,14 @@
 using Avalonia;
 using PixelArtEditor.AppServices.Bitmap;
+using ReactiveUI.SourceGenerators;
 
 namespace PixelArtEditor.Models.Canvas;
 
-public class LayerModel(int width, int height, byte[] data, string name, bool isEmpty = false) : ReactiveObject
+public partial class LayerModel(int width, int height, byte[] data, string name, bool isEmpty = false) : ReactiveObject
 {
-    private int _width = width;
-    public int Width
-    {
-        get => _width;
-        set => this.RaiseAndSetIfChanged(ref _width, value);
-    }
-
-    private int _height = height;
-    public int Height
-    {
-        get => _height;
-        set => this.RaiseAndSetIfChanged(ref _height, value);
-    }
-
-    private byte[] _data = data;
-    public byte[] Data
-    {
-        get => _data;
-        set => this.RaiseAndSetIfChanged(ref _data, value);
-    }
+    [Reactive] public partial int Width { get; set; } = width;
+    [Reactive] public partial int Height { get; set; } = height;
+    [Reactive] public partial byte[] Data { get; set; } = data;
 
     private TiledBitmap? _tiles;
     public TiledBitmap Tiles
@@ -43,54 +27,19 @@ public class LayerModel(int width, int height, byte[] data, string name, bool is
         set => this.RaiseAndSetIfChanged(ref _tiles, value);
     }
 
-    private string _name = name;
-    public string Name
-    {
-        get => _name;
-        set => this.RaiseAndSetIfChanged(ref _name, value);
-    }
-
-    private PixelRect? _thumbDirtyRect;
-    public PixelRect? ThumbDirtyRect
-    {
-        get => _thumbDirtyRect;
-        set => this.RaiseAndSetIfChanged(ref _thumbDirtyRect, value);
-    }
-
-    private bool _isEmpty = isEmpty;
-    public bool IsEmpty
-    {
-        get => _isEmpty;
-        set => this.RaiseAndSetIfChanged(ref _isEmpty, value);
-    }
-
-    private bool _isVisible = true;
-    public bool IsVisible
-    {
-        get => _isVisible;
-        set => this.RaiseAndSetIfChanged(ref _isVisible, value);
-    }
-
-    private float _opacity = 1.0f;
-    public float Opacity
-    {
-        get => _opacity;
-        set => this.RaiseAndSetIfChanged(ref _opacity, value);
-    }
-
-    private bool _isLocked = false;
-    public bool IsLocked 
-    {
-        get => _isLocked;
-        set => this.RaiseAndSetIfChanged(ref _isLocked, value);
-    }
+    [Reactive] public partial string Name { get; set; } = name;
+    [Reactive] public partial PixelRect? ThumbDirtyRect { get; set; }
+    [Reactive] public partial bool IsEmpty { get; set; } = isEmpty;
+    [Reactive] public partial bool IsVisible { get; set; } = true;
+    [Reactive] public partial float Opacity { get; set; } = 1.0f;
+    [Reactive] public partial bool IsLocked { get; set; } = false;
 
     public void Resize(int newWidth, int newHeight, byte[] newData)
     {
-        _width = newWidth;
-        _height = newHeight;
-        _data = newData;
-        _thumbDirtyRect = null;
+        Width = newWidth;
+        Height = newHeight;
+        Data = newData;
+        ThumbDirtyRect = null;
 
         _tiles?.Dispose();
         _tiles = new TiledBitmap(newWidth, newHeight);

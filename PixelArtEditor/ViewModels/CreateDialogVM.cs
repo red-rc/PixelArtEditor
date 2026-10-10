@@ -1,13 +1,9 @@
 using Avalonia.Controls;
 using Avalonia.Media;
-using FellowOakDicom;
 using PixelArtEditor.Models;
 using PixelArtEditor.Models.Canvas;
-using Splat.ModeDetection;
 using System;
 using System.Runtime.InteropServices;
-using System.Xml.Linq;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace PixelArtEditor.ViewModels;
 

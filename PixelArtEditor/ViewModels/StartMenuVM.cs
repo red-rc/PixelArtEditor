@@ -1,22 +1,12 @@
 ﻿using PixelArtEditor.AppServices.Shell;
+using ReactiveUI.SourceGenerators;
 
 namespace PixelArtEditor.ViewModels;
 
-public class StartMenuVM() : ReactiveObject
+public partial class StartMenuVM() : ReactiveObject
 {
-    private double _dragBgOpacity = 0;
-    public double DragBgOpacity
-    {
-        get => _dragBgOpacity;
-        set => this.RaiseAndSetIfChanged(ref _dragBgOpacity, value);
-    }
-
-    private bool _dragImageVisible = false;
-    public bool DragImageVisible
-    {
-        get => _dragImageVisible;
-        set => this.RaiseAndSetIfChanged(ref _dragImageVisible, value);
-    }
+    [Reactive] public partial double DragBgOpacity { get; set; } = 0;
+    [Reactive] public partial bool DragImageVisible { get; set; } = false;
 
     public ReactiveCommand<RxVoid, RxVoid> CreateCommand { get; } = 
         ReactiveCommand.CreateFromTask(ActionService.ShowCreateWindow);

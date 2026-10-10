@@ -4,24 +4,20 @@ using PixelArtEditor.AppServices.Serialization;
 using PixelArtEditor.AppServices.Shell;
 using PixelArtEditor.Models.Canvas;
 using PixelArtEditor.Models.Dock;
+using ReactiveUI.SourceGenerators;
 using System;
 using System.Collections.Generic;
 using System.IO;
 
 namespace PixelArtEditor.AppServices.Settings;
 
-public sealed class SettingsManager : ReactiveObject, ISettingsManager
+public sealed partial class SettingsManager : ReactiveObject, ISettingsManager
 {
     public static SettingsManager GetInstance { get; } = new();
 
     private SettingsManager() => SetDefaults();
 
-    private int _gridMaxSize;
-    public int GridMaxSize
-    {
-        get => _gridMaxSize;
-        set => this.RaiseAndSetIfChanged(ref _gridMaxSize, value);
-    }
+    [Reactive] public partial int GridMaxSize { get; set; }
 
     private string _gridColor = null!;
     public string GridColor
@@ -30,26 +26,9 @@ public sealed class SettingsManager : ReactiveObject, ISettingsManager
         set => this.RaiseAndSetIfChanged(ref _gridColor, value);
     }
 
-    private bool _enableGrid;
-    public bool EnableGrid
-    {
-        get => _enableGrid;
-        set => this.RaiseAndSetIfChanged(ref _enableGrid, value);
-    }
-
-    private bool _enableAutosave;
-    public bool EnableAutosave
-    {
-        get => _enableAutosave;
-        set => this.RaiseAndSetIfChanged(ref _enableAutosave, value);
-    }
-
-    private int _autosaveFrequency;
-    public int AutosaveFrequency
-    {
-        get => _autosaveFrequency;
-        set => this.RaiseAndSetIfChanged(ref _autosaveFrequency, value);
-    }
+    [Reactive] public partial bool EnableGrid { get; set; }
+    [Reactive] public partial bool EnableAutosave { get; set; }
+    [Reactive] public partial int AutosaveFrequency { get; set; }
 
     private string _language = null!;
     public string Language
@@ -63,33 +42,10 @@ public sealed class SettingsManager : ReactiveObject, ISettingsManager
         }
     }
 
-    private bool _scaleCheckerboardWithCanvas;
-    public bool ScaleCheckerboardWithCanvas
-    {
-        get => _scaleCheckerboardWithCanvas;
-        set => this.RaiseAndSetIfChanged(ref _scaleCheckerboardWithCanvas, value);
-    }
-
-    private CheckerboardScale _checkerboardScale;
-    public CheckerboardScale CheckerboardScale
-    {
-        get => _checkerboardScale;
-        set => this.RaiseAndSetIfChanged(ref _checkerboardScale, value);
-    }
-
-    private BitmapInterpolationMode _interpolationMode;
-    public BitmapInterpolationMode InterpolationMode
-    {
-        get => _interpolationMode;
-        set => this.RaiseAndSetIfChanged(ref _interpolationMode, value);
-    }
-
-    private bool _interpolateOnlyWhenScalingDown;
-    public bool InterpolateOnlyWhenScalingDown
-    {
-        get => _interpolateOnlyWhenScalingDown;
-        set => this.RaiseAndSetIfChanged(ref _interpolateOnlyWhenScalingDown, value);
-    }
+    [Reactive] public partial bool ScaleCheckerboardWithCanvas { get; set; }
+    [Reactive] public partial CheckerboardScale CheckerboardScale { get; set; }
+    [Reactive] public partial BitmapInterpolationMode InterpolationMode { get; set; }
+    [Reactive] public partial bool InterpolateOnlyWhenScalingDown { get; set; }
 
     private string _accentColor = null!;
     public string AccentColor

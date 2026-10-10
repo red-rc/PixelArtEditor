@@ -4,15 +4,16 @@ using PixelArtEditor.AppServices.Shell;
 using PixelArtEditor.Helpers;
 using PixelArtEditor.Models;
 using PixelArtEditor.Models.Canvas;
+using ReactiveUI.SourceGenerators;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace PixelArtEditor.ViewModels;
 
-public class ImagePropertiesUCVM(PixelModel model) : ReactiveObject
+public partial class ImagePropertiesUCVM(PixelModel model) : ReactiveObject
 {
-    public PixelModel Model { get; set; } = model;
+    public PixelModel Model = model;
 
     private float _imageProportion = 0f;
     private bool _isUpdating = false;
@@ -79,20 +80,9 @@ public class ImagePropertiesUCVM(PixelModel model) : ReactiveObject
         }
     }
 
-    // --- DPI (вже були, просто float замість Vector) ---
-    private float _dpiX = model.DpiX;
-    public float DpiX
-    {
-        get => _dpiX;
-        set => this.RaiseAndSetIfChanged(ref _dpiX, value);
-    }
-
-    private float _dpiY = model.DpiY;
-    public float DpiY
-    {
-        get => _dpiY;
-        set => this.RaiseAndSetIfChanged(ref _dpiY, value);
-    }
+    // --- DPI ---
+    [Reactive] public partial float DpiX { get; set; } = model.DpiX;
+    [Reactive] public partial float DpiY { get; set; } = model.DpiY;
 
     // --- ColorMode ---
     public List<string> ColorModeNames { get; } = [.. Enum.GetValues<ColorMode>().Select(cm => cm.ToString())];
@@ -135,12 +125,8 @@ public class ImagePropertiesUCVM(PixelModel model) : ReactiveObject
         [ColorMode.CMYK] = [BitDepth.Bit8, BitDepth.Bit16]
     };
 
-    private List<string> _bitDepthNames = [.. ValidBitDepths[ColorMode.RGBA].Select(b => b.ToString())];
-    public List<string> BitDepthNames
-    {
-        get => _bitDepthNames;
-        private set => this.RaiseAndSetIfChanged(ref _bitDepthNames, value);
-    }
+    [Reactive] public partial List<string> BitDepthNames { get; set; } = 
+        [.. ValidBitDepths[model.ColorMode].Select(b => b.ToString())];
 
     private string _bitDepthName = model.BitDepth.ToString();
     public string BitDepthName
@@ -154,12 +140,7 @@ public class ImagePropertiesUCVM(PixelModel model) : ReactiveObject
         }
     }
 
-    private bool _bitDepthEnabled = true;
-    public bool BitDepthEnabled
-    {
-        get => _bitDepthEnabled;
-        set => this.RaiseAndSetIfChanged(ref _bitDepthEnabled, value);
-    }
+    [Reactive] public partial bool BitDepthEnabled { get; set; } = true;
 
     public BitDepth BitDepth = model.BitDepth;
 
@@ -185,12 +166,8 @@ public class ImagePropertiesUCVM(PixelModel model) : ReactiveObject
         [ColorMode.CMYK] = [ColorSpace.Cmyk],
     };
 
-    private List<string> _colorSpaceNames = [.. ValidColorSpaces[ColorMode.RGBA].Select(c => c.Id)];
-    public List<string> ColorSpaceNames
-    {
-        get => _colorSpaceNames;
-        private set => this.RaiseAndSetIfChanged(ref _colorSpaceNames, value);
-    }
+    [Reactive] public partial List<string> ColorSpaceNames { get; set; } = 
+        [.. ValidColorSpaces[model.ColorMode].Select(c => c.Id)];
 
     private string _colorSpaceName = model.SrcColorSpace.Id;
     public string ColorSpaceName
@@ -204,12 +181,7 @@ public class ImagePropertiesUCVM(PixelModel model) : ReactiveObject
         }
     }
 
-    private bool _colorSpaceEnabled = true;
-    public bool ColorSpaceEnabled
-    {
-        get => _colorSpaceEnabled;
-        set => this.RaiseAndSetIfChanged(ref _colorSpaceEnabled, value);
-    }
+    [Reactive] public partial bool ColorSpaceEnabled { get; set; } = true;
 
     public ColorSpace ColorSpace = model.ColorSpace;
 
@@ -231,12 +203,8 @@ public class ImagePropertiesUCVM(PixelModel model) : ReactiveObject
         [ColorMode.CMYK] = [AlphaFormat.None]
     };
 
-    private List<string> _alphaFormatNames = [.. ValidAlphaFormats[ColorMode.RGBA].Select(a => a.ToString())];
-    public List<string> AlphaFormatNames
-    {
-        get => _alphaFormatNames;
-        private set => this.RaiseAndSetIfChanged(ref _alphaFormatNames, value);
-    }
+    [Reactive] public partial List<string> AlphaFormatNames { get; set; } = 
+        [.. ValidAlphaFormats[model.ColorMode].Select(a => a.ToString())];
 
     private string _alphaFormatName = model.AlphaFormat.ToString();
     public string AlphaFormatName
@@ -250,12 +218,7 @@ public class ImagePropertiesUCVM(PixelModel model) : ReactiveObject
         }
     }
 
-    private bool _alphaFormatEnabled = true;
-    public bool AlphaFormatEnabled
-    {
-        get => _alphaFormatEnabled;
-        set => this.RaiseAndSetIfChanged(ref _alphaFormatEnabled, value);
-    }
+    [Reactive] public partial bool AlphaFormatEnabled { get; set; } = true;
 
     public AlphaFormat AlphaFormat = model.AlphaFormat;
 
@@ -296,12 +259,7 @@ public class ImagePropertiesUCVM(PixelModel model) : ReactiveObject
     public ReactiveCommand<RxVoid, RxVoid> ConfigureCommand
         => ReactiveCommand.CreateFromTask(async () => await ActionService.ShowIndexedPropertiesWindow(Model));
 
-    private WriteableBitmap? _renderBitmap;
-    public WriteableBitmap? RenderBitmap
-    {
-        get => _renderBitmap;
-        set => this.RaiseAndSetIfChanged(ref _renderBitmap, value);
-    }
+    [Reactive] public partial WriteableBitmap? RenderBitmap { get; set; }
 
     private PreviewData _renderData = new(0, 0, null, null);
     public PreviewData RenderData

@@ -54,7 +54,7 @@
                     </Style>
                   </DropDownButton.Styles>
                   <DropDownButton.Flyout>
-                    <Flyout Placement="{DynamicResource ColorPickerFlyoutPlacement}">
+                    <Flyout Placement="{DynamicResource ColorPickerFlyoutPlacement}" VerticalOffset="6">
 
                       <Border Padding="6">
                         <Border Classes="ShadowBorder" CornerRadius="5">
@@ -120,11 +120,9 @@
                                   <Grid RowDefinitions="*"
                                         Margin="12">
                                     <Grid.ColumnDefinitions>
-                                      <ColumnDefinition Width="Auto"
-                                                        MinWidth="30" />
+                                      <ColumnDefinition Width="Auto" MinWidth="30" />
                                       <ColumnDefinition Width="*" />
-                                      <ColumnDefinition Width="Auto"
-                                                        MinWidth="30" />
+                                      <ColumnDefinition Width="Auto" MinWidth="30" />
                                     </Grid.ColumnDefinitions>
                                     <primitives:ColorSlider 
                                         x:Name="ColorSpectrumAlphaSlider"
@@ -542,7 +540,7 @@
                     </Style>
                   </DropDownButton.Styles>
                   <DropDownButton.Flyout>
-                    <Flyout Placement="{DynamicResource ColorPickerFlyoutPlacement}">
+                    <Flyout Placement="{DynamicResource ColorPickerFlyoutPlacement}" VerticalOffset="6">
 
                       <Border Padding="6">
                         <Border Classes="ShadowBorder" CornerRadius="5">

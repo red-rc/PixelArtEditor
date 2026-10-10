@@ -5,6 +5,7 @@ using PixelArtEditor.AppServices.Bitmap.Quantization;
 using PixelArtEditor.Helpers;
 using PixelArtEditor.Models;
 using PixelArtEditor.Models.Canvas;
+using ReactiveUI.SourceGenerators;
 using System;
 using System.Collections.Generic;
 using System.Reactive.Linq;
@@ -13,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace PixelArtEditor.ViewModels;
 
-public class IndexedPropertiesVM : ReactiveObject
+public partial class IndexedPropertiesVM : ReactiveObject
 {
     private List<string> _quantizationNames = [.. Enum.GetNames<PaletteQuantization>()];
     public List<string> QuantizationNames
@@ -36,26 +37,9 @@ public class IndexedPropertiesVM : ReactiveObject
 
     public PaletteQuantization Quantization = PaletteQuantization.MedianCut;
 
-    private int _colorCount;
-    public int ColorCount
-    {
-        get => _colorCount;
-        set => this.RaiseAndSetIfChanged(ref _colorCount, value);
-    }
-
-    private int _maxColorCount;
-    public int MaxColorCount
-    {
-        get => _maxColorCount;
-        set => this.RaiseAndSetIfChanged(ref _maxColorCount, value);
-    }
-
-    private bool _dither = true;
-    public bool Dither
-    {
-        get => _dither;
-        set => this.RaiseAndSetIfChanged(ref _dither, value);
-    }
+    [Reactive] public partial int ColorCount { get; set; }
+    [Reactive] public partial int MaxColorCount { get; set; }
+    [Reactive] public partial bool Dither { get; set; } = true;
 
     private Palette? _palette;
     private Dictionary<uint, int>? _histogram;
@@ -67,12 +51,7 @@ public class IndexedPropertiesVM : ReactiveObject
         private set => this.RaiseAndSetIfChanged(ref _renderData, value);
     }
 
-    private bool _isLoading;
-    public bool IsLoading
-    {
-        get => _isLoading;
-        private set => this.RaiseAndSetIfChanged(ref _isLoading, value);
-    }
+    [Reactive] public partial bool IsLoading { get; set; }
 
     private CancellationTokenSource? _updateCts;
 

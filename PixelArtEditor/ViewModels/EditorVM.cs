@@ -5,72 +5,44 @@ using PixelArtEditor.AppServices.Canvas;
 using PixelArtEditor.AppServices.Tools;
 using PixelArtEditor.Models.Canvas;
 using PixelArtEditor.UI;
+using ReactiveUI.SourceGenerators;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
 
 namespace PixelArtEditor.ViewModels;
 
-public class EditorVM : ReactiveObject
+public partial class EditorVM : ReactiveObject
 {
-    private double _dragBgOpacity = 0;
-    public double DragBgOpacity
-    {
-        get => _dragBgOpacity;
-        set => this.RaiseAndSetIfChanged(ref _dragBgOpacity, value);
-    }
-
-    private bool _dragImageVisible = false;
-    public bool DragImageVisible
-    {
-        get => _dragImageVisible;
-        set => this.RaiseAndSetIfChanged(ref _dragImageVisible, value);
-    }
-
-    private bool _confirmPanelVisible = false;
-    public bool ConfirmPanelVisible
-    {
-        get => _confirmPanelVisible;
-        set => this.RaiseAndSetIfChanged(ref _confirmPanelVisible, value);
-    }
-
-    private Canvas? _canvas;
-    public Canvas? Canvas
-    {
-        get => _canvas;
-        set => this.RaiseAndSetIfChanged(ref _canvas, value);
-    }
-
-    private PixelModel _model;
-    public PixelModel Model
-    {
-        get => _model;
-        set => this.RaiseAndSetIfChanged(ref _model, value);
-    }
+    [Reactive] public partial double DragBgOpacity { get; set; } = 0;
+    [Reactive] public partial bool DragImageVisible { get; set; } = false;
+    [Reactive] public partial bool ConfirmPanelVisible { get; set; } = false;
+    [Reactive] public partial Canvas? Canvas { get; set; }
+    [Reactive] public partial PixelModel Model { get; set; }
 
     public PixelModel GetPreparedModel()
     {
         return new PixelModel
         {
-            Name = _model.Name,
-            Extension = _model.Extension,
-            Width = _model.Width,
-            Height = _model.Height,
-            ColorMode = _model.ColorMode,
-            BitDepth = _model.BitDepth,
-            ColorSpace = _model.ColorSpace,
-            SrcColorSpace = _model.SrcColorSpace,
-            AlphaFormat = _model.AlphaFormat,
-            DpiX = _model.DpiX,
-            DpiY = _model.DpiY,
-            Palette = _model.Palette,
+            Name = Model.Name,
+            Extension = Model.Extension,
+            Width = Model.Width,
+            Height = Model.Height,
+            ColorMode = Model.ColorMode,
+            BitDepth = Model.BitDepth,
+            ColorSpace = Model.ColorSpace,
+            SrcColorSpace = Model.SrcColorSpace,
+            AlphaFormat = Model.AlphaFormat,
+            DpiX = Model.DpiX,
+            DpiY = Model.DpiY,
+            Palette = Model.Palette,
             Data = LayerManager.GetCompositePixelData(Model.Width, Model.Height),
-            DicomDataset = _model.DicomDataset,
-            IccProfile = _model.IccProfile
+            DicomDataset = Model.DicomDataset,
+            IccProfile = Model.IccProfile
         };
     }
 
-    private LayerManager _layerManager = new ();
+    private LayerManager _layerManager = new();
     public LayerManager LayerManager
     {
         get => _layerManager;
@@ -87,12 +59,7 @@ public class EditorVM : ReactiveObject
     private Vector2 _startOffset;
     public bool IsPositionSet;
     
-    private Vector2 _offset;
-    public Vector2 Offset
-    {
-        get => _offset;
-        set => this.RaiseAndSetIfChanged(ref _offset, value);
-    }
+    [Reactive] public partial Vector2 Offset { get; set; }
 
     private const int ScaleStep = 8;
 
@@ -110,44 +77,31 @@ public class EditorVM : ReactiveObject
     }
 
     public double MinScale { get; private set; }
-
-    private int _maxScale;
-    public int MaxScale
-    {
-        get => _maxScale;
-        private set => this.RaiseAndSetIfChanged(ref _maxScale, value);
-    }
-
+    [Reactive] public partial int MaxScale { get; set; }
     public double BaseScale { get; private set; }
 
     public ToolSelection Tools { get; private set; } = new();
+    [Reactive] public partial Color PickedColor { get; set; } = Colors.Red;
 
-    private Color _pickedColor = Colors.Red;
-    public Color PickedColor
-    {
-        get => _pickedColor;
-        set => this.RaiseAndSetIfChanged(ref _pickedColor, value);
-    }
-
-    public string? CoordinatesText { get; set; }
-    public string? ScaleText { get; set; }
+    [Reactive] public partial string? CoordinatesText { get; set; }
+    [Reactive] public partial string? ScaleText { get; set; }
 
     private readonly ObservableAsPropertyHelper<bool> _isTransforming;
     public bool IsTransforming => _isTransforming.Value;
 
     public void SetCanvas(Canvas canvas)
     {
-        _canvas = canvas;
+        Canvas = canvas;
 
         LayerManager.InitializeFirstLayer(
-            _model.Width,
-            _model.Height,
-            _model.Data,
-            _model.Name ?? $"{LocalizationService.Get("Layer")} {LayerManager.Layers.Count + 1}");
+            Model.Width,
+            Model.Height,
+            Model.Data,
+            Model.Name ?? $"{LocalizationService.Get("Layer")} {LayerManager.Layers.Count + 1}");
 
         canvas.AttachLayerManager(LayerManager);
 
-        _canvas.WhenAnyValue(x => x.HoverPixel).Subscribe(coord =>
+        Canvas.WhenAnyValueUnsafe(x => x.HoverPixel).Subscribe(coord =>
         {
             CoordinatesText = coord is null
                 ? "X: - Y: -"
@@ -159,10 +113,10 @@ public class EditorVM : ReactiveObject
 
     public EditorVM(PixelModel model)
     {
-        _model = model;
+        Model = model;
         ConfirmPanelVisible = false;
 
-        this.WhenAnyValue(vm => vm.ConfirmPanelVisible).ToProperty(this, vm => vm.IsTransforming, out _isTransforming);
+        this.WhenAnyValueUnsafe(vm => vm.ConfirmPanelVisible).ToProperty(this, vm => vm.IsTransforming, out _isTransforming);
     }
 
     public void StartDragging(Point startMousePos)

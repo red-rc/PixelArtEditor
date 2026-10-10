@@ -4,13 +4,14 @@ using Avalonia.Media.Imaging;
 using PixelArtEditor.AppServices;
 using PixelArtEditor.AppServices.Bitmap;
 using PixelArtEditor.Models.Canvas;
+using ReactiveUI.SourceGenerators;
 using System;
 using System.Reactive;
 using System.Reactive.Linq;
 
 namespace PixelArtEditor.Models.LayerPanel;
 
-public class LayerItem: ReactiveObject, IDisposable
+public partial class LayerItem: ReactiveObject, IDisposable
 {
     public LayerModel Layer { get; }
 
@@ -58,12 +59,7 @@ public class LayerItem: ReactiveObject, IDisposable
         }
     }
 
-    private bool _isEditing;
-    public bool IsEditing
-    {
-        get => _isEditing;
-        set => this.RaiseAndSetIfChanged(ref _isEditing, value);
-    }
+    [Reactive] public partial bool IsEditing { get; set; }
 
     public IImage? VisibleIconSource => IsVisible
         ? Application.Current?.Resources["ShowIcon"] as IImage
@@ -79,24 +75,11 @@ public class LayerItem: ReactiveObject, IDisposable
         this.RaisePropertyChanged(nameof(LockedIconSource));
     }
 
-    private string _hideShowTag;
-    public string HideShowTag
-    {
-        get => _hideShowTag;
-        set => this.RaiseAndSetIfChanged(ref _hideShowTag, value);
-    }
+    [Reactive] public partial string HideShowTag { get; set; }
+    [Reactive] public partial string LockUnlockTag { get; set; }
 
-    private string _lockUnlockTag;
-    public string LockUnlockTag
-    {
-        get => _lockUnlockTag;
-        set => this.RaiseAndSetIfChanged(ref _lockUnlockTag, value);
-    }
-
-    private string GetHideShowTag()
-        => IsVisible ? LocalizationService.Get("Hide") : LocalizationService.Get("Show");
-    private string GetLockUnlockTag()
-       => IsLocked ? LocalizationService.Get("Unlock") : LocalizationService.Get("Lock");
+    private string GetHideShowTag() => IsVisible ? LocalizationService.Get("Hide") : LocalizationService.Get("Show");
+    private string GetLockUnlockTag() => IsLocked ? LocalizationService.Get("Unlock") : LocalizationService.Get("Lock");
 
     public void RefreshTags()
     {
@@ -116,12 +99,12 @@ public class LayerItem: ReactiveObject, IDisposable
         _isVisible = layer.IsVisible;
         _isLocked = layer.IsLocked;
 
-        _hideShowTag = GetHideShowTag();
-        _lockUnlockTag = GetLockUnlockTag();
+        HideShowTag = GetHideShowTag();
+        LockUnlockTag = GetLockUnlockTag();
 
         Observable.Merge(
-            Layer.WhenAnyValue(x => x.ThumbDirtyRect).Where(rect => rect is not null).Select(_ => Unit.Default),
-            Layer.WhenAnyValue(x => x.Data).Skip(1).Select(_ => Unit.Default))
+            Layer.WhenAnyValueUnsafe(x => x.ThumbDirtyRect).Where(rect => rect is not null).Select(_ => Unit.Default),
+            Layer.WhenAnyValueUnsafe(x => x.Data).Skip(1).Select(_ => Unit.Default))
             .Subscribe(_ =>
         {
             UpdateThumb();

@@ -11,6 +11,10 @@
   </PropertyGroup>
 
   <PropertyGroup>
+    <NuGetAudit>false</NuGetAudit>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <AssemblyName>Pixeller</AssemblyName>
     <PackageIcon>logo.ico</PackageIcon>

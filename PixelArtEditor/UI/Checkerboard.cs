@@ -97,9 +97,9 @@ public class Checkerboard : Control
 
         Settings.WhenAnyValue(x => x.ScaleCheckerboardWithCanvas, x => x.CheckerboardScale).Subscribe(_ => InvalidateVisual());
 
-        this.WhenAnyValue(x => x.Model)
-            .Select(model => model.WhenAnyValue(m => m.Width, m => m.Height, m => m.Data))
-            .Switch()
+        Observable.Switch(this.WhenAnyValue(x => x.Model)
+            .Where(model => model is not null)
+            .Select(model => model.WhenAnyValue(m => m.Width, m => m.Height, m => m.Data)))
             .Subscribe(_ => OnModelChanged());
 
         this.GetObservable(OffsetProperty).Subscribe(_ => InvalidateVisual());

@@ -1,18 +1,13 @@
 ﻿using PixelArtEditor.AppServices;
+using ReactiveUI.SourceGenerators;
 using System.Reactive.Linq;
 
 namespace PixelArtEditor.ViewModels;
 
-public class MainWindowVM : ReactiveObject
+public partial class MainWindowVM : ReactiveObject
 {
-    private object _currentView;
+    [Reactive] public partial object CurrentView { get; set; }
 
-    public object CurrentView
-    {
-        get => _currentView;
-        set => this.RaiseAndSetIfChanged(ref _currentView, value);
-    }
-    
     public MenuCommandsVM Menu { get; }
 
     private readonly ObservableAsPropertyHelper<bool> _canOpenMenu;
@@ -23,13 +18,12 @@ public class MainWindowVM : ReactiveObject
         Services.Navigation.Initialize(this);
 
         Menu = new MenuCommandsVM();
-        _currentView = new StartMenuVM();
+        CurrentView = new StartMenuVM();
 
-        this.WhenAnyValue(view => view.CurrentView)
+        Observable.Switch(this.WhenAnyValue(view => view.CurrentView)
             .Select(vm => vm is EditorVM editorVM
                 ? editorVM.WhenAnyValue(e => e.IsTransforming)
-                : Observable.Return(false))
-            .Switch()
+                : Observable.Return(false)))
             .Select(isTransforming => !isTransforming)
             .ToProperty(this, vm => vm.CanOpenMenu, out _canOpenMenu);
     }

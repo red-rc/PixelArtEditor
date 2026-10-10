@@ -1,4 +1,5 @@
 ﻿using FellowOakDicom;
+using ReactiveUI.SourceGenerators;
 
 namespace PixelArtEditor.Models.Canvas;
 
@@ -32,14 +33,9 @@ public sealed record ColorSpace(string Id, ColorFamily Family, TransferFunction 
     public static readonly ColorSpace[] All = [SRgb, LinearSRgb, DisplayP3, AdobeRgb, GraySRgb, GrayG22, GrayLinear, Cmyk, Custom, None];
 }
 
-public class PixelModel : ReactiveObject
+public partial class PixelModel : ReactiveObject
 {
-    private string? _name;
-    public string? Name
-    {
-        get => _name;
-        set => this.RaiseAndSetIfChanged(ref _name, value);
-    }
+    [Reactive] public partial string? Name { get; set; }
 
     private string _extension = "png";
     public string Extension
@@ -48,19 +44,8 @@ public class PixelModel : ReactiveObject
         set => this.RaiseAndSetIfChanged(ref _extension, value);
     }
 
-    private int _width;
-    public int Width
-    {
-        get => _width;
-        set => this.RaiseAndSetIfChanged(ref _width, value);
-    }
-
-    private int _height;
-    public int Height
-    {
-        get => _height;
-        set => this.RaiseAndSetIfChanged(ref _height, value);
-    }
+    [Reactive] public partial int Width { get; set; }
+    [Reactive] public partial int Height { get; set; }
 
     private float _dpiX = 96f;
     public float DpiX
@@ -76,19 +61,8 @@ public class PixelModel : ReactiveObject
         set => this.RaiseAndSetIfChanged(ref _dpiY, value);
     }
 
-    private ColorMode _colorMode;
-    public ColorMode ColorMode
-    {
-        get => _colorMode;
-        set => this.RaiseAndSetIfChanged(ref _colorMode, value);
-    }
-
-    private BitDepth _bitDepth;
-    public BitDepth BitDepth
-    {
-        get => _bitDepth;
-        set => this.RaiseAndSetIfChanged(ref _bitDepth, value);
-    }
+    [Reactive] public partial ColorMode ColorMode { get; set; }
+    [Reactive] public partial BitDepth BitDepth { get; set; }
 
     private ColorSpace _colorSpace = ColorSpace.SRgb;
     public ColorSpace ColorSpace
@@ -97,28 +71,11 @@ public class PixelModel : ReactiveObject
         set => this.RaiseAndSetIfChanged(ref _colorSpace, value);
     }
 
-    public ColorSpace SrcColorSpace { get; set; } = ColorSpace.SRgb;
+    public ColorSpace SrcColorSpace = ColorSpace.SRgb;
 
-    private byte[]? _iccProfile;
-    public byte[]? IccProfile
-    {
-        get => _iccProfile;
-        set => this.RaiseAndSetIfChanged(ref _iccProfile, value);
-    }
-
-    private AlphaFormat _alphaFormat;
-    public AlphaFormat AlphaFormat
-    {
-        get => _alphaFormat;
-        set => this.RaiseAndSetIfChanged(ref _alphaFormat, value);
-    }
-
-    private Palette? _palette;
-    public Palette? Palette
-    {
-        get => _palette;
-        set => this.RaiseAndSetIfChanged(ref _palette, value);
-    }
+    [Reactive] public partial byte[]? IccProfile { get; set; }
+    [Reactive] public partial AlphaFormat AlphaFormat { get; set; }
+    [Reactive] public partial Palette? Palette { get; set; }
 
     private byte[] _data = [];
     public byte[] Data
@@ -127,12 +84,7 @@ public class PixelModel : ReactiveObject
         set => this.RaiseAndSetIfChanged(ref _data, value);
     }
 
-    private DicomDataset? _dicomDataset;
-    public DicomDataset? DicomDataset
-    {
-        get => _dicomDataset;
-        set => this.RaiseAndSetIfChanged(ref _dicomDataset, value);
-    }
+    [Reactive] public partial DicomDataset? DicomDataset { get; set; }
 }
 
 // Contains BGRA data, not RGBA

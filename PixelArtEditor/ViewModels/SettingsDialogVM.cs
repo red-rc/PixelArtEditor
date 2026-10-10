@@ -5,12 +5,13 @@ using PixelArtEditor.AppServices.Settings;
 using PixelArtEditor.Helpers;
 using PixelArtEditor.Models.Canvas;
 using PixelArtEditor.Windows;
+using ReactiveUI.SourceGenerators;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace PixelArtEditor.ViewModels;
 
-public class SettingsDialogVM : ReactiveObject
+public partial class SettingsDialogVM : ReactiveObject
 {
     private static ISettingsManager Settings => Services.Settings;
 
@@ -171,12 +172,7 @@ public class SettingsDialogVM : ReactiveObject
         }
     }
 
-    private int _selectedTabIndex;
-    public int SelectedTabIndex
-    {
-        get => _selectedTabIndex;
-        set => this.RaiseAndSetIfChanged(ref _selectedTabIndex, value);
-    }
+    [Reactive] public partial int SelectedTabIndex { get; set; }
 
     public ReactiveCommand<RxVoid, RxVoid> ResetCommand { get; }
     public ReactiveCommand<RxVoid, RxVoid> CancelCommand { get; }
@@ -204,7 +200,7 @@ public class SettingsDialogVM : ReactiveObject
             dialog.Close();
         });
 
-        _selectedTabIndex = 0;
+        SelectedTabIndex = 0;
     }
 
     public void OnClosing()

@@ -78,14 +78,13 @@
                               Stretch="Uniform" />
                       </ToggleButton>
                       <Popup Name="PART_Popup"
-                             Width="{Binding Bounds.Width, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource AddConverter}, ConverterParameter=12}"
+                             MinWidth="{Binding Bounds.Width, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource AddConverter}, ConverterParameter=12}"
                              MaxHeight="{TemplateBinding MaxDropDownHeight}"
                              IsLightDismissEnabled="True"
                              IsOpen="{TemplateBinding IsDropDownOpen,
                                                       Mode=TwoWay}"
                              PlacementTarget="{TemplateBinding}"
-                             InheritsTransform="True"
-                             VerticalOffset="-6">
+                             InheritsTransform="True">
                         <Border Background="{DynamicResource ThemeBackgroundBrush}"
                                 BorderBrush="{DynamicResource ThemeBorderMidBrush}"
                                 BorderThickness="0" Margin="6">

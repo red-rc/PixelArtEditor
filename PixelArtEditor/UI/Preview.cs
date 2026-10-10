@@ -23,9 +23,9 @@ public class Preview : Control
 
     public Preview()
     {
-        this.WhenAnyValue(x => x.RenderData)
-            .Select(model => model.WhenAnyValue(rd => rd.Width, rd => rd.Height, rd => rd.Bitmap, rd => rd.Color))
-            .Switch()
+        Observable.Switch(this.WhenAnyValue(x => x.RenderData)
+            .Where(model => model is not null)
+            .Select(model => model.WhenAnyValue(rd => rd.Width, rd => rd.Height, rd => rd.Bitmap, rd => rd.Color)))
             .Subscribe(_ => InvalidateVisual());
     }
 

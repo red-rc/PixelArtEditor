@@ -2,10 +2,11 @@ using Avalonia.Media.Imaging;
 using PixelArtEditor.Models.Canvas;
 using PixelArtEditor.Models.Dock;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace PixelArtEditor.AppServices.Settings;
 
-public interface ISettingsManager
+public interface ISettingsManager : INotifyPropertyChanged
 {
     int GridMaxSize { get; set; }
     string GridColor { get; set; }
