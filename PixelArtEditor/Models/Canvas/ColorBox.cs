@@ -54,36 +54,41 @@ public class ColorBox
         return ChannelType.Alpha;
     }
 
+    private interface IKey { byte Get(Color c); }
+    private readonly struct RKey : IKey { public byte Get(Color c) => c.R; }
+    private readonly struct GKey : IKey { public byte Get(Color c) => c.G; }
+    private readonly struct BKey : IKey { public byte Get(Color c) => c.B; }
+    private readonly struct AKey : IKey { public byte Get(Color c) => c.A; }
+
     public int SplitAtMedian(ChannelType channel)
     {
         var medianLen = Length / 2;
         var colorSpan = Colors.AsSpan(Start, Length);
         var weightSpan = Weights.AsSpan(Start, Length);
 
-        Func<Color, byte> key = channel switch
+        switch (channel)
         {
-            ChannelType.Red => c => c.R,
-            ChannelType.Green => c => c.G,
-            ChannelType.Blue => c => c.B,
-            _ => c => c.A
-        };
-
-        QuickSelect(colorSpan, weightSpan, medianLen, key);
+            case ChannelType.Red: QuickSelect<RKey>(colorSpan, weightSpan, medianLen); break;
+            case ChannelType.Green: QuickSelect<GKey>(colorSpan, weightSpan, medianLen); break;
+            case ChannelType.Blue: QuickSelect<BKey>(colorSpan, weightSpan, medianLen); break;
+            default: QuickSelect<AKey>(colorSpan, weightSpan, medianLen); break;
+        }
 
         return medianLen;
     }
 
-    private static void QuickSelect(Span<Color> colors, Span<int> weights, int k, Func<Color, byte> key)
+    private static void QuickSelect<TKey>(Span<Color> colors, Span<int> weights, int k) where TKey : struct, IKey
     {
+        var key = default(TKey);
         int lo = 0, hi = colors.Length - 1;
         while (lo < hi)
         {
-            var pivot = key(colors[(lo + hi) / 2]);
+            var pivot = key.Get(colors[(lo + hi) / 2]);
             int i = lo, j = hi;
             while (i <= j)
             {
-                while (key(colors[i]) < pivot) i++;
-                while (key(colors[j]) > pivot) j--;
+                while (key.Get(colors[i]) < pivot) i++;
+                while (key.Get(colors[j]) > pivot) j--;
                 if (i <= j)
                 {
                     (colors[i], colors[j]) = (colors[j], colors[i]);
@@ -100,11 +105,11 @@ public class ColorBox
     public Color GetAverageColor()
     {
         uint sumR = 0, sumG = 0, sumB = 0, sumA = 0;
-        var sumWeight = 0;
+        long sumWeight = 0;
 
         var span = Colors.AsSpan(Start, Length);
     
-        for (int i = 0; i < span.Length; i++)
+        for (var i = 0; i < span.Length; i++)
         {
             var c = span[i];
             var weight = Weights[Start + i];

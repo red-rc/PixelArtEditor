@@ -1,34 +1,34 @@
 ﻿using Avalonia.Media;
+using PixelArtEditor.AppServices.Bitmap.Quantization;
 using PixelArtEditor.Models.Canvas;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace PixelArtEditor.AppServices.Bitmap;
 
 public class PaletteService
 {
-    public static Palette GetPalette(byte[] data, int colorCount, PaletteQuantization quantizationMethod)
+    public static Palette GetPalette(byte[] data, int colorCount, PaletteQuantization quantizationMethod, bool dither, ref Dictionary<uint, int>? histogram)
     {
+        histogram ??= QuantizationService.GetHistogram(data);
         var transparentWeight = CountTransparentPixels(data);
 
         var palette = quantizationMethod switch
         {
-            PaletteQuantization.KMeans => GetKMeansPalette(data, colorCount),
-            PaletteQuantization.MedianCut => GetMedianCutPalette(data, colorCount, transparentWeight),
-            PaletteQuantization.Octree => GetOctreePalette(data, colorCount),
-            _ => GetMedianCutPalette(data, colorCount, transparentWeight)
+            PaletteQuantization.KMeans => KMeans.GetPalette(histogram, colorCount, transparentWeight),
+            PaletteQuantization.Octree => Octree.GetPalette(histogram, colorCount, transparentWeight),
+            _ => MedianCut.GetPalette(histogram, colorCount, transparentWeight)
         };
 
+        palette.Dither = dither;
         return palette;
     }
 
     private static unsafe int CountTransparentPixels(byte[] data)
     {
         var count = 0;
-        fixed (byte* ptr = data)
+        fixed (byte* scrPtr = data)
         {
-            uint* src = (uint*)ptr;
+            uint* src = (uint*)scrPtr;
             var total = data.Length / 4;
 
             for (var i = 0; i < total; i++)
@@ -36,123 +36,6 @@ public class PaletteService
         }
 
         return count;
-    }
-
-    public static Palette GetKMeansPalette(byte[] data, int colorCount)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static Palette GetMedianCutPalette(byte[] data, int colorCount, int transparentWeight = 0)
-    {
-        var (colors, weights) = GetPixelColorHistogram(data);
-
-        if (colors.Length == 0)
-            return new Palette(transparentWeight > 0 ? [Color.FromArgb(0, 0, 0, 0)] : []);
-
-        var boxes = new List<ColorBox> { new(colors, weights, 0, colors.Length) };
-        var rgbSlots = transparentWeight > 0 ? colorCount - 1 : colorCount;
-
-        while (boxes.Count < rgbSlots)
-        {
-            var boxToSplit = GetMaxVolumeColorBox(boxes);
-            if (boxToSplit is null) break;
-
-            var channel = boxToSplit.GetChannelWithLongestRange();
-            var medianLen = boxToSplit.SplitAtMedian(channel);
-
-            var left = new ColorBox(boxToSplit.Colors, boxToSplit.Weights, boxToSplit.Start, medianLen);
-            var right = new ColorBox(boxToSplit.Colors, boxToSplit.Weights, boxToSplit.Start + medianLen,
-                boxToSplit.Length - medianLen);
-
-            boxes.Remove(boxToSplit);
-            boxes.Add(left);
-            boxes.Add(right);
-        }
-
-        var candidates = new List<(Color color, long weight)>();
-
-        foreach (var box in boxes)
-        {
-            long boxWeight = 0;
-            var span = box.Weights.AsSpan(box.Start, box.Length);
-            foreach (var w in span) boxWeight += w;
-            candidates.Add((box.GetAverageColor(), boxWeight));
-        }
-
-        if (transparentWeight > 0)
-            candidates.Add((Color.FromArgb(0, 0, 0, 0), transparentWeight));
-
-        candidates.Sort((a, b) => b.weight.CompareTo(a.weight));
-        var result = candidates.Count > colorCount ? candidates.GetRange(0, colorCount) : candidates;
-
-        return new Palette([.. result.Select(c => c.color)]);
-    }
-
-    public static Palette GetOctreePalette(byte[] data, int colorCount)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static unsafe (Color[] colors, int[] weights) GetPixelColorHistogram(byte[] data)
-    {
-        var histogram = new Dictionary<Color, int>();
-
-        fixed (byte* srcPtr = data)
-        {
-            uint* src = (uint*)srcPtr;
-            var count = data.Length / 4;
-
-            for (var i = 0; i < count; i++)
-            {
-                var a = (byte)((src[i] >> 24) & 0xFF);
-                if (a < 128) continue;
-
-                var b = (byte)(src[i] & 0xFF);
-                var g = (byte)((src[i] >> 8) & 0xFF);
-                var r = (byte)((src[i] >> 16) & 0xFF);
-
-                var color = Color.FromArgb(255, r, g, b);
-
-                if (histogram.TryGetValue(color, out var w))
-                    histogram[color] = w + 1;
-                else
-                    histogram[color] = 1;
-            }
-        }
-
-        var colors = new Color[histogram.Count];
-        var weights = new int[histogram.Count];
-
-        var idx = 0;
-        foreach (var kvp in histogram)
-        {
-            colors[idx] = kvp.Key;
-            weights[idx] = kvp.Value;
-            idx++;
-        }
-
-        return (colors, weights);
-    }
-
-    private static ColorBox? GetMaxVolumeColorBox(List<ColorBox> boxes)
-    {
-        ColorBox? maxBox = null;
-        uint maxVolume = 0;
-
-        foreach (var box in boxes)
-        {
-            if (box.Length <= 1) continue;
-
-            var volume = box.Volume;
-            if (maxBox is null || volume > maxVolume)
-            {
-                maxVolume = volume;
-                maxBox = box;
-            }
-        }
-
-        return maxBox;
     }
 
     public static Color ResolveColorForPalette(Color color, Palette palette, BitDepth bitDepth)

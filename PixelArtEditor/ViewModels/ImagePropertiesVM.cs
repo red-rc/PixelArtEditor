@@ -3,6 +3,7 @@ using PixelArtEditor.AppServices.Bitmap;
 using PixelArtEditor.AppServices.ImageProcessing;
 using PixelArtEditor.Models.Canvas;
 using System;
+using System.Collections.Generic;
 
 namespace PixelArtEditor.ViewModels;
 
@@ -20,6 +21,8 @@ public class ImagePropertiesVM : ReactiveObject
     public ReactiveCommand<RxVoid, RxVoid> ResetCommand { get; }
     public ReactiveCommand<RxVoid, RxVoid> CancelCommand { get; }
     public ReactiveCommand<RxVoid, RxVoid> SaveCommand { get; }
+
+    private Dictionary<uint, int>? _histogram;
 
     public ImagePropertiesVM(Window dialog, PixelModel model, EditorVM editorVM, bool export = false)
     {
@@ -52,7 +55,7 @@ public class ImagePropertiesVM : ReactiveObject
                 var layers = editorVM.LayerManager;
 
                 if (mode == ColorMode.Indexed && editorVM.Model.Palette is not null)
-                    layers.ToIndexed(editorVM.Model.Palette);
+                    layers.ToIndexed(editorVM.Model.Palette, model.Width);
                 else if (mode == ColorMode.Grayscale)
                     layers.ToGrayscale();
                 else if (mode == ColorMode.GrayscaleAlpha)
@@ -97,7 +100,8 @@ public class ImagePropertiesVM : ReactiveObject
 
             var srcPalette = ImageProps.isPaletteSetByUser ? ImageProps.Model.Palette : null;
 
-            var (quantized, palette) = BitmapService.GetQuantized(model.Data, ImageProps.BitDepth, srcPalette);
+            var (quantized, palette) = 
+                BitmapService.GetQuantized(model.Data, ImageProps.Width, ImageProps.BitDepth, srcPalette, ref _histogram);
 
             if (palette != srcPalette)
                 ImageProps.isPaletteSetByUser = false;

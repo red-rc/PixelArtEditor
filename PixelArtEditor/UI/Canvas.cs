@@ -126,14 +126,18 @@ public class Canvas : Control, ICanvasContext
             InvalidateVisual();
         });
 
-        this.WhenAnyValue(x => x.Model)
-            .Where(model => model is not null)
-            .Select(model => model.WhenAnyValue(x => x.Width, x => x.Height))
+        var modelChanges = this.WhenAnyValue(x => x.Model).Where(m => m is not null);
+
+        modelChanges.Select(m => m.WhenAnyValue(x => x.Width, x => x.Height))
             .Switch()
             .Subscribe(_ => {
                 LayerManager.ResizeLayers(Model.Width, Model.Height);
                 InvalidateVisual();
             });
+
+        modelChanges.Select(m => m.WhenAnyValue(x => x.Palette))
+            .Switch()
+            .Subscribe(_ => InvalidateVisual());
 
         this.GetObservable(SelectedToolProperty).Subscribe(newTool => _currentTool = ToolManager.Get(newTool));
         this.GetObservable(OffsetProperty).Subscribe(_ => InvalidateVisual());

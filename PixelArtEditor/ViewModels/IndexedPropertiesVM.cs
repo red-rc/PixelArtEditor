@@ -1,6 +1,7 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Threading;
 using PixelArtEditor.AppServices.Bitmap;
+using PixelArtEditor.AppServices.Bitmap.Quantization;
 using PixelArtEditor.Helpers;
 using PixelArtEditor.Models;
 using PixelArtEditor.Models.Canvas;
@@ -57,6 +58,7 @@ public class IndexedPropertiesVM : ReactiveObject
     }
 
     private Palette? _palette;
+    private Dictionary<uint, int>? _histogram;
 
     private PreviewData _renderData = new(0, 0, null, null);
     public PreviewData RenderData
@@ -82,7 +84,7 @@ public class IndexedPropertiesVM : ReactiveObject
     {
         LoadFrom(model);
 
-        this.WhenAnyValue(x => x.Quantization, x => x.ColorCount, x => x.Dither).Subscribe(_ => UpdatePreview(model));
+        this.WhenAnyValue(x => x.QuantizationName, x => x.ColorCount, x => x.Dither).Subscribe(_ => UpdatePreview(model));
 
         ResetCommand = ReactiveCommand.Create(() =>
         {
@@ -109,12 +111,14 @@ public class IndexedPropertiesVM : ReactiveObject
         RenderData.Height = model.Height;
         RenderData.Bitmap = BitmapService.CreateBitmap(model.Data, model.Width, model.Height);
 
+        _histogram = QuantizationService.GetHistogram(model.Data);
+
         MaxColorCount = PaletteService.GetPaletteMaxColorCount(model.BitDepth);
         ColorCount = MaxColorCount;
 
         if (model.Palette is not null)
         {
-            Dither = model.Palette.Dither ?? false;
+            Dither = model.Palette.Dither;
             QuantizationName = model.Palette.QuantizationMethod.ToString() ?? "MedianCut";
         }
     }
@@ -136,10 +140,10 @@ public class IndexedPropertiesVM : ReactiveObject
         {
             if (token.IsCancellationRequested) return;
 
-            var palette = PaletteService.GetPalette(model.Data, colorCount, quantization);
+            var palette = PaletteService.GetPalette(model.Data, colorCount, quantization, dither, ref _histogram);
             if (token.IsCancellationRequested) return;
 
-            var quantized = BitmapService.QuantizeToPalette(model.Data, palette, dither);
+            var quantized = BitmapService.QuantizeToPalette(model.Data, model.Width, palette);
             if (token.IsCancellationRequested) return;
 
             Dispatcher.UIThread.Post(() =>

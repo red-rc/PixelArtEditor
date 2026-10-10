@@ -23,7 +23,6 @@ public class Preview : Control
 
     public Preview()
     {
-        RenderOptions.SetBitmapInterpolationMode(this, BitmapInterpolationMode.None);
         this.WhenAnyValue(x => x.RenderData)
             .Select(model => model.WhenAnyValue(rd => rd.Width, rd => rd.Height, rd => rd.Bitmap, rd => rd.Color))
             .Switch()
@@ -43,13 +42,18 @@ public class Preview : Control
 
         var bitmap = data.Bitmap;
         Color? color = data.Color;
-
         if (bitmap is null && color is null) return;
 
         var rect = PreviewHelper.GetAspectRect(Bounds.Width, data.Width, data.Height);
 
         if (bitmap is not null)
-            context.DrawImage(bitmap, rect);
+        {
+            var scale = rect.Width / data.Width;
+            var mode = scale < 1 ? BitmapInterpolationMode.HighQuality : BitmapInterpolationMode.None;
+
+            using (context.PushRenderOptions(new RenderOptions { BitmapInterpolationMode = mode }))
+                context.DrawImage(bitmap, rect);
+        }
         else if (color is Color c)
             context.DrawRectangle(new SolidColorBrush(c), null, rect);
     }

@@ -39,8 +39,8 @@ public class LayerManager
         }
     }
 
-    public void ToIndexed(Palette palette) =>
-        ApplyToLayers(data => BitmapService.QuantizeToPalette(data, palette, palette.Dither ?? false));
+    public void ToIndexed(Palette palette, int width) =>
+        ApplyToLayers(data => BitmapService.QuantizeToPalette(data, width, palette));
     public void ToGrayscale() =>
         ApplyToLayers(data => ImageConverterService.ToGrayscale(ImageConverterService.ToRgb(data)));
     public void ToGrayscaleAlpha() => ApplyToLayers(ImageConverterService.ToGrayscale);

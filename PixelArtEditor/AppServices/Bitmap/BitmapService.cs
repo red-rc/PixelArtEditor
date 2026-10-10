@@ -478,7 +478,7 @@ public static class BitmapService
         return bgra;
     }
 
-    public static unsafe byte[] QuantizeToPalette(byte[] data, Palette palette, bool dither)
+    public static unsafe byte[] QuantizeToPalette(byte[] data, int width, Palette palette)
     {
         if (palette.Colors.Count == 0) return data;
 
@@ -487,7 +487,10 @@ public static class BitmapService
 
         if (!palette.Colors.Any(c => c.A != 0)) return result;
 
-        var cube = PaletteLookup.BuildLookupCube(palette);
+        palette.Cube ??= PaletteLookup.BuildLookupCube(palette);
+
+        var height = data.Length / 4 / width;
+        var err = palette.Dither ? new float[width * height * 3] : null;
 
         fixed (byte* srcPtr = data)
         fixed (byte* dstPtr = result)
@@ -495,39 +498,74 @@ public static class BitmapService
             uint* src = (uint*)srcPtr;
             uint* dst = (uint*)dstPtr;
 
-            for (var i = 0; i < data.Length / 4; i++)
+            for (var y = 0; y < height; y++)
             {
-                var a = (byte)((src[i] >> 24) & 0xFF);
+                for (var x = 0; x < width; x++)
+                {
+                    var i = y * width + x;
+                    var a = (byte)((src[i] >> 24) & 0xFF);
 
-                if (a < 128 && hasTransparentInPalette) { dst[i] = 0; continue; }
+                    if (a < 128 && hasTransparentInPalette) { dst[i] = 0; continue; }
 
-                var b = (byte)(src[i] & 0xFF);
-                var g = (byte)((src[i] >> 8) & 0xFF);
-                var r = (byte)((src[i] >> 16) & 0xFF);
+                    float b = src[i] & 0xFF;
+                    float g = (src[i] >> 8) & 0xFF;
+                    float r = (src[i] >> 16) & 0xFF;
 
-                var best = PaletteLookup.Lookup(cube, Color.FromArgb(255, r, g, b));
-                dst[i] = (uint)best.B | ((uint)best.G << 8) | ((uint)best.R << 16) | (255u << 24);
+                    if (err is not null)
+                    {
+                        var e = i * 3;
+                        b += err[e]; g += err[e + 1]; r += err[e + 2];
+                    }
+
+                    var rb = (byte)Math.Clamp((int)MathF.Round(r), 0, 255);
+                    var gb = (byte)Math.Clamp((int)MathF.Round(g), 0, 255);
+                    var bb = (byte)Math.Clamp((int)MathF.Round(b), 0, 255);
+
+                    var best = PaletteLookup.Lookup(palette.Cube, Color.FromArgb(255, rb, gb, bb));
+                    dst[i] = (uint)best.B | ((uint)best.G << 8) | ((uint)best.R << 16) | (255u << 24);
+
+                    if (err is null) continue;
+
+                    var eb = bb - best.B;
+                    var eg = gb - best.G;
+                    var er = rb - best.R;
+
+                    Spread(err, width, height, x + 1, y, eb, eg, er, 7f / 16);
+                    Spread(err, width, height, x - 1, y + 1, eb, eg, er, 3f / 16);
+                    Spread(err, width, height, x, y + 1, eb, eg, er, 5f / 16);
+                    Spread(err, width, height, x + 1, y + 1, eb, eg, er, 1f / 16);
+                }
             }
         }
 
         return result;
     }
 
-    public static (byte[], Palette palette) GetQuantized(byte[] data, BitDepth bitDepth, Palette? palette = null)
+    private static void Spread(float[] err, int w, int h, int x, int y, float eb, float eg, float er, float k)
+    {
+        if ((uint)x >= (uint)w || (uint)y >= (uint)h) return;
+
+        var i = (y * w + x) * 3;
+        err[i] += eb * k;
+        err[i + 1] += eg * k;
+        err[i + 2] += er * k;
+    }
+
+    public static (byte[], Palette palette) GetQuantized(byte[] data, int width, BitDepth bitDepth, Palette? palette, ref Dictionary<uint, int>? histogram)
     {
         var maxColorCount = PaletteService.GetPaletteMaxColorCount(bitDepth);
 
         byte[] newData;
         if (palette is Palette p && palette.Colors.Count <= maxColorCount)
         {
-            newData = QuantizeToPalette(data, palette, palette?.Dither ?? false);
+            newData = QuantizeToPalette(data, width, palette);
             return (newData, p);
         }
 
         var newPalette = PaletteService.GetPalette(data, maxColorCount, 
-            palette?.QuantizationMethod ?? PaletteQuantization.MedianCut);
+            palette?.QuantizationMethod ?? PaletteQuantization.MedianCut, palette?.Dither ?? true, ref histogram);
 
-        newData = QuantizeToPalette(data, newPalette, palette?.Dither ?? false);
+        newData = QuantizeToPalette(data, width, newPalette);
         return (newData, newPalette);
     }
 }
