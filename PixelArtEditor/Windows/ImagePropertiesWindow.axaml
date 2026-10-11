@@ -43,14 +43,11 @@
                 HorizontalAlignment="Center"
                 ColumnDefinitions="250,Auto,10,Auto"
                 DockPanel.Dock="Top">
-                <editor:PreviewControl
+                <editor:SliderPreviewControl
                      Grid.Column="0"
                      Margin="0,0,0,10"
-                     Width="200"
-                     Height="200"
                      VerticalAlignment="Center"
-                     RenderData="{Binding ImageProps.RenderData}"
-                     FixedTileSize="20" />
+                     RenderData="{Binding ImageProps.RenderData}" />
 
                 <StackPanel Grid.Column="1" Spacing="10">
                     <TextBlock Classes="Header" Text="{DynamicResource Size}" />

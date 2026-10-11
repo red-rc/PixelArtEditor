@@ -44,7 +44,7 @@
                 VerticalAlignment="Bottom"
                 FontSize="14"
                 Foreground="Gray"
-                Text="{DynamicResource AppVersion}" />
+                Text="v1.0.0" />
         </Grid>
 
         <Grid Grid.ColumnSpan="2" IsHitTestVisible="False">

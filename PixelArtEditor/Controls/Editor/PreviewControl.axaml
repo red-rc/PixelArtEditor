@@ -11,7 +11,8 @@
         <ui:Checkerboard  
             DataWidth="{Binding RenderData.Width, ElementName=Root}" 
             DataHeight="{Binding RenderData.Height, ElementName=Root}"
-            FixedTileSize="{Binding FixedTileSize, ElementName=Root}" />
+            FixedTileSize="{Binding FixedTileSize, ElementName=Root}"
+            Opacity="{Binding CheckerboardOpacity, ElementName=Root}" />
         <ui:Preview RenderData="{Binding RenderData, ElementName=Root}" />
     </Panel>
 </UserControl>

@@ -56,7 +56,6 @@ localPairs:
   BitDepth: Розрядність
   AlphaFormat: Формат альфа-каналу
   ColorSpaces: Колірні простори
-  AppVersion: v1.0.0
   Basic: Базовий
   Advanced: Розширений
   Confirm: Підтвердити
@@ -67,15 +66,6 @@ localPairs:
   ScaleCheckerboardWithCanvas: Масштабувати шахівницю разом з полотном
   CheckerboardScale: Масштаб шахівниці
   PixellerTheBest: Pixeller — найкращий графічний редактор
-  Rgb: RGB
-  Hsv: HSV
-  R: R
-  H: H
-  G: G
-  S: S
-  B: B
-  V: V
-  A: A
   Canvas: Полотно
   ViewLocalotNotFound: Не знайдено
   InvalidBitmap: Недійсний формат растрового зображення.

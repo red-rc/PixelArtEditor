@@ -56,8 +56,6 @@ localPairs:
   BitDepth: ビット深度
   AlphaFormat: アルファフォーマット
   ColorSpaces: カラースペース
-  
-  AppVersion: v1.0.0
   Basic: 基本
   Advanced: 高度
   Confirm: 確認
@@ -68,15 +66,6 @@ localPairs:
   ScaleCheckerboardWithCanvas: 市松模様をキャンバスに合わせる
   CheckerboardScale: 市松模様のスケール
   PixellerTheBest: Pixeller — ベストグラフィックエディタ
-  Rgb: RGB
-  Hsv: HSV
-  R: R
-  H: H
-  G: G
-  S: S
-  B: B
-  V: V
-  A: A
   Canvas: キャンバス
   ViewLocalotNotFound: 見つかりません
   InvalidBitmap: 無効なビットマップ形式です。

@@ -106,7 +106,7 @@
                            Width="36"
                            Height="36"
                            RenderData="{Binding RenderData}"
-                           FixedTileSize="12" />
+                           FixedTileSize="6" />
 
                        <Grid Grid.Column="1" VerticalAlignment="Center">
                             <TextBlock 

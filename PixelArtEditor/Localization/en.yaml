@@ -56,8 +56,6 @@ localPairs:
   BitDepth: Bit Depth
   AlphaFormat: Alpha Format
   ColorSpaces: Color Spaces
-  
-  AppVersion: v1.0.0
   Basic: Basic
   Advanced: Advanced
   Confirm: Confirm
@@ -68,15 +66,6 @@ localPairs:
   ScaleCheckerboardWithCanvas: Scale checkerboard with canvas
   CheckerboardScale: Checkerboard scale
   PixellerTheBest: Pixeller — the best graphics editor
-  Rgb: RGB
-  Hsv: HSV
-  R: R
-  H: H
-  G: G
-  S: S
-  B: B
-  V: V
-  A: A
   Canvas: Canvas
   ViewLocalotNotFound: Not Found
   InvalidBitmap: Invalid bitmap format.

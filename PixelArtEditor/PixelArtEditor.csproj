@@ -50,4 +50,10 @@
   <ItemGroup>
     <Folder Include="Assets\Icc\" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Controls\Editor\SliderPreviewControl.axaml.cs">
+      <DependentUpon>SliderPreviewControl.axaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
 </Project>

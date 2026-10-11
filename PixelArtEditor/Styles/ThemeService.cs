@@ -130,6 +130,10 @@ public class BaseTheme
         resources["UploadIcon"] = ThemeHelper.LoadBitmap("avares://PixelArtEditor/Assets/Dark/UIElements/upload.png");
         resources["CheckMarkIcon"] = ThemeHelper.LoadBitmap("avares://PixelArtEditor/Assets/Dark/UIElements/checkMark.png");
         resources["GearIcon"] = ThemeHelper.LoadBitmap("avares://PixelArtEditor/Assets/Dark/UIElements/gear.png");
+
+        resources["SpectrumIcon"] = ThemeHelper.LoadBitmap("avares://PixelArtEditor/Assets/Dark/ColorView/spectrum.png");
+        resources["PaletteIcon"] = ThemeHelper.LoadBitmap("avares://PixelArtEditor/Assets/Dark/ColorView/palette.png");
+        resources["ComponentsIcon"] = ThemeHelper.LoadBitmap("avares://PixelArtEditor/Assets/Dark/ColorView/components.png");
     }
 
     public static void SetLightIcons()
@@ -167,6 +171,10 @@ public class BaseTheme
         resources["UploadIcon"] = ThemeHelper.LoadBitmap("avares://PixelArtEditor/Assets/Light/UIElements/upload.png");
         resources["CheckMarkIcon"] = ThemeHelper.LoadBitmap("avares://PixelArtEditor/Assets/Light/UIElements/checkMark.png");
         resources["GearIcon"] = ThemeHelper.LoadBitmap("avares://PixelArtEditor/Assets/Light/UIElements/gear.png");
+
+        resources["SpectrumIcon"] = ThemeHelper.LoadBitmap("avares://PixelArtEditor/Assets/Light/ColorView/spectrum.png");
+        resources["PaletteIcon"] = ThemeHelper.LoadBitmap("avares://PixelArtEditor/Assets/Light/ColorView/palette.png");
+        resources["ComponentsIcon"] = ThemeHelper.LoadBitmap("avares://PixelArtEditor/Assets/Light/ColorView/components.png");
     }
 }
 

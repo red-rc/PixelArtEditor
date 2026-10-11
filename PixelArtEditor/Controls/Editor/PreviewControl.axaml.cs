@@ -16,6 +16,15 @@ public partial class PreviewControl : UserControl
         set => SetValue(FixedTileSizeProperty, value);
     }
 
+    public static readonly StyledProperty<float> CheckerboardOpacityProperty =
+        AvaloniaProperty.Register<PreviewControl, float>(nameof(CheckerboardOpacity), defaultValue: 1f);
+
+    public float CheckerboardOpacity
+    {
+        get => GetValue(CheckerboardOpacityProperty);
+        set => SetValue(CheckerboardOpacityProperty, value);
+    }
+
     public static readonly StyledProperty<PreviewData> RenderDataProperty =
         AvaloniaProperty.Register<PreviewControl, PreviewData>(nameof(RenderData));
 
@@ -25,8 +34,5 @@ public partial class PreviewControl : UserControl
         set => SetValue(RenderDataProperty, value);
     }
 
-    public PreviewControl()
-    {
-        InitializeComponent();
-    }
+    public PreviewControl() => InitializeComponent();
 }
