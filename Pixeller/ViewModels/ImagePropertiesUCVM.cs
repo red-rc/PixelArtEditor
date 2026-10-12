@@ -244,7 +244,7 @@ public partial class ImagePropertiesUCVM(PixelModel model) : ReactiveObject
         BitDepthNames = [.. validBitDepths.Select(b => b.ToString())];
 
         if (!validBitDepths.Contains(BitDepth))
-            BitDepthName = validBitDepths[0].ToString();
+            BitDepthName = validBitDepths.Contains(BitDepth.Bit8) ? BitDepth.Bit8.ToString() : validBitDepths[0].ToString();
 
         BitDepthEnabled = validBitDepths.Length > 1;
 
@@ -255,7 +255,7 @@ public partial class ImagePropertiesUCVM(PixelModel model) : ReactiveObject
         ColorSpaceNames = [.. validColorSpaces.Select(c => c.Id)];
 
         if (!validColorSpaces.Contains(ColorSpace))
-            ColorSpaceName = validColorSpaces[0].Id;
+            ColorSpaceName = validColorSpaces.Contains(ColorSpace.SRgb) ? ColorSpace.SRgb.Id : validColorSpaces[0].Id;
 
         ColorSpaceEnabled = validColorSpaces.Length > 1;
 
@@ -264,7 +264,7 @@ public partial class ImagePropertiesUCVM(PixelModel model) : ReactiveObject
         AlphaFormatNames = [.. validAlphaFormats.Select(a => a.ToString())];
 
         if (!validAlphaFormats.Contains(AlphaFormat))
-            AlphaFormatName = validAlphaFormats[0].ToString();
+            AlphaFormatName = validAlphaFormats.Contains(AlphaFormat.Straight) ? AlphaFormat.Straight.ToString() : validAlphaFormats[0].ToString();
 
         AlphaFormatEnabled = validAlphaFormats.Length > 1;
     }
