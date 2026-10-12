@@ -1,5 +1,4 @@
 ﻿using Avalonia.Controls;
-using Avalonia.Input;
 using PixelArtEditor.AppServices.Canvas;
 using PixelArtEditor.Helpers;
 using PixelArtEditor.Models.Canvas;
@@ -17,9 +16,6 @@ public class PasteCmd(LayerPanelVM vm, ListBox layerListBox, TopLevel topLevel) 
     {
         if (layerManager is null || !CanExecute || TopLevel.Clipboard is not { } clipboard) return;
 
-        using var data = await clipboard.TryGetDataAsync();
-        if (data is null) return;
-
         var model = await ClipboardImageService.GetModel(clipboard);
         if (model is not null)
         {
@@ -27,13 +23,8 @@ public class PasteCmd(LayerPanelVM vm, ListBox layerListBox, TopLevel topLevel) 
             return;
         }
 
-        var item = data.Items.FirstOrDefault(i => i.Formats.Contains(LayerClipboardSerializer.FormatId));
-        if (item is null) return;
-
-        if (await item.TryGetRawAsync(LayerClipboardSerializer.FormatId) is not byte[] bytes) return;
-
-        var layers = await Task.Run(() => LayerClipboardSerializer.Deserialize(bytes));
-        if (layers is null || layers.Count == 0) return;
+        var layers = await ClipboardImageService.GetLayers(clipboard);
+        if (layers is null) return;
 
         InsertLayers(layers, layerManager);
     }

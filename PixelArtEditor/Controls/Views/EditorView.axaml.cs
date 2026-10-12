@@ -42,7 +42,6 @@ public partial class EditorView : UserControl
     private Point? _zoomPos;
 
     private void OnCancelClick(object? sender, RoutedEventArgs e) => OnCancel();
-
     private void OnConfirmClick(object? sender, RoutedEventArgs e) => OnConfirm();
 
     private void OnCancel()
@@ -141,7 +140,7 @@ public partial class EditorView : UserControl
 
         foreach (var file in files)
         {
-            var model = await ImageImportService.GetPixelModelFromFile(file);
+            var model = await vm.RunLoadAsync(ImageImportService.GetPixelModelFromFile(file));
             if (model is null) continue;
 
             if (ViewModel is null) return;

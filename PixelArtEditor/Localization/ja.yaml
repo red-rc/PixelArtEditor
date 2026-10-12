@@ -57,6 +57,8 @@ localPairs:
   AlphaFormat: アルファフォーマット
   ColorSpaces: カラースペース
   Basic: 基本
+  TiffCompression: TIFF圧縮
+  ExportQuality: JPEG / WebP 品質
   Advanced: 高度
   Confirm: 確認
   Size: サイズ
@@ -88,6 +90,7 @@ localPairs:
   DicomUnsupportedEncoding: このDICOMピクセルエンコーディングはサポートされていません。
   Document: ドキュメント
   InvalidPdf: 無効または破損したPDFファイルです。
+  TiffCompressionUnsupported: サポートされていないTIFF圧縮です。
   PdfNoPages: PDFファイルにページが含まれていません。
   NotImplemented: まだ実装されていません。
   InvalidPalette: 画像パレットが破損しているか、無効です。
@@ -133,3 +136,4 @@ localPairs:
   ColorCount: 色数
   Dither: ディザリング
   PngEncoderError: このビット深度は、フォーマットエンコーダーでサポートされていません
+  ImageLoadingError: 画像の読み込み中にエラーが発生しました。ファイルが破損しているか、サポートされていない形式の可能性があります。

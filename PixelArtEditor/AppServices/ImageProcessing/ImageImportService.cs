@@ -5,7 +5,7 @@ using PixelArtEditor.AppServices.ImageProcessing.Formats;
 using PixelArtEditor.AppServices.Shell;
 using PixelArtEditor.Models.Canvas;
 using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.ColorSpaces;
+using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using System;
@@ -45,7 +45,8 @@ public static class ImageImportService
         new($"PDF {LocalizationService.Get("Document")}")           { Patterns = ["*.pdf"] },
         new($"Icon")                                                { Patterns = ["*.ico"] }
     ];
-    public static async Task<PixelModel?> ImportImageAsync()
+
+    public static async Task<IStorageFile?> PickImportFileAsync()
     {
         var loadOptions = new FilePickerOpenOptions
         {
@@ -62,9 +63,7 @@ public static class ImageImportService
 
         var storageProvider = topLevel.StorageProvider;
         var files = await storageProvider.OpenFilePickerAsync(loadOptions);
-        IStorageFile? file = files.Count > 0 ? files[0] : null;
-
-        return await GetPixelModelFromFile(file);
+        return files.Count > 0 ? files[0] : null;
     }
 
     public static async Task<PixelModel?> GetPixelModelFromFile(IStorageFile? file, bool showError = true)
@@ -182,6 +181,29 @@ public static class ImageImportService
             return ddsModel;
         }
 
+        else if (ext is ".tif" or ".tiff" && TiffCmykService.IsCmyk(ms))
+        {
+            var (tiffModel, tiffError) = await Task.Run(() =>
+            {
+                ms.Position = 0;
+                return TiffCmykService.Load(ms);
+            });
+
+            if (tiffError is not null)
+            {
+                if (showError) await ActionService.ShowError(tiffError);
+                return null;
+            }
+
+            if (tiffModel is not null)
+            {
+                tiffModel.Name = name;
+                tiffModel.Extension = ext.TrimStart('.');
+            }
+
+            return tiffModel;
+        }
+
         var (model, detectedExt, error) = await Task.Run(() =>
         {
             ms.Position = 0;
@@ -209,6 +231,10 @@ public static class ImageImportService
             ms.Position = 0;
             using var image = SharpImage.Load(ms);
             image.Mutate(x => x.AutoOrient());
+
+            if (info.Metadata.DecodedImageFormat is JpegFormat
+                && info.Metadata.GetJpegMetadata().ColorType is JpegEncodingColor.Cmyk or JpegEncodingColor.Ycck)
+                return (ImageReader.ReadCmyk(image, ms.ToArray()), formatExt, (string?)null);
 
             var indexedMeta = ImageReader.ExtractIndexedMetadata(image, ms);
             if (indexedMeta is not null)

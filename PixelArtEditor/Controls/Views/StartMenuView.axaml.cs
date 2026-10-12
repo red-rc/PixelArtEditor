@@ -44,7 +44,7 @@ public partial class StartMenuView : UserControl
         vm.DragBgOpacity = 0;
         vm.DragImageVisible = false;
 
-        var model = await ImageImportService.GetPixelModelFromFile(file);
+        var model = await vm.RunLoadAsync(ImageImportService.GetPixelModelFromFile(file));
         if (model is null) return;
 
         Services.Navigation.NavigateTo(new EditorVM(model));
@@ -54,7 +54,18 @@ public partial class StartMenuView : UserControl
     {
         if (e.KeyModifiers != KeyModifiers.Control || e.Key != Key.V) return;
 
-        var model = await ClipboardImageService.GetModel(TopLevel.GetTopLevel(this)?.Clipboard);
+        if (DataContext is not StartMenuVM vm) return;
+
+        var clipboard = TopLevel.GetTopLevel(this)?.Clipboard;
+
+        var layers = await ClipboardImageService.GetLayerManager(clipboard);
+        if (layers is { } l)
+        {
+            Services.Navigation.NavigateTo(new EditorVM(l.Model, l.Layers));
+            return;
+        }
+
+        var model = await vm.RunLoadAsync(ClipboardImageService.GetModel(clipboard));
         if (model is null) return;
 
         Services.Navigation.NavigateTo(new EditorVM(model));

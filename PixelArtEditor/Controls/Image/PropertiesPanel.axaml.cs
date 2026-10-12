@@ -23,6 +23,16 @@ public partial class PropertiesPanel : UserControl
         set => SetValue(ConfigureEnabledProperty, value);
     }
 
+    public static readonly StyledProperty<bool> ExportOptionsVisibleProperty =
+        AvaloniaProperty.Register<PropertiesPanel, bool>(nameof(ExportOptionsVisible), false);
+
+    /// <summary>Shows the save options (TIFF compression, JPEG/WebP quality); only the export dialog enables it.</summary>
+    public bool ExportOptionsVisible
+    {
+        get => GetValue(ExportOptionsVisibleProperty);
+        set => SetValue(ExportOptionsVisibleProperty, value);
+    }
+
     public PropertiesPanel()
     {
         InitializeComponent();

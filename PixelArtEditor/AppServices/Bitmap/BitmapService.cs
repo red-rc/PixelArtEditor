@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AlphaFormat = Avalonia.Platform.AlphaFormat;
 
@@ -478,7 +479,8 @@ public static class BitmapService
         return bgra;
     }
 
-    public static unsafe byte[] QuantizeToPalette(byte[] data, int width, Palette palette)
+    public static unsafe byte[] QuantizeToPalette(byte[] data, int width, Palette palette,
+        IProgress<int>? progress = null, CancellationToken token = default)
     {
         if (palette.Colors.Count == 0) return data;
 
@@ -498,8 +500,19 @@ public static class BitmapService
             uint* src = (uint*)srcPtr;
             uint* dst = (uint*)dstPtr;
 
+            var lastReported = -1;
+
             for (var y = 0; y < height; y++)
             {
+                if (token.IsCancellationRequested) return result;
+
+                var pct = y * 100 / height;
+                if (pct != lastReported)
+                {
+                    lastReported = pct;
+                    progress?.Report(pct);
+                }
+
                 for (var x = 0; x < width; x++)
                 {
                     var i = y * width + x;

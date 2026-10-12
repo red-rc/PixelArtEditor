@@ -40,6 +40,7 @@
                     <controls:PropertiesPanel 
                         DataContext="{Binding ImageProps}" 
                         ConfigureVisible="True"
+                        ExportOptionsVisible="True"
                         ConfigureEnabled="{Binding IsIndexed}" />
                 </StackPanel>
             </Grid>

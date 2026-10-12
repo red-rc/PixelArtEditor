@@ -4,6 +4,7 @@ using HeyRed.ImageSharp.Heif.Formats.Avif;
 using HeyRed.ImageSharp.Heif.Formats.Heif;
 using PixelArtEditor.AppServices.Bitmap;
 using PixelArtEditor.AppServices.ImageProcessing.Formats;
+using PixelArtEditor.AppServices.ImageProcessing.Icc;
 using PixelArtEditor.Models.Canvas;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats;
@@ -15,6 +16,7 @@ using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.Formats.Qoi;
 using SixLabors.ImageSharp.Formats.Tga;
 using SixLabors.ImageSharp.Formats.Tiff;
+using SixLabors.ImageSharp.Formats.Tiff.Constants;
 using SixLabors.ImageSharp.Formats.Webp;
 using SixLabors.ImageSharp.Metadata.Profiles.Icc;
 using SixLabors.ImageSharp.PixelFormats;
@@ -61,7 +63,7 @@ public static class ImageExportService
                 p.Equals("*.bmp", StringComparison.OrdinalIgnoreCase) ||
                 p.Equals("*.gif", StringComparison.OrdinalIgnoreCase)))];
         }
-        else if (model.ColorMode is ColorMode.GrayscaleAlpha)
+        else if (model.ColorMode is ColorMode.LA)
         {
             validFileTypes = [.. ExportFileTypes.Where(t => t.Patterns is not null && t.Patterns.Any(p =>
                 !p.Equals("*.jpg", StringComparison.OrdinalIgnoreCase) &&
@@ -124,31 +126,47 @@ public static class ImageExportService
                 image.Metadata.HorizontalResolution = model.DpiX;
                 image.Metadata.VerticalResolution = model.DpiY;
 
-                var icc = model.ColorSpace == ColorSpace.Custom ? model.IccProfile : IccProfiles.Load(model.ColorSpace);
+                var isCmyk = model.ColorMode == ColorMode.CMYK;
+                var icc = isCmyk
+                    ? (model.IccProfile is { } cmykIcc && IccCmykConverter.TryCreate(cmykIcc) is { CanExport: true } ? cmykIcc : null)
+                    : model.ColorSpace == ColorSpace.Custom ? model.IccProfile : IccProfiles.Load(model.ColorSpace);
+
                 if (icc is not null) image.Metadata.IccProfile = new IccProfile(icc);
 
                 await using var stream = await file.OpenWriteAsync();
         
-                if (Path.GetExtension(file.Name).Equals(".dcm", StringComparison.InvariantCultureIgnoreCase))
+                var extension = Path.GetExtension(file.Name).ToLowerInvariant();
+
+                if (isCmyk && extension is ".tif" or ".tiff")
+                    TiffCmykService.Save(stream, bgraData, model.Width, model.Height, model.DpiX, model.DpiY, model.BitDepth, model.Compression, icc);
+                else if (isCmyk && extension == ".pdf")
+                    PdfService.SaveCmyk(stream, bgraData, model.Width, model.Height, model.DpiX, model.DpiY, icc);
+                else if (isCmyk && extension is ".jpg" or ".jpeg" && icc is not null)
+                    JpegCmykCodec.Encode(stream, CmykConverter.FromBgra(bgraData, icc), model.Width, model.Height, model.Quality, icc);
+                else if (extension is ".dcm" or ".dicom")
                     DicomService.Save(stream, exportData, model.Width, model.Height, model.DicomDataset);
-                else if (Path.GetExtension(file.Name).Equals(".pdf", StringComparison.InvariantCultureIgnoreCase))
+                else if (extension is ".pdf")
                     PdfService.Save(stream, exportData, model.Width, model.Height, model.DpiX, model.DpiY);
-                else if (Path.GetExtension(file.Name).Equals(".ico", StringComparison.InvariantCultureIgnoreCase))
+                else if (extension is ".ico")
                     IcoService.Save(stream, image.CloneAs<Rgba32>());
-                else if (Path.GetExtension(file.Name).Equals(".dds", StringComparison.InvariantCultureIgnoreCase))
+                else if (extension is ".dds")
                     DdsService.Save(stream, exportData, model.Width, model.Height);
-                else if (Path.GetExtension(file.Name).Equals(".svg", StringComparison.InvariantCultureIgnoreCase))
+                else if (extension is ".svg")
                     await ExportAsSvgWrapper(image, stream, model.Width, model.Height);
                 else
                 {
                     IImageEncoder encoder = Path.GetExtension(file.Name).ToLowerInvariant() switch
                     {
                         ".png" => BuildPngEncoder(model),
-                        ".jpg" or ".jpeg" => new JpegEncoder { Quality = 100 },
+                        ".jpg" or ".jpeg" => new JpegEncoder
+                        {
+                            Quality = model.Quality,
+                            ColorType = isCmyk ? JpegEncodingColor.Cmyk : null
+                        },
                         ".bmp" => BuildBmpEncoder(model),
                         ".gif" => BuildGifEncoder(model),
-                        ".tif" or ".tiff" => new TiffEncoder(),
-                        ".webp" => new WebpEncoder { Quality = 100 },
+                        ".tif" or ".tiff" => new TiffEncoder { Compression = BuildTiffCompression(model.Compression) },
+                        ".webp" => new WebpEncoder { Quality = model.Quality },
                         ".tga" => new TgaEncoder(),
                         ".pbm" => new PbmEncoder(),
                         ".qoi" => new QoiEncoder(),
@@ -245,14 +263,22 @@ public static class ImageExportService
             (ColorMode.ARGB, BitDepth.Bit8) => baseImage.CloneAs<Argb32>(),
             (ColorMode.ABGR, BitDepth.Bit8) => baseImage.CloneAs<Abgr32>(),
             (ColorMode.RG, BitDepth.Bit16) => baseImage.CloneAs<Rg32>(),
-            (ColorMode.Grayscale, BitDepth.Bit8) => baseImage.CloneAs<L8>(),
-            (ColorMode.Grayscale, BitDepth.Bit16) => baseImage.CloneAs<L16>(),
-            (ColorMode.GrayscaleAlpha, BitDepth.Bit8) => baseImage.CloneAs<La16>(),
-            (ColorMode.GrayscaleAlpha, BitDepth.Bit16) => baseImage.CloneAs<La32>(),
+            (ColorMode.L, BitDepth.Bit8) => baseImage.CloneAs<L8>(),
+            (ColorMode.L, BitDepth.Bit16) => baseImage.CloneAs<L16>(),
+            (ColorMode.LA, BitDepth.Bit8) => baseImage.CloneAs<La16>(),
+            (ColorMode.LA, BitDepth.Bit16) => baseImage.CloneAs<La32>(),
             (ColorMode.A, BitDepth.Bit8) => baseImage.CloneAs<A8>(),
             _ => baseImage.CloneAs<Rgba32>()
         };
     }
+
+    private static TiffCompression BuildTiffCompression(TiffCompressionMode mode) => mode switch
+    {
+        TiffCompressionMode.None => TiffCompression.None,
+        TiffCompressionMode.Deflate => TiffCompression.Deflate,
+        TiffCompressionMode.PackBits => TiffCompression.PackBits,
+        _ => TiffCompression.Lzw
+    };
 
     private static PngEncoder BuildPngEncoder(PixelModel model)
     {

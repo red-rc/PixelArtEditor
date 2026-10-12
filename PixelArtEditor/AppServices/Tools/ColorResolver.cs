@@ -14,8 +14,8 @@ public static class ColorResolver
         {
             ColorMode.Indexed when palette is not null && bitDepth is BitDepth bd
                 => PaletteService.ResolveColorForPalette(color, palette, bd),
-            ColorMode.Grayscale => Color.FromArgb(255, GetLuminance(), GetLuminance(), GetLuminance()),
-            ColorMode.GrayscaleAlpha => Color.FromArgb(color.A, GetLuminance(), GetLuminance(), GetLuminance()),
+            ColorMode.L => Color.FromArgb(255, GetLuminance(), GetLuminance(), GetLuminance()),
+            ColorMode.LA => Color.FromArgb(color.A, GetLuminance(), GetLuminance(), GetLuminance()),
             ColorMode.RGB or ColorMode.BGR => Color.FromArgb(255, color.R, color.G, color.B),
             ColorMode.RG => Color.FromArgb(255, color.R, color.G, 0),
             ColorMode.A => Color.FromArgb(255, color.A, color.A, color.A),

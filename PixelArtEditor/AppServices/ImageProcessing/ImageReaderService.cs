@@ -1,4 +1,5 @@
 ﻿using PixelArtEditor.AppServices.Bitmap;
+using PixelArtEditor.AppServices.ImageProcessing.Formats;
 using PixelArtEditor.Helpers;
 using PixelArtEditor.Models.Canvas;
 using SixLabors.ImageSharp;
@@ -131,21 +132,46 @@ public static class ImageReaderService
         => ReadAsBgra32(image, ColorMode.A, BitDepth.Bit8, AlphaFormat.None, ColorSpace.None);
 
     public static PixelModel ReadL8(Image<L8> image)
-        => ReadAsBgra32(image, ColorMode.Grayscale, BitDepth.Bit8, AlphaFormat.None, ColorSpace.GraySRgb);
+        => ReadAsBgra32(image, ColorMode.L, BitDepth.Bit8, AlphaFormat.None, ColorSpace.GraySRgb);
 
     public static PixelModel ReadL16(Image<L16> image)
-        => ReadAsBgra32(image, ColorMode.Grayscale, BitDepth.Bit16, AlphaFormat.None, ColorSpace.GraySRgb);
+        => ReadAsBgra32(image, ColorMode.L, BitDepth.Bit16, AlphaFormat.None, ColorSpace.GraySRgb);
 
     public static PixelModel ReadLa16(Image<La16> image)
-        => ReadAsBgra32(image, ColorMode.GrayscaleAlpha, BitDepth.Bit8, AlphaFormat.Straight, ColorSpace.GraySRgb);
+        => ReadAsBgra32(image, ColorMode.LA, BitDepth.Bit8, AlphaFormat.Straight, ColorSpace.GraySRgb);
 
     public static PixelModel ReadLa32(Image<La32> image)
-        => ReadAsBgra32(image, ColorMode.GrayscaleAlpha, BitDepth.Bit16, AlphaFormat.Straight, ColorSpace.GraySRgb);
+        => ReadAsBgra32(image, ColorMode.LA, BitDepth.Bit16, AlphaFormat.Straight, ColorSpace.GraySRgb);
 
     public static PixelModel? ReadIndexed(Image<Rgba32> image, Palette palette, BitDepth bitDepth)
     {
         if (palette.Colors.Count == 0 || palette.Colors.Count > 256) return null;
         return ReadAsBgra32(image, ColorMode.Indexed, bitDepth, AlphaFormat.Straight, ColorSpace.SRgb, palette);
+    }
+
+    /// <summary>
+    /// CMYK JPEG: raw ink planes are decoded and converted through the embedded ICC profile (when it has an A2B table);
+    /// otherwise the RGB that ImageSharp produced is kept. The model keeps the CMYK mode and profile for export.
+    /// </summary>
+    public static PixelModel ReadCmyk(Image image, byte[] original)
+    {
+        var model = ReadAsBgra32(image, ColorMode.CMYK, BitDepth.Bit8, AlphaFormat.None, ColorSpace.Cmyk);
+        var icc = image.Metadata.IccProfile?.ToByteArray();
+
+        var orientation = 
+            image.Metadata.ExifProfile?.TryGetValue(SixLabors.ImageSharp.Metadata.Profiles.Exif.ExifTag.Orientation, out var o) == true
+            ? o.Value : 1;
+
+        var raw = orientation == 1 ? JpegCmykCodec.TryDecode(original) : null;
+
+        if (raw is not null && raw.Width == model.Width && raw.Height == model.Height)
+        {
+            icc ??= raw.Icc;
+            model.Data = CmykConverter.ToBgra(raw.Cmyk, icc);
+        }
+
+        model.IccProfile = icc;
+        return model;
     }
 
     public static PixelModel ReadFallback(Image image)

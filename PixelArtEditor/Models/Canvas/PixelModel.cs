@@ -3,9 +3,11 @@ using ReactiveUI.SourceGenerators;
 
 namespace PixelArtEditor.Models.Canvas;
 
-public enum ColorMode { RGB, RGBA, BGR, BGRA, ARGB, ABGR, RG, A, Grayscale, GrayscaleAlpha, Indexed, CMYK }
+public enum ColorMode { RGB, RGBA, BGR, BGRA, ARGB, ABGR, RG, A, L, LA, Indexed, CMYK }
 public enum BitDepth { Bit1, Bit2, Bit4, Bit8, Bit16, Bit565, Bit5551, Bit1010102 }
 public enum AlphaFormat { None, Straight, Premultiplied }
+
+public enum TiffCompressionMode { None, Lzw, Deflate, PackBits }
 
 public enum ColorFamily { None, Rgb, Gray, Cmyk }
 public enum TransferFunction { SRgb, Linear, Gamma22, Gamma18 }
@@ -36,54 +38,29 @@ public sealed record ColorSpace(string Id, ColorFamily Family, TransferFunction 
 public partial class PixelModel : ReactiveObject
 {
     [Reactive] public partial string? Name { get; set; }
-
-    private string _extension = "png";
-    public string Extension
-    {
-        get => _extension;
-        set => this.RaiseAndSetIfChanged(ref _extension, value);
-    }
+    [Reactive] public partial string Extension { get; set; } = "png";
 
     [Reactive] public partial int Width { get; set; }
     [Reactive] public partial int Height { get; set; }
-
-    private float _dpiX = 96f;
-    public float DpiX
-    {
-        get => _dpiX;
-        set => this.RaiseAndSetIfChanged(ref _dpiX, value);
-    }
-
-    private float _dpiY = 96f;
-    public float DpiY
-    {
-        get => _dpiY;
-        set => this.RaiseAndSetIfChanged(ref _dpiY, value);
-    }
+    [Reactive] public partial float DpiX { get; set; } = 96f;
+    [Reactive] public partial float DpiY { get; set; } = 96f;
 
     [Reactive] public partial ColorMode ColorMode { get; set; }
     [Reactive] public partial BitDepth BitDepth { get; set; }
-
-    private ColorSpace _colorSpace = ColorSpace.SRgb;
-    public ColorSpace ColorSpace
-    {
-        get => _colorSpace;
-        set => this.RaiseAndSetIfChanged(ref _colorSpace, value);
-    }
+    [Reactive] public partial ColorSpace ColorSpace { get; set; } = ColorSpace.SRgb;
 
     public ColorSpace SrcColorSpace = ColorSpace.SRgb;
+
+    /// <summary>TIFF strip compression (source CMYK TIFF value is reused on export).</summary>
+    public TiffCompressionMode Compression = TiffCompressionMode.Lzw;
+
+    /// <summary>Export quality (1-100), shared by JPEG and WebP.</summary>
+    public int Quality = 100;
 
     [Reactive] public partial byte[]? IccProfile { get; set; }
     [Reactive] public partial AlphaFormat AlphaFormat { get; set; }
     [Reactive] public partial Palette? Palette { get; set; }
-
-    private byte[] _data = [];
-    public byte[] Data
-    {
-        get => _data;
-        set => this.RaiseAndSetIfChanged(ref _data, value);
-    }
-
+    [Reactive] public partial byte[] Data { get; set; } = [];
     [Reactive] public partial DicomDataset? DicomDataset { get; set; }
 }
 

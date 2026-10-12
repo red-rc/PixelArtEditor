@@ -12,7 +12,7 @@ using System.Numerics;
 
 namespace PixelArtEditor.ViewModels;
 
-public partial class EditorVM : ReactiveObject
+public partial class EditorVM : ViewBase
 {
     [Reactive] public partial double DragBgOpacity { get; set; } = 0;
     [Reactive] public partial bool DragImageVisible { get; set; } = false;
@@ -38,7 +38,9 @@ public partial class EditorVM : ReactiveObject
             Palette = Model.Palette,
             Data = LayerManager.GetCompositePixelData(Model.Width, Model.Height),
             DicomDataset = Model.DicomDataset,
-            IccProfile = Model.IccProfile
+            IccProfile = Model.IccProfile,
+            Compression = Model.Compression,
+            Quality = Model.Quality
         };
     }
 
@@ -93,11 +95,12 @@ public partial class EditorVM : ReactiveObject
     {
         Canvas = canvas;
 
-        LayerManager.InitializeFirstLayer(
-            Model.Width,
-            Model.Height,
-            Model.Data,
-            Model.Name ?? $"{LocalizationService.Get("Layer")} {LayerManager.Layers.Count + 1}");
+        if (_layerManager.Layers.Count == 0)
+            LayerManager.InitializeFirstLayer(
+                Model.Width,
+                Model.Height,
+                Model.Data,
+                Model.Name ?? $"{LocalizationService.Get("Layer")} {LayerManager.Layers.Count + 1}");
 
         canvas.AttachLayerManager(LayerManager);
 
@@ -111,9 +114,10 @@ public partial class EditorVM : ReactiveObject
         });
     }
 
-    public EditorVM(PixelModel model)
+    public EditorVM(PixelModel model, LayerManager? layerManager = null)
     {
         Model = model;
+        if (layerManager is not null) _layerManager = layerManager;
         ConfirmPanelVisible = false;
 
         this.WhenAnyValueUnsafe(vm => vm.ConfirmPanelVisible).ToProperty(this, vm => vm.IsTransforming, out _isTransforming);

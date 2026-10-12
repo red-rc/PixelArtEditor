@@ -54,9 +54,9 @@ public class ImagePropertiesVM : ReactiveObject
 
                 if (mode == ColorMode.Indexed && editorVM.Model.Palette is not null)
                     layers.ToIndexed(editorVM.Model.Palette, model.Width);
-                else if (mode == ColorMode.Grayscale)
+                else if (mode == ColorMode.L)
                     layers.ToGrayscale();
-                else if (mode == ColorMode.GrayscaleAlpha)
+                else if (mode == ColorMode.LA)
                     layers.ToGrayscaleAlpha();
                 else if (mode is ColorMode.RGB or ColorMode.BGR)
                     layers.ToRgb();
@@ -112,8 +112,8 @@ public class ImagePropertiesVM : ReactiveObject
         {
             result = ImageProps.ColorMode switch
             {
-                ColorMode.Grayscale => ImageConverterService.ToGrayscale(ImageConverterService.ToRgb(model.Data)),
-                ColorMode.GrayscaleAlpha => ImageConverterService.ToGrayscale(model.Data),
+                ColorMode.L => ImageConverterService.ToGrayscale(ImageConverterService.ToRgb(model.Data)),
+                ColorMode.LA => ImageConverterService.ToGrayscale(model.Data),
                 ColorMode.RGB or ColorMode.BGR => ImageConverterService.ToRgb(model.Data),
                 ColorMode.RG => ImageConverterService.ToRedGreen(model.Data),
                 ColorMode.A => ImageConverterService.ToAlpha(model.Data),

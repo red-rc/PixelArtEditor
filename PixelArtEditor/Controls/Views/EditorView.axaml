@@ -169,5 +169,17 @@
                 VerticalAlignment="Center"
                 RenderOptions.BitmapInterpolationMode="None" />
         </Grid>
+
+        <Grid IsHitTestVisible="False">
+            <ProgressBar
+                IsVisible="{Binding IsLoading}"
+                Width="300"
+                Height="30"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Minimum="0"
+                Maximum="100"
+                IsIndeterminate="True" />
+        </Grid>
     </Grid>
 </UserControl>

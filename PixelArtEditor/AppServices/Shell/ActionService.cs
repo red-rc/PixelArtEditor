@@ -18,10 +18,16 @@ public static class ActionService
 
     public static async Task ShowImportWindow()
     {
-        var model = await ImageImportService.ImportImageAsync();
-        if (model is null) return;
+        var file = await ImageImportService.PickImportFileAsync();
+        if (file is null) return;
 
-        Services.Navigation.NavigateTo(new EditorVM(model));
+        if (Services.Navigation.GetViewModel() is ViewBase vb)
+        {
+            var model = await vb.RunLoadAsync(ImageImportService.GetPixelModelFromFile(file));
+            if (model is null) return;
+
+            Services.Navigation.NavigateTo(new EditorVM(model));
+        }
     }
 
     public static async Task ShowExportWindow(PixelModel model, EditorVM editorVM)

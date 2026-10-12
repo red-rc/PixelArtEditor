@@ -85,20 +85,35 @@ public partial class ImagePropertiesUCVM(PixelModel model) : ReactiveObject
     [Reactive] public partial float DpiY { get; set; } = model.DpiY;
 
     // --- ColorMode ---
-    public List<string> ColorModeNames { get; } = [.. Enum.GetValues<ColorMode>().Select(cm => cm.ToString())];
+    private static string ColorModeToDisplay(string name) => name switch
+    {
+        "L" => "Grayscale",
+        "LA" => "Grayscale + Alpha",
+        _ => name
+    };
 
-    private string _colorModeName = model.ColorMode.ToString();
+    private static string ColorModeFromDisplay(string name) => name switch
+    {
+        "Grayscale" => "L",
+        "Grayscale + Alpha" => "LA",
+        _ => name
+    };
+
+    public List<string> ColorModeNames { get; } = [.. Enum.GetValues<ColorMode>().Select(cm => ColorModeToDisplay(cm.ToString()))];
+
+    private string _colorModeName = ColorModeToDisplay(model.ColorMode.ToString());
     public string ColorModeName
     {
         get => _colorModeName;
         set
         {
-            if (_colorModeName == value) return;
-            ColorMode = EnumHelper.StringToEnum<ColorMode>(value);
+            var display = ColorModeToDisplay(ColorModeFromDisplay(value));
+            if (_colorModeName == display) return;
+            ColorMode = EnumHelper.StringToEnum<ColorMode>(ColorModeFromDisplay(value));
             this.RaisePropertyChanged(nameof(IsIndexed));
-            this.RaiseAndSetIfChanged(ref _colorModeName, value);
+            this.RaiseAndSetIfChanged(ref _colorModeName, display);
 
-            AlphaFormatEnabled = ColorMode == ColorMode.RGBA || ColorMode == ColorMode.Grayscale;
+            AlphaFormatEnabled = ColorMode == ColorMode.RGBA || ColorMode == ColorMode.L;
             UpdateAvailableProperties();
         }
     }
@@ -119,8 +134,8 @@ public partial class ImagePropertiesUCVM(PixelModel model) : ReactiveObject
         [ColorMode.ABGR] = [BitDepth.Bit8],
         [ColorMode.RG] = [BitDepth.Bit16],
         [ColorMode.A] = [BitDepth.Bit8],
-        [ColorMode.Grayscale] = [BitDepth.Bit8, BitDepth.Bit16],
-        [ColorMode.GrayscaleAlpha] = [BitDepth.Bit8, BitDepth.Bit16],
+        [ColorMode.L] = [BitDepth.Bit8, BitDepth.Bit16],
+        [ColorMode.LA] = [BitDepth.Bit8, BitDepth.Bit16],
         [ColorMode.Indexed] = [BitDepth.Bit1, BitDepth.Bit2, BitDepth.Bit4, BitDepth.Bit8],
         [ColorMode.CMYK] = [BitDepth.Bit8, BitDepth.Bit16]
     };
@@ -159,8 +174,8 @@ public partial class ImagePropertiesUCVM(PixelModel model) : ReactiveObject
         [ColorMode.ARGB] = RgbSpaces,
         [ColorMode.ABGR] = RgbSpaces,
         [ColorMode.Indexed] = RgbSpaces,
-        [ColorMode.Grayscale] = GraySpaces,
-        [ColorMode.GrayscaleAlpha] = GraySpaces,
+        [ColorMode.L] = GraySpaces,
+        [ColorMode.LA] = GraySpaces,
         [ColorMode.RG] = [ColorSpace.None],
         [ColorMode.A] = [ColorSpace.None],
         [ColorMode.CMYK] = [ColorSpace.Cmyk],
@@ -197,8 +212,8 @@ public partial class ImagePropertiesUCVM(PixelModel model) : ReactiveObject
         [ColorMode.ABGR] = [AlphaFormat.Straight, AlphaFormat.Premultiplied],
         [ColorMode.RG] = [AlphaFormat.None, AlphaFormat.Premultiplied],
         [ColorMode.A] = [AlphaFormat.None],
-        [ColorMode.Grayscale] = [AlphaFormat.None, AlphaFormat.Premultiplied],
-        [ColorMode.GrayscaleAlpha] = [AlphaFormat.Straight, AlphaFormat.Premultiplied],
+        [ColorMode.L] = [AlphaFormat.None, AlphaFormat.Premultiplied],
+        [ColorMode.LA] = [AlphaFormat.Straight, AlphaFormat.Premultiplied],
         [ColorMode.Indexed] = [AlphaFormat.Straight, AlphaFormat.Premultiplied],
         [ColorMode.CMYK] = [AlphaFormat.None]
     };
@@ -254,6 +269,26 @@ public partial class ImagePropertiesUCVM(PixelModel model) : ReactiveObject
         AlphaFormatEnabled = validAlphaFormats.Length > 1;
     }
 
+    // --- Export options (shown only in the export dialog) ---
+
+    public List<string> CompressionNames { get; } = [.. Enum.GetValues<TiffCompressionMode>().Select(c => c.ToString())];
+
+    private string _compressionName = model.Compression.ToString();
+    public string CompressionName
+    {
+        get => _compressionName;
+        set
+        {
+            if (_compressionName == value || !CompressionNames.Contains(value)) return;
+            Compression = EnumHelper.StringToEnum<TiffCompressionMode>(value);
+            this.RaiseAndSetIfChanged(ref _compressionName, value);
+        }
+    }
+
+    public TiffCompressionMode Compression = model.Compression;
+
+    [Reactive] public partial int Quality { get; set; } = Math.Clamp(model.Quality, 1, 100);
+
     public bool isPaletteSetByUser = false;
 
     public ReactiveCommand<RxVoid, RxVoid> ConfigureCommand
@@ -293,7 +328,8 @@ public partial class ImagePropertiesUCVM(PixelModel model) : ReactiveObject
             DpiY = DpiY,
             Data = data,
             DicomDataset = dicomDataset,
-            IccProfile = Model.IccProfile
+            IccProfile = Model.IccProfile,
+            Compression = Model.Compression
         };
     }
 }

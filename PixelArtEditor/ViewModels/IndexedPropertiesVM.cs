@@ -1,5 +1,4 @@
 ﻿using Avalonia.Controls;
-using Avalonia.Threading;
 using PixelArtEditor.AppServices.Bitmap;
 using PixelArtEditor.AppServices.Bitmap.Quantization;
 using PixelArtEditor.Helpers;
@@ -16,12 +15,7 @@ namespace PixelArtEditor.ViewModels;
 
 public partial class IndexedPropertiesVM : ReactiveObject
 {
-    private List<string> _quantizationNames = [.. Enum.GetNames<PaletteQuantization>()];
-    public List<string> QuantizationNames
-    {
-        get => _quantizationNames;
-        private set => this.RaiseAndSetIfChanged(ref _quantizationNames, value);
-    }
+    [Reactive] public partial List<string> QuantizationNames { get; set; } = [.. Enum.GetNames<PaletteQuantization>()];
 
     private string _quantizationName = "MedianCut";
     public string QuantizationName
@@ -52,6 +46,7 @@ public partial class IndexedPropertiesVM : ReactiveObject
     }
 
     [Reactive] public partial bool IsLoading { get; set; }
+    [Reactive] public partial int ProgressValue { get; set; } = 0;
 
     private CancellationTokenSource? _updateCts;
 
@@ -102,40 +97,51 @@ public partial class IndexedPropertiesVM : ReactiveObject
         }
     }
 
-    private void UpdatePreview(PixelModel model)
+    private async void UpdatePreview(PixelModel model)
     {
-        IsLoading = true;
-
         _updateCts?.Cancel();
         var cts = new CancellationTokenSource();
         _updateCts = cts;
         var token = cts.Token;
 
+        IsLoading = true;
+        ProgressValue = 0;
+
+        var progress = new Progress<int>(p =>
+        {
+            if (token.IsCancellationRequested) return;
+            ProgressValue = p;
+        });
+
         var colorCount = ColorCount;
         var quantization = Quantization;
         var dither = Dither;
 
-        Task.Run(() =>
+        try
         {
-            if (token.IsCancellationRequested) return;
-
-            var palette = PaletteService.GetPalette(model.Data, colorCount, quantization, dither, ref _histogram);
-            if (token.IsCancellationRequested) return;
-
-            var quantized = BitmapService.QuantizeToPalette(model.Data, model.Width, palette);
-            if (token.IsCancellationRequested) return;
-
-            Dispatcher.UIThread.Post(() =>
+            var (palette, quantized) = await Task.Run<(Palette?, byte[]?)>(() =>
             {
-                if (token.IsCancellationRequested) return;
+                if (token.IsCancellationRequested) return (null, null);
 
-                _palette = palette;
+                var p = PaletteService.GetPalette(model.Data, colorCount, quantization, dither, ref _histogram);
+                if (token.IsCancellationRequested) return (null, null);
 
-                RenderData.Bitmap?.Dispose();
-                RenderData.Bitmap = BitmapService.CreateBitmap(quantized, model.Width, model.Height);
-
-                IsLoading = false;
+                var q = BitmapService.QuantizeToPalette(model.Data, model.Width, p, progress, token);
+                return ((Palette?)p, q);
             });
-        }, CancellationToken.None);
+
+            if (token.IsCancellationRequested || palette is null || quantized is null) return;
+
+            _palette = palette;
+
+            RenderData.Bitmap?.Dispose();
+            RenderData.Bitmap = BitmapService.CreateBitmap(quantized, model.Width, model.Height);
+
+            ProgressValue = 100;
+        }
+        finally
+        {
+            if (!token.IsCancellationRequested) IsLoading = false;
+        }
     }
 }

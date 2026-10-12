@@ -57,6 +57,8 @@ localPairs:
   AlphaFormat: Формат альфа-каналу
   ColorSpaces: Колірні простори
   Basic: Базовий
+  TiffCompression: Стиснення TIFF
+  ExportQuality: Якість JPEG / WebP
   Advanced: Розширений
   Confirm: Підтвердити
   Size: Розмір
@@ -88,6 +90,7 @@ localPairs:
   DicomUnsupportedEncoding: Це кодування пікселів DICOM не підтримується.
   Document: Документ
   InvalidPdf: Недійсний або пошкоджений файл PDF.
+  TiffCompressionUnsupported: Непідтримуване стиснення TIFF.
   PdfNoPages: Файл PDF не містить сторінок.
   NotImplemented: ще не реалізовано.
   InvalidPalette: Палітра зображення пошкоджена або недійсна.
@@ -133,3 +136,4 @@ localPairs:
   ColorCount: Кількість кольорів
   Dither: Дизеринг
   PngEncoderError: Кодер формату не підтримує цю глибину кольору
+  ImageLoadingError: Під час завантаження зображення сталася помилка. Файл може бути пошкоджений або непідтримуваного формату.

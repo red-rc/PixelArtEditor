@@ -57,6 +57,8 @@ localPairs:
   AlphaFormat: Alpha Format
   ColorSpaces: Color Spaces
   Basic: Basic
+  TiffCompression: TIFF Compression
+  ExportQuality: JPEG / WebP Quality
   Advanced: Advanced
   Confirm: Confirm
   Size: Size
@@ -88,6 +90,7 @@ localPairs:
   DicomUnsupportedEncoding: This DICOM pixel encoding is not supported.
   Document: Document
   InvalidPdf: Invalid or corrupted PDF file.
+  TiffCompressionUnsupported: Unsupported TIFF compression.
   PdfNoPages: PDF file contains no pages.
   NotImplemented: not yet implemented.
   InvalidPalette: Image palette is corrupted or invalid.
@@ -133,3 +136,4 @@ localPairs:
   ColorCount: Color count
   Dither: Dithering
   EncoderError: "Format encoder doesn't support this bit depth"
+  ImageLoadingError: "An error occurred while loading the image. The file may be corrupted or in an unsupported format."
