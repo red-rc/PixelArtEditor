@@ -178,8 +178,14 @@ public class Checkerboard : Control
             var (bmpW, bmpH, offsetX, offsetY) = CanvasHelper.GetBitmapRenderInfo(Scale, Offset, Bounds, Model);
             if (bmpW <= 0 || bmpH <= 0) return;
 
-            context.DrawRectangle(null, null, new Rect(offsetX, offsetY, bmpW, bmpH), 0, 0, _shadow);
-            DrawCheckerBoard(context, offsetX, offsetY, bmpW, bmpH);
+            // Same rounding as TiledBitmap.DrawTiles, so edges match the canvas pixel-perfectly
+            var left = Math.Round(offsetX);
+            var top = Math.Round(offsetY);
+            var snappedW = Math.Round(offsetX + bmpW) - left;
+            var snappedH = Math.Round(offsetY + bmpH) - top;
+
+            context.DrawRectangle(null, null, new Rect(left, top, snappedW, snappedH), 0, 0, _shadow);
+            DrawCheckerBoard(context, left, top, snappedW, snappedH);
         }
     }
 }

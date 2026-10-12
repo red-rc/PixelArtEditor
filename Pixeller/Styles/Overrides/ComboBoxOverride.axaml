@@ -78,14 +78,16 @@
                               Stretch="Uniform" />
                       </ToggleButton>
                       <Popup Name="PART_Popup"
-                             Width="{Binding Bounds.Width, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource AddConverter}, ConverterParameter=12}"
                              MaxHeight="{TemplateBinding MaxDropDownHeight}"
                              IsLightDismissEnabled="True"
                              IsOpen="{TemplateBinding IsDropDownOpen,
                                                       Mode=TwoWay}"
                              PlacementTarget="{TemplateBinding}"
                              InheritsTransform="True">
-                        <Border Background="{DynamicResource ThemeBackgroundBrush}"
+                        <Border x:CompileBindings="True"
+                                x:DataType="ComboBox"
+                                Width="{Binding Bounds.Width, RelativeSource={RelativeSource TemplatedParent}}"
+                                Background="{DynamicResource ThemeBackgroundBrush}"
                                 BorderBrush="{DynamicResource ThemeBorderMidBrush}"
                                 BorderThickness="0" Margin="6">
                           <ScrollViewer HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
