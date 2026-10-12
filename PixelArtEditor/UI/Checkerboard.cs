@@ -110,7 +110,7 @@ public class Checkerboard : Control
 
     private void OnModelChanged() => InvalidateVisual();
 
-    private void DrawCheckerBoard(DrawingContext context, int offsetX, int offsetY, int bmpW, int bmpH)
+    private void DrawCheckerBoard(DrawingContext context, double offsetX, double offsetY, double bmpW, double bmpH)
     {
         _checkerboardBrush ??= CreateBaseBrush();
 

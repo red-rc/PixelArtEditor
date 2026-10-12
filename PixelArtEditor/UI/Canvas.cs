@@ -112,6 +112,8 @@ public class Canvas : Control, ICanvasContext
     public Dictionary<LayerModel, LayerRenderCache> RenderCache { get; } = [];
     private CompositeDisposable? _layersSubscription;
 
+    private static double Snap(double value) => Math.Round(value);
+
     public Canvas()
     {
         Settings.WhenAnyValue(x => x.InterpolationMode, x => x.InterpolateOnlyWhenScalingDown).Subscribe(_ =>
@@ -221,10 +223,12 @@ public class Canvas : Control, ICanvasContext
     {
         if (HoverPixel is null) return;
 
-        var rect = new Rect(
-            offsetX + HoverPixel.Value.X * Scale,
-            offsetY + HoverPixel.Value.Y * Scale,
-            Scale, Scale);
+        var x0 = Snap(offsetX + HoverPixel.Value.X * Scale);
+        var y0 = Snap(offsetY + HoverPixel.Value.Y * Scale);
+        var x1 = Snap(offsetX + (HoverPixel.Value.X + 1) * Scale);
+        var y1 = Snap(offsetY + (HoverPixel.Value.Y + 1) * Scale);
+
+        var rect = new Rect(x0, y0, x1 - x0, y1 - y0);
 
         _hoverPixelColor
             ??= CanvasHelper.GetHighlightColor(BitmapService.GetCompositePixelColor(LayerManager.Layers, HoverPixel.Value));
@@ -246,14 +250,14 @@ public class Canvas : Control, ICanvasContext
         {
             for (var x = startX; x <= endX; x++)
             {
-                var posX = offsetX + x * Scale;
-                context.DrawLine(_gridPen, new Point(posX, offsetY), new Point(posX, offsetY + bmpH));
+                var posX = Snap(offsetX + x * Scale);
+                context.DrawLine(_gridPen, new Point(posX, Snap(offsetY)), new Point(posX, Snap(offsetY + bmpH)));
             }
 
             for (var y = startY; y <= endY; y++)
             {
-                var posY = offsetY + y * Scale;
-                context.DrawLine(_gridPen, new Point(offsetX, posY), new Point(offsetX + bmpW, posY));
+                var posY = Snap(offsetY + y * Scale);
+                context.DrawLine(_gridPen, new Point(Snap(offsetX), posY), new Point(Snap(offsetX + bmpW), posY));
             }
         }
     }

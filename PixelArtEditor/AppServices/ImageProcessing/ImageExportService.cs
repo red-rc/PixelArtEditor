@@ -77,8 +77,6 @@ public static class ImageExportService
                 p.Equals("*.jpeg", StringComparison.OrdinalIgnoreCase) ||
                 p.Equals("*.pdf", StringComparison.OrdinalIgnoreCase) ||
                 p.Equals("*.tif", StringComparison.OrdinalIgnoreCase) ||
-                p.Equals("*.ico", StringComparison.OrdinalIgnoreCase) ||
-                p.Equals("*.svg", StringComparison.OrdinalIgnoreCase) ||
                 p.Equals("*.tiff", StringComparison.OrdinalIgnoreCase)))];
         }
         else

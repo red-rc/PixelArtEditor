@@ -34,6 +34,13 @@ public partial class EditorView : UserControl
     private double _mousePressX;
     private Point? _zoomOrigin;
 
+    private readonly DispatcherTimer _zoomTimer = new(DispatcherPriority.Render) 
+    { 
+        Interval = TimeSpan.FromMilliseconds(16) 
+    };
+    private double _pendingZoomLog;
+    private Point? _zoomPos;
+
     private void OnCancelClick(object? sender, RoutedEventArgs e) => OnCancel();
 
     private void OnConfirmClick(object? sender, RoutedEventArgs e) => OnConfirm();
@@ -73,6 +80,8 @@ public partial class EditorView : UserControl
     public EditorView()
     {
         InitializeComponent();
+
+        _zoomTimer.Tick += OnZoomTick;
 
         _layoutManager = new LayoutManager(MainLayout, RectHost, CanvasPanel);
         _tooltipManager = new TooltipManager(Tooltip, TooltipText, RectHost);
@@ -199,6 +208,33 @@ public partial class EditorView : UserControl
         }
     }
 
+    private void QueueZoom(double factor, double steps, Point? pos)
+    {
+        _pendingZoomLog += Math.Log(factor) * steps;
+        _zoomPos = pos;
+        if (!_zoomTimer.IsEnabled) _zoomTimer.Start();
+    }
+
+    private void OnZoomTick(object? sender, EventArgs e)
+    {
+        if (ViewModel is null) 
+        { 
+            _zoomTimer.Stop(); 
+            _pendingZoomLog = 0; 
+            return; 
+        }
+
+        var step = Math.Abs(_pendingZoomLog) < 0.01 ? _pendingZoomLog : _pendingZoomLog * 0.5;
+        ViewModel.ZoomBy((float)Math.Exp(step), true, _zoomPos);
+        _pendingZoomLog -= step;
+
+        if (Math.Abs(_pendingZoomLog) < 1e-4)
+        {
+            _pendingZoomLog = 0;
+            _zoomTimer.Stop();
+        }
+    }
+
     private void CanvasPanel_OnSizeChanged(object? sender, SizeChangedEventArgs e)
     {
         if (ViewModel == null || e.NewSize.Width <= 0 || e.NewSize.Height <= 0) return;
@@ -210,7 +246,7 @@ public partial class EditorView : UserControl
     private void CanvasPanel_OnPointerWheelChanged(object? sender, PointerWheelEventArgs e)
     {
         if (ViewModel == null || e.GetCurrentPoint(CanvasPanel).Properties.IsRightButtonPressed) return;
-        ViewModel.ZoomBy(1.1f, true, e.GetPosition(CanvasPanel), e.Delta.Y);
+        QueueZoom(1.1, e.Delta.Y, e.GetPosition(CanvasPanel));
     }
 
     private void CanvasPanel_OnPointerPressed(object? sender, PointerPressedEventArgs e)
@@ -243,11 +279,7 @@ public partial class EditorView : UserControl
 
             if (Math.Abs(dx) >= 5)
             {
-                if (dx > 0)
-                    ViewModel.ZoomBy(1.05f, true, _zoomOrigin);
-                else if (dx < 0)
-                    ViewModel.ZoomBy(1 / 1.05f, true, _zoomOrigin);
-
+                QueueZoom(1.05, Math.Sign(dx), _zoomOrigin);
                 _mousePressX = e.GetPosition(this).X;
             }
         }
