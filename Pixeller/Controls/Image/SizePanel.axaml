@@ -1,0 +1,61 @@
+<UserControl
+    x:Class="Pixeller.Controls.Image.SizePanel"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="clr-namespace:Pixeller.UI"
+    xmlns:vm="clr-namespace:Pixeller.ViewModels"
+    Width="80"
+    Height="150"
+    d:DesignHeight="150"
+    d:DesignWidth="80"
+    x:DataType="vm:ImagePropertiesUCVM"
+    Background="{DynamicResource BackgroundColor}"
+    mc:Ignorable="d">
+
+    <UserControl.Styles>
+        <Style Selector="TextBlock">
+            <Setter Property="FontSize" Value="15" />
+        </Style>
+        <Style Selector="NumericUpDown.NumberBox">
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="Minimum" Value="1" />
+            <Setter Property="Maximum" Value="300000" />
+            <Setter Property="Height" Value="30" />
+        </Style>
+    </UserControl.Styles>
+
+    <Grid
+        Background="{DynamicResource SecondaryBackgroundColor}">
+        <StackPanel Orientation="Vertical" Spacing="10">
+            <StackPanel>
+                <TextBlock HorizontalAlignment="Center" Text="{DynamicResource Width}" />
+                <ui:NumberBox
+                    Width="60"
+                    Classes="NumberBox"
+                    Value="{Binding Width, Mode=TwoWay}" />
+            </StackPanel>
+            <StackPanel>
+                <ui:InstantToggleButton
+                    Width="30"
+                    Height="18"
+                    HorizontalAlignment="Center"
+                    Classes="ProportionBtn"
+                    IsChecked="{Binding EnableProportion}">
+                    <Image
+                        Width="14"
+                        Height="7"
+                        Source="{DynamicResource ChainIcon}" />
+                </ui:InstantToggleButton>
+            </StackPanel>
+            <StackPanel Margin="0,-5,0,0">
+                <TextBlock HorizontalAlignment="Center" Text="{DynamicResource Height}" />
+                <ui:NumberBox
+                    Width="60"
+                    Classes="NumberBox"
+                    Value="{Binding Height, Mode=TwoWay}" />
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</UserControl>

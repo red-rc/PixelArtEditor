@@ -1,0 +1,46 @@
+﻿using Avalonia;
+using Pixeller.AppServices.Bitmap;
+using Pixeller.Helpers;
+using Pixeller.Models.Canvas;
+using Pixeller.Models.Tools;
+
+namespace Pixeller.AppServices.Tools.Implementations;
+
+public class PenTool : ITool
+{
+    private static PixelPoint? _lastPixel;
+
+    public void OnPointerExited(ICanvasContext ctx)
+    {
+
+    }
+
+    public void OnPointerMoved(ICanvasContext ctx) => Paint(ctx);
+
+    public void OnPointerPressed(ICanvasContext ctx) => Paint(ctx);
+
+    public void OnPointerReleased(ICanvasContext ctx) => _lastPixel = null;
+
+    private static void Paint(ICanvasContext ctx)
+    {
+        var layer = ctx.LayerManager.ActiveLayer;
+        if (ctx.HoverPixel is null || layer is null || layer.Data is null) return;
+
+        // Do not forget to change it with tool width and height
+        var current = ctx.HoverPixel.Value;
+        var from = _lastPixel ?? current;
+
+        var pixels = LineHelper.GetLine(from, current);
+
+        var dirtyRect = new PixelRect(ctx.HoverPixel.Value.X, ctx.HoverPixel.Value.Y, 1, 1);
+
+        foreach (var pixel in pixels)
+        {
+            BitmapService.BrushSquare(layer.Data, layer.Width, new PixelRect(pixel.X, pixel.Y, 1, 1), ctx.DrawColor);
+            dirtyRect = dirtyRect.Union(new PixelRect(pixel.X, pixel.Y, 1, 1));
+        }
+
+        _lastPixel = current;
+        ToolManager.InvalidatePixelData(ctx, layer, dirtyRect);
+    }
+}

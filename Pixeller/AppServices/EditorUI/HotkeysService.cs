@@ -1,0 +1,81 @@
+﻿using Avalonia.Input;
+using Pixeller.AppServices.EditorUI.LayerPanel;
+using Pixeller.ViewModels;
+using System;
+using System.Threading.Tasks;
+
+namespace Pixeller.AppServices.EditorUI;
+
+public class HotkeysService(LayerCmdList commands, EditorVM? viewModel, Action onCancel, Action onConfirm)
+{
+    public async Task<bool> Handle(KeyModifiers modifiers, Key key)
+    {
+        var layerManager = viewModel?.LayerManager;
+
+        switch (modifiers, key)
+        {
+            case (KeyModifiers.Control, Key.N):
+                commands.AddCmd.Execute(layerManager);
+                return true;
+
+            case (KeyModifiers.Control, Key.D):
+                await commands.DuplicateCmd.Execute(layerManager);
+                return true;
+
+            case (KeyModifiers.Control, Key.Up):
+                commands.MoveStepCmd.Execute(layerManager, -1);
+                return true;
+
+            case (KeyModifiers.Control, Key.Down):
+                commands.MoveStepCmd.Execute(layerManager, 1);
+                return true;
+
+            case (KeyModifiers.Control, Key.G):
+                commands.GroupCmd.Execute(layerManager);
+                return true;
+
+            case (KeyModifiers.Control, Key.C):
+                await commands.CopyCmd.Execute(layerManager);
+                return true;
+
+            case (KeyModifiers.Control, Key.V):
+                await commands.PasteCmd.Execute(layerManager);
+                return true;
+
+            case (KeyModifiers.None, Key.Delete):
+                commands.DeleteCmd.Execute(layerManager);
+                return true;
+
+            case (KeyModifiers.None, Key.Escape):
+                onCancel();
+                return true;
+
+            case (KeyModifiers.None, Key.Enter):
+                onConfirm();
+                return true;
+
+            case (KeyModifiers.None, Key.B):
+                viewModel?.Tools.SelectedTool = Models.Tools.ToolType.Pen;
+                return true;
+
+            case (KeyModifiers.None, Key.I):
+                viewModel?.Tools.SelectedTool = Models.Tools.ToolType.ColorPicker;
+                return true;
+
+            case (KeyModifiers.None, Key.F):
+                viewModel?.Tools.SelectedTool = Models.Tools.ToolType.Fill;
+                return true;
+
+            case (KeyModifiers.None, Key.E):
+                viewModel?.Tools.SelectedTool = Models.Tools.ToolType.Eraser;
+                return true;
+
+            case (KeyModifiers.None, Key.H):
+                viewModel?.Tools.SelectedTool = Models.Tools.ToolType.Hand;
+                return true;
+
+            default:
+                return false;
+        }
+    }
+}

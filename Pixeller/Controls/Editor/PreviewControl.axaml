@@ -1,0 +1,18 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:ui="clr-namespace:Pixeller.UI"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Pixeller.Controls.Editor.PreviewControl"
+             x:Name="Root"
+             ClipToBounds="False">
+    <Panel>
+        <ui:Checkerboard  
+            DataWidth="{Binding RenderData.Width, ElementName=Root}" 
+            DataHeight="{Binding RenderData.Height, ElementName=Root}"
+            FixedTileSize="{Binding FixedTileSize, ElementName=Root}"
+            Opacity="{Binding CheckerboardOpacity, ElementName=Root}" />
+        <ui:Preview RenderData="{Binding RenderData, ElementName=Root}" />
+    </Panel>
+</UserControl>

@@ -1,0 +1,141 @@
+<Window
+    x:Class="Pixeller.Windows.IndexedDialogWindow"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="using:Pixeller.UI"
+    xmlns:controlsGlobal="clr-namespace:Pixeller.Controls"
+    xmlns:vm="clr-namespace:Pixeller.ViewModels"
+    xmlns:editor="clr-namespace:Pixeller.Controls.Editor"
+    Width="500"
+    Height="375"
+    d:DesignHeight="375"
+    d:DesignWidth="500"
+    x:DataType="vm:IndexedPropertiesVM"
+    Background="{DynamicResource BackgroundColor}"
+    ExtendClientAreaToDecorationsHint="True"
+    CanResize="False"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
+
+    <Window.Styles>
+        <Style Selector="TextBlock">
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="FontFamily" Value="{DynamicResource AppFont}" />
+        </Style>
+    </Window.Styles>
+
+    <Grid RowDefinitions="Auto,*" Background="{DynamicResource SecondaryBackgroundColor}">
+        <controlsGlobal:TitleBar 
+            Grid.Row="0" 
+            Title="{DynamicResource IndexedTitle}" 
+            IconVisible="False" 
+            CanMinimize="False" 
+            CanMaximize="False" />
+        <Grid RowDefinitions="*,Auto" Grid.Row="1">
+            <Grid
+                Grid.Row="0"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center"
+                ColumnDefinitions="250,Auto"
+                DockPanel.Dock="Top">
+                <editor:PreviewControl
+                    Grid.Column="0"
+                    Margin="0,0,0,10"
+                    Width="200"
+                    Height="200"
+                    VerticalAlignment="Center"
+                    RenderData="{Binding RenderData}"
+                    FixedTileSize="20" />
+
+                <ProgressBar 
+                    VerticalAlignment="Center" 
+                    IsVisible="{Binding IsLoading}"
+                    Margin="0,170,0,0"
+                    Width="190" 
+                    Height="20"
+                    Minimum="0"
+                    Maximum="100"
+                    IsIndeterminate="False"
+                    Value="{Binding ProgressValue}" />
+
+                <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="10">
+                    <StackPanel>
+                        <TextBlock HorizontalAlignment="Center" Text="{DynamicResource Quantization}" />
+                        <ComboBox
+                            ItemsSource="{Binding QuantizationNames}" 
+                            SelectedItem="{Binding QuantizationName, Mode=TwoWay}" />
+			        </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel>
+                            <TextBlock HorizontalAlignment="Center" Text="{DynamicResource ColorCount}" />
+                            <Slider 
+                                Name="MySlider" 
+                                Width="150"
+                                Minimum="1" 
+                                Maximum="{Binding MaxColorCount}" 
+                                Value="{Binding ColorCount}"
+                                TickFrequency="1" 
+                                IsSnapToTickEnabled="True" />
+                        </StackPanel>
+                    
+                        <ui:NumberBox
+                            Width="40"
+                            Minimum="{Binding #MySlider.Minimum}"
+                            Maximum="{Binding #MySlider.Maximum}"
+                            Value="{Binding #MySlider.Value, Mode=TwoWay}"
+                            HorizontalAlignment="Center" 
+                            Margin="0,10,0,0"/>
+			        </StackPanel>
+                    <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Spacing="10">
+                        <TextBlock HorizontalAlignment="Center" Text="{DynamicResource Dither}" />
+                        <CheckBox IsChecked="{Binding Dither}" />
+			        </StackPanel>
+                </StackPanel>
+            </Grid>
+            <Grid
+                Grid.Row="1"
+                Height="100"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Bottom"
+                Background="{DynamicResource BackgroundColor}"
+                ColumnDefinitions="*,Auto,Auto"
+                DockPanel.Dock="Bottom">
+                <Button
+                    Grid.Column="0"
+                    Height="50"
+                    Margin="0,25,10,25"
+                    Padding="30,1"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Stretch"
+                    Classes="CancelBtn"
+                    Command="{Binding CancelCommand}"
+                    Content="{DynamicResource Cancel}"
+                    FontSize="20" />
+                <Button
+                    Grid.Column="1"
+                    Height="50"
+                    Margin="0,25,10,25"
+                    Padding="30,1"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Stretch"
+                    Classes="ResetBtn"
+                    Command="{Binding ResetCommand}"
+                    Content="{DynamicResource Reset}"
+                    FontSize="20" />
+                <Button
+                    Grid.Column="2"
+                    Height="50"
+                    Margin="0,25,25,25"
+                    Padding="30,1"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Stretch"
+                    Classes="ConfirmBtn"
+                    Command="{Binding SaveCommand}"
+                    Content="{DynamicResource Save}"
+                    FontSize="20" />
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>

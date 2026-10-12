@@ -1,0 +1,61 @@
+<UserControl
+    x:Class="Pixeller.Controls.Settings.AppearanceView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="clr-namespace:Pixeller.ViewModels"
+    d:DesignHeight="350"
+    d:DesignWidth="450"
+    x:DataType="vm:SettingsDialogVM"
+    Background="{DynamicResource SecondaryBackgroundColor}"
+    mc:Ignorable="d">
+
+    <UserControl.Styles>
+        <Style Selector="TextBlock.Label">
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style Selector="ComboBox">
+            <Setter Property="FontSize" Value="14" />
+        </Style>
+    </UserControl.Styles>
+
+    <StackPanel Orientation="Vertical" Spacing="10">
+        <StackPanel Orientation="Horizontal" Spacing="10">
+            <TextBlock Classes="Label" Text="{DynamicResource Theme}" />
+            <ComboBox
+                Width="150"
+                Height="30"
+                Padding="10,0,10,0"
+                ItemsSource="{Binding ThemeOptions}"
+                SelectedItem="{Binding Theme, Mode=TwoWay}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Value}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="10">
+            <TextBlock Classes="Label" Text="{DynamicResource AccentColor}" />
+            <ColorPicker Theme="{StaticResource ColorPickerNoAlpha}" Width="100" Color="{Binding AccentColor, Mode=TwoWay}" />
+            <Border
+                Width="40"
+                Height="30"
+                Padding="0"
+                Background="{DynamicResource PrimaryColor}"
+                CornerRadius="4" />
+            <Border
+                Width="40"
+                Height="30"
+                Background="{DynamicResource PrimaryHoverColor}"
+                CornerRadius="4" />
+            <Border
+                Width="40"
+                Height="30"
+                Background="{DynamicResource PrimaryPressColor}"
+                CornerRadius="4" />
+        </StackPanel>
+    </StackPanel>
+</UserControl>

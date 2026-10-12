@@ -1,0 +1,195 @@
+<UserControl 
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="using:Pixeller.UI"
+    xmlns:editor="using:Pixeller.Controls.Editor"
+    mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
+    x:Class="Pixeller.Controls.Editor.LayerPanel"
+    xmlns:model="clr-namespace:Pixeller.Models.LayerPanel"
+    xmlns:vm="clr-namespace:Pixeller.ViewModels"
+    x:DataType="vm:LayerPanelVM"
+    d:Background="{DynamicResource BackgroundColor}">
+
+    <Grid RowDefinitions="40, *, 50">
+        <Grid Grid.Row="0" ColumnDefinitions="*, Auto" Background="{DynamicResource BackgroundColor}">
+            <TextBlock 
+                Grid.Column="0" 
+                Margin="10,10,10,5" 
+                Text="{DynamicResource Layers}" 
+                FontFamily="{DynamicResource HeadingFont}" 
+                FontSize="16"
+                HorizontalAlignment="Left" 
+                VerticalAlignment="Center" />
+            <StackPanel 
+                Grid.Column="1" 
+                Margin="0,0,30,0" 
+                Orientation="Horizontal"
+                HorizontalAlignment="Right" 
+                VerticalAlignment="Center">
+                <TextBlock Margin="0,5,5,0" Text="{DynamicResource Opacity}" FontSize="14" />
+                <ui:NumberBox
+                    Classes="NumberBox"
+                    FontSize="13"
+                    ShowButtonSpinner="False"
+                    Minimum="0"
+                    Maximum="100"
+                    Value="{Binding Opacity, Mode=TwoWay}"
+                    Width="35" 
+                    Height="25" />
+                <TextBlock VerticalAlignment="Center" Text="%" Margin="5,0,0,0" FontSize="16"/>
+            </StackPanel>
+        </Grid>
+        <ListBox 
+            x:Name="LayerListBox"
+            Grid.Row="1"
+            ItemsSource="{Binding LayerItems}"
+            PointerPressed="LayerListBox_PointerPressed"
+            SelectionChanged="LayerListBox_SelectionChanged"
+            SelectedItem="{Binding SelLayerItem}" 
+            Background="{DynamicResource BackgroundColor}"
+            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+            SelectionMode="Multiple">
+            <ListBox.Styles>
+                <Style Selector="ListBoxItem">
+                    <Setter Property="Padding" Value="5,2"/>
+                    <Setter Property="Transitions">
+                        <Transitions>
+                            <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.15"/>
+                        </Transitions>
+                    </Setter>
+                </Style>
+
+                <Style Selector="ListBoxItem.disabled">
+                    <Setter Property="IsHitTestVisible" Value="False"/>
+                </Style>
+            
+                <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
+                    <Setter Property="Background" Value="{DynamicResource UiHoverColor}"/>
+                </Style>
+                <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+                    <Setter Property="Background" Value="{DynamicResource UiColor}"/>
+                </Style>
+                <Style Selector="ListBoxItem:selected:pointerover /template/ ContentPresenter">
+                    <Setter Property="Background" Value="{DynamicResource UiHoverColor}"/>
+                </Style>
+                
+                <Style Selector="ListBoxItem ui|InstantToggleButton.LayerItemBtn /template/ ContentPresenter">
+                  <Setter Property="Background" Value="Transparent"/>
+                </Style>
+                <Style Selector="ListBoxItem ui|InstantToggleButton.LayerItemBtn:pointerover /template/ ContentPresenter">
+                    <Setter Property="Background" Value="{DynamicResource GrayColor}"/>
+                </Style>
+
+                <Style Selector="Image">
+                    <Setter Property="Width" Value="18" />
+                    <Setter Property="Height" Value="18" />
+                </Style>
+
+                <Style Selector="ListBox ContextMenu">
+                    <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />
+                    <Setter Property="FontFamily" Value="{DynamicResource AppFont}" />
+                    <Setter Property="FontSize" Value="13" />
+                    <Setter Property="CornerRadius" Value="5" />
+                    <Setter Property="Padding" Value="4" />
+                </Style>
+
+            </ListBox.Styles>
+
+            <ListBox.ItemTemplate>
+                <DataTemplate x:DataType="model:LayerItem">
+                    <Grid ColumnDefinitions="Auto,*,Auto,Auto" Background="Transparent">
+                       <editor:PreviewControl
+                           Grid.Column="0"
+                           Margin="5,5,10,5"
+                           Width="36"
+                           Height="36"
+                           RenderData="{Binding RenderData}"
+                           FixedTileSize="6" />
+
+                       <Grid Grid.Column="1" VerticalAlignment="Center">
+                            <TextBlock 
+                                Classes="LayerItemText" 
+                                Text="{Binding Name}" 
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                TextTrimming="CharacterEllipsis"
+                                IsVisible="{Binding !IsEditing}"
+                                DoubleTapped="TextBlock_DoubleTapped"/>
+                            <TextBox 
+                                Classes="RenameTextBox" 
+                                Text="{Binding Name}" 
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Center"
+                                Height="30" 
+                                FontSize="14"
+                                Name="RenameTextBox"
+                                IsVisible="{Binding IsEditing}"
+                                KeyDown="RenameTextBox_KeyDown"
+                                LostFocus="RenameTextBox_LostFocus"/>
+                        </Grid>
+                        <ui:InstantToggleButton 
+                            Grid.Column="2"
+                            Classes="LayerItemBtn"
+                            Tag="{Binding HideShowTag}" 
+                            IsChecked="{Binding IsVisible}" 
+                            Margin="5,0,5,0">
+                            <Image Source="{Binding VisibleIconSource}" />
+                        </ui:InstantToggleButton>
+                        <ui:InstantToggleButton 
+                            Grid.Column="3"
+                            Classes="LayerItemBtn" 
+                            Tag="{Binding LockUnlockTag}" 
+                            IsChecked="{Binding IsLocked}"
+                            Margin="0,0,15,0">
+                            <Image Source="{Binding LockedIconSource}" />
+                        </ui:InstantToggleButton>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <StackPanel 
+                Grid.Row="2" 
+                x:Name="ActionPanel"
+                Background="{DynamicResource BackgroundColor}" 
+                VerticalAlignment="Bottom"  
+                HorizontalAlignment="Stretch"
+                FlowDirection="LeftToRight"
+                Orientation="Horizontal">
+            <Button Classes="ActionBtn" Tag="{DynamicResource Add}" Click="AddClick">
+                <Image Source="{DynamicResource AddIcon}" />
+            </Button>
+            <Button Classes="ActionBtn" Tag="{DynamicResource Delete}" Click="DeleteClick">
+                <Image Source="{DynamicResource DeleteIcon}" />
+            </Button>
+            <Button Classes="ActionBtn" Tag="{DynamicResource Duplicate}" Click="DuplicateClick">
+                <Image Source="{DynamicResource DuplicateIcon}" />
+            </Button>
+            <Button Classes="ActionBtn" Tag="{DynamicResource Group}" Click="GroupClick">
+                <Image Source="{DynamicResource GroupIcon}" />
+            </Button>
+            <Button Classes="ActionBtn" Tag="{DynamicResource ToTheTop}" Click="ToTheTopClick">
+                <Image Source="{DynamicResource UpIcon}" />
+            </Button>
+            <Button Classes="ActionBtn" Tag="{DynamicResource ToTheBottom}" Click="ToTheBottomClick">
+                <Image Source="{DynamicResource DownIcon}" />
+            </Button>
+        </StackPanel>
+
+        <Canvas x:Name="FloatingHost" IsHitTestVisible="True" />
+        <Canvas IsHitTestVisible="False">
+            <Border 
+                Name="CountBadge"
+                IsVisible="false"
+                Padding="5"
+                Background="{DynamicResource UiColor}"
+                CornerRadius="5">
+                <TextBlock
+                    Name="CountBadgeText"
+                    FontSize="14"
+                    Foreground="{DynamicResource ForegroundColor}" />
+            </Border>
+        </Canvas>
+    </Grid>
+</UserControl>

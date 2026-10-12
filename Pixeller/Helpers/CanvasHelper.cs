@@ -1,0 +1,47 @@
+﻿using Avalonia;
+using Avalonia.Input;
+using Avalonia.Media;
+using Pixeller.Models.Canvas;
+using System;
+using System.Numerics;
+
+namespace Pixeller.Helpers;
+
+public static class CanvasHelper
+{
+    public static (double bmpW, double bmpH, double offsetX, double offsetY) GetBitmapRenderInfo(
+        double Scale, Vector2 Offset, Rect Bounds, PixelModel model)
+    {
+        var bmpW = model.Width * Scale;
+        var bmpH = model.Height * Scale;
+
+        return (bmpW, bmpH, (Bounds.Width - bmpW) / 2 + Offset.X, (Bounds.Height - bmpH) / 2 + Offset.Y);
+    }
+
+    public static PixelPoint? GetPixelCoord(ICanvasContext ctx, Visual relativeTo, PointerEventArgs e)
+    {
+        var pos = e.GetPosition(relativeTo);
+        var (bmpW, bmpH, offsetX, offsetY) = GetBitmapRenderInfo(ctx.Scale, ctx.Offset, ctx.Bounds, ctx.Model);
+
+        var relX = pos.X - offsetX;
+        var relY = pos.Y - offsetY;
+
+        if (relX < 0 || relY < 0 || relX >= bmpW || relY >= bmpH) return null;
+
+        var px = (int)Math.Floor(relX / ctx.Scale);
+        var py = (int)Math.Floor(relY / ctx.Scale);
+
+        return new PixelPoint(px, py);
+    }
+
+    public static Color GetHighlightColor(Color color)
+    {
+        var factor = Math.Max(Math.Max(color.R, color.G), color.B) <= 127 ? 255 : 0;
+
+        return new Color(
+            65,
+            (byte)factor,
+            (byte)factor,
+            (byte)factor);
+    }
+}

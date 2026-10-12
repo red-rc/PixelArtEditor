@@ -1,0 +1,77 @@
+<UserControl
+    x:Class="Pixeller.Controls.Views.StartMenuView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="clr-namespace:Pixeller.ViewModels"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    x:DataType="vm:StartMenuVM"
+    Background="{DynamicResource BackgroundColor}"
+    mc:Ignorable="d"
+    Focusable="True"
+    x:Name="Root">
+
+    <Grid Background="Transparent" ColumnDefinitions="*,3.5*" DragDrop.AllowDrop="True">
+        <Grid Grid.Column="0">
+            <StackPanel
+                Margin="30,75,30,0"
+                Orientation="Vertical"
+                Spacing="10">
+                <Button
+                    Padding="30,15"
+                    HorizontalAlignment="Stretch"
+                    Classes="ConfirmBtn"
+                    Command="{Binding CreateCommand}"
+                    Content="{DynamicResource Create}" />
+                <Button
+                    Padding="30,15"
+                    HorizontalAlignment="Stretch"
+                    Classes="CancelBtn"
+                    Content="{DynamicResource Open}" />
+            </StackPanel>
+        </Grid>
+        <Grid Background="{DynamicResource SecondaryBackgroundColor}" Grid.Column="1">
+            <TextBlock
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                FontSize="28"
+                Text="{DynamicResource PixellerTheBest}" />
+            <TextBlock
+                Margin="0,0,10,10"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                FontSize="14"
+                Foreground="Gray"
+                Text="{Binding AppVersion}" />
+        </Grid>
+
+        <Grid Grid.ColumnSpan="2" IsHitTestVisible="False">
+            <Border
+                Background="{DynamicResource PrimaryColor}"
+                Opacity="{Binding DragBgOpacity}" />
+        
+            <Image
+                Source="{DynamicResource UploadIcon}"
+                IsVisible="{Binding DragImageVisible}"
+                Width="80"
+                Height="80"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                RenderOptions.BitmapInterpolationMode="None" />
+        </Grid>
+
+        <Grid Grid.ColumnSpan="2" IsHitTestVisible="False">
+            <ProgressBar
+                IsVisible="{Binding IsLoading}"
+                Width="300"
+                Height="30"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Minimum="0"
+                Maximum="100"
+                IsIndeterminate="True" />
+        </Grid>
+    </Grid>
+</UserControl>

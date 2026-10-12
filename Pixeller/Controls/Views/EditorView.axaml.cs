@@ -1,0 +1,326 @@
+﻿using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Input;
+using Avalonia.Interactivity;
+using Avalonia.Threading;
+using Avalonia.VisualTree;
+using Pixeller.AppServices;
+using Pixeller.AppServices.EditorUI;
+using Pixeller.AppServices.ImageProcessing;
+using Pixeller.Helpers;
+using Pixeller.Models.Canvas;
+using Pixeller.ViewModels;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reactive.Linq;
+
+namespace Pixeller.Controls.Views;
+
+public partial class EditorView : UserControl
+{
+    private readonly LayoutManager _layoutManager;
+    private readonly TooltipManager _tooltipManager;
+    private readonly ImageDropHandler _dropHandler;
+    private readonly PanelDragController _dragController;
+    private HotkeysService? _hotkeysService;
+
+    private IDisposable? _modelSubscription;
+
+    private EditorVM? ViewModel => DataContext as EditorVM;
+
+    private readonly List<LayerModel> _addedLayers = [];
+
+    private double _mousePressX;
+    private Point? _zoomOrigin;
+
+    private readonly DispatcherTimer _zoomTimer = new(DispatcherPriority.Render) 
+    { 
+        Interval = TimeSpan.FromMilliseconds(16) 
+    };
+    private double _pendingZoomLog;
+    private Point? _zoomPos;
+
+    private void OnCancelClick(object? sender, RoutedEventArgs e) => OnCancel();
+    private void OnConfirmClick(object? sender, RoutedEventArgs e) => OnConfirm();
+
+    private void OnCancel()
+    {
+        if (ViewModel is null) return;
+
+        foreach (var layer in _addedLayers)
+            ViewModel.LayerManager.Layers.Remove(layer);
+
+        var vm = LayerPanelControl.ViewModel;
+        if (vm is null) return;
+
+        if (LayerPanelControl.LayerManager?.Layers.Count > 0)
+        {
+            var index = Math.Clamp(1, 0, vm.LayerItems.Count - 1);
+            vm.SelLayerItem = vm.LayerItems[index];
+        }
+
+        CompleteConfirmation();
+    }
+
+    private void OnConfirm()
+    {
+        CompleteConfirmation();
+    }
+
+    private void CompleteConfirmation()
+    {
+        if (ViewModel is null) return;
+
+        _addedLayers.Clear();
+        ViewModel.ConfirmPanelVisible = false;
+    }
+
+    public EditorView()
+    {
+        InitializeComponent();
+
+        _zoomTimer.Tick += OnZoomTick;
+
+        _layoutManager = new LayoutManager(MainLayout, RectHost, CanvasPanel);
+        _tooltipManager = new TooltipManager(Tooltip, TooltipText, RectHost);
+
+        _dropHandler = new ImageDropHandler(
+            o => { ViewModel?.DragBgOpacity = o; },
+            v => { ViewModel?.DragImageVisible = v; });
+
+        _dragController = new PanelDragController(MainLayout, FloatingHost, RectHost, _layoutManager);
+
+        AddHandler(KeyDownEvent, OnHotkeys, RoutingStrategies.Tunnel);
+
+        DataContextChanged += OnDataContextChanged;
+
+        if (Services.Navigation.GetViewModel() is not EditorVM editorVM) return;
+        editorVM.LayersPasted += OnLayersPasted;
+    }
+
+    protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        base.OnAttachedToVisualTree(e);
+
+        _layoutManager.InitializeRects();
+        _layoutManager.LoadLayout();
+
+        Services.Settings.WhenAnyValue(x => x.Layout).Subscribe(_ => _layoutManager.LoadLayout());
+
+        MainLayout.LayoutUpdated += OnMainLayoutLayoutUpdated;
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        DragDrop.AddDragOverHandler(this, OnDragOver);
+        DragDrop.AddDragLeaveHandler(this, OnDragLeave);
+        DragDrop.AddDropHandler(this, OnDrop);
+    }
+
+    private void OnDragOver(object? sender, DragEventArgs e)
+    {
+        if (DataContext is not EditorVM vm || vm.IsTransforming) return;
+        _dropHandler.HandleDragOver(e);
+    }
+
+    private async void OnDragLeave(object? sender, RoutedEventArgs e)
+        => await _dropHandler.HandleDragLeave();
+
+    private async void OnDrop(object? sender, DragEventArgs e)
+    {
+        if (DataContext is not EditorVM vm || vm.IsTransforming) return;
+
+        var files = ImageDropHandler.GetFiles(e);
+
+        vm.DragBgOpacity = 0;
+        vm.DragImageVisible = false;
+
+        foreach (var file in files)
+        {
+            var model = await vm.RunLoadAsync(ImageImportService.GetPixelModelFromFile(file));
+            if (model is null) continue;
+
+            if (ViewModel is null) return;
+            LayerPasteHelper.InsertPasted(model, ViewModel.LayerManager, LayerPanelControl.ViewModel);
+        }
+    }
+
+    public void OnLayersPasted(List<LayerModel> layers, EditorVM vm)
+    {
+        _addedLayers.AddRange(layers);
+        if (_addedLayers.Count < 1) return;
+
+        LayerPanelControl.LayerListBox.SelectedItems?.Clear();
+        foreach (var layer in _addedLayers)
+        {
+            var item = LayerPanelControl.ViewModel?.LayerItems.FirstOrDefault(x => x.Layer == layer);
+            if (item is not null) LayerPanelControl.LayerListBox.SelectedItems?.Add(item);
+        }
+
+        vm.ConfirmPanelVisible = true;
+    }
+
+    private async void OnHotkeys(object? sender, KeyEventArgs e)
+    {
+        if (e.Key is Key.LeftCtrl) return;
+
+        var focused = TopLevel.GetTopLevel(this)?.FocusManager?.GetFocusedElement();
+        if (focused is TextBox or NumericUpDown) return;
+
+        _hotkeysService ??= new HotkeysService(LayerPanelControl.LayerCommands, ViewModel, OnCancel, OnConfirm);
+
+        var handled = await _hotkeysService.Handle(e.KeyModifiers, e.Key);
+        if (!handled) return;
+
+        e.Handled = true;
+        Dispatcher.UIThread.Post(() => Root.Focus());
+    }
+
+    private void OnDataContextChanged(object? sender, EventArgs e)
+    {
+        _modelSubscription?.Dispose();
+
+        if (ViewModel is not null)
+        {
+            ViewModel.SetCanvas(CanvasControl);
+            LayerPanelControl.LayerManager = ViewModel.LayerManager;
+
+            _hotkeysService = null;
+
+            ViewModel.AdjustCanvas(CanvasPanel.Bounds.Width, CanvasPanel.Bounds.Height);
+
+            _modelSubscription = Observable.Switch(ViewModel.WhenAnyValue(x => x.Model)
+                .Select(model => model.WhenAnyValue(m => m.Width, m => m.Height)))
+                .Subscribe(_ =>
+                {
+                    Dispatcher.UIThread.Post(() =>
+                    {
+                        if (CanvasPanel.Bounds is not { Width: > 0, Height: > 0 }) return;
+                        ViewModel.AdjustCanvas(CanvasPanel.Bounds.Width, CanvasPanel.Bounds.Height);
+                    });
+                });
+
+            Dispatcher.UIThread.Post(() => Root.Focus());
+        }
+    }
+
+    private void QueueZoom(double factor, double steps, Point? pos)
+    {
+        _pendingZoomLog += Math.Log(factor) * steps;
+        _zoomPos = pos;
+        if (!_zoomTimer.IsEnabled) _zoomTimer.Start();
+    }
+
+    private void OnZoomTick(object? sender, EventArgs e)
+    {
+        if (ViewModel is null) 
+        { 
+            _zoomTimer.Stop(); 
+            _pendingZoomLog = 0; 
+            return; 
+        }
+
+        var step = Math.Abs(_pendingZoomLog) < 0.01 ? _pendingZoomLog : _pendingZoomLog * 0.5;
+        ViewModel.ZoomBy((float)Math.Exp(step), true, _zoomPos);
+        _pendingZoomLog -= step;
+
+        if (Math.Abs(_pendingZoomLog) < 1e-4)
+        {
+            _pendingZoomLog = 0;
+            _zoomTimer.Stop();
+        }
+    }
+
+    private void CanvasPanel_OnSizeChanged(object? sender, SizeChangedEventArgs e)
+    {
+        if (ViewModel == null || e.NewSize.Width <= 0 || e.NewSize.Height <= 0) return;
+        ViewModel.AdjustCanvas(e.NewSize.Width, e.NewSize.Height);
+
+        Dispatcher.UIThread.Post(() => Root.Focus(), DispatcherPriority.Input);
+    }
+
+    private void CanvasPanel_OnPointerWheelChanged(object? sender, PointerWheelEventArgs e)
+    {
+        if (ViewModel == null || e.GetCurrentPoint(CanvasPanel).Properties.IsRightButtonPressed) return;
+        QueueZoom(1.1, e.Delta.Y, e.GetPosition(CanvasPanel));
+    }
+
+    private void CanvasPanel_OnPointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        if (e.GetCurrentPoint(this).Properties.PointerUpdateKind == PointerUpdateKind.RightButtonPressed)
+            Dispatcher.UIThread.Post(() => Root.Focus());
+
+        if (ViewModel == null || !ViewModel.Tools.IsHandEnabled) return;
+
+        if (e.GetCurrentPoint(CanvasPanel).Properties.IsRightButtonPressed && !ViewModel.IsPositionSet)
+            ViewModel.StartDragging(e.GetPosition(CanvasPanel));
+
+        if (e.GetCurrentPoint(CanvasPanel).Properties.IsLeftButtonPressed)
+        {
+            _zoomOrigin = e.GetPosition(CanvasPanel);
+            _mousePressX = e.GetPosition(this).X;
+        }
+    }
+
+    private void CanvasPanel_OnPointerMoved(object? sender, PointerEventArgs e)
+    {
+        if (ViewModel == null || !ViewModel.Tools.IsHandEnabled) return;
+
+        if (e.GetCurrentPoint(CanvasPanel).Properties.IsRightButtonPressed && ViewModel.IsPositionSet)
+            ViewModel.UpdateDragging(e.GetPosition(CanvasPanel));   
+
+        if (e.GetCurrentPoint(CanvasPanel).Properties.IsLeftButtonPressed && _mousePressX > 0)
+        {
+            var dx = e.GetPosition(this).X - _mousePressX;
+
+            if (Math.Abs(dx) >= 5)
+            {
+                QueueZoom(1.05, Math.Sign(dx), _zoomOrigin);
+                _mousePressX = e.GetPosition(this).X;
+            }
+        }
+    }
+
+    private void CanvasPanel_OnPointerReleased(object? sender, PointerReleasedEventArgs e)
+    {
+        if (ViewModel == null) return;
+        ViewModel.IsPositionSet = false;
+        _zoomOrigin = null;
+        _mousePressX = -1;
+    }
+
+    private void OnMainLayoutLayoutUpdated(object? sender, EventArgs e) => _layoutManager.UpdateRectPositions();
+
+    private void Root_PointerMoved(object? sender, PointerEventArgs e)
+    {
+        var buttons = LayerPanelControl.GetVisualDescendants().OfType<Button>()
+            .Concat(ToolbarPanel.StackPanel.Children.OfType<Button>());
+
+        _tooltipManager.OnPointerMoved(e, buttons);
+    } 
+
+    private async void Panel_PointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed || ViewModel == null || ViewModel.IsTransforming) return;
+        _dragController.OnPointerPressed(this, e);
+    }
+
+    private void Panel_PointerMoved(object? sender, PointerEventArgs e)
+    {
+        if (sender is not Control draggedPanel
+            || !e.GetCurrentPoint(this).Properties.IsLeftButtonPressed
+            || ViewModel == null
+            || ViewModel.IsTransforming) return;
+
+        _dragController.OnPointerMoved(draggedPanel, this, e);
+    }
+
+    private void Panel_PointerReleased(object? sender, PointerReleasedEventArgs e)
+    {
+        _dragController.OnPointerReleased(sender as Control, e);
+        _tooltipManager.Hide();
+    }
+}

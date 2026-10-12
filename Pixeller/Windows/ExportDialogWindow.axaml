@@ -1,0 +1,79 @@
+<Window
+    x:Class="Pixeller.Windows.ExportDialogWindow"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:editor="clr-namespace:Pixeller.Controls.Editor"
+    xmlns:controls="clr-namespace:Pixeller.Controls.Image"
+    xmlns:controlsGlobal="clr-namespace:Pixeller.Controls"
+    xmlns:vm="clr-namespace:Pixeller.ViewModels"
+    Width="600"
+    Height="400"
+    d:DesignHeight="400"
+    d:DesignWidth="600"
+    x:DataType="vm:ImagePropertiesVM"
+    Background="{DynamicResource BackgroundColor}"
+    ExtendClientAreaToDecorationsHint="True"
+    CanResize="False"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
+
+    <Grid RowDefinitions="Auto,*" Background="{DynamicResource SecondaryBackgroundColor}">
+        <controlsGlobal:TitleBar 
+            Grid.Row="0" 
+            Title="{DynamicResource ExportTitle}" 
+            IconVisible="False" 
+            CanMinimize="False" 
+            CanMaximize="False" />
+        <Grid RowDefinitions="*,Auto"  Grid.Row="1">
+            <Grid Grid.Row="0"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                ColumnDefinitions="250,Auto">
+                <editor:SliderPreviewControl
+                    Grid.Column="0"
+                    VerticalAlignment="Center"
+                    RenderData="{Binding ImageProps.RenderData}" />
+
+                <StackPanel Grid.Column="1" Spacing="10">
+                    <controls:PropertiesPanel 
+                        DataContext="{Binding ImageProps}" 
+                        ConfigureVisible="True"
+                        ExportOptionsVisible="True"
+                        ConfigureEnabled="{Binding IsIndexed}" />
+                </StackPanel>
+            </Grid>
+            <Grid
+                Grid.Row="1"
+                Height="100"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Bottom"
+                Background="{DynamicResource BackgroundColor}"
+                ColumnDefinitions="*,Auto,Auto">
+                <Button
+                    Grid.Column="0"
+                    Height="50"
+                    Margin="0,25,10,25"
+                    Padding="30,1"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Stretch"
+                    Classes="CancelBtn"
+                    Command="{Binding CancelCommand}"
+                    Content="{DynamicResource Cancel}"
+                    FontSize="20" />
+                <Button
+                    Grid.Column="1"
+                    Height="50"
+                    Margin="0,25,25,25"
+                    Padding="30,1"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Stretch"
+                    Classes="ConfirmBtn"
+                    Command="{Binding SaveCommand}"
+                    Content="{DynamicResource Confirm}"
+                    FontSize="20" />
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>

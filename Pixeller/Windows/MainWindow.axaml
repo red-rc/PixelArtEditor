@@ -1,0 +1,29 @@
+<Window
+    x:Class="Pixeller.Windows.MainWindow"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="clr-namespace:Pixeller.ViewModels"
+    xmlns:controls="clr-namespace:Pixeller.Controls"
+    Title="Pixeller"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    x:DataType="vm:MainWindowVM"
+    Background="{DynamicResource BackgroundColor}"
+    ExtendClientAreaToDecorationsHint="True"
+    Icon="/Assets/logo.ico"
+    TransparencyLevelHint="AcrylicBlur"
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d">
+
+    <Grid RowDefinitions="Auto,*" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <controls:TitleBar Grid.Row="0" TitleVisible="False" IconSource="/Assets/logo.ico">
+            <controls:TitleBar.ExtraContent>
+                <controls:MenuBar HorizontalAlignment="Left" VerticalAlignment="Stretch" />
+            </controls:TitleBar.ExtraContent>
+        </controls:TitleBar>
+
+        <ContentControl Grid.Row="1" Content="{Binding CurrentView}" />
+    </Grid>
+</Window>

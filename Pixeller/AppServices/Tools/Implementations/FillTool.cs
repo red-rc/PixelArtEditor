@@ -1,0 +1,41 @@
+﻿using Avalonia;
+using Pixeller.AppServices.Bitmap;
+using Pixeller.Models.Canvas;
+using Pixeller.Models.Tools;
+
+namespace Pixeller.AppServices.Tools.Implementations;
+
+public class FillTool : ITool
+{
+    public void OnPointerExited(ICanvasContext ctx)
+    {
+
+    }
+
+    public void OnPointerMoved(ICanvasContext ctx)
+    {
+
+    }
+
+    public void OnPointerPressed(ICanvasContext ctx) => Fill(ctx);
+
+    public void OnPointerReleased(ICanvasContext ctx)
+    {
+
+    }
+
+    private static void Fill(ICanvasContext ctx)
+    {
+        var layer = ctx.LayerManager.ActiveLayer;
+        if (layer is null || ctx.HoverPixel is null) return;
+
+        var dirtyRect = BitmapService.FillSimilarPixels(
+            layer.Data, 
+            layer.Width, 
+            ctx.HoverPixel.Value, 
+            ctx.DrawColor);
+
+        if (dirtyRect is PixelRect rect)
+            ToolManager.InvalidatePixelData(ctx, layer, rect);
+    }
+}

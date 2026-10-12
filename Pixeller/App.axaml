@@ -1,0 +1,37 @@
+<Application
+    x:Class="Pixeller.App"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:viewModels="clr-namespace:Pixeller.ViewModels"
+    xmlns:controls="clr-namespace:Pixeller.Controls.Views"
+    xmlns:conv="using:Pixeller.Converters">
+    <!--  "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options.  -->
+
+    <Application.DataTemplates>
+        <DataTemplate DataType="{x:Type viewModels:StartMenuVM}">
+            <controls:StartMenuView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModels:EditorVM}">
+            <controls:EditorView />
+        </DataTemplate>
+    </Application.DataTemplates>
+
+    <Application.Resources>
+        <conv:AddConverter x:Key="AddConverter"/>
+        <conv:TabToViewConverter x:Key="TabToViewConverter" />
+    </Application.Resources>
+
+    <Application.Styles>
+        <SimpleTheme />
+        <StyleInclude Source="avares://Pixeller.Core/Styles/SimpleStyle.axaml" />
+        <StyleInclude Source="avares://Avalonia.Controls.ColorPicker/Themes/Simple/Simple.xaml" />
+        <StyleInclude Source="avares://Pixeller.Core/Styles/Overrides/ColorViewOverride.axaml" />
+        <StyleInclude Source="avares://Pixeller.Core/Styles/Overrides/ColorPickerOverride.axaml" />
+        <StyleInclude Source="avares://Pixeller.Core/Styles/Overrides/MenuItemOverride.axaml" />
+        <StyleInclude Source="avares://Pixeller.Core/Styles/Overrides/MenuOverride.axaml" />
+        <StyleInclude Source="avares://Pixeller.Core/Styles/Overrides/ComboBoxOverride.axaml" />
+        <StyleInclude Source="avares://Pixeller.Core/Styles/Overrides/WindowDrawnDecorationsOverride.axaml" />
+        <StyleInclude Source="avares://Pixeller.Core/Styles/Overrides/SliderOverride.axaml" />
+        <StyleInclude Source="avares://Pixeller.Core/Styles/Overrides/ProgressBarOverride.axaml" />
+    </Application.Styles>
+</Application>

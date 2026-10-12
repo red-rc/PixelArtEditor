@@ -1,0 +1,112 @@
+<Window
+    x:Class="Pixeller.Windows.MessageDialogWindow"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="clr-namespace:Pixeller.ViewModels"
+    xmlns:controls="clr-namespace:Pixeller.Controls"
+    x:DataType="vm:MessageDialogVM"
+    Title="{Binding Name}"
+    Width="375"
+    Height="175"
+    d:DesignHeight="175"
+    d:DesignWidth="375"
+    Background="{DynamicResource BackgroundColor}"
+    ExtendClientAreaToDecorationsHint="True"
+    CanResize="False"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
+
+    <Window.Styles>
+        <Style Selector="Button.OKBtn">
+            <Setter Property="Background" Value="{DynamicResource PrimaryColor}" />
+            <Setter Property="FontFamily" Value="{DynamicResource AppFont}" />
+            <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Width" Value="80" />
+            <Setter Property="Height" Value="25" />
+            <Setter Property="CornerRadius" Value="2.5" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            
+            <Style Selector="^:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+                <Setter Property="Background" Value="{DynamicResource PrimaryHoverColor}" />
+                <Setter Property="BoxShadow" Value="{DynamicResource CardShadow}" />
+            </Style>
+            <Style Selector="^:pressed /template/ ContentPresenter#PART_ContentPresenter">
+                <Setter Property="Background" Value="{DynamicResource PrimaryPressColor}" />
+                <Setter Property="BoxShadow" Value="{DynamicResource CardShadow}" />
+            </Style>
+        </Style>
+
+        <Style Selector="Button.CopyBtn">
+            <Setter Property="Background" Value="{DynamicResource UiColor}" />
+            <Setter Property="FontFamily" Value="{DynamicResource AppFont}" />
+            <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Width" Value="25" />
+            <Setter Property="Height" Value="25" />
+            <Setter Property="CornerRadius" Value="2.5" />
+            
+            <Style Selector="^:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+                <Setter Property="Background" Value="{DynamicResource UiHoverColor}" />
+                <Setter Property="BoxShadow" Value="{DynamicResource CardShadow}" />
+            </Style>
+            <Style Selector="^:pressed /template/ ContentPresenter#PART_ContentPresenter">
+                <Setter Property="Background" Value="{DynamicResource UiPressColor}" />
+                <Setter Property="BoxShadow" Value="{DynamicResource CardShadow}" />
+            </Style>
+        </Style>
+
+        <Style Selector="TextBlock">
+            <Setter Property="FontFamily" Value="{DynamicResource AppFont}" />
+            <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />
+            <Setter Property="FontSize" Value="12" />
+        </Style>
+    </Window.Styles>
+
+    <Grid RowDefinitions="30,*,40">
+        <controls:TitleBar 
+            Grid.Row="0" 
+            Title="{DynamicResource MessageTitle}" 
+            IconVisible="False" 
+            CanMinimize="False" 
+            CanMaximize="False" />
+
+        <Grid Grid.Row="1">
+            <StackPanel
+                HorizontalAlignment="Center" 
+                VerticalAlignment="Center"
+                Orientation="Horizontal">
+                <StackPanel Width="56" VerticalAlignment="Center">
+                    <Image 
+                        Source="/Assets/error.ico"
+                        Width="32" 
+                        Height="32"
+                        RenderOptions.BitmapInterpolationMode="None" />
+                </StackPanel>
+                <ScrollViewer>
+                    <TextBlock x:Name="MsgText" VerticalAlignment="Center" TextWrapping="Wrap" MaxWidth="301" Text="{Binding Message}" />
+                </ScrollViewer>
+            </StackPanel>
+        </Grid>
+
+        <Grid Grid.Row="2" Background="{DynamicResource SecondaryBackgroundColor}">
+            <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft" Spacing="7.5" Margin="15,0">
+                <Button
+                    Classes="OKBtn"
+                    Content="OK" 
+                    Command="{Binding OKCommand}" />
+                <Button
+                    Classes="CopyBtn"
+                    Click="CopyClick">
+                    <Image 
+                        Source="{DynamicResource DuplicateIcon}"
+                        Width="13" 
+                        Height="13"
+                        RenderOptions.BitmapInterpolationMode="None" />
+                </Button>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>

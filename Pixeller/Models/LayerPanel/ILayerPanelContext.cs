@@ -1,0 +1,18 @@
+﻿using Avalonia.Interactivity;
+using Pixeller.Models.Canvas;
+using System.Collections.ObjectModel;
+
+namespace Pixeller.Models.LayerPanel;
+
+public interface ILayerPanelContext
+{
+    ICanvasContext? GetCanvasContext();
+    void DeleteClick(object? sender, RoutedEventArgs e);
+    void DuplicateClick(object? sender, RoutedEventArgs e);
+    void GroupClick(object? sender, RoutedEventArgs e);
+    void RenameClick(object? sender, RoutedEventArgs e);
+
+    LayerModel? GetActiveLayer();
+    ObservableCollection<LayerModel>? GetLayers();
+    ObservableCollection<LayerModel> GetSelLayers();
+}

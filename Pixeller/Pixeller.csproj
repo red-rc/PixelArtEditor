@@ -1,0 +1,59 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <PublishAot>true</PublishAot>
+    <IsAotCompatible>true</IsAotCompatible>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AssemblyName>Pixeller.Core</AssemblyName>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <AvaloniaResource Include="Assets\**" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <NuGetAudit>false</NuGetAudit>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" />
+    <PackageReference Include="Avalonia.Controls.ColorPicker" />
+    <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
+    <PackageReference Include="Avalonia.Themes.Simple" />
+    <PackageReference Include="Avalonia.Markup.Xaml.Loader" />
+    <PackageReference Include="AvaloniaUI.DiagnosticsSupport" />
+    <PackageReference Include="DynamicData" />
+    <PackageReference Include="HeyRed.ImageSharp.Heif" />
+    <PackageReference Include="fo-dicom" />
+    <PackageReference Include="PDFtoImage" />
+    <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="Pfim" />
+    <PackageReference Include="ReactiveUI.Avalonia" />
+    <PackageReference Include="SixLabors.ImageSharp" />
+    <PackageReference Include="SkiaSharp" />
+    <PackageReference Include="Svg.Skia" />
+    <PackageReference Include="Vecc.YamlDotNet.Analyzers.StaticGenerator" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <PackageReference Include="YamlDotNet" />
+    <PackageReference Include="Avalonia.Desktop" />
+    <PackageReference Include="System.Reactive" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AvaloniaResource Include="Localization\**\*.yaml" />
+    <AvaloniaResource Include="Styles\Fonts\**\*.ttf" />
+    <Content Include="Styles\Fonts\**\*.ttf" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Assets\Icc\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Controls\Editor\SliderPreviewControl.axaml.cs">
+      <DependentUpon>SliderPreviewControl.axaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+</Project>
