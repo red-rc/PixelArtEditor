@@ -23,7 +23,7 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     env:
-      Project_Path: PixelArtEditor.Desktop/PixelArtEditor.Desktop.csproj
+      Project_Path: Pixeller.Desktop/Pixeller.Desktop.csproj
       Output_Path: output/${{ matrix.target }}
 
     steps:
