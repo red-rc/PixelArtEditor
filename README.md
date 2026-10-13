@@ -33,10 +33,10 @@ Pixeller supports a range of image formats, pixel layouts, and encoding options.
 
 Some are already implemented, while others are planned:
 
-- [ ] Layers and merging
-- [ ] Masks
-- [ ] Filters and effects
-- [ ] Image cropping
+- Layers and merging
+- Masks
+- Filters and effects
+- Image cropping
 
 ## Technology
 
