@@ -1,9 +1,7 @@
-name: Avalonia Cross-Platform Build
+name: Build and Release Pixeller
 
 on:
   push:
-    branches: [ "master" ]
-  pull_request:
     branches: [ "master" ]
 
 jobs:
@@ -14,10 +12,13 @@ jobs:
         include:
           - target: win-x64
             os: windows-latest
+            archive-name: Pixeller-win-x64.zip
           - target: linux-x64
             os: ubuntu-latest
+            archive-name: Pixeller-linux-x64.tar.gz
           - target: osx-x64
             os: macos-latest
+            archive-name: Pixeller-osx-x64.tar.gz
 
     runs-on: ${{ matrix.os }}
 
@@ -28,6 +29,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 0 # Потрібно для історії комітів/версій
 
       - name: Install .NET SDK
         uses: actions/setup-dotnet@v4.3.0
@@ -45,15 +48,53 @@ jobs:
           -p:TrimMode=full
           -o ${{ env.Output_Path }}
 
-      - name: Inspect publish output
+      - name: Archive Windows Build (ZIP)
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: |
+          Compress-Archive -Path "${{ env.Output_Path }}/*" -DestinationPath "${{ matrix.archive-name }}"
+
+      - name: Archive Linux/macOS Build (Tar)
+        if: matrix.os != 'windows-latest'
         shell: bash
         run: |
-          echo "Project: ${{ env.Project_Path }}"
-          echo "Target: ${{ matrix.target }}"
-          find "${{ env.Output_Path }}" -maxdepth 2 -type f -print
-          
-      - name: Upload build artifacts
+          tar -czf "${{ matrix.archive-name }}" -C "${{ env.Output_Path }}" .
+
+      - name: Upload Build Artifact (Internal)
         uses: actions/upload-artifact@v4.6.1
         with:
-          name: Avalonia-${{ matrix.target }}
-          path: ${{ env.Output_Path }}
+          name: release-asset-${{ matrix.target }}
+          path: ${{ matrix.archive-name }}
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download all workflow artifacts
+        uses: actions/download-artifact@v4
+
+      - name: Generate Auto Version
+        id: version
+        run: |
+          # Генерує версію на основі номера запуску (наприклад, v0.1.45)
+          VERSION="v0.1.${{ github.run_number }}"
+          echo "tag_name=$VERSION" >> $GITHUB_OUTPUT
+          echo "Generated version: $VERSION"
+
+      - name: Release and Upload Assets
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag_name }}
+          name: "Pixeller ${{ steps.version.outputs.tag_name }}"
+          body: |
+            Automatic pre-release build for Pixeller.
+            - Build run: ${{ github.run_number }}
+            - Commit: ${{ github.sha }}
+          draft: false
+          prerelease: true
+          files: |
+            release-asset-win-x64/Pixeller-win-x64.zip
+            release-asset-linux-x64/Pixeller-linux-x64.tar.gz
+            release-asset-osx-x64/Pixeller-osx-x64.tar.gz
