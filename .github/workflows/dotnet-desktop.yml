@@ -30,7 +30,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4.2.2
         with:
-          fetch-depth: 0 # Потрібно для історії комітів/версій
+          fetch-depth: 0
 
       - name: Install .NET SDK
         uses: actions/setup-dotnet@v4.3.0
@@ -78,8 +78,10 @@ jobs:
       - name: Generate Auto Version
         id: version
         run: |
-          # Генерує версію на основі номера запуску (наприклад, v0.1.45)
-          VERSION="v0.1.${{ github.run_number }}"
+          TAG_COUNT=$(git tag | wc -l)
+          NEXT_VERSION=$((TAG_COUNT + 1))
+          
+          VERSION="v0.1.$NEXT_VERSION"
           echo "tag_name=$VERSION" >> $GITHUB_OUTPUT
           echo "Generated version: $VERSION"
 
