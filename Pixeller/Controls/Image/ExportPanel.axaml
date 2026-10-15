@@ -1,0 +1,73 @@
+<UserControl    
+    x:Class="Pixeller.Controls.Image.ExportPanel"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="clr-namespace:Pixeller.UI"
+    xmlns:vm="clr-namespace:Pixeller.ViewModels"
+    Width="150"
+    Height="250"
+    d:DesignHeight="250"
+    d:DesignWidth="150"
+    x:DataType="vm:ImagePropertiesUCVM"
+    Background="{DynamicResource SecondaryBackgroundColor}"
+    mc:Ignorable="d">
+
+    <UserControl.Styles>
+        <Style Selector="TextBlock">
+            <Setter Property="FontSize" Value="14" />
+        </Style>
+        <Style Selector="NumericUpDown.NumberBox">
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="ShowButtonSpinner" Value="False" />
+            <Setter Property="MinHeight" Value="24" />
+            <Setter Property="Height" Value="24" />
+            <Setter Property="Width" Value="55" />
+        </Style>
+        <Style Selector="ComboBox">
+            <Setter Property="Width" Value="120" />
+            <Setter Property="MinHeight" Value="24" />
+            <Setter Property="Height" Value="24" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="Padding" Value="8,0,8,0" />
+        </Style>
+    </UserControl.Styles>
+
+    <StackPanel
+        HorizontalAlignment="Stretch"
+        VerticalAlignment="Stretch"
+        Spacing="6">
+        <StackPanel>
+            <TextBlock HorizontalAlignment="Center" Text="{DynamicResource ExportQuality}" />
+            <ui:NumberBox
+                Classes="NumberBox"
+                Minimum="1"
+                Maximum="100"
+                Width="120"
+                IsEnabled="{Binding QualityEnabled}"
+                Value="{Binding Quality, Mode=TwoWay}" />
+        </StackPanel>
+        <StackPanel>
+            <TextBlock HorizontalAlignment="Center" Text="{DynamicResource PngFilter}" />
+            <ComboBox
+                IsEnabled="{Binding PngOptionsEnabled}"
+                ItemsSource="{Binding PngFilterNames}"
+                SelectedItem="{Binding PngFilterName, Mode=TwoWay}" />
+        </StackPanel>
+        <StackPanel>
+            <TextBlock HorizontalAlignment="Center" Text="{DynamicResource PngCompression}" />
+            <ComboBox
+                IsEnabled="{Binding PngOptionsEnabled}"
+                ItemsSource="{Binding PngCompressionNames}"
+                SelectedItem="{Binding PngCompressionName, Mode=TwoWay}" />
+        </StackPanel>
+        <StackPanel>
+            <TextBlock HorizontalAlignment="Center" Text="{DynamicResource TiffCompression}" />
+            <ComboBox
+                IsEnabled="{Binding CompressionEnabled}"
+                ItemsSource="{Binding CompressionNames}"
+                SelectedItem="{Binding CompressionName, Mode=TwoWay}" />
+        </StackPanel>
+    </StackPanel>
+</UserControl>

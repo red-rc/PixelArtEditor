@@ -53,9 +53,10 @@ public static class ImageExportService
         new($"Icon")                                               { Patterns = ["*.ico"] }
     ];
 
-    public static async Task ExportImageAsync(Window dialog, PixelModel model)
+    public static async Task<IStorageFile?> PickExportFileAsync(Window dialog, PixelModel model)
     {
         List<FilePickerFileType>? validFileTypes;
+
         if (model.ColorMode is ColorMode.Indexed)
         {
             validFileTypes = [.. ExportFileTypes.Where(t => t.Patterns is not null && t.Patterns.Any(p =>
@@ -97,9 +98,11 @@ public static class ImageExportService
                 : validFileTypes
         };
 
-        var file = await dialog.StorageProvider.SaveFilePickerAsync(saveOptions);
-        if (file is null) return;
-        
+        return await dialog.StorageProvider.SaveFilePickerAsync(saveOptions);
+    }
+
+    public static async Task ExportImageAsync(IStorageFile file, PixelModel model)
+    {        
         if (model.Data is null) return;
         
         await Task.Run(async () =>
@@ -304,11 +307,18 @@ public static class ImageExportService
             {
                 BitDepth = bitDepth,
                 ColorType = PngColorType.Palette,
+                FilterMethod = model.PngFilter,
+                CompressionLevel = model.PngCompression,
                 Quantizer = new PaletteQuantizer(sharpColors)
             };
         }
 
-        return new PngEncoder { BitDepth = bitDepth };
+        return new PngEncoder
+        {
+            BitDepth = bitDepth,
+            FilterMethod = model.PngFilter,
+            CompressionLevel = model.PngCompression
+        };
     }
 
     private static BmpEncoder BuildBmpEncoder(PixelModel model)
@@ -339,7 +349,7 @@ public static class ImageExportService
             };
         }
 
-        return new BmpEncoder() { BitsPerPixel = bitsPerPixel };
+        return new BmpEncoder() {  BitsPerPixel = bitsPerPixel };
     }
 
     private static GifEncoder BuildGifEncoder(PixelModel model)

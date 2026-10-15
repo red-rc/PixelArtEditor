@@ -12,7 +12,6 @@ x64/
 x86/
 
 # Local configuration & scripts
-settings.json
 global.json
 clean_localization.py
 

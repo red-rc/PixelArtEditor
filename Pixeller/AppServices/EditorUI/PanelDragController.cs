@@ -57,7 +57,7 @@ public class PanelDragController(Grid mainLayout, Avalonia.Controls.Canvas float
                 ? layoutManager.VerticalRects : layoutManager.HorizontalRects;
 
             rectsToHighlight.ForEach(rect => rect.Fill = rect.GetValue(LayoutManager.DockInfoProperty)?.Orientation == _dockState.Orientation
-                ? new SolidColorBrush(Application.Current?.Resources["PrimaryPressColor"] as Color? ?? Colors.Blue) : rect.Fill);
+                ? new SolidColorBrush(Application.Current?.Resources["PrimaryPressColor"] as Color? ?? Colors.DodgerBlue) : rect.Fill);
 
             e.Pointer.Capture(draggedPanel);
         }
@@ -119,7 +119,11 @@ public class PanelDragController(Grid mainLayout, Avalonia.Controls.Canvas float
 
             Services.Settings.Layout = [.. mainLayout.Children
                 .OfType<Control>()
-                .Select(c => new PanelLayout { Name = c.Name, Row = Grid.GetRow(c), Col = Grid.GetColumn(c) })];
+                .Select(c => new PanelLayout { 
+                    Name = c.Name, 
+                    Row = Grid.GetRow(c), 
+                    Col = Grid.GetColumn(c) 
+                })];
             Services.Settings.Save();
         }
         else

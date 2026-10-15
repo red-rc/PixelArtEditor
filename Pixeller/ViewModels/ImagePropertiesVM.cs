@@ -1,20 +1,17 @@
 using Avalonia.Controls;
+using Pixeller.AppServices;
 using Pixeller.AppServices.Bitmap;
 using Pixeller.AppServices.ImageProcessing;
+using Pixeller.AppServices.Shell;
 using Pixeller.Models.Canvas;
 using System;
 using System.Collections.Generic;
 
 namespace Pixeller.ViewModels;
 
-public enum PreviewTrigger
-{
-    Size,
-    Palette,
-    Other
-}
+public enum PreviewTrigger { Size, Palette, Other }
 
-public class ImagePropertiesVM : ReactiveObject
+public class ImagePropertiesVM : ViewBase
 {
     public ImagePropertiesUCVM ImageProps { get; }
 
@@ -67,8 +64,13 @@ public class ImagePropertiesVM : ReactiveObject
             }
             else
             {
-                await ImageExportService.ExportImageAsync(dialog, ImageProps.GetFinalPixelModel(
-                    model.Data, model.Name, model.Extension, model.Palette, model.DicomDataset));
+                var finalModel = ImageProps.GetFinalPixelModel(
+                    model.Data, model.Name, model.Extension, model.Palette, model.DicomDataset);
+
+                var file = await ImageExportService.PickExportFileAsync(dialog, finalModel);
+                if (file is null) return;
+
+                await RunExportAsync(ImageExportService.ExportImageAsync(file, finalModel));
             }
 
             dialog.Close();

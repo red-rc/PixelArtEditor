@@ -29,16 +29,16 @@
     <Border Padding="6">
         <Border Classes="InnerBorder">
             <StackPanel Orientation="Vertical">
-                <MenuItem Header="Rename" Click="RenameClick" />
-                <MenuItem Header="Duplicate" Click="DuplicateClick" />
-                <MenuItem Header="Create Group" Click="GroupClick" />
-                <MenuItem Header="Merge Layers" Click="MergeClick" />
-                <MenuItem Header="Transform" Click="TransformClick" />
+                <MenuItem Header="{DynamicResource Rename}" Click="RenameClick" />
+                <MenuItem Header="{DynamicResource Duplicate}" Click="DuplicateClick" />
+                <MenuItem Header="{DynamicResource CreateGroup}" Click="GroupClick" />
+                <MenuItem Header="{DynamicResource MergeLayers}" Click="MergeClick" />
+                <MenuItem Header="{DynamicResource Transform}" Click="TransformClick" />
                 <Separator />
-                <MenuItem Header="Export" Click="ExportClick" />
-                <MenuItem Header="Filters &amp; Correction" Click="FiltersClick" />
+                <MenuItem Header="{DynamicResource Export}" Click="ExportClick" />
+                <MenuItem Header="{DynamicResource FiltersCorrection}" Click="FiltersClick" />
                 <Separator />
-                <MenuItem Classes="DeleteItem" Header="Delete" Click="DeleteClick" />
+                <MenuItem Classes="DeleteItem" Header="{DynamicResource Delete}" Click="DeleteClick" />
             </StackPanel>
         </Border>
     </Border>

@@ -75,8 +75,7 @@
                     Grid.Row="0"
                     BorderBrush="{DynamicResource BackgroundPressColor}"
                     BorderThickness="0,0,0,3">
-
-                    <ColorView Color="{Binding PickedColor}" />
+                    <ui:PaletteColorView Color="{Binding PickedColor}" ImagePalette="{Binding Model.Palette}" />
                 </Border>
 
                 <controls:LayerPanel 

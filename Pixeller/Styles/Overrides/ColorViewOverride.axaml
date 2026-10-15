@@ -5,7 +5,8 @@
         xmlns:primitives="using:Avalonia.Controls.Primitives"
         xmlns:pc="using:Avalonia.Controls.Primitives.Converters"
         xmlns:globalization="using:System.Globalization"
-        xmlns:ui="using:Pixeller.UI"
+        xmlns:ui="clr-namespace:Pixeller.UI"
+        xmlns:editor="clr-namespace:Pixeller.Controls.Editor"
         x:CompileBindings="False">
     <Styles.Resources>
         <ResourceDictionary>
@@ -19,86 +20,6 @@
 
           <!-- This radius should follow ControlCornerRadius -->
           <CornerRadius x:Key="ColorViewTabBackgroundCornerRadius">3</CornerRadius>
-        
-          <ControlTheme x:Key="ColorViewPaletteListBoxTheme"
-                        TargetType="ListBox">
-            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
-            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
-            <Setter Property="ScrollViewer.IsScrollChainingEnabled" Value="True" />
-            <Setter Property="Template">
-              <ControlTemplate>
-                <Border Name="border"
-                        ClipToBounds="{TemplateBinding ClipToBounds}"
-                        Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="{TemplateBinding CornerRadius}">
-                  <ScrollViewer Name="PART_ScrollViewer"
-                                HorizontalScrollBarVisibility="{TemplateBinding (ScrollViewer.HorizontalScrollBarVisibility)}"
-                                VerticalScrollBarVisibility="{TemplateBinding (ScrollViewer.VerticalScrollBarVisibility)}"
-                                IsScrollChainingEnabled="{TemplateBinding (ScrollViewer.IsScrollChainingEnabled)}"
-                                AllowAutoHide="{TemplateBinding (ScrollViewer.AllowAutoHide)}">
-                    <ItemsPresenter Name="PART_ItemsPresenter"
-                                    ItemsPanel="{TemplateBinding ItemsPanel}"
-                                    Margin="{TemplateBinding Padding}"/>
-                  </ScrollViewer>
-                </Border>
-              </ControlTemplate>
-            </Setter>
-          </ControlTheme>
-        
-          <ControlTheme x:Key="ColorViewPaletteListBoxItemTheme"
-                        TargetType="ListBoxItem">
-            <Setter Property="Background" Value="Transparent" />
-            <Setter Property="Padding" Value="0" />
-            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-            <Setter Property="VerticalContentAlignment" Value="Stretch" />
-            <Setter Property="Template">
-              <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                <Grid UseLayoutRounding="False">
-                  <ContentPresenter Name="PART_ContentPresenter"
-                                    Background="{TemplateBinding Background}"
-                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                    BorderThickness="{TemplateBinding BorderThickness}"
-                                    CornerRadius="{TemplateBinding CornerRadius}"
-                                    ContentTemplate="{TemplateBinding ContentTemplate}"
-                                    Content="{TemplateBinding Content}"
-                                    Padding="{TemplateBinding Padding}"
-                                    VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                    HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" />
-                  <Rectangle x:Name="BorderRectangle"
-                             IsHitTestVisible="False"
-                             StrokeThickness="3"
-                             HorizontalAlignment="Stretch"
-                             VerticalAlignment="Stretch" />
-                </Grid>
-              </ControlTemplate>
-            </Setter>
-        
-            <Style Selector="^ /template/ Rectangle#BorderRectangle">
-              <Setter Property="Stroke" Value="{DynamicResource SystemControlHighlightListAccentLowBrush}" />
-              <Setter Property="Opacity" Value="0" />
-            </Style>
-        
-            <Style Selector="^:pointerover /template/ Rectangle#BorderRectangle"
-                   x:DataType="Color">
-              <Setter Property="Stroke" Value="{Binding Converter={StaticResource ContrastBrushConverter}}" />
-              <Setter Property="Opacity" Value="0.5" />
-            </Style>
-        
-            <Style Selector="^:selected /template/ Rectangle#BorderRectangle"
-                   x:DataType="Color">
-              <!-- The below and above lines really should be:
-                     'Value="{Binding Converter={StaticResource ContrastBrushConverter}, ConverterParameter={DynamicResource TextControlForeground}}"'
-                   However, DynamicResource and Binding is not currently supported in Avalonia for converter parameters.
-                   This means certain colors with transparency less than 50% may have a selection border that is difficult
-                   to see over top of the default control/window background. Since palettes do not usually have transparency
-                   it is considered better to disable this functionality rather than work around it with a multi-value
-                   converter. This should be revisited if Avalonia supports the above code in the future. -->
-              <Setter Property="Stroke" Value="{Binding Converter={StaticResource ContrastBrushConverter}}" />
-              <Setter Property="Opacity" Value="1" />
-            </Style>
-          </ControlTheme>
         
           <!-- Based on the Simple ToggleButton ControlTheme -->
           <ControlTheme x:Key="ColorViewColorModelRadioButtonTheme"
@@ -195,14 +116,10 @@
         
           </ControlTheme>
         
-          <ControlTheme x:Key="{x:Type ColorView}"
-                        TargetType="ColorView">
+          <ControlTheme x:Key="{x:Type ColorView}" TargetType="ColorView">
             <Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
             <!-- Alpha position should match CSS (and default slider order) instead of XAML/WinUI -->
             <Setter Property="HexInputAlphaPosition" Value="Trailing" />
-            <Setter Property="Palette">
-              <controls:FluentColorPalette />
-            </Setter>
             <Setter Property="IsAlphaEnabled" Value="False" />
             <Setter Property="Template">
               <ControlTemplate TargetType="{x:Type ColorView}">
@@ -255,45 +172,47 @@
                                  RenderOptions.BitmapInterpolationMode="None" />
                         </Border>
                       </TabItem.Header>
-                      <Grid RowDefinitions="*"
-                            Margin="12">
-                        <Grid.ColumnDefinitions>
-                          <ColumnDefinition Width="*" />
-                          <ColumnDefinition Width="Auto" MinWidth="30" />
-                        </Grid.ColumnDefinitions>
-                        <primitives:ColorSpectrum 
-                            x:Name="ColorSpectrum"
-                            Grid.Column="0"
-                            Components="SaturationValue"
-                            HsvColor="{Binding HsvColor, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
-                            MinHue="{TemplateBinding MinHue}"
-                            MaxHue="{TemplateBinding MaxHue}"
-                            MinSaturation="{TemplateBinding MinSaturation}"
-                            MaxSaturation="{TemplateBinding MaxSaturation}"
-                            MinValue="{TemplateBinding MinValue}"
-                            MaxValue="{TemplateBinding MaxValue}"
-                            Shape="{TemplateBinding ColorSpectrumShape}"
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Stretch" />
-                        <primitives:ColorSlider 
-                            x:Name="ColorSpectrumThirdComponentSlider"
-                            AutomationProperties.Name="Hue"
-                            Grid.Column="1"
-                            IsAlphaVisible="False"
-                            IsPerceptive="True"
-                            Orientation="Vertical"
-                            ColorModel="Hsva"
-                            ColorComponent="{Binding ThirdComponent, ElementName=ColorSpectrum}"
-                            HsvColor="{Binding HsvColor, ElementName=ColorSpectrum}"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Stretch"
-                            Margin="0,0,12,0"
-                            IsVisible="{TemplateBinding IsColorSpectrumSliderVisible}"/>
-                      </Grid>
+                        <Grid RowDefinitions="*"
+                              HorizontalAlignment="Center"
+                              Margin="12">
+                          <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                          </Grid.ColumnDefinitions>
+                          <primitives:ColorSpectrum
+                              x:Name="ColorSpectrum"
+                              Grid.Column="0"
+                              Components="SaturationValue"
+                              HsvColor="{Binding HsvColor, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                              MinHue="{TemplateBinding MinHue}"
+                              MaxHue="{TemplateBinding MaxHue}"
+                              MinSaturation="{TemplateBinding MinSaturation}"
+                              MaxSaturation="{TemplateBinding MaxSaturation}"
+                              MinValue="{TemplateBinding MinValue}"
+                              MaxValue="{TemplateBinding MaxValue}"
+                              Shape="{TemplateBinding ColorSpectrumShape}"
+                              Width="220"
+                              VerticalAlignment="Stretch" />
+                          <Border Grid.Column="1" Width="8" />
+                          <primitives:ColorSlider
+                              x:Name="ColorSpectrumThirdComponentSlider"
+                              AutomationProperties.Name="Hue"
+                              Grid.Column="2"
+                              IsAlphaVisible="False"
+                              IsPerceptive="True"
+                              Orientation="Vertical"
+                              ColorModel="Hsva"
+                              ColorComponent="{Binding ThirdComponent, ElementName=ColorSpectrum}"
+                              HsvColor="{Binding HsvColor, ElementName=ColorSpectrum}"
+                              HorizontalAlignment="Center"
+                              VerticalAlignment="Stretch"
+                              Width="20"
+                              IsVisible="{TemplateBinding IsColorSpectrumSliderVisible}" />
+                        </Grid>
                     </TabItem>
                     <!-- Palette Tab -->
-                    <TabItem Theme="{StaticResource ColorViewTabItemTheme}"
-                             IsVisible="{TemplateBinding IsColorPaletteVisible}">
+                    <TabItem Theme="{StaticResource ColorViewTabItemTheme}" IsVisible="{TemplateBinding IsColorPaletteVisible}">
                       <TabItem.Header>
                         <Border Height="{DynamicResource ColorViewTabStripHeight}">
                           <Image Source="{DynamicResource PaletteIcon}"
@@ -302,30 +221,9 @@
                                 RenderOptions.BitmapInterpolationMode="None" />
                         </Border>
                       </TabItem.Header>
-                      <ListBox Theme="{StaticResource ColorViewPaletteListBoxTheme}"
-                               ItemContainerTheme="{StaticResource ColorViewPaletteListBoxItemTheme}"
-                               ItemsSource="{TemplateBinding PaletteColors}"
-                               SelectedItem="{Binding Color, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource DoNothingForNullConverter}, Mode=TwoWay}"
-                               UseLayoutRounding="False"
-                               Margin="12">
-                        <ListBox.ItemTemplate>
-                          <DataTemplate DataType="{x:Type Color}">
-                            <Border AutomationProperties.Name="{Binding Converter={StaticResource ColorToDisplayNameConverter}}"
-                                    ToolTip.Tip="{Binding Converter={StaticResource ColorToDisplayNameConverter}}"
-                                    HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Stretch">
-                              <Border.Background>
-                                <SolidColorBrush Color="{Binding}" />
-                              </Border.Background>
-                            </Border>
-                          </DataTemplate>
-                        </ListBox.ItemTemplate>
-                        <ListBox.ItemsPanel>
-                          <ItemsPanelTemplate>
-                            <UniformGrid Columns="{Binding $parent[ColorView].PaletteColumnCount}" />
-                          </ItemsPanelTemplate>
-                        </ListBox.ItemsPanel>
-                      </ListBox>
+                      <editor:PalettePanel 
+                          Margin="0,0,0,12" 
+                          ImagePalette="{Binding $parent[ui:PaletteColorView].ImagePalette}" />
                     </TabItem>
                     <!-- Components Tab -->
                     <TabItem Theme="{StaticResource ColorViewTabItemTheme}"
@@ -587,4 +485,23 @@
         
         </ResourceDictionary>
     </Styles.Resources>
+
+    <!-- Default TabControl template (Simple theme) sets Margin="4" on its content host with
+         template priority, which overrides any style setter. Replace the template here instead.
+         Applies to ColorView and ColorPicker flyout (both use PART_TabControl). -->
+    <Style Selector="TabControl#PART_TabControl">
+      <Setter Property="Template">
+        <ControlTemplate>
+          <DockPanel LastChildFill="True">
+            <ItemsPresenter Name="PART_ItemsPresenter"
+                            DockPanel.Dock="Top"
+                            ItemsPanel="{TemplateBinding ItemsPanel}" />
+            <ContentPresenter Name="PART_SelectedContentHost"
+                              Margin="0"
+                              Content="{TemplateBinding SelectedContent}"
+                              ContentTemplate="{TemplateBinding SelectedContentTemplate}" />
+          </DockPanel>
+        </ControlTemplate>
+      </Setter>
+    </Style>
 </Styles>

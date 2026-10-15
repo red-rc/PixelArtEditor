@@ -58,6 +58,8 @@ localPairs:
   ColorSpaces: カラースペース
   Basic: 基本
   TiffCompression: TIFF圧縮
+  PngFilter: PNGフィルター
+  PngCompression: PNG圧縮
   ExportQuality: JPEG / WebP 品質
   Advanced: 高度
   Confirm: 確認
@@ -137,3 +139,11 @@ localPairs:
   Dither: ディザリング
   PngEncoderError: このビット深度は、フォーマットエンコーダーでサポートされていません
   ImageLoadingError: 画像の読み込み中にエラーが発生しました。ファイルが破損しているか、サポートされていない形式の可能性があります。
+  Rename: 名前を変更
+  Duplicate: 複製
+  CreateGroup: グループを作成
+  MergeLayers: レイヤーを結合
+  Transform: 変形
+  Export: エクスポート
+  FiltersCorrection: フィルターと補正
+  Delete: 削除

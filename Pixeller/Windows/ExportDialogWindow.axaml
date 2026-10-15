@@ -36,13 +36,16 @@
                     VerticalAlignment="Center"
                     RenderData="{Binding ImageProps.RenderData}" />
 
-                <StackPanel Grid.Column="1" Spacing="10">
+                <Grid Grid.Column="1" ColumnDefinitions="*,*">
                     <controls:PropertiesPanel 
+                        Grid.Column="0"
                         DataContext="{Binding ImageProps}" 
                         ConfigureVisible="True"
-                        ExportOptionsVisible="True"
                         ConfigureEnabled="{Binding IsIndexed}" />
-                </StackPanel>
+                    <controls:ExportPanel 
+                        Grid.Column="1"
+                        DataContext="{Binding ImageProps}" />
+                </Grid>
             </Grid>
             <Grid
                 Grid.Row="1"
@@ -59,6 +62,7 @@
                     HorizontalAlignment="Right"
                     VerticalAlignment="Stretch"
                     Classes="CancelBtn"
+                    IsEnabled="{Binding !IsLoading}"
                     Command="{Binding CancelCommand}"
                     Content="{DynamicResource Cancel}"
                     FontSize="20" />
@@ -70,10 +74,23 @@
                     HorizontalAlignment="Right"
                     VerticalAlignment="Stretch"
                     Classes="ConfirmBtn"
+                    IsEnabled="{Binding !IsLoading}"
                     Command="{Binding SaveCommand}"
                     Content="{DynamicResource Confirm}"
                     FontSize="20" />
             </Grid>
+        </Grid>
+
+        <Grid Grid.RowSpan="2" IsHitTestVisible="False">
+            <ProgressBar
+                IsVisible="{Binding IsLoading}"
+                Width="300"
+                Height="30"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Minimum="0"
+                Maximum="100"
+                IsIndeterminate="True" />
         </Grid>
     </Grid>
 </Window>

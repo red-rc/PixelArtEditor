@@ -58,6 +58,8 @@ localPairs:
   ColorSpaces: Color Spaces
   Basic: Basic
   TiffCompression: TIFF Compression
+  PngFilter: PNG Filter
+  PngCompression: PNG Compression
   ExportQuality: JPEG / WebP Quality
   Advanced: Advanced
   Confirm: Confirm
@@ -137,3 +139,11 @@ localPairs:
   Dither: Dithering
   EncoderError: "Format encoder doesn't support this bit depth"
   ImageLoadingError: "An error occurred while loading the image. The file may be corrupted or in an unsupported format."
+  Rename: Rename
+  Duplicate: Duplicate
+  CreateGroup: Create Group
+  MergeLayers: Merge Layers
+  Transform: Transform
+  Export: Export
+  FiltersCorrection: Filters & Correction
+  Delete: Delete

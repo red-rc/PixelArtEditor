@@ -29,4 +29,17 @@ public abstract partial class ViewBase : ReactiveObject
         }
         finally { IsLoading = false; }
     }
+
+    public async Task RunExportAsync(Task load)
+    {
+        IsLoading = true;
+
+        try
+        {
+            var minVisible = Task.Delay(300);
+            await load;
+            await minVisible;
+        }
+        finally { IsLoading = false; }
+    }
 }

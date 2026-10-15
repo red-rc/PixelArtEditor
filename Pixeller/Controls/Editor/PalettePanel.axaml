@@ -1,0 +1,37 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Pixeller.Controls.Editor.PalettePanel"
+             xmlns:editor="clr-namespace:Pixeller.Controls.Editor"
+             x:DataType="editor:PalettePanel"
+             x:Name="Root">
+
+    
+    <ScrollViewer 
+        HorizontalAlignment="Stretch" 
+        VerticalAlignment="Stretch" 
+        HorizontalScrollBarVisibility="Disabled">
+        <ItemsControl Margin="3,6,3,0" ItemsSource="{Binding Swatches, ElementName=Root}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="editor:SwatchItem">
+                    <Border
+                        Margin="4,2"
+                        Width="18"
+                        Height="18"
+                        CornerRadius="50"
+                        BorderThickness="1"
+                        BorderBrush="{DynamicResource ForegroundColor}"
+                        PointerPressed="OnSwatchPressed">
+                        <Border.Background>
+                            <SolidColorBrush Color="{Binding Color}" />
+                        </Border.Background>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </ScrollViewer>
+</UserControl>

@@ -6,12 +6,12 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="clr-namespace:Pixeller.UI"
     xmlns:vm="clr-namespace:Pixeller.ViewModels"
-    Width="300"
-    Height="200"
-    d:DesignHeight="200"
-    d:DesignWidth="300"
+    Width="150"
+    Height="250"
+    d:DesignHeight="250"
+    d:DesignWidth="150"
     x:DataType="vm:ImagePropertiesUCVM"
-    Background="{DynamicResource BackgroundColor}"
+    Background="{DynamicResource SecondaryBackgroundColor}"
     mc:Ignorable="d"
     x:Name="Root">
 
@@ -23,7 +23,7 @@
             <Setter Property="FontSize" Value="14" />
             <Setter Property="ShowButtonSpinner" Value="False" />
             <Setter Property="Minimum" Value="1" />
-            <Setter Property="Maximum" Value="8192" />
+            <Setter Property="Maximum" Value="9999" />
             <Setter Property="MinHeight" Value="24" />
             <Setter Property="Height" Value="24" />
             <Setter Property="Width" Value="55" />
@@ -37,92 +37,72 @@
         </Style>
     </UserControl.Styles>
 
-    <Grid
+    <StackPanel
         HorizontalAlignment="Stretch"
         VerticalAlignment="Stretch"
-        ColumnDefinitions="*,*"
-        Background="{DynamicResource SecondaryBackgroundColor}">
-        <StackPanel Grid.Column="0" Spacing="6">
-            <StackPanel>
-                <TextBlock HorizontalAlignment="Center" Text="{DynamicResource DpiXY}" />
-                <StackPanel
-                    HorizontalAlignment="Center"
-                    Orientation="Horizontal"
-                    Spacing="6">
-                    <ui:NumberBox Classes="NumberBox" Value="{Binding DpiX, Mode=TwoWay}" />
-                    <ui:NumberBox Classes="NumberBox" Value="{Binding DpiY, Mode=TwoWay}" />
-                </StackPanel>
-            </StackPanel>
-            <StackPanel>
-                <TextBlock HorizontalAlignment="Center" Text="{DynamicResource ColorMode}" />
-                <ComboBox
-                    ItemsSource="{Binding ColorModeNames}"
-                    SelectedItem="{Binding ColorModeName, Mode=TwoWay}">
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate x:DataType="x:String">
-                            <TextBlock Text="{Binding}" TextWrapping="Wrap" />
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                    <ComboBox.SelectionBoxItemTemplate>
-                        <DataTemplate x:DataType="x:String">
-                            <TextBlock Text="{Binding}" TextTrimming="CharacterEllipsis" />
-                        </DataTemplate>
-                    </ComboBox.SelectionBoxItemTemplate>
-                </ComboBox>
-            </StackPanel>
-            <StackPanel>
-                <Grid Width="120">
-                    <TextBlock Text="{DynamicResource BitDepth}" HorizontalAlignment="Center" />
-                    <Button
-                        Width="16"
-                        Height="16"
-                        HorizontalAlignment="Right"
-                        Classes="ProportionBtn"
-                        Command="{Binding ConfigureCommand}" 
-                        IsVisible="{Binding ConfigureVisible, ElementName=Root}"
-                        IsEnabled="{Binding ConfigureEnabled, ElementName=Root}">
-                        <Image 
-                            Width="14"
-                            Height="14"
-                            Source="{DynamicResource GearIcon}" />
-                    </Button>
-                </Grid>
-                <ComboBox
-                    IsEnabled="{Binding BitDepthEnabled}"
-                    ItemsSource="{Binding BitDepthNames}" 
-                    SelectedItem="{Binding BitDepthName, Mode=TwoWay}" />
-			</StackPanel>
-            <StackPanel IsVisible="{Binding ExportOptionsVisible, ElementName=Root}">
-                <TextBlock HorizontalAlignment="Center" Text="{DynamicResource ExportQuality}" />
-                <ui:NumberBox
-                    Classes="NumberBox"
-                    Minimum="1"
-                    Maximum="100"
-                    Width="120"
-                    Value="{Binding Quality, Mode=TwoWay}" />
+        Spacing="6">
+        <StackPanel>
+            <TextBlock HorizontalAlignment="Center" Text="{DynamicResource DpiXY}" />
+            <StackPanel
+                HorizontalAlignment="Center"
+                Orientation="Horizontal"
+                Spacing="6">
+                <ui:NumberBox Classes="NumberBox" Value="{Binding DpiX, Mode=TwoWay}" />
+                <ui:NumberBox Classes="NumberBox" Value="{Binding DpiY, Mode=TwoWay}" />
             </StackPanel>
         </StackPanel>
-        <StackPanel Grid.Column="1" Spacing="6">
-			<StackPanel>
-                <TextBlock TextWrapping="Wrap" HorizontalAlignment="Center" Text="{DynamicResource AlphaFormat}" />
-                <ComboBox
-                    IsEnabled="{Binding AlphaFormatEnabled}"
-                    ItemsSource="{Binding AlphaFormatNames}" 
-                    SelectedItem="{Binding AlphaFormatName, Mode=TwoWay}" />
-			</StackPanel>
-            <StackPanel>
-                <TextBlock HorizontalAlignment="Center" Text="{DynamicResource ColorSpaces}" />
-                <ComboBox
-                    IsEnabled="{Binding ColorSpaceEnabled}"
-                    ItemsSource="{Binding ColorSpaceNames}" 
-                    SelectedItem="{Binding ColorSpaceName, Mode=TwoWay}" />
-            </StackPanel>
-            <StackPanel IsVisible="{Binding ExportOptionsVisible, ElementName=Root}">
-                <TextBlock HorizontalAlignment="Center" Text="{DynamicResource TiffCompression}" />
-                <ComboBox
-                    ItemsSource="{Binding CompressionNames}"
-                    SelectedItem="{Binding CompressionName, Mode=TwoWay}" />
-            </StackPanel>
+        <StackPanel>
+            <TextBlock HorizontalAlignment="Center" Text="{DynamicResource ColorMode}" />
+            <ComboBox
+                ItemsSource="{Binding ColorModeNames}"
+                SelectedItem="{Binding ColorModeName, Mode=TwoWay}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate x:DataType="x:String">
+                        <TextBlock Text="{Binding}" TextWrapping="Wrap" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+                <ComboBox.SelectionBoxItemTemplate>
+                    <DataTemplate x:DataType="x:String">
+                        <TextBlock Text="{Binding}" TextTrimming="CharacterEllipsis" />
+                    </DataTemplate>
+                </ComboBox.SelectionBoxItemTemplate>
+            </ComboBox>
         </StackPanel>
-    </Grid>
+        <StackPanel>
+            <Grid Width="120">
+                <TextBlock Text="{DynamicResource BitDepth}" HorizontalAlignment="Center" />
+                <Button
+                    Width="16"
+                    Height="16"
+                    HorizontalAlignment="Right"
+                    Classes="ProportionBtn"
+                    Command="{Binding ConfigureCommand}"
+                    IsVisible="{Binding ConfigureVisible, ElementName=Root}"
+                    IsEnabled="{Binding ConfigureEnabled, ElementName=Root}">
+                    <Image
+                        Width="14"
+                        Height="14"
+                        Source="{DynamicResource GearIcon}" />
+                </Button>
+            </Grid>
+            <ComboBox
+                IsEnabled="{Binding BitDepthEnabled}"
+                ItemsSource="{Binding BitDepthNames}"
+                SelectedItem="{Binding BitDepthName, Mode=TwoWay}" />
+        </StackPanel>
+        <StackPanel>
+            <TextBlock HorizontalAlignment="Center" Text="{DynamicResource ColorSpaces}" />
+            <ComboBox
+                IsEnabled="{Binding ColorSpaceEnabled}"
+                ItemsSource="{Binding ColorSpaceNames}"
+                SelectedItem="{Binding ColorSpaceName, Mode=TwoWay}" />
+        </StackPanel>
+        <StackPanel>
+            <TextBlock TextWrapping="Wrap" HorizontalAlignment="Center" Text="{DynamicResource AlphaFormat}" />
+            <ComboBox
+                IsEnabled="{Binding AlphaFormatEnabled}"
+                ItemsSource="{Binding AlphaFormatNames}"
+                SelectedItem="{Binding AlphaFormatName, Mode=TwoWay}" />
+        </StackPanel>
+    </StackPanel>
 </UserControl>

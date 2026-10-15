@@ -16,7 +16,7 @@ public static class ActionService
         Services.Navigation.NavigateTo(new EditorVM(model));
     }
 
-    public static async Task ShowImportWindow()
+    public static async Task ShowImportDialog()
     {
         var file = await ImageImportService.PickImportFileAsync();
         if (file is null) return;

@@ -24,7 +24,7 @@
 
   <ItemGroup>
     <Content Include="logo.ico" />
-    <Content Include="..\config.json" Link="config.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="..\settings.json" Link="settings.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>

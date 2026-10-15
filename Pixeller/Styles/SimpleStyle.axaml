@@ -1,5 +1,6 @@
 <Styles xmlns="https://github.com/avaloniaui" xmlns:ui="clr-namespace:Pixeller.UI"
         xmlns:primitives="using:Avalonia.Controls.Primitives">
+
     <!-- ================= Namespace declaration is NECESSARY. Compiler is crazy ================= -->
 
     <!-- ================= Transitions ================= -->

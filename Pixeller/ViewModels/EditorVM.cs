@@ -72,7 +72,6 @@ public partial class EditorVM : ViewBase
         set
         {
             this.RaiseAndSetIfChanged(ref _scale, Math.Clamp(value, MinScale, MaxScale));
-            this.RaisePropertyChanged(nameof(Scale));
             UpdateScaleText();
             this.RaisePropertyChanged(nameof(ScaleText));
         }

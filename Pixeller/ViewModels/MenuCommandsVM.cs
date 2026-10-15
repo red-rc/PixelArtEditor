@@ -100,7 +100,7 @@ public class MenuCommandsVM : ReactiveObject
     {
     }
     
-    private async void OnImport() => await ActionService.ShowImportWindow();
+    private async void OnImport() => await ActionService.ShowImportDialog();
     
     private void OnSave()
     {

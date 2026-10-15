@@ -5,6 +5,7 @@ using Pixeller.Helpers;
 using Pixeller.Models;
 using Pixeller.Models.Canvas;
 using ReactiveUI.SourceGenerators;
+using SixLabors.ImageSharp.Formats.Png;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -267,6 +268,11 @@ public partial class ImagePropertiesUCVM(PixelModel model) : ReactiveObject
             AlphaFormatName = validAlphaFormats.Contains(AlphaFormat.Straight) ? AlphaFormat.Straight.ToString() : validAlphaFormats[0].ToString();
 
         AlphaFormatEnabled = validAlphaFormats.Length > 1;
+
+        // Export options
+        QualityEnabled = ColorMode != ColorMode.Indexed;
+        CompressionEnabled = ColorMode != ColorMode.Indexed;
+        PngOptionsEnabled = ColorMode != ColorMode.CMYK;
     }
 
     // --- Export options (shown only in the export dialog) ---
@@ -287,7 +293,55 @@ public partial class ImagePropertiesUCVM(PixelModel model) : ReactiveObject
 
     public TiffCompressionMode Compression = model.Compression;
 
+    [Reactive] public partial bool CompressionEnabled { get; set; } = model.ColorMode != ColorMode.Indexed;
+
     [Reactive] public partial int Quality { get; set; } = Math.Clamp(model.Quality, 1, 100);
+
+    [Reactive] public partial bool QualityEnabled { get; set; } = model.ColorMode != ColorMode.Indexed;
+
+    // --- PNG (ImageSharp values) ---
+
+    public List<string> PngFilterNames { get; } = [.. Enum.GetValues<PngFilterMethod>().Select(f => f.ToString())];
+
+    private string _pngFilterName = model.PngFilter.ToString();
+    public string PngFilterName
+    {
+        get => _pngFilterName;
+        set
+        {
+            if (_pngFilterName == value || !PngFilterNames.Contains(value)) return;
+            PngFilter = EnumHelper.StringToEnum<PngFilterMethod>(value);
+            this.RaiseAndSetIfChanged(ref _pngFilterName, value);
+        }
+    }
+
+    public PngFilterMethod PngFilter = model.PngFilter;
+
+    private static readonly PngCompressionLevel[] PngCompressionLevels =
+    [
+        PngCompressionLevel.Level0, PngCompressionLevel.Level1, PngCompressionLevel.Level2, PngCompressionLevel.Level3, PngCompressionLevel.Level4,
+        PngCompressionLevel.Level5, PngCompressionLevel.Level6, PngCompressionLevel.Level7, PngCompressionLevel.Level8, PngCompressionLevel.Level9
+    ];
+
+    private static string PngCompressionToDisplay(PngCompressionLevel level) => level.ToString().Replace("Level", "Level ");
+
+    public List<string> PngCompressionNames { get; } = [.. PngCompressionLevels.Select(PngCompressionToDisplay)];
+
+    private string _pngCompressionName = PngCompressionToDisplay(model.PngCompression);
+    public string PngCompressionName
+    {
+        get => _pngCompressionName;
+        set
+        {
+            if (_pngCompressionName == value || !PngCompressionNames.Contains(value)) return;
+            PngCompression = EnumHelper.StringToEnum<PngCompressionLevel>(value.Replace(" ", ""));
+            this.RaiseAndSetIfChanged(ref _pngCompressionName, value);
+        }
+    }
+
+    public PngCompressionLevel PngCompression = model.PngCompression;
+
+    [Reactive] public partial bool PngOptionsEnabled { get; set; } = model.ColorMode != ColorMode.CMYK;
 
     public bool isPaletteSetByUser = false;
 
@@ -329,7 +383,10 @@ public partial class ImagePropertiesUCVM(PixelModel model) : ReactiveObject
             Data = data,
             DicomDataset = dicomDataset,
             IccProfile = Model.IccProfile,
-            Compression = Model.Compression
+            Compression = Compression,
+            Quality = Quality,
+            PngFilter = PngFilter,
+            PngCompression = PngCompression
         };
     }
 }

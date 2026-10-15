@@ -39,7 +39,7 @@
         </StackPanel>
         <StackPanel Orientation="Horizontal" Spacing="10">
             <TextBlock Classes="Label" Text="{DynamicResource AccentColor}" />
-            <ColorPicker Theme="{StaticResource ColorPickerNoAlpha}" Width="100" Color="{Binding AccentColor, Mode=TwoWay}" />
+            <ColorPicker IsAlphaVisible="False" Width="100" Color="{Binding AccentColor, Mode=TwoWay}" />
             <Border
                 Width="40"
                 Height="30"

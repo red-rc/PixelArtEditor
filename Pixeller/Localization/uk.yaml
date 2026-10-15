@@ -58,6 +58,8 @@ localPairs:
   ColorSpaces: Колірні простори
   Basic: Базовий
   TiffCompression: Стиснення TIFF
+  PngFilter: Фільтр PNG
+  PngCompression: Стиснення PNG
   ExportQuality: Якість JPEG / WebP
   Advanced: Розширений
   Confirm: Підтвердити
@@ -137,3 +139,11 @@ localPairs:
   Dither: Дизеринг
   PngEncoderError: Кодер формату не підтримує цю глибину кольору
   ImageLoadingError: Під час завантаження зображення сталася помилка. Файл може бути пошкоджений або непідтримуваного формату.
+  Rename: Перейменувати
+  Duplicate: Дублювати
+  CreateGroup: Створити групу
+  MergeLayers: Об'єднати шари
+  Transform: Трансформувати
+  Export: Експортувати
+  FiltersCorrection: Фільтри та корекція
+  Delete: Видалити

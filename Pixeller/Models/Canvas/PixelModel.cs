@@ -1,5 +1,6 @@
 ﻿using FellowOakDicom;
 using ReactiveUI.SourceGenerators;
+using SixLabors.ImageSharp.Formats.Png;
 
 namespace Pixeller.Models.Canvas;
 
@@ -51,11 +52,10 @@ public partial class PixelModel : ReactiveObject
 
     public ColorSpace SrcColorSpace = ColorSpace.SRgb;
 
-    /// <summary>TIFF strip compression (source CMYK TIFF value is reused on export).</summary>
     public TiffCompressionMode Compression = TiffCompressionMode.Lzw;
-
-    /// <summary>Export quality (1-100), shared by JPEG and WebP.</summary>
     public int Quality = 100;
+    public PngFilterMethod PngFilter = PngFilterMethod.Adaptive;
+    public PngCompressionLevel PngCompression = PngCompressionLevel.Level6;
 
     [Reactive] public partial byte[]? IccProfile { get; set; }
     [Reactive] public partial AlphaFormat AlphaFormat { get; set; }
